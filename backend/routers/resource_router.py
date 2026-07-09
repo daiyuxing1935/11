@@ -1,8 +1,10 @@
 """资源推送路由"""
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from auth import get_current_user
 from schemas import APIResponse
 from services import resource_service
+import httpx
 
 router = APIRouter()
 
@@ -67,3 +69,23 @@ async def learn_resource(resource_id: str, current_user: dict = Depends(get_curr
         return APIResponse(data=result)
     except Exception as e:
         return APIResponse(code=500, message=f"获取学习资料失败: {str(e)}", data=None)
+
+
+@router.get("/proxy-image")
+async def proxy_image(url: str = ""):
+    """代理获取外部图片，解决浏览器跨域/混合内容拦截问题"""
+    if not url:
+        raise HTTPException(status_code=400, detail="url parameter required")
+    try:
+        async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
+            resp = await client.get(url)
+            if resp.status_code == 200:
+                content_type = resp.headers.get("content-type", "image/png")
+                return StreamingResponse(
+                    content=iter([resp.content]),
+                    media_type=content_type,
+                    headers={"Cache-Control": "public, max-age=86400"}
+                )
+            raise HTTPException(status_code=resp.status_code, detail="Image fetch failed")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

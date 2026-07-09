@@ -12,6 +12,8 @@
 - SSE流式输出实现Agent"边思考边展示"
 - Docker多阶段构建与docker-compose生产级编排
 
+**Image-Prompt(agent API service overview):** A flat-design minimalist 2D vector illustration introducing Agent API service deployment. A central "Agent API Service" hub with five surrounding capability nodes connected by tech light blue #409EFF lines: "FastAPI + Pydantic" (web framework gear icon), "异步并发" (parallel arrows icon), "结构化日志" (JSON log document icon), "Prometheus监控" (graph/chart icon), "Docker部署" (container whale icon). White background with dark blue #1a1a2e labels. Academic API engineering overview visualization with radial layout.
+
 ---
 
 ## 2. 技术选型对比
@@ -46,6 +48,8 @@
 | 典型搭配 | 轻量任务、缓存 | 关键业务消息 | CPU/IO密集型异步任务 |
 
 **推荐方案**：小型项目 Redis + Celery（复用已有Redis）；中大型项目 RabbitMQ + Celery（消息零丢失需求）。
+
+**Image-Prompt(technology stack comparison):** A flat-design minimalist 2D vector illustration comparing technology choices for Agent API service. Two comparison panels side by side: Left "Web框架 FastAPI vs Flask" showing FastAPI with native async/sync arrows, auto-generated Swagger docs icon, Pydantic validation shield; Flask with simpler but sync-only architecture. Right "消息队列 Redis vs RabbitMQ vs Celery" showing three tiers: Redis (lightweight cache cylinder), RabbitMQ (message queue with ACK arrows), Celery (task queue layer on top). Tech light blue #409EFF for recommended choices. White background with dark blue #1a1a2e labels. Academic technology selection visualization.
 
 ---
 
@@ -1088,6 +1092,8 @@ if __name__ == "__main__":
     )
 ```
 
+**Image-Prompt(agent API service architecture):** A flat-design minimalist 2D vector illustration of the complete Agent API service architecture. A layered architecture diagram: Top layer "FastAPI Routes" (/api/v1/agent/chat, /health, /metrics) → Middle layer "Core Services" (AgentService, Auth, Rate Limiter as horizontal blocks) → Bottom layer "Infrastructure" (LLM API, Redis, Celery, ChromaDB). Side panels: "Monitoring" (Prometheus + Grafana dashboards), "Logging" (structured JSON log stream). Flow arrows in tech light blue #409EFF between layers. White background with dark blue #1a1a2e labels. Academic service architecture visualization.
+
 ---
 
 ## 4. 容器化部署
@@ -1409,6 +1415,8 @@ scrape_configs:
 └──────────────────────────┴──────────────────────────────┘
 ```
 
+**Image-Prompt(docker compose deployment architecture):** A flat-design minimalist 2D vector illustration of the docker-compose deployment architecture. Seven service containers arranged in a structured layout: "agent-api" (FastAPI icon with port 8000), "celery-worker" (worker gear icon with x2 replicas), "celery-beat" (clock scheduler icon), "redis" (Redis cube with health check), "chromadb" (vector database icon with port 8001), "prometheus" (metrics scraper icon with port 9090), "grafana" (dashboard icon with port 3000). All connected via "agent-network" bridge at bottom. Tech light blue #409EFF for container borders. White background with dark blue #1a1a2e labels. Academic container orchestration visualization.
+
 ---
 
 ## 5. 部署架构图（文字描述）
@@ -1459,6 +1467,8 @@ scrape_configs:
 4. 所有请求指标 → /metrics端点 → Prometheus采集 → Grafana展示
 5. 结构化日志 → stdout → ELK/Loki等日志平台采集
 ```
+
+**Image-Prompt(production deployment architecture):** A flat-design minimalist 2D vector illustration of the production deployment architecture. Top: "用户/客户端" → "Nginx 反向代理" (HTTPS/TLS shield) → three "Agent API Instance" (FastAPI servers with load balancing arrows). Middle layer: "Redis" (cache/queue), "Celery Workers" (task processors), "ChromaDB" (vector database). Bottom: "External LLM APIs" (OpenAI cloud icon). Side monitoring column: "Prometheus" scraping /metrics → "Grafana" dashboards. Log stream flowing to "ELK/Loki". Tech light blue #409EFF for data flow lines. White background with dark blue #1a1a2e labels. Academic production infrastructure visualization.
 
 ---
 
@@ -1708,6 +1718,8 @@ if __name__ == "__main__":
             print(f"\n\n--- 完成，耗时 {event['data']['elapsed_ms']}ms ---")
 ```
 
+**Image-Prompt(API testing and SSE streaming):** A flat-design minimalist 2D vector illustration showing API testing workflow. Left side: curl terminal commands for health check, non-streaming chat, and SSE streaming. Right side: SSE event timeline showing event types flowing: "tool_start" (gear icon) → "tool_end" (checkmark) → "token" (text fragments appearing one by one) → "done" (completion flag). A StreamingResponse arrow with "text/event-stream" content type. Tech light blue #409EFF for event stream arrows. White background with dark blue #1a1a2e labels. Academic API testing visualization.
+
 ---
 
 ## 7. 生产环境 Checklist
@@ -1732,6 +1744,8 @@ if __name__ == "__main__":
 | **运维** | 自动化CI/CD（GitHub Actions / GitLab CI） |  |
 | **运维** | 数据库迁移方案（Alembic） |  |
 | **运维** | 蓝绿部署或滚动更新策略 |  |
+
+**Image-Prompt(production readiness checklist):** A flat-design minimalist 2D vector illustration of the production deployment checklist. Six checklist categories in a 2x3 grid: "安全" (shield with lock, TLS, API Key rotation icons), "可靠性" (health check heartbeat, master-slave database, resource limits gauges), "监控" (Prometheus + Grafana + AlertManager triangle), "性能" (Nginx load balancer, Redis cache, timeout settings), "运维" (CI/CD pipeline gear, database migration arrow, blue-green deployment). Each category with checkbox items in tech light blue #409EFF. White background with dark blue #1a1a2e labels. Academic operations checklist visualization.
 
 ---
 
@@ -1762,3 +1776,5 @@ if __name__ == "__main__":
 2. 添加请求ID追踪（从API入口到日志到响应Header全链路Trace ID）
 3. 实现API Key的数据库存储与Web管理界面
 4. 添加单元测试（pytest + httpx AsyncClient）和集成测试
+
+**Image-Prompt(agent engineering learning roadmap):** A flat-design minimalist 2D vector illustration of the Agent engineering and deployment learning roadmap. Six key learning areas arranged as connected hexagons: "FastAPI + Pydantic" (type-safe API), "异步非阻塞" (async/await concurrency), "Celery任务队列" (distributed task processing), "可观测性三板斧" (Logs + Metrics + Traces triangle), "SSE流式输出" (streaming events), "容器化部署" (Docker + K8s). Further learning directions shown as upward arrows: "LangServe", "K8s HPA", "LLM缓存", "LangSmith追踪". Tech light blue #409EFF hexagon borders. White background with dark blue #1a1a2e labels. Academic learning roadmap visualization.

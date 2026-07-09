@@ -8,6 +8,11 @@
 
 读完本章，你将能够准确地判断任何一个AI系统到底是"会聊天的机器人"还是"能干活的智能体"。
 
+Image-Prompt(chatbot-vs-agent-overview):
+```
+A flat-design 2D vector illustration showing a conceptual split comparison. Left side: a simple speech bubble robot face with only a mouth — labeled "ChatBot: Can Talk" in muted gray-blue, with a thought bubble containing question marks and generic replies. Right side: a full robot figure with articulated hands actively working at a desk with tools — labeled "AI Agent: Can Work" in tech blue (#409EFF), with action items, databases, and API connections visible. A dashed line separates them with the question: "Talking Robot or Working Agent?" Between them, a transformation arrow shows a ChatBot with one plugin added, with a red X over it saying "Adding one API call does not make an Agent." Deep blue (#1a1a2e) labels, clean white background, split comparison layout.
+```
+
 ## 聊天机器人（ChatBot）的定义与工作机制
 
 ### 什么是ChatBot
@@ -149,6 +154,11 @@ def generate_reply(intent, entities, db_result):
 **关键洞察**：无论ChatBot采用关键词匹配、机器学习分类器还是LLM来理解意图，其行为的终点始终是**生成一段文本回复给用户**。它不会在对话之外采取任何实际行动——不会真的去订票、不会真的去退款、不会真的去修改数据库。
 
 这就是ChatBot与Agent最根本的分界线。
+
+Image-Prompt(chatbot-workflow-mechanism):
+```
+A flat-design 2D vector illustration showing the three-step ChatBot processing pipeline vertically. Top: a user message icon flowing down. Step 1: "Intent Recognition" — a text classification node with categories (booking, refund, inquiry, chat) and keyword/machine learning/LLM chips representing three generations of technology. Step 2: "Entity Extraction" — a structured data table extracting date, city, product type from text. Step 3: "Response Generation" — a template-filling node producing a text reply. A prominent red boundary line at the bottom shows: "STOP HERE — Only Generates Text" with the ChatBot behind a glass wall unable to reach the database/API/action icons beyond. Tech blue (#409EFF) for the processing pipeline, red accent for the boundary line, deep blue (#1a1a2e) labels, clean white background, centered vertical flow layout.
+```
 
 ## AI智能体（AI Agent）的本质差异
 
@@ -323,6 +333,11 @@ class MultiStepAgent:
         return self._summarize(results)
 ```
 
+Image-Prompt(agent-capability-triangle):
+```
+A flat-design 2D vector illustration showing the Agent capability triangle (the three differentiating capabilities). A triangular layout with three vertices: "Tool Use" (wrench and API gear icon, with sub-icons of search, database, email, code), "Autonomous Planning" (roadmap branching into sub-tasks icon, with before/after comparison: "ChatBot: suggests how" vs "Agent: plans and executes"), and "Multi-step Execution" (connected nodes with dependency arrows, error recovery loop, parallel execution branches). At the center of the triangle: a smiling robot figure. Below the triangle, a comparison line: "ChatBot = Point (Understand + Reply)" vs "Agent = Triangle (Plan + Execute + Use Tools)". Tech blue (#409EFF) for the triangle and robot, deep blue (#1a1a2e) labels, clean white background, centered layout.
+```
+
 ## 对话型AI的演化光谱
 
 ChatBot和Agent不是两个孤立的概念，而是一条演化光谱上的两个区间。理解这个光谱，有助于在开发中选择合适的技术方案。
@@ -458,6 +473,11 @@ ELIZA         Siri早期       ChatGPT        AutoGPT        CrewAI
 └─────────────────────────────────────────────────────────┘
 ```
 
+Image-Prompt(conversational-ai-evolution-spectrum):
+```
+A flat-design 2D vector illustration showing a five-stage evolutionary spectrum from left to right, each stage as an increasing step. Stage 1 (1990s, gray): Rule Bot — keyword matching box with fixed "if/then" arrows, complexity 1 star. Stage 2 (2010s, light blue-gray): Retrieval Bot — vector database/search icon with document retrieval, complexity 2 stars. Stage 3 (2023, mid-blue): Generative Bot — LLM brain with speech bubble output, context window visual, complexity 3 stars. Stage 4 (2024, tech blue #409EFF): AI Agent — full robot with tools, planner, memory, execution loop, complexity 4 stars. Stage 5 (2025+, deep blue #1a1a2e): Multi-Agent System — team of specialized robots (PM, Dev, QA, Ops) connected by message arrows, complexity 5 stars. Each stage labeled with representative products (ELIZA, Siri, ChatGPT, AutoGPT, CrewAI). Clean white background, progressive complexity layout.
+```
+
 ## 智能体 vs 聊天机器人：多维对比表
 
 ### 对比表一：核心能力维度
@@ -498,6 +518,11 @@ ELIZA         Siri早期       ChatGPT        AutoGPT        CrewAI
 | **用户干预** | 每轮都需用户参与 | 关键节点确认，其余自主执行 |
 | **透明度** | 较低（只看到回复，看不到推理） | 较高（可看到推理链和工具调用过程） |
 | **信任建立** | 回复质量 | 回复质量 + 执行成功率 + 行为可预测性 |
+
+Image-Prompt(chatbot-vs-agent-comparison-table):
+```
+A flat-design 2D vector illustration showing a three-panel comparison infographic. Panel 1 "Core Capabilities": left column (ChatBot) with limited icons — speech bubble, knowledge base book, single dialog chain; right column (Agent) with expanded icons — speech bubble + gear tool + database + multi-step chain + memory chip. Panel 2 "Technical Architecture": ChatBot as a simple arrow (User → LLM → Reply), Agent as a complex loop (User → LLM → Planner → Tools → Memory → Result → Loop). Panel 3 "User Experience": ChatBot shows a person chatting continuously (real-time, every round needs user), Agent shows a person assigning a task and walking away (delegation, async updates, key node confirmation only). Tech blue (#409EFF) for Agent elements, gray-blue for ChatBot. Deep blue (#1a1a2e) labels, clean white background, three-column layout.
+```
 
 ## 实际场景对比：同一个需求下的不同表现
 
@@ -605,6 +630,11 @@ Agent: [回复] "已帮你安排好产品评审会！下周二5月28日下午2-4
 
 **差异极其明显**：ChatBot给了你一个"操作手册"，Agent直接帮你完成了操作。
 
+Image-Prompt(chatbot-vs-agent-scenario-comparison):
+```
+A flat-design 2D vector illustration showing three real-world scenario comparison cards horizontally. Card 1 "Order Query": ChatBot side — a robot behind a counter just reading a status screen; Agent side — the same robot actively diagnosing logistics delays, tracing root causes from an API dashboard, offering solutions. Card 2 "Meeting Scheduling": ChatBot side — a robot holding a "how-to" checklist; Agent side — the same robot checking multiple calendars, finding intersection, booking the room, sending invites. Card 3 "Data Analysis": ChatBot side — a robot suggesting SQL queries on a whiteboard; Agent side — the same robot connected to database, running code, generating charts, creating a PPT report. Each card has "ChatBot: Tells you how" vs "Agent: Does it for you" labels. Tech blue (#409EFF) for Agent actions, muted gray for ChatBot suggestions. Deep blue (#1a1a2e) labels, clean white background.
+```
+
 ### 场景三：数据分析和汇报
 
 **用户需求**："分析一下上个月的用户增长情况，周一例会要用。"
@@ -647,6 +677,11 @@ Agent: [回复] "分析报告已生成！上月用户增长概览：
        - ⚠️ 需关注：KOL渠道用户7日留存率仅12%，远低于自然渠道的35%
        - 完整报告已保存至共享文件夹，包含6张数据图表
        需要我预演一下汇报内容吗？"
+```
+
+Image-Prompt(chatbot-vs-agent-data-analysis):
+```
+A flat-design 2D vector illustration showing the data analysis scenario as a dramatic before/after transformation. Left "Before" (ChatBot): a robot standing at a whiteboard drawing analysis suggestion boxes (dimensions: new users, channels, retention, DAU/MAU, geography) with a speech bubble saying "Here's what you should analyze..." — all theoretical. Right "After" (Agent): the same robot actively connected to a database server, running Python code on a screen, generating bar charts and line graphs, detecting a spike anomaly (May 15, +200%) with a magnifying glass, and producing a finished PPT report with key findings highlighted. The transformation arrow between them reads "From telling how → to doing it." Tech blue (#409EFF) for the Agent side, gray for ChatBot side. Deep blue (#1a1a2e) labels, clean white background.
 ```
 
 ## 什么时候ChatBot就够了？什么时候必须用Agent？
@@ -708,6 +743,11 @@ Agent: [回复] "分析报告已生成！上月用户增长概览：
 | 购物建议 | 对比几款产品，给分析 | 搜索→比价→加入购物车→下单 | 下单环节设人工确认 |
 | 学习计划 | 根据目标生成学习路线 | 生成计划→创建Todo→设置提醒→跟踪进度 | 看是否需要持续跟踪 |
 
+Image-Prompt(chatbot-vs-agent-decision-framework):
+```
+A flat-design 2D vector illustration showing a decision framework with two columns. Left column "ChatBot is Enough" (gray-blue header): feature checklist — "Task is information query/reply", "User expects conversation", "Single/few rounds complete", "No external system operation", "Fast response needed (<2s)", "Low error cost" — each with a checkmark. Five example cards below: FAQ, Product Info, Mental Companion, Online Tutoring, Content Generation. Right column "Agent Required" (tech blue #409EFF header): feature checklist — "External system operation needed", "User expects delegation", "Multi-step with dependencies", "Dynamic strategy adjustment", "Async execution desired" — each with a checkmark. Six example cards below: Smart CS, Data Analysis, Auto Ops, Travel Planning, Recruiting, Code Review. A decision flow diagram at the bottom starts with "Does it need only text reply?" branching to ChatBot or Agent paths. Deep blue (#1a1a2e) labels, clean white background.
+```
+
 ### 决策流程图
 
 ```
@@ -737,6 +777,11 @@ Agent: [回复] "分析报告已生成！上月用户增长概览：
                      └──────────┘
 ```
 
+Image-Prompt(chatbot-vs-agent-decision-flowchart):
+```
+A flat-design 2D vector illustration showing a clear decision flowchart. Starting node: "Analyze User Needs" → first diamond: "Only text reply needed? (No external system operation)" — Yes branch leads to second diamond: "Single round enough?" → Yes → "Rule Bot" (simplest), No → "Generative Bot". The No branch from the first diamond leads to: "Multi-step planning needed?" → Yes → "Agent Required", No → "Generative Bot with Tools (Simple Agent)". Each decision path terminates in a recommendation badge with appropriate complexity star rating. A summary note: "Simple problems → ChatBot (fast, cheap); Complex problems → Agent (deep, capable)". Tech blue (#409EFF) for Agent paths, gray-blue for ChatBot paths, deep blue (#1a1a2e) labels, clean white background, centered flowchart layout.
+```
+
 ## 总结
 
 ChatBot和AI Agent的根本区别不在于它们是否使用了LLM，而在于**行动能力的有无**。
@@ -758,4 +803,9 @@ ChatBot = 理解你说的话 + 给出合适的回复
 Agent  = 理解你的目标 + 制定执行计划 + 调用工具干活 + 交付结果
 
 一句话总结：ChatBot是"嘴"，只能聊；Agent是"手"，能干活。
+```
+
+Image-Prompt(chatbot-vs-agent-final-summary):
+```
+A flat-design 2D vector illustration showing a powerful visual metaphor for the ChatBot vs Agent distinction. Left side: a friendly robot head with an oversized animated mouth and speech bubbles, labeled "ChatBot = Mouth (Talks Only)" — behind a glass wall, unable to touch the world. Right side: a complete robot figure with articulated hands actively working — holding a wrench, clicking a mouse, sending an email, writing code — labeled "Agent = Hands (Gets Things Done)". The robot has broken through the glass wall. Between them, a transformation formula: "ChatBot + Tools + Planning + Memory + Execution Loop = Agent". Bottom shows a complementary diagram: a funnel with "Simple Questions → ChatBot (fast, cheap)" on the wide top and "Complex Tasks → Agent (deep, capable)" on the narrow bottom, working together in a single product. Tech blue (#409EFF) for the Agent/Hands side, muted gray for the ChatBot/Mouth side, deep blue (#1a1a2e) labels, clean white background, split comparison layout.
 ```

@@ -6,6 +6,10 @@
 
 **CRAG（Comprehensive RAG Benchmark）** 正是为此而生——它是一个专门用于评估RAG系统综合性能的基准测试。与传统QA数据集不同，CRAG不仅评测最终答案的正确性，还深入评测检索质量、生成质量和端到端性能三个核心维度。本文将从CRAG的设计理念、评测维度和实践应用三个层面进行深入解析。
 
+
+
+**Image-Prompt(CRAG-RAG-System-Evaluation-Overview):** A flat-design illustration of a RAG system being evaluated. Center shows a document icon feeding into a magnifying glass (retrieval) then into a brain-shaped processor (generation), with a scoring checklist overlay on the right side displaying checkmarks and score bars. Primary blue #409EFF for the evaluation flow arrows and scoring elements, deep blue #1a1a2e outlines, white background. Rounded rectangular panels, thin-line icons, centered symmetrical composition. Academic benchmark testing atmosphere.
+
 ---
 
 ## RAG评估的挑战
@@ -54,6 +58,8 @@ RAG系统评估：
   检索到的文档：无相关文档
   生成回答："珠穆朗玛峰高8849.68米" [实际为8848.86米，微小的数字偏差]
 ```
+
+**Image-Prompt(RAG-vs-Pure-LLM-Evaluation-Comparison):** A flat-design split comparison diagram. Top half shows pure LLM evaluation as a simple single-arrow pipeline: "Question -> LLM -> Answer -> Compare -> Score" in muted gray. Bottom half shows RAG evaluation as a more complex branched pipeline: "Question -> Retrieval Module -> Relevant Docs -> Generation Module -> Answer", with two additional evaluation checkpoints at Retrieval and Generation stages highlighted in primary blue #409EFF. Deep blue #1a1a2e outlines, white background, rounded rectangular process nodes connected by thin-line arrows. Academic comparative analysis style.
 
 ---
 
@@ -500,6 +506,8 @@ class EndToEndMetrics:
         }
 ```
 
+**Image-Prompt(CRAG-Three-Dimension-Evaluation-Framework):** A flat-design three-panel dashboard layout. Top center reads "CRAG Comprehensive Evaluation Framework" in deep blue #1a1a2e. Three rounded rectangular panels below, side by side: left panel "Retrieval Quality" with metrics icons (Recall, Precision, MRR, NDCG), middle panel "Generation Quality" with icons (Faithfulness, Relevance, Fluency, Coverage), right panel "End-to-End Performance" with icons (Accuracy, F1, Latency, Cost). Each panel in primary blue #409EFF accent borders, white card backgrounds, thin-line minimal icons. Clean white overall background, centered symmetrical composition. Academic benchmark evaluation style.
+
 ---
 
 ## 完整的CRAG评估流程
@@ -680,3 +688,5 @@ CRAG Benchmark为RAG系统提供了一个标准化、多维度的评估框架。
 5. **结合业务**：不同场景对检索/生成/延迟的容忍度不同，评分权重应结合业务需求调整
 
 记住：RAG系统的质量上限由检索决定，下限由生成决定，而用户体验由端到端延迟决定。
+
+**Image-Prompt(CRAG-Benchmark-Summary-Key-Principles):** A flat-design summary infographic with five rounded rectangular cards arranged in a row. Cards labeled: "Retrieval First", "Faithfulness > Fluency", "Multi-Dimensional", "Continuous Evaluation", "Business-Aligned". Each card features a minimal thin-line icon in primary blue #409EFF, deep blue #1a1a2e text labels. White background, centered horizontal layout, soft rounded corners. Academic key-takeaways summary style for educational software.

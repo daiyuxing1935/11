@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e8f2fb"/>
+    </linearGradient>
+    <linearGradient id="blockGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3a8fe0"/>
+    </linearGradient>
+    <linearGradient id="highwayGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#409EFF" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#409EFF" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="800" height="500" rx="12" ry="12" fill="url(#bgGrad)"/>
+
+  <!-- Title -->
+  <text x="400" y="38" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">Residual Connection &amp; Layer Normalization</text>
+
+  <!-- Main horizontal highway (information highway) -->
+  <line x1="60" y1="150" x2="740" y2="150" stroke="url(#highwayGrad)" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Highway label -->
+  <text x="400" y="130" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#409EFF" font-weight="bold">Information Highway</text>
+
+  <!-- Input node -->
+  <rect x="60" y="135" width="50" height="30" rx="15" ry="15" fill="#409EFF" opacity="0.8"/>
+  <text x="85" y="154" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="white" font-weight="bold">x</text>
+
+  <!-- Processing block (Sublayer) -->
+  <rect x="280" y="110" width="180" height="80" rx="12" ry="12" fill="url(#blockGrad)" stroke="#3a8fe0" stroke-width="2"/>
+  <text x="370" y="148" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="white" font-weight="bold">Sublayer(x)</text>
+  <text x="370" y="172" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="rgba(255,255,255,0.8)">(e.g. Self-Attention)</text>
+
+  <!-- Residual connection (bypass arrow) -->
+  <path d="M 110 150 C 180 60, 300 60, 370 100" fill="none" stroke="#409EFF" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="370,95 365,105 375,105" fill="#409EFF"/>
+
+  <!-- Addition symbol (+) -->
+  <circle cx="470" cy="150" r="14" fill="#e8f2fb" stroke="#409EFF" stroke-width="2"/>
+  <text x="470" y="155" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#409EFF" font-weight="bold">+</text>
+
+  <!-- Arrow from + to LayerNorm -->
+  <line x1="484" y1="150" x2="530" y2="150" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="530,145 525,150 530,155" fill="#409EFF"/>
+
+  <!-- LayerNorm block -->
+  <rect x="530" y="115" width="140" height="70" rx="12" ry="12" fill="white" stroke="#409EFF" stroke-width="2.5"/>
+  <text x="600" y="146" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">LayerNorm</text>
+  <text x="600" y="168" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#666">μ=0, σ²=1</text>
+
+  <!-- Output arrow from LayerNorm -->
+  <line x1="670" y1="150" x2="730" y2="150" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="730,145 725,150 730,155" fill="#409EFF"/>
+
+  <!-- Output node -->
+  <rect x="730" y="135" width="50" height="30" rx="15" ry="15" fill="#409EFF" opacity="0.8"/>
+  <text x="755" y="154" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="white" font-weight="bold">y</text>
+
+  <!-- Formula box -->
+  <rect x="140" y="230" width="520" height="60" rx="10" ry="10" fill="#1a1a2e" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="400" y="258" text-anchor="middle" font-family="Courier, monospace" font-size="16" fill="#409EFF" font-weight="bold">Output = LayerNorm( x + Sublayer(x) )</text>
+  <text x="400" y="278" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#8899aa">Residual connection preserves input, LayerNorm stabilizes training</text>
+
+  <!-- Layer Normalization visualization section -->
+  <text x="400" y="330" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">Layer Normalization Detail</text>
+
+  <!-- Coordinate axis -->
+  <line x1="80" y1="430" x2="720" y2="430" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/>
+  <line x1="80" y1="380" x2="80" y2="450" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Axis arrows -->
+  <polygon points="720,430 715,427 715,433" fill="#1a1a2e"/>
+  <polygon points="80,380 77,385 83,385" fill="#1a1a2e"/>
+
+  <!-- Axis labels -->
+  <text x="730" y="434" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#1a1a2e">x</text>
+  <text x="70" y="375" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#1a1a2e">y</text>
+
+  <!-- Original data points (scattered) -->
+  <circle cx="150" cy="395" r="5" fill="#409EFF" opacity="0.4"/>
+  <circle cx="220" cy="418" r="5" fill="#409EFF" opacity="0.4"/>
+  <circle cx="300" cy="385" r="5" fill="#409EFF" opacity="0.4"/>
+  <circle cx="380" cy="410" r="5" fill="#409EFF" opacity="0.4"/>
+  <circle cx="450" cy="390" r="5" fill="#409EFF" opacity="0.4"/>
+  <circle cx="520" cy="415" r="5" fill="#409EFF" opacity="0.4"/>
+  <circle cx="600" cy="388" r="5" fill="#409EFF" opacity="0.4"/>
+
+  <!-- Arrow: original → normalized -->
+  <text x="120" y="365" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#666" text-anchor="middle">Original</text>
+  <text x="120" y="450" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#666" text-anchor="middle">Data</text>
+
+  <!-- Normalized data points (centered at mean=0) -->
+  <circle cx="150" cy="430" r="5" fill="#409EFF" opacity="0.7"/>
+  <circle cx="220" cy="430" r="5" fill="#409EFF" opacity="0.7"/>
+  <circle cx="300" cy="430" r="5" fill="#409EFF" opacity="0.7"/>
+  <circle cx="380" cy="430" r="5" fill="#409EFF" opacity="0.7"/>
+  <circle cx="450" cy="430" r="5" fill="#409EFF" opacity="0.7"/>
+  <circle cx="520" cy="430" r="5" fill="#409EFF" opacity="0.7"/>
+  <circle cx="600" cy="430" r="5" fill="#409EFF" opacity="0.7"/>
+
+  <!-- Mean=0 line -->
+  <line x1="80" y1="430" x2="720" y2="430" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>
+
+  <!-- Gamma and Beta annotations -->
+  <rect x="640" y="380" width="70" height="55" rx="8" ry="8" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="675" y="398" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#1a1a2e" font-weight="bold">γ · x̂ + β</text>
+  <text x="675" y="418" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#409EFF">Scale γ</text>
+  <text x="675" y="432" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#409EFF">Shift β</text>
+
+  <!-- Arrow from normalized to gamma/beta -->
+  <line x1="610" y1="430" x2="640" y2="408" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="640,405 637,412 643,410" fill="#409EFF"/>
+
+  <!-- Step labels below axis -->
+  <text x="250" y="470" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#666">Step 1: Center to μ=0</text>
+  <text x="500" y="470" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#666">Step 2: Scale to σ²=1</text>
+  <text x="680" y="470" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#409EFF">Step 3: γ · x̂ + β</text>
+
+  <!-- Decorative dashed flow lines -->
+  <path d="M 85 150 L 85 200 L 140 200" fill="none" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
+  <path d="M 755 150 L 755 200 L 660 200" fill="none" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
+</svg>

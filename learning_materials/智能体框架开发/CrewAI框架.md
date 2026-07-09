@@ -8,6 +8,8 @@
 
 CrewAI由Joao Moura于2023年创建，是一款专注于**多Agent协作编排**的Python框架。它的设计哲学非常直观：**像管理人类团队一样管理AI Agent团队**。
 
+**Image-Prompt(multi-agent team collaboration concept):** A flat-design minimalist 2D vector illustration introducing CrewAI multi-agent collaboration. A horizontal evolution showing three stages: "Single LLM" (one person icon answering questions) → "Single Agent" (one robot with tool icons) → "Multi-Agent Team" (three specialized avatar icons - Researcher with magnifying glass, Analyst with chart, Writer with pen - collaborating around a shared project). The multi-agent stage highlighted with tech light blue #409EFF glow. White background with dark blue #1a1a2e labels. Academic evolution of AI systems visualization.
+
 ---
 
 ## CrewAI的核心设计理念

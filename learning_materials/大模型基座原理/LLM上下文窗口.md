@@ -6,6 +6,11 @@
 
 理解上下文窗口的工作原理，不仅能帮助你更好地使用大语言模型，还能让你在面对长文本任务时做出更明智的技术选择。本文将带你深入了解上下文窗口的方方面面，并提供大量可操作的代码示例和实用策略。
 
+**Image-Prompt(Context Window Concept Introduction):**
+```
+A flat-design 2D vector illustration introducing the context window concept. A large stylized window frame in the center, through which text content is visible. Inside the window: clear, sharp text tokens. Outside the window (left and right edges): blurred/faded text tokens disappearing into the background. A chat interface mockup at the bottom showing a long conversation where earlier messages fade and shrink as they approach the window boundary. A question mark icon with label "模型记住了什么？" in deep blue #1a1a2e. Primary blue #409EFF for the window frame and visible tokens. White background, rounded elements, clean academic style.
+```
+
 ## 什么是上下文窗口
 
 上下文窗口，简单来说，就是大语言模型在一次处理中能够"看到"的最大文本量。它就像一个阅读视野——窗口之内的内容模型能够理解和使用，窗口之外的内容则完全不可见。
@@ -59,6 +64,11 @@ print(f"英文文本Token数(gpt-4): {count_tokens_openai(sample_text_en)}")
 
 **常见误区纠正**：很多开发者以为一个汉字=1个Token，这是不准确的。以GPT-4的分词器为例，"人工智能"是1个Token，"改变"是1个Token，但"工作原理"可能被分为"工作"和"原理"两个Token。因此，中英混合文本的Token计算一定要使用实际的分词器来统计，不能用字数简单估算。
 
+**Image-Prompt(Token vs Character Count Comparison):**
+```
+A flat-design 2D vector illustration explaining the difference between tokens and characters. Left side: a Chinese text sample "人工智能正在改变世界" with each character marked by small boxes, showing ~10 characters. An arrow points to a Token counter showing "约15-20 tokens". Middle: an English text sample "Artificial intelligence is changing" with each word marked, showing ~5 words. An arrow points to a Token counter showing "约6-8 tokens". Right: a code sample "def hello(): print('world')" showing ~25 characters but ~12 tokens. Below: a comparison summary card with three language rows (中文, 英文, 代码) and their approximate token-to-character ratios. Primary blue #409EFF for the token counters, deep blue #1a1a2e for text. White background, rounded rectangular panels, clean minimalist style, academic atmosphere.
+```
+
 ## 上下文窗口如何影响模型性能
 
 上下文窗口不仅仅是一个容量限制，它还深刻影响着模型的推理质量。
@@ -83,6 +93,11 @@ print(f"英文文本Token数(gpt-4): {count_tokens_openai(sample_text_en)}")
 - 难以区分不同位置的信息
 - 对远距离依赖关系的捕捉变弱
 - 更容易产生事实性错误
+
+**Image-Prompt(Lost in the Middle Phenomenon):**
+```
+A flat-design 2D vector illustration of the "Lost in the Middle" phenomenon. A long horizontal document bar representing a 20-page document, divided into three zones: "开头 (Beginning)" highlighted with high-attention glow in blue, "中间 (Middle)" shown with faded/dimmed text and a warning icon, "结尾 (End)" highlighted with high-attention glow. A U-shaped accuracy curve overlay showing retrieval accuracy on the y-axis (high at both ends, dropping significantly in the middle). Small magnifying glass icons at the beginning and end showing clear focus, while the middle magnifying glass shows a blurry/uncertain view. A callout: "关键信息放在开头或结尾" in deep blue #1a1a2e. Primary blue #409EFF for the accuracy curve, white background, clean academic chart style.
+```
 
 ## 短上下文 vs 长上下文策略对比
 
@@ -109,6 +124,11 @@ print(f"英文文本Token数(gpt-4): {count_tokens_openai(sample_text_en)}")
 └── 否 → 你的任务更像"查找"还是"理解"？
     ├── 查找（如：文档中哪段提到了X）→ 使用RAG
     └── 理解（如：这段话在说什么）→ 考虑分块+逐块处理
+```
+
+**Image-Prompt(Long vs Short Context Strategy Decision Tree):**
+```
+A flat-design 2D vector illustration of a decision tree for choosing context strategies. Root node at top: "你的任务需要理解全文全局结构吗？" (a question in a rounded rectangle). Left branch (YES): leads to "使用长上下文模型" with a full-document icon and sub-branches for "文档超过窗口80%" (-> recursive summarization) and "窗口内" (-> direct input with key info first). Right branch (NO): leads to a sub-question "查找还是理解？" branching to "查找 -> RAG" (magnifying glass over segmented documents) and "理解 -> 逐块处理" (document chunks with sequential processing icons). Each decision node is primary blue #409EFF, leaf nodes are lighter blue. Deep blue #1a1a2e labels. White background, rounded rectangles, thin arrow connectors, clean academic style.
 ```
 
 ## 应对长上下文的实用技术（含代码实现）
@@ -400,6 +420,11 @@ def format_conversation(history: List[dict]) -> str:
 - **关键信息标注**：在文本中插入标记，帮助模型快速定位重要段落
 - **分级压缩**：对重要信息保留更多细节，对次要信息进行更大幅度的压缩
 
+**Image-Prompt(Long Context Processing Techniques Overview):**
+```
+A flat-design 2D vector illustration showing four long-context processing techniques as cards in a 2x2 grid. Top-left: "滑动窗口 (Sliding Window)" — overlapping document chunks sliding across a long text bar with overlap zones highlighted. Top-right: "摘要递归 (Recursive Summarization)" — a pyramid/funnel shape where long text at top is progressively compressed through multiple summary layers to a concise output at bottom. Bottom-left: "RAG检索增强 (Retrieval Augmented Generation)" — a query flowing into a search icon over a document database, retrieving relevant chunks that feed into an LLM. Bottom-right: "上下文压缩 (Context Compression)" — a conversation history being compressed from many message bubbles into a compact summary card with key points preserved. Each card is a rounded rectangle in primary blue #409EFF. Deep blue #1a1a2e labels. White background, clean minimalist style, academic atmosphere.
+```
+
 ## 长上下文模型的最新进展
 
 近年来，长上下文能力取得了突破性进展。从最初的2K-4K Token，经历了8K、32K、128K，到现在部分模型支持1M甚至更大的上下文窗口。
@@ -499,6 +524,11 @@ def needle_in_haystack_test(
     return results
 ```
 
+**Image-Prompt(Context Window Evolution Timeline and Model Comparison):**
+```
+A flat-design 2D vector illustration showing the evolution of context windows. Top: a timeline bar from 2020 to 2025 with key milestones: 2K (GPT-3), 4K (GPT-3.5), 8K, 32K (GPT-4), 128K (Claude 2.1), 200K (Claude 3), 1M-2M (Gemini 1.5 Pro). Each milestone marked with a dot and model icon. Below: a horizontal comparison bar chart showing "标称窗口 (Nominal Window)" vs "有效窗口 (Effective Window)" for each major model as dual bars — the effective window bar is always shorter than the nominal. Small icons on the timeline indicating key technologies: RoPE (rotating icon), FlashAttention (lightning bolt), KV-Cache compression (compressed layers icon). Primary blue #409EFF for bars, deep blue #1a1a2e labels. White background, clean academic infographic style.
+```
+
 ## 总结
 
 上下文窗口是理解和使用大语言模型的基石概念。它决定了模型一次能"看"多少信息，也深刻影响着模型的推理质量和响应成本。随着技术的进步，上下文窗口在不断扩展，但"更大并不意味着更好"——如何智慧地管理上下文，选择最适合当前任务的技术方案，才是真正体现使用水平的所在。
@@ -513,3 +543,8 @@ def needle_in_haystack_test(
 6. **实测优于盲信**——使用大海捞针等方法验证模型的实际效果
 
 掌握滑动窗口、摘要递归、RAG和上下文压缩等技术，你就能在有限的上下文中高效处理无限的信息。记住：**好的输入管理，胜过盲目追求更大的窗口。**
+
+**Image-Prompt(Context Window Summary Key Takeaways):**
+```
+A flat-design 2D vector illustration of a summary knowledge card. Centered title "上下文窗口 核心要点" in deep blue #1a1a2e. Six key takeaway items arranged in a balanced grid layout: 1) Token ≠ 字数 — always use tokenizer to count (counter icon), 2) Key info at beginning and end — avoid Lost in the Middle (bookmark icon at both ends), 3) RAG and long context each have strengths — choose by task type (split-path icon), 4) Context compression is essential skill (compress/expand icon), 5) Verify real capability with Needle-in-Haystack test (needle in book stack icon), 6) Good input management beats blindly pursuing larger windows (quality over quantity icon). Each item is a rounded rectangle card in primary blue #409EFF with white icon. Clean white background, academic learning atmosphere suitable for educational software UI.
+```

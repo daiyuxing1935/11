@@ -14,6 +14,11 @@ Transformer的诞生一举解决了上述所有问题。它的核心创新在于
 
 想象一下这个对比：RNN就像一个人读一本书，必须从第一页一个字一个字读到最后一页；而Transformer就像一个人同时打开所有书页，一眼就能看到每一页的内容，并立即理解任意两页之间的关联。这种"上帝视角"让Transformer在理解长文本方面获得了巨大的优势。
 
+**Image-Prompt(Transformer vs RNN Comparison):**
+```
+A flat-design 2D vector illustration comparing RNN sequential processing versus Transformer parallel processing. Left side: a chain of connected nodes processing text one-by-one in sequence with arrows showing the serial dependency. Right side: all text nodes connected simultaneously in a network with a central Self-Attention hub, all nodes glowing with the same timeline. Clean white background, primary blue #409EFF for the RNN chain and Transformer connections, deep blue #1a1a2e for text labels. Rounded rectangular panels, minimalist thin-line icons for "sequential" vs "parallel", comfortable spacing, academic learning atmosphere.
+```
+
 ## 核心架构详解
 
 Transformer的完整架构由**编码器（Encoder）和**解码器（Decoder）两部分堆叠而成。在原始论文中，编码器和解码器各由6层组成（N=6），但实际应用中这个数字可以根据任务和计算资源灵活调整。
@@ -42,6 +47,11 @@ Transformer的完整架构由**编码器（Encoder）和**解码器（Decoder）
 1. **掩码多头自注意力层（Masked Multi-Head Self-Attention）**：与编码器的自注意力类似，但通过掩码（mask）确保每个位置只能关注它之前的位置。这保证了自回归生成的正确性。
 2. **交叉注意力层（Cross-Attention）**：这是连接编码器和解码器的桥梁。解码器的查询（Query）来自自身，而键（Key）和值（Value）来自编码器的输出。这让解码器在生成每个词时都能"参考"输入序列的全部信息。
 3. **前馈神经网络层**：与编码器中的结构相同。
+
+**Image-Prompt(Transformer Architecture Diagram):**
+```
+A flat-design minimalist 2D vector illustration of the complete Transformer architecture. Left column: Encoder stack (N layers) with each layer showing Multi-Head Self-Attention block and Feed-Forward Network block connected by residual arrows and LayerNorm labels. Right column: Decoder stack (N layers) with Masked Multi-Head Self-Attention, Cross-Attention receiving arrows from Encoder, and Feed-Forward Network. Input tokens enter from bottom-left, output tokens exit from top-right. Clean white background, primary blue #409EFF for main blocks, deeper blue #1a1a2e for text labels. Rounded rectangles, thin arrow connectors, symmetrical balanced composition.
+```
 
 ## 五大核心组件深入解析
 
@@ -253,6 +263,11 @@ FFN(x) = ReLU(x · W_1 + b_1) · W_2 + b_2
 - LLaMA使用SwiGLU（一种门控变体）
 - SwiGLU通过引入门控机制进一步提升了FFN的表达能力
 
+**Image-Prompt(Five Core Transformer Components):**
+```
+A flat-design 2D vector illustration showing five interconnected rounded cards arranged in a pentagon layout around a central "Transformer Core" circle. The five cards are: 1) Token Embedding (icon of text-to-vector transformation), 2) Positional Encoding (icon of sine/cosine waves with position numbers), 3) Self-Attention (icon of Q-K-V nodes with bidirectional arrows), 4) Multi-Head Attention (icon of multiple parallel attention heads converging), 5) Feed-Forward Network (icon of layered neural nodes). Each card is primary blue #409EFF with white text. Deep blue #1a1a2e connecting lines between all components. Clean white background, rounded shapes, thin line icons, academic atmosphere.
+```
+
 ## 残差连接和层归一化
 
 这两个技巧虽然看似简单，但对于训练深层Transformer至关重要。
@@ -289,6 +304,11 @@ LayerNorm(x) = γ · (x - μ) / √(σ² + ε) + β
 
 现代大模型普遍采用Pre-Norm，因为它在大规模训练中更稳定，不容易出现训练崩溃。
 
+**Image-Prompt(Residual Connection and Layer Normalization):**
+```
+A flat-design minimalist 2D vector illustration explaining residual connection and layer normalization. A main horizontal path represents the "information highway" with a curved bypass arrow (residual connection) going around a processing block labeled "Sublayer(x)". The formula "Output = LayerNorm(x + Sublayer(x))" displayed in a clean code-style box. Below: a small visualization of Layer Normalization showing data points being normalized to mean=0, variance=1 on a coordinate axis, then scaled by gamma and shifted by beta. Primary blue #409EFF for the main path and blocks, deep blue #1a1a2e for formulas and labels. White background, rounded shapes, clean academic style.
+```
+
 ## 完整的计算流程
 
 让我们以一个翻译任务为例，走一遍完整的Transformer前向传播流程：
@@ -314,6 +334,11 @@ LayerNorm(x) = γ · (x - μ) / √(σ² + ε) + β
 5. 最后通过线性层+Softmax预测下一个词
 6. 如果是训练阶段，使用Teacher Forcing并行计算所有位置
 7. 如果是推理阶段，自回归逐词生成
+
+**Image-Prompt(Transformer Forward Propagation Flowchart):**
+```
+A flat-design 2D vector flowchart illustrating the complete Transformer forward propagation. Starts with "Input Text" at top, flowing down through: Token Embedding block -> Positional Encoding addition -> Encoder Layer 1 to N (stacked blocks) -> encoded representations. Then splits to show training (Teacher Forcing, parallel decoding) vs inference (autoregressive generation, token-by-token) paths. Ends with "Output Text" at bottom. Each block is a rounded rectangle in primary blue #409EFF. Directional arrows in deep blue #1a1a2e. Clean white background, centered symmetrical layout, academic learning atmosphere.
+```
 
 ## GPT vs BERT vs T5：三大范式
 
@@ -363,6 +388,11 @@ LayerNorm(x) = γ · (x - μ) / √(σ² + ε) + β
 3. **效率**：推理时只需要解码器，参数利用更高效
 4. **上下文学习（In-Context Learning）**：GPT-3发现仅解码器模型具有强大的上下文学习能力——在提示词中给出几个例子，模型就能完成新任务，无需微调
 
+**Image-Prompt(GPT BERT T5 Architecture Comparison):**
+```
+A flat-design 2D vector illustration comparing three model paradigms side by side in three vertical columns. Left: GPT (Decoder-only) showing a stack of masked self-attention layers with unidirectional arrows pointing right. Center: BERT (Encoder-only) showing a stack of bidirectional self-attention layers with bidirectional arrows. Right: T5 (Encoder-Decoder) showing an encoder stack connected to a decoder stack via cross-attention bridges. Each column has a distinctive icon at top. Below each: a small example of text generation behavior. Primary blue #409EFF for architecture blocks, deep blue #1a1a2e for labels. White background, rounded rectangular frames, clean minimalist style, academic atmosphere.
+```
+
 ## 自注意力计算复杂度分析
 
 虽然自注意力非常强大，但它的计算复杂度是O(n²)（n是序列长度）。让我们具体分析：
@@ -380,6 +410,11 @@ LayerNorm(x) = γ · (x - μ) / √(σ² + ε) + β
 | Flash Attention | IO感知的精确注意力算法 | O(n²)但实际飞快 | FlashAttention |
 
 FlashAttention是目前最广泛使用的优化方法，它通过优化GPU内存访问模式（减少HBM读写次数），在数学上等价于标准注意力但速度快数倍且更省内存。
+
+**Image-Prompt(Attention Complexity O(n squared) Visualization):**
+```
+A flat-design minimalist 2D vector illustration visualizing the O(n²) attention complexity. A grid/matrix visualization showing how the attention score matrix grows quadratically as sequence length n increases. Three matrix squares of increasing sizes: n=4 (16 cells), n=8 (64 cells), n=16 (256 cells). Each cell is a tiny blue square. Below: a line chart showing quadratic growth curve labeled "O(n²)" with the x-axis labeled "Sequence Length (n)" and y-axis labeled "Computational Cost". Small icons of optimization methods (FlashAttention lightning bolt, Sparse Attention dotted grid, Sliding Window) shown as solution paths below. Primary blue #409EFF, white background, deep blue #1a1a2e labels.
+```
 
 ## 注意力可视化：看看模型在"关注"什么
 
@@ -400,6 +435,11 @@ FlashAttention是目前最广泛使用的优化方法，它通过优化GPU内存
 **发现4：分隔符注意力**
 在处理长文档时，模型经常利用分隔符（如句号、换行符）作为"信息汇总点"，在这些位置聚合前后的信息。
 
+**Image-Prompt(Attention Weight Heatmap Visualization):**
+```
+A flat-design 2D vector illustration of an attention weight heatmap matrix. A square grid where each cell's color intensity represents attention weight strength — darker blue #1a1a2e for high attention, lighter blues for medium, and near-white for low attention. X-axis and Y-axis labeled with sample words ("The", "cat", "sat", "on", "the", "mat"). Several cells highlighted with glow effects showing strong attention patterns: diagonal dominance, adjacent word attention, and delimiter token attention. Small annotation callouts pointing to specific patterns with labels in deep blue text. Clean white background, rounded matrix cells, academic visualization style.
+```
+
 ## 实践建议与常见误区
 
 **误区1：位置编码不重要**
@@ -419,6 +459,16 @@ FlashAttention是目前最广泛使用的优化方法，它通过优化GPU内存
 4. **深入阶段**：阅读《Attention Is All You Need》原论文，理解每个设计选择背后的原因。研究一种高效的注意力变体（如FlashAttention）的实现原理。
 5. **前沿阶段**：关注最新的架构改进，如Mamba（状态空间模型）、混合架构（Jamba）、线性注意力等，理解它们试图解决的问题以及各自的权衡。
 
+**Image-Prompt(Transformer Learning Roadmap):**
+```
+A flat-design 2D vector illustration of a learning roadmap with 5 ascending step icons arranged in a curved path from bottom-left to top-right. Step 1: "Understand Self-Attention" (lightbulb icon). Step 2: "Draw Architecture" (pencil and diagram icon). Step 3: "Practice with HuggingFace" (gear and code icon). Step 4: "Read Original Paper" (document icon). Step 5: "Explore Frontiers" (telescope/rocket icon). Three warning sign icons scattered near the path labeled "误区: Positional Encoding", "误区: More Heads ≠ Better", "误区: Skip Warmup". Primary blue #409EFF for the path and step icons, deep blue #1a1a2e for text. Warning signs in a warm amber accent. Clean white background, rounded elements, academic atmosphere.
+```
+
 ## 总结
 
 Transformer的成功并非偶然。它通过自注意力机制优雅地解决了序列建模中的核心挑战：长距离依赖和并行计算。其模块化的设计让研究者可以灵活地组合编码器、解码器，或只使用其中一部分，催生了GPT、BERT、T5等众多成功的预训练模型。理解Transformer不仅是学习大模型的起点，更是深入整个现代NLP/AI领域的基石。掌握了它，你就拿到了理解几乎所有前沿AI模型的"通用钥匙"。
+
+**Image-Prompt(Transformer Key Takeaways Summary Card):**
+```
+A flat-design 2D vector illustration of a summary knowledge card. Centered title "Transformer 核心要点" in deep blue #1a1a2e. Four key takeaway icons arranged in a 2x2 grid below: 1) Self-Attention as the soul of Transformer (heart icon with connection lines), 2) Modular design enabling GPT/BERT/T5 (three interconnected puzzle pieces), 3) Residual connections enable deep training (highway bypass icon), 4) O(n²) complexity drives optimization research (graph with downward-trending optimization arrow). Each icon card is a rounded rectangle in primary blue #409EFF with white icon and label text. Clean white background, balanced symmetrical grid layout, academic learning atmosphere suitable for educational software UI.
+```

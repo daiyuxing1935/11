@@ -66,9 +66,13 @@
             </el-form-item>
           </el-form>
           <el-form v-else label-width="120px" style="max-width:500px">
-            <el-form-item label="API Key">
+            <el-form-item label="LLM API Key">
               <el-input v-model="llmForm.api_key" type="password" show-password placeholder="sk-..." />
               <div style="font-size:12px;color:#909399">支持OpenAI、DeepSeek等兼容接口的API Key</div>
+            </el-form-item>
+            <el-form-item label="图片生成 Key">
+              <el-input v-model="llmForm.image_api_key" type="password" show-password placeholder="r8_..." />
+              <div style="font-size:12px;color:#909399">Replicate API Key，用于AI配图生成。<a href="https://replicate.com/account/api-tokens" target="_blank" style="color:#409EFF">免费注册获取 →</a></div>
             </el-form-item>
             <el-form-item label="接口地址">
               <el-input v-model="llmForm.base_url" placeholder="https://api.openai.com" />
@@ -151,6 +155,7 @@ const llmConfig = ref({
 })
 const llmForm = reactive({
   api_key: '',
+  image_api_key: '',
   base_url: 'https://api.openai.com',
   model_name: 'gpt-4o',
   temperature: 0.7,
@@ -164,6 +169,7 @@ onMounted(async () => {
     llmConfig.value = data
     if (data.is_configured) {
       llmForm.api_key = ''
+      llmForm.image_api_key = ''
       llmForm.base_url = data.base_url
       llmForm.model_name = data.model_name
       llmForm.temperature = data.temperature
@@ -204,8 +210,9 @@ async function handleResetLLM() {
   try {
     await ElMessageBox.confirm('确认重置为系统默认配置？', '提示', { confirmButtonText: '确认', cancelButtonText: '取消', type: 'warning' })
     await resetLLMConfig()
-    llmConfig.value = { provider: 'openai', api_key: '', base_url: 'https://api.openai.com', model_name: 'gpt-4o', temperature: 0.7, max_tokens: 4096, is_configured: false }
+    llmConfig.value = { provider: 'openai', api_key: '', image_api_key: '', base_url: 'https://api.openai.com', model_name: 'gpt-4o', temperature: 0.7, max_tokens: 4096, is_configured: false }
     llmForm.api_key = ''
+    llmForm.image_api_key = ''
     llmForm.base_url = 'https://api.openai.com'
     llmForm.model_name = 'gpt-4o'
     llmForm.temperature = 0.7

@@ -34,7 +34,7 @@ app.add_middleware(
 init_db()
 
 # 注册路由
-from routers import auth_router, diagnosis_router, qa_router, learning_router, analytics_router, resource_router, knowledge_router, llm_config_router
+from routers import auth_router, diagnosis_router, qa_router, learning_router, analytics_router, resource_router, knowledge_router, llm_config_router, image_router
 
 app.include_router(auth_router.router, prefix="/api/auth", tags=["认证"])
 app.include_router(diagnosis_router.router, prefix="/api/diagnosis", tags=["学情诊断"])
@@ -44,6 +44,7 @@ app.include_router(analytics_router.router, prefix="/api/analytics", tags=["学�
 app.include_router(resource_router.router, prefix="/api/resources", tags=["资源推送"])
 app.include_router(knowledge_router.router, prefix="/api/knowledge", tags=["知识点"])
 app.include_router(llm_config_router.router, prefix="/api/llm-config", tags=["LLM配置"])
+app.include_router(image_router.router, prefix="/api/images", tags=["图片生成"])
 
 
 @app.get("/")

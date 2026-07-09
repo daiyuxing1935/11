@@ -6,6 +6,8 @@
 
 一个未经优化的Prompt常见的问题包括：回答过于笼统、遗漏关键信息、格式不稳定、存在偏见、容易出现幻觉等。通过系统的优化方法，这些问题大多可以得到显著的改善。
 
+**Image-Prompt(英文绘图词):** flat-design 2D vector illustration, clean white background, centered symmetric layout. A "before and after" optimization visual. Left side: a messy prompt document with red warning indicators — a fuzzy text blob for "回答笼统/Vague", missing puzzle piece for "遗漏信息/Missing Info", misaligned format blocks for "格式不稳定/Unstable Format", a biased scale for "存在偏见/Bias", a ghost cloud for "幻觉/Hallucination". A central "优化/Optimize" gear icon transforms these into a clean, structured prompt on the right side. All issues are resolved with green checkmarks. Tech light blue #409EFF, dark blue #1a1a2e, rounded shapes, thin-line icons, academic learning atmosphere, moderate whitespace.
+
 ## 二、迭代优化的流程
 
 Prompt优化不是一次性的工作，而是一个"编写-测试-分析-改进"的循环过程。

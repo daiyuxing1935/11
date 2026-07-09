@@ -36,7 +36,8 @@ async def get_llm_config(current_user: dict = Depends(get_current_user)):
             model_name=r.get("model_name", "gpt-4o"),
             temperature=r.get("temperature", 0.7),
             max_tokens=r.get("max_tokens", 4096),
-            is_configured=bool(r.get("api_key"))
+            is_configured=bool(r.get("api_key")),
+            image_api_key=_mask_api_key(r.get("image_api_key", ""))
         ).model_dump())
     else:
         return APIResponse(data=LLMConfigResponse(is_configured=False).model_dump())
@@ -56,18 +57,18 @@ async def save_llm_config(req: LLMConfigRequest, current_user: dict = Depends(ge
         conn.execute(
             """UPDATE user_llm_config
                SET provider=?, api_key=?, base_url=?, model_name=?,
-                   temperature=?, max_tokens=?, updated_at=?
+                   temperature=?, max_tokens=?, image_api_key=?, updated_at=?
                WHERE user_id=?""",
             (req.provider, req.api_key, req.base_url, req.model_name,
-             req.temperature, req.max_tokens, now, current_user["id"])
+             req.temperature, req.max_tokens, req.image_api_key or "", now, current_user["id"])
         )
     else:
         conn.execute(
             """INSERT INTO user_llm_config
-               (user_id, provider, api_key, base_url, model_name, temperature, max_tokens, updated_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+               (user_id, provider, api_key, base_url, model_name, temperature, max_tokens, image_api_key, updated_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (current_user["id"], req.provider, req.api_key, req.base_url,
-             req.model_name, req.temperature, req.max_tokens, now)
+             req.model_name, req.temperature, req.max_tokens, req.image_api_key or "", now)
         )
     conn.commit()
     conn.close()

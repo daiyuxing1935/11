@@ -6,6 +6,8 @@
 
 可以把Function Calling理解为：模型不再是只能"说"，还能"做"。当用户问"今天北京天气怎么样"时，模型不会凭空编造（或拒绝回答），而是生成一个函数调用请求，告诉系统："请帮我调用get_weather函数，参数是city='北京'"。系统执行这个函数后，将真实的天气数据反馈给模型，模型再基于这些数据生成自然语言的回答。
 
+Image-Prompt(英文绘图词): A 2D vector illustration showing an AI agent at center, a user on the left asking "What is the weather in Beijing?", and a function-call arrow from the AI to a cloud API icon on the right returning structured JSON data. The AI then generates a natural language reply back to the user. Flat-design minimalist style, tech light blue #409EFF primary color, white background, dark blue #1a1a2e text labels. Rounded rectangular nodes connected by directional arrows, thin-line weather and gear icons, centered symmetric layout with moderate whitespace, academic learning atmosphere for educational software UI.
+
 ## 二、定义工具Schema
 
 要让模型知道有哪些工具可用、何时使用它们，你需要为每个工具定义一个**Schema（模式定义）**。一个标准的工具Schema包含以下要素：
@@ -54,6 +56,8 @@
 - **标明必填和可选**：required字段让模型知道哪些参数必须提供
 - **添加默认值说明**：在description中说明参数的默认行为
 
+Image-Prompt(英文绘图词): A 2D vector illustration of a tool definition card floating at center, displaying JSON Schema fields: name, description, parameters with type/object/properties structure. Surrounding the card are annotated labels pointing to each field with explanatory callouts for "tool identifier", "when to use this", "required vs optional", and "enum for fixed choices". Flat-design minimalist style, tech light blue #409EFF accent on the schema card borders, white background, dark blue #1a1a2e annotation text. Clean academic layout with rounded corners and thin-line curly-bracket icons, moderate whitespace.
+
 ## 三、模型如何决定调用工具
 
 当你把工具Schema和用户消息一起发送给模型时，模型会进行以下判断过程：
@@ -64,6 +68,8 @@
 4. **决策输出**：如果找到合适的工具，输出函数调用请求；如果不需要工具，直接输出文本回复
 
 这里有一个关键点：**是否调用工具完全是模型的判断**，你无法强制模型调用某个特定工具（除非在System Prompt中明确要求）。因此，工具描述的质量直接决定了模型调用工具的准确性。
+
+Image-Prompt(英文绘图词): A 2D vector illustration of a decision flowchart with four sequential rounded nodes arranged horizontally: (1) "Analyze User Intent" with a magnifying glass icon pointed at a user message bubble, (2) "Match Available Tools" with a toolbox icon scanning a tool list, (3) "Extract Parameters" with a form input icon pulling values from user text, (4) "Decision Output" with a branching diamond leading to either a "Function Call" JSON block or a plain "Text Reply" speech bubble. Flat-design minimalist style, tech light blue #409EFF flow arrows and node borders, white background, dark blue #1a1a2e labels inside each rounded rectangle. Academic learning atmosphere.
 
 ## 四、工具执行的完整流程
 
@@ -133,6 +139,8 @@ def execute_tool(tool_name, args):
     return tools_registry[tool_name](args)
 ```
 
+Image-Prompt(英文绘图词): A 2D vector illustration of a 5-step vertical pipeline workflow. Top: a "User Input" chat bubble. Step 1 arrow down to an "LLM Analysis" rounded node with a brain icon. Step 2 arrow down to "Tool Execution" with a spinning gear icon. Step 3 arrow down to "Result Return" with a data document icon. Step 4 arrow down to "Final Response" with a natural language speech bubble at bottom. A dashed loop-back arrow on the right side curves from Step 3 back to Step 1, labeled "Continue loop until no tool call". Flat-design minimalist style, tech light blue #409EFF arrows and node accents, white background, dark blue #1a1a2e text labels. Centered vertical layout, thin-line icons, academic learning atmosphere for educational software UI.
+
 ## 五、工具设计的最佳实践
 
 ### 原则一：单一职责
@@ -191,6 +199,8 @@ def search_database(query, limit=10):
 
 不要写"搜索信息"这样模糊的描述。要写"在公司的产品数据库中搜索商品信息，支持按名称、分类、价格范围筛选"。描述越具体，模型判断越准确。
 
+Image-Prompt(英文绘图词): A 2D vector illustration of five horizontally arranged rounded icon cards, each representing a best practice principle: (1) "Single Responsibility" with a single clean gear icon, (2) "Flat Parameters" with a simple two-field form icon, (3) "Error Handling" with a shield-checkmark icon showing success/fail return structure, (4) "Tool Count Limit" with a numbered badge reading "5-15" and a toolbox, (5) "Specific Description" with a magnifying glass over a detailed document. Flat-design minimalist style, tech light blue #409EFF card borders and accents, white background, dark blue #1a1a2e titles below each card. Centered symmetric horizontal layout, thin-line icons, clean academic infographic.
+
 ## 六、MCP协议简介
 
 **MCP（Model Context Protocol）** 是一个开放协议，由Anthropic发布，旨在标准化AI模型与外部工具、数据源的交互方式。你可以将MCP理解为"工具调用的USB接口标准"——就像USB让不同品牌的外设能即插即用，MCP让不同的工具和AI系统能够标准化地连接。
@@ -227,8 +237,12 @@ def search_database(query, limit=10):
 
 任何MCP Client都可以发现并调用这个工具，无需了解底层的GitHub API细节。
 
+Image-Prompt(英文绘图词): A 2D vector illustration showing a central MCP hub labeled "Model Context Protocol" with a USB-plug metaphor connector design. Left side shows three AI agent icons (MCP Clients) plugging into the hub via standardized connectors. Right side shows three tool server nodes (MCP Servers) exposing capabilities: a database icon, a file system icon, and an API gateway icon, each displaying standardized JSON tool definitions. Thin bidirectional communication arrows connect through the hub. Flat-design minimalist style, tech light blue #409EFF hub and connector accents, white background, dark blue #1a1a2e labels. Rounded shapes, thin-line connection cables, academic atmosphere.
+
 ## 七、总结
 
 Function Calling让大语言模型从"纸上谈兵"进化为"知行合一"。掌握了工具调用的设计和实现，你就能构建出真正有用的AI智能体——它们能查数据、发邮件、操作系统，成为你业务中的得力助手。
 
 在实际开发中，不要过度依赖模型对工具的"自动选择"。始终在代码层面添加安全校验——检查敏感操作的参数、限制工具的调用频率、记录所有工具调用的审计日志。记住：**模型负责"决定做什么"，你负责"确保做得安全"**。
+
+Image-Prompt(英文绘图词): A 2D vector illustration of an AI agent transforming from a "talking head" silhouette on the left into an "action-oriented" figure with tool-holding hands on the right, symbolizing the evolution from pure conversation to real-world capability execution. A large shield icon with a checkmark overlays the right side representing security guardrails, audit logging, and safety controls. A bridge of thin-line code brackets connects the two halves. Flat-design minimalist style, tech light blue #409EFF primary color for the bridge and shield, white background, dark blue #1a1a2e text labels. Centered horizontal composition, rounded shapes, academic atmosphere.

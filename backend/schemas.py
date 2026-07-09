@@ -157,6 +157,7 @@ class LLMConfigRequest(BaseModel):
     model_name: Optional[str] = "gpt-4o"
     temperature: Optional[float] = 0.7
     max_tokens: Optional[int] = 4096
+    image_api_key: Optional[str] = ""  # Replicate API key for image generation
 
 class LLMConfigResponse(BaseModel):
     provider: str = "openai"
@@ -166,6 +167,7 @@ class LLMConfigResponse(BaseModel):
     temperature: float = 0.7
     max_tokens: int = 4096
     is_configured: bool = False  # whether user has set a custom config
+    image_api_key: str = ""  # masked: "r8_...xyz"
 
 # ===== Common =====
 class APIResponse(BaseModel):

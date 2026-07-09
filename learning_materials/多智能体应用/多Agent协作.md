@@ -32,6 +32,8 @@
 
 当多个智能体相互作用时，系统整体可能展现出超越单个智能体的能力——这就是所谓的"涌现智能"。就像蚁群的整体行为远超单只蚂蚁的能力，多智能体系统也可能产生超越个体之和的智能表现。
 
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration showing five core values of multi-agent systems arranged around a central task. Center: a large complex puzzle labeled "Complex Task". Five surrounding value nodes connected by radial lines: "Capability Complementarity" (two puzzle pieces fitting together, one labeled logic, one labeled creativity), "Attention Focus" (three magnifying glasses focusing on different parts), "Error Isolation" (firewall/barrier between agent outputs, one error contained), "Parallel Processing" (three simultaneous clock icons overlapping), "Emergent Intelligence" (small dots connecting to form a larger glowing shape). Tech blue #409EFF primary, white background, radial layout.
+
 ---
 
 ## 协作模式
@@ -84,6 +86,8 @@
 
 **劣势**：管理者本身成为瓶颈和单点故障；设计复杂度高。
 
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration showing three collaboration modes as three horizontal panels. Top "Sequential": Agent A → Agent B → Agent C in a linear pipeline with document icons passing between them. Middle "Parallel": one central task fanning out to Agents A, B, C simultaneously, then converging to a summary agent. Bottom "Hierarchical": a Manager agent at top with three lines connecting downward to Worker agents A, B, C. Each panel with a small label showing "Best for: pipeline tasks", "Best for: multi-angle analysis", "Best for: complex dynamic tasks". Tech blue #409EFF primary, white background.
+
 ---
 
 ## 智能体通信方法
@@ -110,6 +114,8 @@
 
 **优势**：信息丰富，支持复杂交互。
 **劣势**：对话管理复杂，可能产生沟通噪音。
+
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration showing three communication methods. Left "Message Queue": agents connected to queue boxes with async arrows (send→queue→receive), showing decoupling. Center "Shared Context": a central document/database with multiple agents reading and writing (arrows pointing in/out), showing information transparency. Right "Structured Dialogue": two agents facing each other with formatted speech bubbles (JSON structure visible inside), showing rich interaction. Tech blue #409EFF primary, white background, three-panel comparison.
 
 ---
 
@@ -155,6 +161,8 @@
 - **创意PK**：多个智能体独立生成方案，择优选用
 
 竞争模式能有效激发智能体的创造力，减少"群体思维"的风险。
+
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration contrasting coordination and competition modes. Left "Coordination": multiple agents connected by handshake icons, converging arrows toward a shared goal flag, information flowing freely between them. Right "Competition": two agents facing off with VS symbol between them, speech bubbles showing debate/arguments, a judge/referee agent above. Examples below: "Adversarial Debate" (two debaters + judge), "Code Attack-Defense" (one writing code, one finding bugs), "Creative PK" (multiple lightbulbs competing, one crowned winner). Tech blue #409EFF primary, white background.
 
 ---
 

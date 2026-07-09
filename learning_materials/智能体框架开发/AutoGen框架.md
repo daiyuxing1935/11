@@ -24,6 +24,8 @@ AutoGen 是由微软研究院（Microsoft Research）开源的**多智能体对�
 | 开源方 | 微软 | LangChain团队 | CrewAI |
 | 最大优势 | 灵活对话+代码执行 | 生态丰富 | 简单易用 |
 
+**Image-Prompt(multi-agent conversation framework):** A flat-design minimalist 2D vector illustration of the AutoGen multi-agent framework architecture. Center of composition shows three rounded rectangular agent nodes (AssistantAgent, UserProxyAgent, GroupChatManager) connected by bidirectional message arrows in tech light blue #409EFF. White background with dark blue #1a1a2e labels. Below the agents, a horizontal pipeline shows the conversation-driven programming paradigm: Message Send → Receive → Generate Reply → Send, each step as a rounded pill shape. Thin-line icons for speech bubbles and gears. Academic learning atmosphere with moderate whitespace and symmetric layout.
+
 ---
 
 ## 2. ConversableAgent：核心对话智能体
@@ -166,6 +168,8 @@ agent.register_reply(
     position=0,  # 优先级：0为最高
 )
 ```
+
+**Image-Prompt(conversable agent message mechanism):** A flat-design minimalist 2D vector illustration showing the ConversableAgent core message mechanism. A central rounded rectangular agent node labeled "ConversableAgent" with four internal method blocks arranged symmetrically: send(), receive(), generate_reply(), initiate_chat(). Arrows in tech light blue #409EFF show message flow between two agent instances on left and right. White background, dark blue #1a1a2e text labels. Thin-line envelope and arrow icons. Clean academic educational style with centered composition.
 
 ---
 
@@ -339,6 +343,8 @@ if __name__ == "__main__":
     print("=" * 60)
 ```
 
+**Image-Prompt(group chat multi-agent orchestration):** A flat-design minimalist 2D vector illustration of AutoGen GroupChat architecture. Four rounded agent avatar icons (Architect, Developer, Reviewer, UserProxy) arranged in a circle around a central "GroupChatManager" hub node in tech light blue #409EFF. Dashed selection arrows show the manager choosing the next speaker. Speaker selection methods displayed as three small pill badges: auto, round_robin, random. White background with dark blue #1a1a2e text. Thin-line chat bubble icons connect agents. Academic atmosphere with symmetric radial layout.
+
 ---
 
 ## 4. 代码执行集成
@@ -463,6 +469,8 @@ user_proxy.initiate_chat(
 # Coder会据此修正代码，直到代码正确运行为止
 ```
 
+**Image-Prompt(code execution sandbox pipeline):** A flat-design minimalist 2D vector illustration of the AutoGen code execution integration. A horizontal flow diagram showing: Coder Agent (rounded rectangle with code icon) → generates Python code → UserProxy Agent (rounded rectangle with gear icon) → executes in Docker Sandbox (cube icon with shield) → returns results/errors back as feedback loop. The sandbox cube has a protective glow border in tech light blue #409EFF. White background, dark blue #1a1a2e labels. Thin-line terminal and container icons. Academic learning atmosphere.
+
 ---
 
 ## 5. 人机交互模式
@@ -563,6 +571,8 @@ supervisor = UserProxyAgent(
 )
 ```
 
+**Image-Prompt(human input modes comparison):** A flat-design minimalist 2D vector illustration showing three human-in-the-loop interaction modes. Three columns side by side: "ALWAYS" mode (human silhouette with solid connecting line to agent), "TERMINATE" mode (human silhouette with dashed conditional line), "NEVER" mode (agent standalone with automated gear). Each column uses tech light blue #409EFF for active elements. White background, dark blue #1a1a2e for labels. Thin-line human and robot icons. Academic comparison layout with moderate spacing.
+
 ---
 
 ## 6. AutoGen vs CrewAI：详细对比分析
@@ -638,6 +648,8 @@ agent = Agent(
 | 追求极简API和快速上手 | **CrewAI** |
 | 微软技术栈/生态 | **AutoGen** |
 | 需要生产级Docker沙箱 | **AutoGen** |
+
+**Image-Prompt(framework comparison AutoGen vs CrewAI):** A flat-design minimalist 2D vector illustration comparing AutoGen and CrewAI frameworks side by side. Left side: AutoGen shown as a conversation web with agents connected by bidirectional chat arrows. Right side: CrewAI shown as a hierarchical pyramid with Manager at top delegating tasks downward. A central divider with comparison labels in tech light blue #409EFF. White background, dark blue #1a1a2e text. Thin-line icons representing different architectural patterns. Academic educational comparison chart style.
 
 ---
 
@@ -820,6 +832,8 @@ if __name__ == "__main__":
         print(f"  [{i}] {name}: {content}...")
 ```
 
+**Image-Prompt(multi-agent debate system):** A flat-design minimalist 2D vector illustration of a multi-agent debate system. Four rounded agent nodes arranged in a diamond pattern: Moderator (top), Proponent (left, green-tinted), Opponent (right, orange-tinted), Judge (bottom). Debate flow arrows in tech light blue #409EFF show alternating exchanges between Proponent and Opponent with Moderator controlling turns. A gavel icon near Judge node. White background with dark blue #1a1a2e labels. Academic debate atmosphere with symmetric diamond composition.
+
 ---
 
 ## 8. 高级特性速览
@@ -872,6 +886,8 @@ sub_agent = AssistantAgent(
 # 注：此处为概念性代码，具体API请参考AutoGen文档
 ```
 
+**Image-Prompt(teachability and nested chat features):** A flat-design minimalist 2D vector illustration showing two advanced AutoGen features. Left panel: Teachability shown as an agent with a brain icon storing memories to a database cylinder labeled "Teachability DB" with recall arrows. Right panel: Nested Chat shown as a main agent containing a smaller sub-agent dialog bubble inside it, representing recursive conversation nesting. Tech light blue #409EFF accents. White background, dark blue #1a1a2e text. Thin-line icons. Academic feature overview layout.
+
 ---
 
 ## 9. 小结与学习建议
@@ -900,6 +916,8 @@ sub_agent = AssistantAgent(
 - 生产环境使用 `use_docker=True` 隔离代码执行
 - 利用 `register_reply` 机制添加日志、监控、审计等横切关注点
 - 定期使用 Teachability 让Agent积累领域知识
+
+**Image-Prompt(AutoGen learning roadmap summary):** A flat-design minimalist 2D vector illustration of the AutoGen learning pathway. A horizontal stepped roadmap with four ascending stages: "入门" (two-agent dialogue), "进阶" (GroupChat workflow), "高级" (human-AI collaboration), "专家" (custom reply functions). Each stage shown as an ascending rounded step in tech light blue #409EFF gradient intensity. White background with dark blue #1a1a2e labels. Thin-line milestone flag icons. Clean academic progression visualization with centered layout.
 
 ---
 

@@ -45,6 +45,8 @@ RAG增强LLM（开卷考试）:   用户问题 → 检索相关文档 → LLM（
 
 这就像考试：闭卷考试全靠记忆（容易出错），开卷考试可以翻书查找（更准确可靠）。
 
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration showing the "Achilles heel" metaphor for LLMs. A large LLM figure (robot/ai icon) shown with three vulnerable spots highlighted on its body, each connected to a limitation: "Knowledge Cutoff" (frozen calendar at 2023), "Hallucination" (ghost-like speech bubble with false info), "Private Data Blind" (locked folder the AI can't see). Below, the RAG solution shown as equipping the LLM with a "Reference Library" backpack, transforming closed-book exam (struggling) to open-book exam (confident). Tech blue #409EFF primary, white background.
+
 ## 二、RAG完整流程：八大阶段的深度解析
 
 一个生产级的RAG系统包含八个核心阶段，每个阶段都有其技术难点和优化空间。
@@ -409,6 +411,8 @@ answer = chain.invoke("Python asyncio的核心概念是什么？")
 print(answer)
 ```
 
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration of the complete 8-stage RAG pipeline as a horizontal process flow. Eight stages shown as connected rounded rectangle nodes: "1.Document Loading" (file icons) → "2.Parsing" (text extraction from PDF) → "3.Chunking" (document splitting into blocks) → "4.Embedding" (text→vector transformation) → "5.Indexing" (vectors stored in database cylinder) → "6.Retrieval" (magnifying glass over database, top-K results) → "7.Augmentation" (documents + query merged into prompt template) → "8.Generation" (LLM producing answer with citations). Each stage with a small representative icon. Tech blue #409EFF primary, white background, clean pipeline style.
+
 ## 三、RAG的三个演化阶段
 
 ### 3.1 Naive RAG（朴素RAG）
@@ -514,6 +518,8 @@ class AdvancedRAG:
                     │  Answer Verifier│  答案验证模块
                     └─────────────────┘
 ```
+
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration showing the evolution of RAG in three ascending steps. Bottom step "Naive RAG": simple linear pipeline (load→chunk→embed→retrieve→generate) with warning icons indicating issues. Middle step "Advanced RAG": enhanced pipeline with optimization nodes at each stage (pre-retrieval, retrieval, post-retrieval optimizations highlighted). Top step "Modular RAG": flexible architecture diagram with interchangeable modules (Query Router, Vector Search, BM25, SQL Query, Result Merger, Re-ranker, Generator, Verifier) connected in a configurable flow. Tech blue #409EFF primary, white background, evolutionary staircase design.
 
 ## 四、RAG评估体系
 
@@ -919,3 +925,5 @@ if __name__ == "__main__":
 | 高安全要求 | 私有化部署Milvus + 本地LLM + BGE | 数据不出本地 |
 
 RAG不是银弹，但它确实为LLM提供了一种成本可控、效果显著的知识增强方案。理解其全流程中的每个环节，并根据具体场景做出合适的权衡，是构建高质量RAG系统的关键。随着技术的演进，Agentic RAG（智能体驱动RAG）、Graph RAG（图增强RAG）等新模式也在不断涌现，但万变不离其宗——**检索的质量决定了答案的上限，生成的智慧决定了答案的下限**。
+
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration of a RAG technology stack decision flowchart. A central decision tree starting with "Your Scenario?" branching to different recommended stacks: "Quick Prototype" → LangChain + Chroma + OpenAI, "Chinese KB" → BGE + Milvus + Qwen, "Large Scale Production" → LlamaIndex + Pinecone/Milvus, "Low Cost" → LlamaIndex + FAISS + BGE-small, "Multimodal" → LlamaIndex + Weaviate, "High Security" → On-premise Milvus + Local LLM. Each recommendation shown as a tech stack icon group. Tech blue #409EFF primary, white background.

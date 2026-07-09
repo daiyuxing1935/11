@@ -6,6 +6,8 @@
 
 一个典型的智能体就像一个虚拟员工：它接收任务（用户输入），理解任务目标（感知），制定执行计划（规划），调用工具完成任务（执行），并根据执行结果调整后续行动（反馈循环）。理解智能体的运行机制，是开发可靠AI应用的基础。
 
+Image-Prompt(英文绘图词): A flat-design minimalist 2D vector illustration of a centered friendly AI robot icon with three orbiting concept rings labeled "Perception", "Planning", and "Action", a human user silhouette on the left sending a task bubble with arrow, and API gear/tool icons on the right, clean white background, light blue #409EFF accents on rings and icons, dark blue #1a1a2e text labels, rounded shapes, thin-line icons, academic learning atmosphere.
+
 ## 二、感知-规划-执行循环
 
 智能体的核心运行逻辑是一个循环，通常被称为**感知-规划-执行循环（Perception-Planning-Execution Loop）**。
@@ -60,6 +62,8 @@ while task_not_completed:
     update_memory(state, action, result)
 ```
 
+Image-Prompt(英文绘图词): A flat-design minimalist 2D vector illustration of a circular flow diagram with three large rounded nodes labeled "Perception" (eye icon), "Planning" (brain/gear icon), and "Execution" (play-button icon), connected by curved directional arrows forming a continuous loop, a smaller feedback arrow looping back from Execution to Perception labeled "Feedback", clean white background, light blue #409EFF node borders and arrows, dark blue #1a1a2e text labels, centered symmetric layout with moderate whitespace.
+
 ## 三、智能体的生命周期
 
 一个智能体从启动到终止，经历以下状态：
@@ -103,6 +107,8 @@ while task_not_completed:
 
 优雅的终止处理非常重要：应该保存关键状态和日志，释放占用的资源，向用户报告最终结果。
 
+Image-Prompt(英文绘图词): A flat-design minimalist 2D vector illustration of a horizontal state machine timeline with four rounded state nodes connected by arrows: "Initialized" (power-on icon, green accent), "Running" (play icon with three sub-states Idle/Processing/Waiting nested inside), "Paused" (pause icon, amber accent), and "Terminated" (checkmark icon, gray accent), centered symmetric layout, clean white background, light blue #409EFF connecting arrows, dark blue #1a1a2e state labels, thin-line status icons, educational software UI style.
+
 ## 四、事件驱动与轮询架构
 
 ### 事件驱动架构
@@ -137,6 +143,8 @@ while True:
 
 在实际项目中，常见的是混合架构：核心循环使用轮询方式，但对外部事件（如用户消息到达、工具返回）使用事件通知机制，减少不必要的等待时间。
 
+Image-Prompt(英文绘图词): A flat-design minimalist 2D vector illustration showing a side-by-side comparison of two architectural patterns: on the left, an event-driven architecture with event icons (message, callback, timer) flowing into an event queue box then to an agent processing unit; on the right, a polling architecture with a clock icon and a continuous loop arrow checking for messages and tool results; center-bottom a hybrid model combining both approaches, clean white background, light blue #409EFF for event arrow paths, dark blue #1a1a2e labels, rounded rectangular containers, thin-line icons.
+
 ## 五、执行过程中的状态管理
 
 智能体在执行过程中需要维护多种状态：
@@ -164,6 +172,8 @@ task_state = {
 ### 工具状态
 
 管理工具的可用性、调用计数和限流状态。对于有状态的外部系统（如数据库连接），还需要管理连接的建立、维护和释放。
+
+Image-Prompt(英文绘图词): A flat-design minimalist 2D vector illustration of a layered state management diagram with three horizontal stacked rounded panels: top panel "Conversation State" (speech bubble history icon), middle panel "Task State" (checklist with progress bar icon showing subtask completion), bottom panel "Tool State" (wrench icon with connection status indicator), all feeding into a central agent core hexagon, clean white background, light blue #409EFF panel borders, dark blue #1a1a2e labels, centered symmetric layout.
 
 ## 六、中断与错误处理
 
@@ -197,6 +207,8 @@ def call_tool_with_retry(tool_func, max_retries=3, base_delay=1):
             delay = base_delay * (2 ** attempt)  # 指数退避
             time.sleep(delay)
 ```
+
+Image-Prompt(英文绘图词): A flat-design minimalist 2D vector illustration of an error handling flow diagram with four connected strategy nodes: a "Retry" loop (curved arrow with exponential backoff 1s-2s-4s labels), a "Degradation" fallback path (branching to backup option), a "Graceful Failure" output (user-facing message bubble with clear explanation), and a "Circuit Breaker" gate (open/closed switch icon detecting consecutive failures), clean white background, light blue #409EFF flow arrows, dark blue #1a1a2e labels, rounded rectangular node shapes.
 
 ## 七、监控与日志
 
@@ -236,6 +248,8 @@ class AgentLogger:
         }))
 ```
 
+Image-Prompt(英文绘图词): A flat-design minimalist 2D vector illustration of a monitoring dashboard panel with five metric cards arranged in a row: "Latency" (clock icon with ms value), "Tool Success Rate" (pie chart icon with percentage), "Task Completion" (checkmark progress ring), "Token Usage" (stacked coin icon with count), and "Loop Steps" (step counter icon with number), below them a structured log stream panel with color-coded DEBUG/INFO/WARNING/ERROR entries flowing downward, clean white background, light blue #409EFF metric card accents, dark blue #1a1a2e labels, rounded card corners.
+
 ## 八、实际实现参考
 
 如果你想亲手实现一个简单的智能体运行框架，以下是一个最小化示例的核心结构：
@@ -273,3 +287,5 @@ class SimpleAgent:
 ```
 
 理解Agent的运行机制，就像理解汽车的发动机工作原理一样——你不需要自己制造发动机，但知道它如何运作会让你在驾驶时更加从容，在出现问题时更容易定位根源。在实际开发中，你可以使用LangChain、AutoGPT、CrewAI等成熟框架，它们已经实现了这些运行机制，让你可以专注于业务逻辑的设计。
+
+Image-Prompt(英文绘图词): A flat-design minimalist 2D vector illustration of a simplified agent architecture blueprint showing three core component blocks: "LLM Model" (brain icon, top), "Tool Set" (toolbox icon with API/DB/Email tool chips, right), and "Agent Core" (central hexagon with run loop symbol, center), connected by light blue #409EFF bidirectional arrows forming the perception-planning-execution loop, with input arrow from left (user icon) and output arrow to right (response bubble), clean white background, dark blue #1a1a2e labels, rounded shapes, academic educational diagram style.

@@ -21,6 +21,8 @@
 | 图像理解模型 | 图像 | 分类、检测、分割 | OCR、人脸识别 |
 | VLM | 图像 + 文本 | 跨模态理解与推理 | UI自动化、图表解读、场景问答 |
 
+Image-Prompt(英文绘图词): flat-design minimalist 2D vector illustration of a humanoid AI agent with a glowing eye icon overlaying a camera lens, surrounded by floating UI elements including a screenshot thumbnail, a bar chart, and a document page. Three labeled perception capability tags orbit the agent: "Environment Perception", "Document Understanding", "Visual QA". A comparison table at the bottom shows three rows (Text LLM, Image Model, VLM) with checkmark columns for input modalities. Clean white background, tech light blue #409EFF primary accents, dark blue #1a1a2e for all text labels. Centered symmetric layout with rounded rectangle cards and thin-line icons. Academic learning atmosphere suitable for educational software UI.
+
 ## 二、VLM的技术原理
 
 ### 核心架构：视觉编码器 + 连接器 + 语言模型
@@ -123,6 +125,8 @@ instruction_data = {
 }
 ```
 
+Image-Prompt(英文绘图词): flat-design minimalist 2D vector illustration of the VLM three-stage architecture pipeline in horizontal flow. Left: an image icon entering a rounded box labeled "Vision Encoder (ViT / CLIP / SigLIP)" with a patch-grid pattern inside. Center: a funnel-shaped connector node labeled "Connector (Linear Projection / MLP / Q-Former)" with arrow showing dimension mapping from 1024 to 4096. Right: a large rounded box labeled "LLM (Large Language Model)" receiving concatenated visual tokens and text tokens, outputting a text response bubble. Below the pipeline, a two-stage training timeline: Phase 1 "Alignment Pretraining" (connector only, freeze others) and Phase 2 "Instruction Tuning" (unfreeze LLM, visual QA data). A small token sequence strip shows [VIS_1][VIS_2]...[VIS_N][这][张][图]... merging into one unified input. Clean white background, #409EFF tech blue primary boxes, dark blue #1a1a2e text labels. Centered symmetric layout with rounded rectangles and thin-line connector arrows. Academic educational style.
+
 ## 三、主流VLM模型对比
 
 当前市场上主要的VLM模型各有特色，以下是详细的横向对比：
@@ -158,6 +162,8 @@ instruction_data = {
     ├── 云端 → Gemini 2.5 Pro / GPT-4o
     └── 本地 → InternVL2 (部分支持)
 ```
+
+Image-Prompt(英文绘图词): flat-design minimalist 2D vector illustration of a horizontal model comparison dashboard. A bar chart with six horizontal bars representing VLM models (GPT-4o, Gemini 2.5 Pro, Claude 3.5 Sonnet, Qwen-VL-Max, LLaVA-1.6, InternVL2) with colored segments for capability dimensions (UI Understanding blue, Chart Reading green, OCR orange, Document Understanding purple, Video Support gray). Beside the bars, a simplified decision tree flowchart: root node "Need VLM?" branching to "Cloud / High Precision" (with sub-branches for multimodal reasoning, code+image, Chinese scenarios) and "Local Deployment" (with sub-branches for GPU tiers: A100, A10/4090, CPU/Edge). Clean white background, #409EFF tech blue primary bars, dark blue #1a1a2e text labels. Two-panel symmetric layout with rounded cards and thin-line connectors. Academic atmosphere.
 
 ## 四、VLM在智能体中的核心应用场景
 
@@ -416,6 +422,8 @@ print(f"图表类型：{result['chart_type']}")
 print(f"关键发现：{result['business_implications']}")
 ```
 
+Image-Prompt(英文绘图词): flat-design minimalist 2D vector illustration showing three VLM application scenario panels in a horizontal row. Left panel "UI Automation": a smartphone screen with highlighted clickable elements, connected in a circular loop of "Capture Screenshot -> VLM Analysis -> Generate Action -> Execute Click", with a small JSON output card beside it. Center panel "Scene Perception": a robot icon facing a warehouse shelf with labeled bounding boxes identifying objects, spatial relationships shown as dashed distance lines, and a structured analysis card listing scene type, objects, hazards, and navigable areas. Right panel "Chart Analysis": a bar chart on the left converting through a VLM funnel into structured JSON output on the right, with labeled fields for chart_type, axes, key_data_points, and business_implications. Clean white background, #409EFF tech blue primary accents, dark blue #1a1a2e text labels. Three-column symmetric layout with rounded cards and thin-line icons. Educational software UI style.
+
 ## 五、多模态Agent的架构设计
 
 ### 完整的多模态Agent架构
@@ -545,6 +553,8 @@ class ModalityRouter:
         fused["unified_context"] = "\n\n".join(contexts)
         return fused
 ```
+
+Image-Prompt(英文绘图词): flat-design minimalist 2D vector illustration of a complete multi-modal agent architecture diagram in vertical stack layout. Top layer: three user input icons (text bubble, image icon, microphone) entering a central circular "Modality Router" hub. The router fans out to three vertical processing lanes: left "Text LLM Processor", center "VLM Perception Module" (with vision encoder + LLM sub-components), right "Audio Processor (ASR/TTS)". All three lanes converge into a "Context Fusion Layer" (represented as a horizontal merging bar), which feeds downward into "Reasoning & Planning Engine", then "Tool Calling Layer", and finally "Memory System" at the bottom. Each layer is a distinct rounded rectangle with thin-line internal icons. Clean white background, #409EFF tech blue primary for active flow arrows and module borders, dark blue #1a1a2e for all text labels. Centered symmetric layout with moderate whitespace. Academic educational atmosphere.
 
 ## 六、VLM集成的最佳实践
 
@@ -741,6 +751,8 @@ def robust_vlm_call(vlm_client, image_input, query, max_retries=3):
     }
 ```
 
+Image-Prompt(英文绘图词): flat-design minimalist 2D vector illustration of a best-practices dashboard organized as a 3x2 grid of rounded cards. Card 1 "Image Preprocessing": an image icon with a resize/downscale arrow and a resolution guide table (UI: 1280px low-detail, Document: high-detail). Card 2 "Prompt Design Strategy": a spotlight beam highlighting specific regions of a screenshot with structured bullet points beside it, contrasting a vague prompt (red X) with a specific prompt (green checkmark). Card 3 "Multi-Image Strategy": two parallel arrows (strategy A: concurrent analysis then synthesis) vs a single merged frame (strategy B: single request with multiple images). Card 4 "Cost Control": a gauge meter showing cost levels with five strategy labels (resolution control, cache reuse, text pre-filter, on-demand loading, local model). Card 5 "Error Handling": a flow diagram showing retry logic branching into image-too-large (compress), content-filter (reject), timeout (exponential backoff), and success paths. Card 6 "Fallback Chain": a tiered cascade from local VLM to cloud VLM with cache lookup as first step. Clean white background, #409EFF tech blue primary card borders, dark blue #1a1a2e text labels. Symmetric grid layout with thin-line icons. Academic educational UI style.
+
 ## 七、从理论到实战的完整示例
 
 让我们构建一个完整的"图表分析报告生成智能体"，它将多种能力串联在一起：
@@ -841,6 +853,8 @@ report = agent.run(
 print(report)
 ```
 
+Image-Prompt(英文绘图词): flat-design minimalist 2D vector illustration of a horizontal pipeline workflow for a chart report generation agent. The flow starts from left with three input chart thumbnails (revenue trend line chart, user growth bar chart, cost breakdown pie chart) entering a pipeline of five sequentially connected rounded stage boxes: Step 1 "Analyze Charts" (magnifying glass icon), Step 2 "Extract Key Data" (table grid icon), Step 3 "Cross-Chart Correlation" (intersecting Venn diagram icon), Step 4 "Generate Report" (document with sparklines icon), Step 5 "Save to Memory" (database cylinder icon). A final output document icon on the right labeled "Comprehensive Report" with executive summary highlights. Below the pipeline, a mini "Agent Memory" timeline showing stored analysis history entries. Clean white background, #409EFF tech blue primary stage boxes and flow arrows, dark blue #1a1a2e text labels for all steps. Horizontal symmetric layout with rounded rectangles and thin-line connector arrows. Academic educational software UI atmosphere.
+
 ## 八、总结
 
 视觉语言模型赋予了智能体"看见并理解"这个世界的能力。从UI自动化到文档分析，从场景感知到图表解读，VLM正在将智能体的应用边界从纯文本领域推向多模态交互的全新维度。
@@ -852,3 +866,5 @@ print(report)
 3. **VLM是感知模块的一部分，不是全部**：将它放入完整的智能体架构中，与文本理解、工具调用、记忆系统协同工作，才能发挥最大价值
 
 随着VLM技术的持续进步——更高的分辨率支持、更快的推理速度、更强的推理能力——未来的智能体将能够像人类一样自然地通过"眼睛"感知世界，完成越来越复杂的现实任务。
+
+Image-Prompt(英文绘图词): flat-design minimalist 2D vector illustration of a summary concept card layout. Three large numbered circular icons arranged in a triangular formation around a central glowing brain icon representing the intelligent agent. Circle 1 (top): a spotlight beam icon labeled "Attention Guidance > Model Capability" with subtitle "Good prompt design focuses VLM on key information". Circle 2 (bottom-left): a balance scale icon labeled "Cost vs Precision Balance" with subtitle "Not every scenario needs highest-precision cloud VLM". Circle 3 (bottom-right): three interlocking puzzle pieces labeled "VLM is Part of Perception Module" with subtitle "Integrate with text, tools, and memory systems". A futuristic upward arrow at the bottom labeled "Future: Higher Resolution, Faster Inference, Stronger Reasoning". Clean white background, #409EFF tech blue primary accents for circles and icons, dark blue #1a1a2e for all text labels. Centered symmetric triangular composition with rounded shapes and thin-line icons. Academic educational software UI style with moderate whitespace.

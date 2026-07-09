@@ -1,275 +1,245 @@
 <template>
   <div class="resources-page">
     <el-tabs v-model="activeTab">
-      <el-tab-pane label="个性化推荐" name="recommend">
-        <el-row :gutter="20">
-          <el-col :span="8" v-for="item in recommendations" :key="item.resource.id">
-            <el-card shadow="hover" class="resource-card" @click="openResource(item.resource)">
-              <template #header>
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <el-tag :type="getDiffType(item.resource.difficulty)" size="small">{{ item.resource.difficulty }}</el-tag>
-                  <div>
-                    <el-button text size="small" @click.stop="openResource(item.resource)" type="primary">
-                      <el-icon><Reading /></el-icon> 学习
-                    </el-button>
-                    <el-button text @click.stop="toggleCollect(item.resource.id)" :type="isCollected(item.resource.id) ? 'warning' : ''">
-                      <el-icon><StarFilled v-if="isCollected(item.resource.id)" /><Star v-else /></el-icon>
-                    </el-button>
-                  </div>
-                </div>
-              </template>
-              <h4>{{ item.resource.title }}</h4>
-              <p class="res-summary">{{ item.resource.summary }}</p>
-              <div class="res-meta">
-                <el-tag v-for="t in item.resource.tags?.slice(0,3)" :key="t" size="small" type="info" style="margin:2px;cursor:pointer" @click.stop="clickKnowledgeTag(t)">{{ t }}</el-tag>
-              </div>
-              <div class="res-footer">
-                <span><el-icon><Timer /></el-icon> {{ item.resource.duration }}</span>
-                <el-tag type="warning" size="small">{{ item.reason }}</el-tag>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-        <el-empty v-if="!recommendations.length" description="完成测评后可获取个性化推荐" />
-      </el-tab-pane>
       <el-tab-pane label="全部资源" name="all">
-        <div class="filter-bar">
-          <el-select v-model="filterCategory" placeholder="按模块筛选" clearable style="width:280px" @change="onFilterChange">
+        <div style="margin-bottom:12px">
+          <el-select v-model="filterCategory" placeholder="按模块筛选" clearable style="width:280px" @change="fetchAll">
             <el-option v-for="m in moduleList" :key="m.key" :label="m.label" :value="m.key" />
           </el-select>
-          <el-select v-model="filterDifficulty" placeholder="难度筛选" clearable style="width:150px;margin-left:12px" @change="onFilterChange">
-            <el-option label="Lv1入门" value="Lv1入门" /><el-option label="Lv2中等" value="Lv2中等" /><el-option label="Lv3高阶" value="Lv3高阶" />
-          </el-select>
         </div>
-
-        <!-- 按模块分组展示 -->
-        <template v-if="!filterCategory">
-          <div v-for="mod in moduleGroups" :key="mod.key" class="module-section">
-            <div class="module-header">
-              <span class="module-icon">{{ mod.icon }}</span>
-              <span class="module-title">{{ mod.label }}</span>
-              <el-tag size="small" type="info">{{ mod.items.length }}个资源</el-tag>
-            </div>
-            <el-row :gutter="20">
-              <el-col :span="6" v-for="item in mod.items" :key="item.id">
-                <el-card shadow="hover" class="resource-card-small" @click="openResource(item)">
-                  <div style="display:flex;justify-content:space-between;align-items:flex-start">
-                    <el-tag :type="getDiffType(item.difficulty)" size="small">{{ item.difficulty }}</el-tag>
-                    <el-button text size="small" type="primary" @click.stop="openResource(item)">
-                      <el-icon><Reading /></el-icon>
-                    </el-button>
-                  </div>
-                  <h4 style="margin:8px 0">{{ item.title }}</h4>
-                  <p class="res-summary">{{ item.summary?.slice(0,60) }}...</p>
-                  <span style="font-size:12px;color:#c0c4cc">{{ item.duration }} · {{ item.type === 'tutorial' ? '教程' : '文章' }}</span>
-                </el-card>
-              </el-col>
-            </el-row>
+        <div v-for="mod in moduleGroups" :key="mod.key" style="margin-bottom:32px">
+          <div style="display:flex;align-items:center;gap:8px;padding:12px 0;margin-bottom:12px;border-bottom:2px solid #409EFF">
+            <span style="font-size:22px">{{ mod.icon }}</span>
+            <span style="font-size:17px;font-weight:700;color:#1a1a2e">{{ mod.label }}</span>
+            <el-tag size="small" type="info">{{ mod.items.length }}个</el-tag>
           </div>
-          <el-empty v-if="!moduleGroups.length" description="暂无资源" />
-        </template>
-
-        <!-- 筛选模式下平铺展示 -->
-        <template v-else>
-          <el-row :gutter="20" style="margin-top:16px">
-            <el-col :span="6" v-for="item in filteredModuleItems" :key="item.id">
-              <el-card shadow="hover" class="resource-card-small" @click="openResource(item)">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start">
-                  <el-tag :type="getDiffType(item.difficulty)" size="small">{{ item.difficulty }}</el-tag>
-                  <el-button text size="small" type="primary" @click.stop="openResource(item)">
-                    <el-icon><Reading /></el-icon>
-                  </el-button>
+          <el-row :gutter="20">
+            <el-col :span="6" v-for="item in mod.items" :key="item.id">
+              <el-card shadow="hover" style="cursor:pointer;margin-bottom:16px" @click="openResource(item)">
+                <div style="display:flex;justify-content:space-between">
+                  <el-tag :type="item.difficulty==='Lv1入门'?'success':item.difficulty==='Lv2中等'?'warning':'danger'" size="small">{{ item.difficulty }}</el-tag>
                 </div>
                 <h4 style="margin:8px 0">{{ item.title }}</h4>
-                <p class="res-summary">{{ item.summary?.slice(0,60) }}...</p>
-                <span style="font-size:12px;color:#c0c4cc">{{ item.duration }} · {{ item.category }}</span>
+                <p style="color:#909399;font-size:13px">{{ item.summary?.slice(0,60) }}...</p>
+                <span style="font-size:12px;color:#c0c4cc">{{ item.duration }}</span>
               </el-card>
             </el-col>
           </el-row>
-          <el-empty v-if="!filteredModuleItems.length" description="该模块暂无资源" />
-        </template>
+        </div>
       </el-tab-pane>
     </el-tabs>
-
-    <!-- 学习资料弹窗（点击资源卡片或知识点标签） -->
-    <el-dialog v-model="learnDialogVisible" :title="learnDialogTitle" width="90%" top="3vh" :close-on-click-modal="false" destroy-on-close>
-      <div v-if="learnDialogLoading" style="text-align:center;padding:40px">
-        <el-icon class="is-loading" :size="32"><Loading /></el-icon>
-        <p style="margin-top:12px;color:#909399">正在加载学习资料...</p>
+    <div v-if="dialogVisible" @click.self="dialogVisible=false" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding-top:3vh">
+      <div style="background:#fff;border-radius:8px;width:90%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-bottom:1px solid #e4e7ed">
+          <div style="display:flex;align-items:center;gap:12px">
+            <h2 style="margin:0;font-size:18px">{{ dialogTitle }}</h2>
+            <button class="gen-all-btn" @click="generateAll" style="padding:6px 16px;background:#67C23A;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer">⚡ 一键生成全部配图</button>
+          </div>
+          <button @click="dialogVisible=false" style="background:none;border:none;font-size:28px;cursor:pointer;color:#909399">&times;</button>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:16px 24px;font-size:15px;line-height:1.8;color:#303133">
+          <div v-if="dialogLoading" style="text-align:center;padding:40px;color:#409EFF">加载中...</div>
+          <div v-else v-html="dialogContent" ref="contentRef"></div>
+        </div>
       </div>
-      <div v-else class="learn-material-content" v-html="learnDialogContent"></div>
-      <template #footer>
-        <el-button type="primary" @click="learnDialogVisible = false">关闭</el-button>
-      </template>
-    </el-dialog>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { getRecommendations, getResourceList, collectResource, getCollectedResources, getKnowledgeMaterial, getResourceLearnMaterial } from '../api/resource'
-import { ElMessage } from 'element-plus'
-import { marked } from 'marked'
+import { getResourceList, getResourceLearnMaterial } from '../api/resource'
 
-const activeTab = ref('recommend')
-const recommendations = ref([])
-const allResources = ref({ items: [], total: 0 })
-const collected = ref([])
+const activeTab = ref('all')
+const allResources = ref({ items: [] })
 const filterCategory = ref('')
-const filterDifficulty = ref('')
-const currentPage = ref(1)
+const dialogVisible = ref(false)
+const dialogTitle = ref('')
+const dialogContent = ref('')
+const dialogLoading = ref(false)
+const contentRef = ref(null)
 
-// 六大模块定义
 const moduleList = [
   { key: '模块一：智能体基础通识', label: '模块一：智能体基础通识', icon: '🤖' },
   { key: '模块二：大模型与提示词工程', label: '模块二：大模型与提示词工程', icon: '🧠' },
   { key: '模块三：智能体四大核心能力模块', label: '模块三：智能体四大核心能力模块', icon: '⚙️' },
   { key: '模块四：开发框架与工程实践', label: '模块四：开发框架与工程实践', icon: '🔧' },
   { key: '模块五：多智能体系统', label: '模块五：多智能体系统', icon: '🤝' },
-  { key: '模块六：评估、安全与前沿拓展', label: '模块六：评估、安全与前沿拓展', icon: '🛡️' },
+  { key: '模块六：评估、安全与前沿拓展', label: '模块六：评估、安全与前沿拓展', icon: '🛡️' }
 ]
 
-// 按模块分组
 const moduleGroups = computed(() => {
-  const items = allResources.value.items || []
-  return moduleList.map(m => ({
-    ...m,
-    items: items.filter(item => item.category === m.key)
-  })).filter(m => m.items.length > 0)
+  return moduleList.map(m => ({ ...m, items: (allResources.value.items||[]).filter(i => i.category === m.key) })).filter(m => m.items.length > 0)
 })
 
-// 筛选模式下的结果
-const filteredModuleItems = computed(() => {
-  const items = allResources.value.items || []
-  if (!filterCategory.value && !filterDifficulty.value) return items
-  return items.filter(item => {
-    if (filterCategory.value && item.category !== filterCategory.value) return false
-    if (filterDifficulty.value && item.difficulty !== filterDifficulty.value) return false
-    return true
-  })
-})
+onMounted(() => { fetchAll() })
 
-onMounted(async () => {
-  try { recommendations.value = await getRecommendations() } catch(e) {}
+async function fetchAll() {
+  try { allResources.value = await getResourceList({ page: 1, page_size: 100, category: filterCategory.value||undefined }) } catch(e) {}
+}
+
+window._prompts = {}
+window._promptIds = []
+
+async function openResource(resource) {
+  dialogVisible.value = true
+  dialogTitle.value = resource.title
+  dialogContent.value = ''
+  dialogLoading.value = true
   try {
-    // 一次拉取所有资源（page_size设大）
-    allResources.value = await getResourceList({ page: 1, page_size: 100 })
-  } catch(e) {}
-  try { collected.value = await getCollectedResources() } catch(e) {}
-})
-
-async function fetchAll(page = 1) {
-  currentPage.value = page
-  allResources.value = await getResourceList({
-    page,
-    page_size: 100,
-    category: filterCategory.value || undefined,
-    difficulty: filterDifficulty.value || undefined
-  })
-}
-
-function onFilterChange() {
-  fetchAll(1)
-}
-
-function getDiffType(d) { return d === 'Lv1入门' ? 'success' : d === 'Lv2中等' ? 'warning' : 'danger' }
-
-function isCollected(id) { return collected.value.some(c => c.id === id) }
-
-function openResource(resource) {
-  learnDialogVisible.value = true
-  learnDialogTitle.value = resource.title
-  learnDialogContent.value = ''
-  learnDialogLoading.value = true
-  getResourceLearnMaterial(resource.id).then(res => {
+    const res = await getResourceLearnMaterial(resource.id)
     if (res && res.content) {
-      learnDialogTitle.value = res.resource_title || resource.title
-      learnDialogContent.value = marked.parse(res.content)
-    } else {
-      learnDialogContent.value = '<p style="color:#909399">暂无学习资料，请稍后重试</p>'
+      dialogTitle.value = res.resource_title || resource.title
+      if (!window.marked) {
+        await new Promise((resolve) => {
+          const s = document.createElement('script')
+          s.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js'
+          s.onload = resolve
+          document.head.appendChild(s)
+        })
+      }
+      var raw = res.content
+      window._prompts = {}
+      window._promptIds = []
+      var counter = 0
+      raw = raw.replace(/(?:\*\*)?Image-Prompt\(([^)]+)\):(?:\*\*)?\s*([\s\S]*?)(?=\n\n(?:#|\*\*Image-Prompt|Image-Prompt)|\n(?:#|\*\*Image-Prompt|Image-Prompt)|$)/g, function(m, label, body) {
+        var clean = body.trim()
+        if (clean && clean.length > 10) {
+          var id = counter++
+          window._prompts[id] = clean
+          window._promptIds.push(id)
+          return '%%PROMPT_' + id + '%%'
+        }
+        return ''
+      })
+      var html = window.marked.parse(raw)
+      for (var i = 0; i < counter; i++) {
+        var text = window._prompts[i]
+        var first = text.split('.')[0] + '.'
+        if (first.length > 120) first = first.substring(0, 120) + '...'
+        var card = '<div class="prompt-card" data-pid="' + i + '" style="margin:24px 0;border-radius:10px;overflow:hidden;background:#fff;border:1px solid #d4e6ff;box-shadow:0 1px 8px rgba(64,158,255,0.06)">' +
+          '<div style="display:flex;align-items:center;gap:8px;padding:10px 18px;background:linear-gradient(135deg,#eef6ff,#e3f0ff)">' +
+            '<span style="font-size:18px">🖼️</span><span style="font-weight:600;color:#2c6fce;font-size:13px">建议配图</span>' +
+            '<button class="gen-btn" data-pid="' + i + '" style="margin-left:auto;padding:5px 14px;background:#409EFF;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer">✨ 生成图片</button>' +
+          '</div>' +
+          '<div style="padding:14px 18px">' +
+            '<div class="img-result" data-pid="' + i + '" style="display:none;margin-bottom:12px;text-align:center"></div>' +
+            '<p style="margin:0 0 10px;font-size:13px;color:#444;line-height:1.7">' + first + '</p>' +
+            '<details><summary style="cursor:pointer;font-size:12px;color:#409EFF">展开完整提示词</summary>' +
+              '<pre style="margin:10px 0 0;padding:12px;background:#f8fafc;border-radius:6px;font-size:12px;color:#555;line-height:1.7;white-space:pre-wrap;word-break:break-word;max-height:300px;overflow-y:auto">' + text.replace(/</g,'&lt;').replace(/&/g,'&amp;') + '</pre>' +
+            '</details>' +
+          '</div></div>'
+        html = html.split('%%PROMPT_' + i + '%%').join(card)
+        html = html.split('<p>%%PROMPT_' + i + '%%</p>').join(card)
+      }
+      dialogContent.value = html
+      // 绑定按钮事件并自动加载缓存
+      setTimeout(function() {
+        var btns = document.querySelectorAll('.gen-btn[data-pid]')
+        btns.forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var pid = parseInt(this.getAttribute('data-pid'))
+            genImage(this, pid)
+          })
+        })
+        // 自动加载已缓存的图片
+        loadCachedImages()
+      }, 200)
     }
-  }).catch(e => {
-    learnDialogContent.value = '<p style="color:#f56c6c">获取学习资料失败，请检查网络后重试</p>'
-  }).finally(() => {
-    learnDialogLoading.value = false
-  })
+  } catch(e) {}
+  dialogLoading.value = false
 }
 
-async function toggleCollect(id) {
+async function loadCachedImages() {
   try {
-    await collectResource(id)
-    collected.value = await getCollectedResources()
+    var resp = await fetch('/api/images/list', {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    })
+    var data = await resp.json()
+    if (data.code === 200 && data.data) {
+      for (var i = 0; i < data.data.length; i++) {
+        var item = data.data[i]
+        var hash = item.prompt_hash
+        // 找到匹配的 prompt
+        for (var pid in window._prompts) {
+          var ptext = window._prompts[pid]
+          // 简单 hash 比对
+          var calcHash = await sha256(ptext)
+          if (calcHash === hash) {
+            // 加载 SVG 文件
+            var imgResult = document.querySelector('.img-result[data-pid="' + pid + '"]')
+            var btn = document.querySelector('.gen-btn[data-pid="' + pid + '"]')
+            if (imgResult && btn) {
+              imgResult.innerHTML = '<div style="text-align:center;padding:12px;background:#fafbfc;border-radius:6px;overflow:hidden;max-height:800px"><img src="' + item.url + '" style="max-width:100%;height:auto;display:block" onerror="this.parentElement.innerHTML=\'<span style=color:#909399>加载失败</span>\'" /></div>'
+              imgResult.style.display = 'block'
+              btn.textContent = '✅ 已缓存'
+              btn.style.background = '#67C23A'
+            }
+          }
+        }
+      }
+    }
   } catch(e) {}
 }
 
-/** 点击知识点标签 - 联网搜索+AI整理学习资料 */
-async function clickKnowledgeTag(tag) {
-  learnDialogVisible.value = true
-  learnDialogTitle.value = tag
-  learnDialogContent.value = ''
-  learnDialogLoading.value = true
+async function sha256(text) {
+  var encoder = new TextEncoder()
+  var data = encoder.encode(text)
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  var hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+async function genImage(btn, pid) {
+  var prompt = window._prompts[pid]
+  if (!prompt) return
+  var card = btn.closest('.prompt-card')
+  var resultDiv = card.querySelector('.img-result')
+  btn.disabled = true
+  btn.textContent = '⏳ 绘制中...'
+  btn.style.background = '#909399'
   try {
-    const res = await getKnowledgeMaterial(tag)
-    if (res && res.content) {
-      learnDialogTitle.value = res.matched_tag || tag
-      learnDialogContent.value = marked.parse(res.content)
+    var resp = await fetch('/api/images/generate?prompt=' + encodeURIComponent(prompt), {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    })
+    var data = await resp.json()
+    if (data.code === 200 && data.data && data.data.svg) {
+      var wrappedSvg = data.data.svg
+      if (wrappedSvg.indexOf('viewBox') === -1) wrappedSvg = wrappedSvg.replace('<svg', '<svg viewBox="0 0 800 500"')
+      wrappedSvg = wrappedSvg.replace('<svg', '<svg width="100%" style="max-width:100%;height:auto;display:block"')
+      resultDiv.innerHTML = '<div style="text-align:center;padding:12px;background:#fafbfc;border-radius:6px;overflow:hidden;max-height:800px">' + wrappedSvg + '</div>'
+      resultDiv.style.display = 'block'
+      btn.textContent = '🔄 重新生成'
+      btn.style.background = '#67C23A'
     } else {
-      learnDialogContent.value = '<p style="color:#909399">暂无相关资料，请稍后重试</p>'
+      btn.textContent = '❌ 失败'
+      btn.style.background = '#F56C6C'
+      resultDiv.style.display = 'block'
+      resultDiv.innerHTML = '<div style="text-align:center;padding:20px;color:#F56C6C">' + (data.message || '生成失败') + '</div>'
     }
   } catch(e) {
-    learnDialogContent.value = '<p style="color:#f56c6c">获取学习资料失败，请检查AI配置后重试</p>'
-  } finally {
-    learnDialogLoading.value = false
+    btn.textContent = '❌ 网络错误'
+    btn.style.background = '#F56C6C'
   }
+  btn.disabled = false
+}
+
+async function generateAll() {
+  var btns = document.querySelectorAll('.gen-btn[data-pid]')
+  if (btns.length === 0) return
+  var allBtn = document.querySelector('.gen-all-btn')
+  if (allBtn) { allBtn.disabled = true; allBtn.textContent = '⏳ 批量生成中...' }
+  for (var i = 0; i < btns.length; i++) {
+    var btn = btns[i]
+    var pid = parseInt(btn.getAttribute('data-pid'))
+    var imgResult = document.querySelector('.img-result[data-pid="' + pid + '"]')
+    // 跳过已生成的
+    if (imgResult && imgResult.style.display === 'block') continue
+    await genImage(btn, pid)
+    // 间隔 2 秒避免 LLM 限流
+    if (i < btns.length - 1) await new Promise(r => setTimeout(r, 2000))
+  }
+  if (allBtn) { allBtn.disabled = false; allBtn.textContent = '✅ 全部完成' }
 }
 </script>
-
-<style scoped>
-.resource-card { height: 100%; cursor: pointer; }
-.resource-card:hover { transform: translateY(-4px); transition: 0.3s; }
-.resource-card h4 { margin: 8px 0; font-size: 14px; }
-.res-summary { color: #909399; font-size: 13px; line-height: 1.5; }
-.res-meta { margin: 8px 0; }
-.res-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #c0c4cc; margin-top: 8px; }
-.resource-card-small { cursor: pointer; margin-bottom: 16px; }
-.resource-card-small:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-.filter-bar { margin-bottom: 8px; }
-
-/* 模块分组样式 */
-.module-section { margin-bottom: 32px; }
-.module-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 0;
-  margin-bottom: 12px;
-  border-bottom: 2px solid #409EFF;
-}
-.module-icon { font-size: 22px; }
-.module-title { font-size: 17px; font-weight: 700; color: #1a1a2e; }
-
-/* 学习资料 Markdown 渲染样式 */
-.learn-material-content {
-  max-height: 78vh;
-  overflow-y: auto;
-  padding: 8px 4px;
-  font-size: 15px;
-  line-height: 1.8;
-  color: #303133;
-}
-.learn-material-content :deep(h1) { font-size: 22px; font-weight: 700; margin: 8px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #409EFF; color: #1a1a2e; }
-.learn-material-content :deep(h2) { font-size: 18px; font-weight: 600; margin: 24px 0 12px; color: #303133; border-left: 4px solid #409EFF; padding-left: 12px; }
-.learn-material-content :deep(h3) { font-size: 16px; font-weight: 600; margin: 18px 0 10px; color: #409EFF; }
-.learn-material-content :deep(p) { margin: 10px 0; }
-.learn-material-content :deep(strong) { color: #1a1a2e; }
-.learn-material-content :deep(code) { background: #f0f2f5; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #e83e8c; font-family: 'Courier New', monospace; }
-.learn-material-content :deep(pre) { background: #1a1a2e; color: #f8f8f2; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; }
-.learn-material-content :deep(pre code) { background: none; color: #f8f8f2; padding: 0; font-size: 13px; }
-.learn-material-content :deep(ul), .learn-material-content :deep(ol) { padding-left: 24px; margin: 8px 0; }
-.learn-material-content :deep(li) { margin: 4px 0; }
-.learn-material-content :deep(table) { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
-.learn-material-content :deep(th) { background: #f5f7fa; padding: 10px 12px; text-align: left; font-weight: 600; border: 1px solid #e4e7ed; }
-.learn-material-content :deep(td) { padding: 8px 12px; border: 1px solid #e4e7ed; }
-.learn-material-content :deep(blockquote) { border-left: 4px solid #e4e7ed; padding: 8px 16px; margin: 12px 0; background: #fafafa; color: #606266; }
-.learn-material-content :deep(hr) { border: none; border-top: 1px solid #e4e7ed; margin: 20px 0; }
-</style>

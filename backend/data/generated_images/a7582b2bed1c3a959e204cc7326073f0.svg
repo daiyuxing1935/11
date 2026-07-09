@@ -1,0 +1,204 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e8f2fb"/>
+    </linearGradient>
+    <linearGradient id="era1Grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7a8ba8"/>
+      <stop offset="100%" stop-color="#6b7d9a"/>
+    </linearGradient>
+    <linearGradient id="era2Grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5b8db8"/>
+      <stop offset="100%" stop-color="#4a7da8"/>
+    </linearGradient>
+    <linearGradient id="era3Grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2b7ed4"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#60b0ff"/>
+      <stop offset="50%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3080dd"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="800" height="500" rx="12" ry="12" fill="url(#bgGrad)"/>
+
+  <!-- Title -->
+  <text x="400" y="42" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e" letter-spacing="1">AI智能体进化历程</text>
+  <text x="400" y="64" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#5a6a7e" letter-spacing="0.5">从规则系统到自主智能体的技术演进</text>
+
+  <!-- Timeline base line -->
+  <line x1="60" y1="280" x2="740" y2="280" stroke="#c0d0e0" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Era 1: 1980s-2000s - IF/THEN rules -->
+  <!-- Era box -->
+  <rect x="65" y="110" width="190" height="140" rx="14" ry="14" fill="white" stroke="url(#era1Grad)" stroke-width="2" opacity="0.95"/>
+  <rect x="65" y="110" width="190" height="40" rx="14" ry="14" fill="url(#era1Grad)" opacity="0.15"/>
+  <text x="160" y="137" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#4a5a6a">专家系统时代</text>
+  <text x="160" y="155" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#6b7d9a">1980s – 2000s</text>
+
+  <!-- IF/THEN flowchart icon -->
+  <rect x="105" y="175" width="110" height="60" rx="8" ry="8" fill="none" stroke="#6b7d9a" stroke-width="1.8"/>
+  <!-- Diamond decision -->
+  <polygon points="160,185 170,195 160,205 150,195" fill="#6b7d9a" opacity="0.7"/>
+  <text x="160" y="193" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="white" font-weight="bold">?</text>
+  <!-- IF label -->
+  <text x="130" y="218" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#5a6a7e" font-weight="bold">IF</text>
+  <!-- THEN label -->
+  <text x="190" y="218" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#5a6a7e" font-weight="bold">THEN</text>
+  <!-- Arrow -->
+  <line x1="145" y1="205" x2="145" y2="215" stroke="#6b7d9a" stroke-width="1.2"/>
+  <polygon points="142,213 145,218 148,213" fill="#6b7d9a"/>
+  <line x1="175" y1="205" x2="175" y2="215" stroke="#6b7d9a" stroke-width="1.2"/>
+  <polygon points="172,213 175,218 178,213" fill="#6b7d9a"/>
+
+  <!-- Year label era 1 -->
+  <text x="160" y="310" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">1980</text>
+  <text x="160" y="328" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#1a1a2e">— 2000</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="260" y1="250" x2="290" y2="250" stroke="#c0d0e0" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="288,244 298,250 288,256" fill="#c0d0e0"/>
+  <line x1="260" y1="280" x2="290" y2="280" stroke="#c0d0e0" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="288,274 298,280 288,286" fill="#c0d0e0"/>
+  <line x1="260" y1="310" x2="290" y2="310" stroke="#c0d0e0" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="288,304 298,310 288,316" fill="#c0d0e0"/>
+
+  <!-- Era 2: 2000s-2018 - Neural network + RL -->
+  <rect x="305" y="110" width="190" height="140" rx="14" ry="14" fill="white" stroke="url(#era2Grad)" stroke-width="2" opacity="0.95"/>
+  <rect x="305" y="110" width="190" height="40" rx="14" ry="14" fill="url(#era2Grad)" opacity="0.15"/>
+  <text x="400" y="137" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#3a6a8a">深度学习时代</text>
+  <text x="400" y="155" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#5b8db8">2000s – 2018</text>
+
+  <!-- Brain with neural nodes -->
+  <ellipse cx="400" cy="195" rx="35" ry="28" fill="none" stroke="#4a7da8" stroke-width="1.8"/>
+  <!-- Brain lobes -->
+  <path d="M375 195 Q380 178 390 175 Q395 172 400 175 Q405 172 410 175 Q420 178 425 195" fill="none" stroke="#4a7da8" stroke-width="1.4"/>
+  <path d="M375 195 Q380 210 390 213 Q395 216 400 213 Q405 216 410 213 Q420 210 425 195" fill="none" stroke="#4a7da8" stroke-width="1.4"/>
+  <!-- Neural nodes -->
+  <circle cx="388" cy="186" r="3.5" fill="#4a7da8" opacity="0.8"/>
+  <circle cx="400" cy="180" r="3.5" fill="#4a7da8" opacity="0.8"/>
+  <circle cx="412" cy="186" r="3.5" fill="#4a7da8" opacity="0.8"/>
+  <circle cx="383" cy="195" r="3.5" fill="#4a7da8" opacity="0.8"/>
+  <circle cx="400" cy="195" r="3.5" fill="#4a7da8" opacity="0.8"/>
+  <circle cx="417" cy="195" r="3.5" fill="#4a7da8" opacity="0.8"/>
+  <circle cx="388" cy="204" r="3.5" fill="#4a7da8" opacity="0.8"/>
+  <circle cx="400" cy="210" r="3.5" fill="#4a7da8" opacity="0.8"/>
+  <circle cx="412" cy="204" r="3.5" fill="#4a7da8" opacity="0.8"/>
+  <!-- Connections -->
+  <line x1="388" y1="186" x2="400" y2="180" stroke="#4a7da8" stroke-width="0.8" opacity="0.5"/>
+  <line x1="400" y1="180" x2="412" y2="186" stroke="#4a7da8" stroke-width="0.8" opacity="0.5"/>
+  <line x1="388" y1="186" x2="383" y2="195" stroke="#4a7da8" stroke-width="0.8" opacity="0.5"/>
+  <line x1="412" y1="186" x2="417" y2="195" stroke="#4a7da8" stroke-width="0.8" opacity="0.5"/>
+  <line x1="383" y1="195" x2="400" y2="195" stroke="#4a7da8" stroke-width="0.8" opacity="0.5"/>
+  <line x1="400" y1="195" x2="417" y2="195" stroke="#4a7da8" stroke-width="0.8" opacity="0.5"/>
+  <line x1="388" y1="204" x2="400" y2="210" stroke="#4a7da8" stroke-width="0.8" opacity="0.5"/>
+  <line x1="400" y1="210" x2="412" y2="204" stroke="#4a7da8" stroke-width="0.8" opacity="0.5"/>
+  <line x1="383" y1="195" x2="388" y2="204" stroke="#4a7da8" stroke-width="0.8" opacity="0.5"/>
+  <line x1="417" y1="195" x2="412" y2="204" stroke="#4a7da8" stroke-width="0.8" opacity="0.5"/>
+
+  <!-- RL circular arrow -->
+  <path d="M430 178 Q445 178 445 195 Q445 212 430 212" fill="none" stroke="#4a7da8" stroke-width="1.8" stroke-linecap="round"/>
+  <polygon points="432,176 442,178 432,182" fill="#4a7da8"/>
+  <text x="448" y="196" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="7" fill="#4a7da8" font-weight="bold">RL</text>
+
+  <!-- Year label era 2 -->
+  <text x="400" y="310" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">2000</text>
+  <text x="400" y="328" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#1a1a2e">— 2018</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="500" y1="250" x2="530" y2="250" stroke="#c0d0e0" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="528,244 538,250 528,256" fill="#c0d0e0"/>
+  <line x1="500" y1="280" x2="530" y2="280" stroke="#c0d0e0" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="528,274 538,280 528,286" fill="#c0d0e0"/>
+  <line x1="500" y1="310" x2="530" y2="310" stroke="#c0d0e0" stroke-width="2.5" stroke-linecap="round"/>
+  <polygon points="528,304 538,310 528,316" fill="#c0d0e0"/>
+
+  <!-- Era 3: 2023-present - LLM core + robot -->
+  <rect x="545" y="110" width="190" height="140" rx="14" ry="14" fill="white" stroke="url(#era3Grad)" stroke-width="2" opacity="0.95"/>
+  <rect x="545" y="110" width="190" height="40" rx="14" ry="14" fill="url(#era3Grad)" opacity="0.12"/>
+  <text x="640" y="137" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#2b6aae">LLM智能体时代</text>
+  <text x="640" y="155" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#409EFF">2023 – 至今</text>
+
+  <!-- Glowing LLM core -->
+  <circle cx="640" cy="195" r="18" fill="url(#glowGrad)" opacity="0.25"/>
+  <circle cx="640" cy="195" r="14" fill="url(#glowGrad)" opacity="0.4"/>
+  <circle cx="640" cy="195" r="10" fill="url(#glowGrad)" opacity="0.6"/>
+  <circle cx="640" cy="195" r="7" fill="#409EFF"/>
+  <text x="640" y="198" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="6" fill="white" font-weight="bold">LLM</text>
+
+  <!-- Robot figure emerging from core -->
+  <!-- Robot body -->
+  <rect x="658" y="185" width="22" height="28" rx="4" ry="4" fill="#409EFF" opacity="0.85"/>
+  <!-- Robot head -->
+  <rect x="660" y="177" width="18" height="12" rx="3" ry="3" fill="#409EFF" opacity="0.9"/>
+  <!-- Robot eyes -->
+  <circle cx="666" cy="183" r="2" fill="white"/>
+  <circle cx="672" cy="183" r="2" fill="white"/>
+  <!-- Robot antenna -->
+  <line x1="669" y1="177" x2="669" y2="171" stroke="#409EFF" stroke-width="1.5"/>
+  <circle cx="669" cy="169" r="2" fill="#409EFF"/>
+
+  <!-- Tool icons held by robot -->
+  <!-- Search icon -->
+  <circle cx="662" cy="200" r="4" fill="none" stroke="white" stroke-width="1.2"/>
+  <line x1="665" y1="203" x2="668" y2="206" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- Code icon -->
+  <text x="676" y="204" text-anchor="middle" font-family="monospace" font-size="8" fill="white" font-weight="bold">&lt;/&gt;</text>
+
+  <!-- Calendar icon -->
+  <rect x="660" y="210" width="8" height="7" rx="1" fill="none" stroke="white" stroke-width="1"/>
+  <line x1="660" y1="212" x2="668" y2="212" stroke="white" stroke-width="0.8"/>
+  <line x1="662" y1="209" x2="662" y2="211" stroke="white" stroke-width="0.8"/>
+  <line x1="666" y1="209" x2="666" y2="211" stroke="white" stroke-width="0.8"/>
+
+  <!-- Year label era 3 -->
+  <text x="640" y="310" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">2023</text>
+  <text x="640" y="328" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#1a1a2e">— 至今</text>
+
+  <!-- Bottom definition section -->
+  <rect x="40" y="355" width="720" height="130" rx="10" ry="10" fill="white" stroke="#d0ddee" stroke-width="1.5" opacity="0.9"/>
+
+  <text x="60" y="380" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">核心定义要素（深度解析）</text>
+  <text x="60" y="400" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#3a4a5e">AI智能体必须具备以下四个基本能力，每一个都值得深入理解：</text>
+
+  <!-- Four capability icons -->
+  <!-- 1. Perception -->
+  <circle cx="120" cy="440" r="18" fill="#409EFF" opacity="0.15"/>
+  <path d="M112 440 Q120 430 128 440 Q120 450 112 440Z" fill="none" stroke="#409EFF" stroke-width="1.8"/>
+  <circle cx="120" cy="440" r="3" fill="#409EFF"/>
+  <text x="120" y="468" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#1a1a2e" font-weight="bold">感知</text>
+
+  <!-- 2. Reasoning -->
+  <circle cx="230" cy="440" r="18" fill="#409EFF" opacity="0.15"/>
+  <polygon points="230,428 238,438 235,448 225,448 222,438" fill="none" stroke="#409EFF" stroke-width="1.8"/>
+  <text x="230" y="468" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#1a1a2e" font-weight="bold">推理</text>
+
+  <!-- 3. Memory -->
+  <circle cx="340" cy="440" r="18" fill="#409EFF" opacity="0.15"/>
+  <rect x="328" y="432" width="24" height="16" rx="2" fill="none" stroke="#409EFF" stroke-width="1.8"/>
+  <line x1="328" y1="438" x2="352" y2="438" stroke="#409EFF" stroke-width="1.2"/>
+  <circle cx="340" cy="445" r="2" fill="#409EFF"/>
+  <text x="340" y="468" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#1a1a2e" font-weight="bold">记忆</text>
+
+  <!-- 4. Action -->
+  <circle cx="450" cy="440" r="18" fill="#409EFF" opacity="0.15"/>
+  <path d="M438 440 L450 428 L462 440 L450 452Z" fill="none" stroke="#409EFF" stroke-width="1.8"/>
+  <polygon points="450,432 454,438 450,444 446,438" fill="#409EFF" opacity="0.6"/>
+  <text x="450" y="468" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#1a1a2e" font-weight="bold">行动</text>
+
+  <!-- Connecting dots between capabilities -->
+  <circle cx="165" cy="440" r="2" fill="#c0d0e0"/>
+  <circle cx="175" cy="440" r="2" fill="#c0d0e0"/>
+  <circle cx="185" cy="440" r="2" fill="#c0d0e0"/>
+  <circle cx="275" cy="440" r="2" fill="#c0d0e0"/>
+  <circle cx="285" cy="440" r="2" fill="#c0d0e0"/>
+  <circle cx="295" cy="440" r="2" fill="#c0d0e0"/>
+  <circle cx="385" cy="440" r="2" fill="#c0d0e0"/>
+  <circle cx="395" cy="440" r="2" fill="#c0d0e0"/>
+  <circle cx="405" cy="440" r="2" fill="#c0d0e0"/>
+</svg>

@@ -51,6 +51,8 @@
 | 1024 tokens | 100-200 tokens | 10-20% | 技术文档，学术论文 |
 | 2048 tokens | 200-400 tokens | 10-20% | 长篇报告，法律文书 |
 
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration showing the critical role of chunking in RAG quality as a pipeline with amplification effect. At the top "Chunking Quality" as the first domino/gear, cascading down to affect "Retrieval Precision" → "Context Completeness" → "Answer Quality". Three chunk size examples shown side by side: "Small Chunk (100-300 tokens)" as tiny puzzle pieces (high precision, low recall), "Medium Chunk (500-1000 tokens)" as balanced puzzle pieces (optimal), "Large Chunk (1500-3000 tokens)" as oversized pieces (high recall, low precision). Overlap visualization showing two adjacent chunks with a highlighted shared region. Tech blue #409EFF primary, white background.
+
 ## 二、主流切块策略深度对比
 
 ### 2.1 固定大小切块（Fixed-size Chunking）
@@ -615,6 +617,8 @@ def chunk_conversation(conversation: list, max_turns: int = 8):
     return chunks
 ```
 
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration comparing five chunking strategies as horizontal panels. Panel 1 "Fixed-Size": document cut by character count with scissors, showing uneven breaks. Panel 2 "Recursive": separator hierarchy pyramid on the left (paragraph→sentence→word→character), document progressively split on the right. Panel 3 "Semantic": adjacent sentences with similarity scores between them, a "cliff" drop indicating the split point. Panel 4 "Structural": Markdown/HTML document with H1/H2/H3 headers highlighted as natural split boundaries. Panel 5 "Code": Python function/class blocks as natural chunks. Tech blue #409EFF primary, white background, clean comparison.
+
 ## 三、嵌入模型选择：从通用到专用
 
 ### 3.1 嵌入模型的评估维度
@@ -844,6 +848,8 @@ result = select_embedding_model("zh", "general", "local", "medium")
 print(f"推荐模型: {result['model']}")
 print(f"推荐理由: {result['reason']}")
 ```
+
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration of embedding model selection as a funnel/filter process. Incoming text at the top passes through evaluation dimensions arranged as filter layers: "Quality" layer (MTEB ranking badge, domain fit gauge), "Engineering" layer (dimension size slider, speed gauge, deployment toggle API vs Local), "Language" layer (language flags: ZH, EN, multilingual). At the bottom, a comparison grid showing popular models (OpenAI text-embedding-3, BGE, E5, Jina) with their key specs. A Matryoshka doll icon representing Matryoshka embeddings with dimension layers (256, 512, 1024, 3072). Tech blue #409EFF primary, white background.
 
 ## 四、嵌入质量评估
 
@@ -1175,6 +1181,8 @@ def production_chunking_pipeline(file_path: str) -> list:
     
     return validated_chunks
 ```
+
+**Image-Prompt(英文绘图词):** Flat-design 2D vector illustration showing best practices and common pitfalls as a two-column comparison. Left column "Best Practices" with green checkmark icons: analyzing document features first (document analysis magnifying glass), preserving metadata (tag icon), starting with recursive chunking (recommended badge), A/B testing (split test icon), small chunk retrieval + large chunk return (two arrows of different sizes). Right column "Pitfalls" with red X icons: using default parameters blindly (warning triangle), ignoring multimodal content (image+table inside PDF), losing document context after chunking (broken chain icon), same strategy for all doc types (hammer hitting different shaped objects). Tech blue #409EFF primary, white background, clean educational layout.
 
 ## 六、完整实战：端到端的文档处理流水线
 

@@ -12,6 +12,11 @@
 
 本章将深入对比这两种范式，从定义、执行机制、适用场景等多个维度展开分析，并提供一套实用的决策框架，帮助你在实际开发中做出正确的选择。
 
+Image-Prompt(workflow-vs-agent-overview):
+```
+A flat-design 2D vector illustration showing a split-scene comparison of two task execution philosophies. Left side (Workflow): a pre-drawn map with all routes clearly marked, a delivery truck following a highlighted path along fixed roads — labeled "Map Navigation: Follow the Known Path". Right side (Agent): a compass pointing toward a destination star on the horizon, a robot hiker dynamically choosing routes through varied terrain, adapting to obstacles — labeled "Compass Navigation: Find Your Own Way". The dividing line shows a cost comparison: "Deterministic tasks with Agent = unnecessary cost & delay". Tech blue (#409EFF) for Agent/compass side, muted blue-gray for Workflow/map side. Deep blue (#1a1a2e) labels, clean white background, split symmetrical layout.
+```
+
 ## 工作流（Workflow）的定义
 
 ### 什么是工作流
@@ -241,6 +246,11 @@ app = workflow.compile()
 
 **关键观察**：这个工作流虽然包含了分支和条件判断，但所有的路径——从开始到结束的每一种可能性——都是在设计时就已经确定的。风控分数小于30一定走approve，大于70一定走reject，没有任何"意外"的空间。
 
+Image-Prompt(workflow-definition-dag):
+```
+A flat-design 2D vector illustration showing a Workflow as a Directed Acyclic Graph (DAG). The main visual is a clean directed graph with labeled nodes (A, B, C, D, E, F) connected by directional arrows, forming a clear flow from Entry to End. Each node is a rounded rectangle with a task icon (validation, payment, inventory, fraud check, approve, reject). Branching paths show conditional logic (if/else) at node splits. A legend explains: "Node = Task Step", "Edge = Execution Order". The four key features are displayed as badges around the graph: "Predefined", "Deterministic", "Structured", "Predictable". Tech blue (#409EFF) for nodes and arrows, deep blue (#1a1a2e) for labels, clean white background, centered layout.
+```
+
 ## AI智能体（AI Agent）的定义
 
 ### 什么是Agent式执行
@@ -397,6 +407,11 @@ class RefundAgent:
 
 **关键差异**：工作流的所有分支（质量问题、不想要了、大额审核...）在编写代码时就已经硬编码了。Agent的分支（看图判断是否损坏、查库存决定是否补偿）是运行时由LLM推理产生的，在设计代码时并没有对应的if-else语句。
 
+Image-Prompt(agent-definition-dynamic-graph):
+```
+A flat-design 2D vector illustration showing Agent execution as real-time graph building. Unlike the fixed DAG, this shows a dynamic process: at Time 1, Agent is at node A facing three unknowns (B, C, D) with lightning bolt decision lines. At Time 2, Agent chose C and discovered new options (E, F) that weren't visible before. At Time 3, Agent reached the goal. The visual shows a "fog of war" effect — unexplored paths are grayed out, explored paths are tech blue (#409EFF). The four key features are displayed as badges: "Dynamic", "Adaptive", "Non-deterministic", "Goal-driven". A small comparison inset shows: "Workflow = traversing a known map" vs "Agent = building the map as you go". Deep blue (#1a1a2e) labels, clean white background.
+```
+
 ## 核心区别深度解析
 
 ### 确定性 vs 非确定性
@@ -476,6 +491,11 @@ Agent的世界观：
 | **业务逻辑变更** | 重：需要修改流程定义并重新测试 | 轻：调整提示词或工具即可 |
 | **适合的团队** | 业务分析师 + 工程师 | AI工程师 + 提示词工程师 |
 | **典型框架** | Temporal, Airflow, LangGraph, Camunda | LangChain Agent, OpenAI Agent SDK, CrewAI |
+
+Image-Prompt(workflow-vs-agent-path-comparison):
+```
+A flat-design 2D vector illustration showing two path-space visualizations side by side. Left: "Workflow Path Space" — a finite, clearly bounded decision tree with all paths visible and enumerated (Path 1: A→B→D→F, Path 2: A→C→E→F, etc.), each path numbered like a subway map. Labels: "All N paths predefined", "Testable, auditable, optimizable". Right: "Agent Path Space" — an infinite-expanding tree with a root node at center, branching exponentially outward with dotted "possible but unexplored" branches radiating into a star shape. Labels: "Exponential possible paths", "Cannot fully predict, cannot fully test". Tech blue (#409EFF) for Agent side, structured gray-blue for Workflow side. Deep blue (#1a1a2e) labels, clean white background, comparison layout.
+```
 
 ## 决策树：什么场景用工作流？什么场景用Agent？
 
@@ -560,6 +580,11 @@ Agent的世界观：
 | 代码Bug诊断和修复 | ✅ Agent | 每个Bug都不一样，需要动态推理 |
 | 旅行行程规划 | ✅ Agent | 每个用户偏好不同，方案千差万别 |
 | 个人日程管理 | ✅ Agent | 动态冲突解决，灵活调整 |
+
+Image-Prompt(workflow-vs-agent-decision-tree):
+```
+A flat-design 2D vector illustration showing a decision tree flowchart. Starting from the top: "Automate a Business Process" → five diamond-shaped decision nodes branching downward: Q1 "Can all steps be fully enumerated?" → Q2 "Are transition rules clear and stable?" → Q3 "Error tolerance?" → Q4 "Compliance/audit required?" → Q5 "New unexpected situations frequent?". Each "Yes" and "No" branch leads to a recommendation badge: green for "Workflow", tech blue (#409EFF) for "Agent", and a gradient badge for "Hybrid Mode". The "Four-Principle Quick Guide" appears as a small sidebar: "1. Look at boundaries, 2. Look at changes, 3. Look at consequences, 4. Look at frequency". Deep blue (#1a1a2e) labels, clean white background, centered tree layout.
+```
 
 ## 混合模式：工作流中嵌入智能体节点（Agentic Workflow）
 
@@ -787,6 +812,11 @@ hybrid_app = hybrid_workflow.compile()
    → "Agent不行就按规则来"
 ```
 
+Image-Prompt(hybrid-agentic-workflow):
+```
+A flat-design 2D vector illustration showing a hybrid architecture diagram. The outer structure is a Workflow Engine (labeled "Skeleton") drawn as a solid rounded rectangle with deterministic nodes: Entry → Validation (rule) → Agent Node (dynamic) → Review (rule) → End. The Agent Node is a highlighted tech blue (#409EFF) inner box containing a freeform exploration pattern (labeled "Muscle") with a mini robot navigating between sub-nodes. Bubbles annotate the four design principles: "1. Workflow is skeleton, Agent is muscle", "2. Agent output must be verified", "3. Certain things don't need LLM", "4. Keep fallback path". A small cost comparison table at bottom: Cost, Reliability, Flexibility for Pure Workflow vs Hybrid vs Pure Agent. Deep blue (#1a1a2e) labels, clean white background.
+```
+
 ## 实际案例：客服系统的混合架构
 
 ### 背景
@@ -881,6 +911,11 @@ hybrid_app = hybrid_workflow.compile()
 
 关键洞察：混合方案用280元/天的增量成本，换来了人工介入率从28%降至6%。按每个客服日薪400元计算，相当于节省了约4.5个客服的人力。
 
+Image-Prompt(customer-service-hybrid-architecture):
+```
+A flat-design 2D vector illustration showing a five-layer funnel architecture for a customer service system. Layer 1 (top, widest, light gray): "Quick Router — Keyword + Regex, <10ms, 60% traffic, Near zero cost" with template reply icon. Layer 2: "Intent Classifier — Light NLU, <50ms, +25% traffic" with NLU chip icon. Layer 3: "Standard Workflow — Order/Logistics/Refund, <500ms, +10%" with structured flow icon. Layer 4 (narrower, tech blue #409EFF): "Agent Deep Processing — LLM + Tools, 2-15s, final 4%" with robot brain and tools icon. Layer 5 (narrowest, with a human figure): "Human Review (HITL) — 1%, minutes-hours" with checkbox icon. A performance dashboard card at the bottom shows key metrics: "Resolution Rate: 94%", "Avg Response: 1.2s", "Daily LLM Calls: ~5000", "Human Intervention: 6%". Deep blue (#1a1a2e) labels, clean white background.
+```
+
 ## 总结
 
 工作流和Agent代表了两种任务编排的哲学，没有绝对的优劣之分。
@@ -911,4 +946,9 @@ Agent  = 动态的、自适应的任务执行 → 适合需要判断和推理的
 混合   = 工作流骨架 + Agent节点 → 生产环境的最佳实践
 
 决策原则：能确定的就别让AI猜，AI猜的要设好护栏。
+```
+
+Image-Prompt(workflow-vs-agent-summary):
+```
+A flat-design 2D vector illustration showing a unified summary metaphor. Center: a character holding both a map (Workflow) in one hand and a compass (Agent) in the other, walking forward confidently. Three labeled zones: left zone — "Workflow = Map Navigation" showing a bus on a clearly marked road with street signs (standardized processes); center zone — "Hybrid = Map + Compass" showing main roads with the character consulting a compass at intersections (the practical gold standard); right zone — "Agent = Compass Navigation" showing open terrain with the character following the compass toward a goal star on the horizon (creative problem-solving). The decision formula at the bottom: "SOP exists → Workflow | Case-by-case → Embed Agent | All case-by-case → Full Agent with guardrails". Tech blue (#409EFF) for Agent elements, structured gray for Workflow elements, deep blue (#1a1a2e) labels, clean white background, centered layout.
 ```
