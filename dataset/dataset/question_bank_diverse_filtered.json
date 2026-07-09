@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "generated_at": "2026-06-09T22:02:07.254077",
+    "total_qa": 0,
+    "type_distribution": {
+      "structure": 79,
+      "definition": 502,
+      "summary": 134,
+      "comparison": 96,
+      "method": 190,
+      "principle": 114,
+      "application": 168,
+      "reason": 141,
+      "pros_cons": 1,
+      "enumeration": 39,
+      "example": 26,
+      "process": 3
+    },
+    "difficulty_distribution": {
+      "medium": 658,
+      "easy": 780,
+      "hard": 55
+    },
+    "source_distribution": {
+      "AI Agent 开发全书 原理、框架与企业落地 (李希沅, 王甲君, 武天富, 解敏) (z-library.sk, 1lib.sk, z-lib.sk)": 357,
+      "AI Agent开发与应用基于大模型的智能体构建 [转换版] (凌峰) (z-library.sk, 1lib.sk, z-lib.sk)": 217,
+      "AI Agent开发实战 从基础原理到企业级应用 (郑天民) (z-library.sk, 1lib.sk, z-lib.sk)": 242,
+      "扣子开发AI Agent智能体应用 (宋立桓 王东健 陈铭毅 程东升) (z-library.sk, 1lib.sk, z-lib.sk)": 239,
+      "零基础开发AI Agent (叶涛管锴杨霆辉) (z-library.sk, 1lib.sk, z-lib.sk)": 176,
+      "零基础开发AI Agent——手把手教你用扣子做智能体_叶涛等-202501 (叶涛管锴 张心雨著) (z-library.sk, 1lib.sk, z-lib.sk)": 262
+    },
+    "filter_summary": {
+      "original_total": 1691,
+      "removed_total": 198,
+      "remaining_total": 1493,
+      "removal_reasons": {
+        "误用\"相比...有什么优势\"": 32,
+        "包含\"包括包括\"重复词": 6,
+        "100%完全重复": 29,
+        "答案无实质内容(仅目录)": 90,
+        "无意义\"第X章\"引用问题": 5,
+        "问题不完整/截断": 1,
+        "同章节极高相似(>85%)": 34,
+        "自我指涉冗余": 1
+      }
+    },
+    "note": "已由全新的高质量题库v2替代。"
+  },
+  "qa_pairs": []
+}

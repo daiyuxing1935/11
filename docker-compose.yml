@@ -1,0 +1,13 @@
+services:
+  backend:
+    build: ./backend
+    container_name: ai-learning-backend
+    ports:
+      - 127.0.0.1:8001:8000
+    volumes:
+      - backend_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  backend_data:
+    driver: local
