@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F5FAFF"/>
+    </linearGradient>
+    <linearGradient id="bulbGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#7BC0FF"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#409EFF" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">多智能体系统核心优势</text>
+
+  <!-- ============ 左上：专业化 ============ -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="58" width="355" height="195" rx="12" fill="url(#cardGrad1)" stroke="#409EFF" stroke-width="1.5"/>
+    <!-- 标题栏 -->
+    <rect x="30" y="58" width="355" height="36" rx="12" fill="#409EFF" opacity="0.1"/>
+    <rect x="30" y="78" width="355" height="16" fill="#409EFF" opacity="0.1"/>
+    <text x="207" y="82" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">专业化</text>
+
+    <!-- 智能体1：搜索 -->
+    <rect x="52" y="110" width="96" height="56" rx="8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+    <text x="100" y="132" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">🔍 搜索</text>
+    <rect x="62" y="142" width="76" height="18" rx="4" fill="#409EFF" opacity="0.15"/>
+    <text x="100" y="155" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF" font-weight="bold">Sonnet</text>
+
+    <!-- 智能体2：代码 -->
+    <rect x="162" y="110" width="96" height="56" rx="8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+    <text x="210" y="132" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">💻 代码</text>
+    <rect x="172" y="142" width="76" height="18" rx="4" fill="#409EFF" opacity="0.15"/>
+    <text x="210" y="155" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF" font-weight="bold">Haiku</text>
+
+    <!-- 智能体3：编辑 -->
+    <rect x="272" y="110" width="96" height="56" rx="8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+    <text x="320" y="132" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">✏️ 编辑</text>
+    <rect x="282" y="142" width="76" height="18" rx="4" fill="#409EFF" opacity="0.15"/>
+    <text x="320" y="155" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF" font-weight="bold">Sonnet</text>
+
+    <!-- 标注 -->
+    <rect x="52" y="180" width="120" height="24" rx="12" fill="#409EFF" opacity="0.12"/>
+    <text x="112" y="196" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#409EFF" font-weight="bold">各司其职</text>
+  </g>
+
+  <!-- ============ 右上：并行 ============ -->
+  <g filter="url(#shadow)">
+    <rect x="415" y="58" width="355" height="195" rx="12" fill="url(#cardGrad1)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="415" y="58" width="355" height="36" rx="12" fill="#409EFF" opacity="0.1"/>
+    <rect x="415" y="78" width="355" height="16" fill="#409EFF" opacity="0.1"/>
+    <text x="592" y="82" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">并行处理</text>
+
+    <!-- 三个并行智能体 -->
+    <rect x="437" y="108" width="88" height="44" rx="8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+    <text x="481" y="135" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">智能体 A</text>
+
+    <rect x="537" y="108" width="88" height="44" rx="8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+    <text x="581" y="135" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">智能体 B</text>
+
+    <rect x="637" y="108" width="88" height="44" rx="8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+    <text x="681" y="135" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">智能体 C</text>
+
+    <!-- 并行箭头 -->
+    <line x1="481" y1="152" x2="481" y2="172" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+    <line x1="581" y1="152" x2="581" y2="172" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+    <line x1="681" y1="152" x2="681" y2="172" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+    <!-- 速度对比 -->
+    <rect x="437" y="178" width="150" height="28" rx="6" fill="#FFF3E0" stroke="#FF9800" stroke-width="1"/>
+    <text x="512" y="197" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#E65100">串行 12s →</text>
+
+    <rect x="597" y="178" width="150" height="28" rx="6" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1"/>
+    <text x="672" y="197" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#2E7D32">并行 7s ✓</text>
+
+    <!-- 标注 -->
+    <rect x="437" y="215" width="120" height="24" rx="12" fill="#409EFF" opacity="0.12"/>
+    <text x="497" y="231" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#409EFF" font-weight="bold">效率倍增</text>
+  </g>
+
+  <!-- ============ 左下：鲁棒性 ============ -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="273" width="355" height="195" rx="12" fill="url(#cardGrad1)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="30" y="273" width="355" height="36" rx="12" fill="#409EFF" opacity="0.1"/>
+    <rect x="30" y="293" width="355" height="16" fill="#409EFF" opacity="0.1"/>
+    <text x="207" y="297" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">鲁棒性</text>
+
+    <!-- 三个分析师 -->
+    <rect x="52" y="325" width="88" height="44" rx="8" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1"/>
+    <text x="96" y="352" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#2E7D32">分析师 1 ✓</text>
+
+    <rect x="152" y="325" width="88" height="44" rx="8" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1"/>
+    <text x="196" y="352" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#2E7D32">分析师 2 ✓</text>
+
+    <rect x="252" y="325" width="88" height="44" rx="8" fill="#FFEBEE" stroke="#F44336" stroke-width="1"/>
+    <text x="296" y="352" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#C62828">分析师 3 ✗</text>
+
+    <!-- 交叉验证 -->
+    <rect x="52" y="382" width="200" height="28" rx="6" fill="#E3F2FD" stroke="#409EFF" stroke-width="1"/>
+    <text x="152" y="401" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">交叉验证通过 2/3</text>
+
+    <!-- 标注 -->
+    <rect x="262" y="382" width="106" height="28" rx="12" fill="#409EFF" opacity="0.12"/>
+    <text x="315" y="401" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#409EFF" font-weight="bold">容错机制</text>
+  </g>
+
+  <!-- ============ 右下：涌现智能 ============ -->
+  <g filter="url(#shadow)">
+    <rect x="415" y="273" width="355" height="195" rx="12" fill="url(#cardGrad1)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="415" y="273" width="355" height="36" rx="12" fill="#409EFF" opacity="0.1"/>
+    <rect x="415" y="293" width="355" height="16" fill="#409EFF" opacity="0.1"/>
+    <text x="592" y="297" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">涌现智能</text>
+
+    <!-- 交互的智能体 -->
+    <circle cx="510" cy="345" r="16" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="510" y="350" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">A</text>
+
+    <circle cx="570" cy="330" r="16" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="570" y="335" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">B</text>
+
+    <circle cx="620" cy="345" r="16" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="620" y="350" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">C</text>
+
+    <circle cx="565" cy="365" r="16" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="565" y="370" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">D</text>
+
+    <!-- 交互连线 -->
+    <line x1="526" y1="345" x2="554" y2="335" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+    <line x1="586" y1="335" x2="604" y2="345" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+    <line x1="554" y1="360" x2="526" y2="350" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+    <line x1="604" y1="350" x2="586" y2="360" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+    <line x1="554" y1="335" x2="554" y2="360" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+
+    <!-- 灯泡 -->
+    <circle cx="680" cy="345" r="28" fill="url(#bulbGrad)" opacity="0.3"/>
+    <circle cx="680" cy="345" r="22" fill="url(#bulbGrad)" opacity="0.5"/>
+    <circle cx="680" cy="345" r="16" fill="url(#bulbGrad)" opacity="0.8"/>
+    <text x="680" y="350" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#fff" font-weight="bold">💡</text>
+
+    <!-- 标注 -->
+    <rect x="437" y="400" width="130" height="24" rx="12" fill="#409EFF" opacity="0.12"/>
+    <text x="502" y="416" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#409EFF" font-weight="bold">1+1 &gt; 2</text>
+  </g>
+
+</svg>

@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e8f4f8"/>
+    </linearGradient>
+    <linearGradient id="level1Grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3a8ee0"/>
+    </linearGradient>
+    <linearGradient id="level2Grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5aabf5"/>
+      <stop offset="100%" stop-color="#409EFF"/>
+    </linearGradient>
+    <linearGradient id="level3Grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6db8ff"/>
+      <stop offset="100%" stop-color="#5aabf5"/>
+    </linearGradient>
+    <linearGradient id="level4Grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#82c4ff"/>
+      <stop offset="100%" stop-color="#6db8ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#409EFF" flood-opacity="0.2"/>
+    </filter>
+    <filter id="starGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- 标题 -->
+  <text x="400" y="48" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e" letter-spacing="2">提示工程学习路径</text>
+  <text x="400" y="70" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666" letter-spacing="1">Prompt Engineering Learning Roadmap</text>
+
+  <!-- 金字塔第1层（底部） - 零样本提示 -->
+  <rect x="200" y="380" width="400" height="52" rx="10" fill="url(#level1Grad)" filter="url(#shadow)"/>
+  <text x="400" y="412" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" letter-spacing="1">零样本提示 / Zero-Shot</text>
+
+  <!-- 金字塔第2层 -->
+  <rect x="240" y="308" width="320" height="52" rx="10" fill="url(#level2Grad)" filter="url(#shadow)"/>
+  <text x="400" y="340" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" letter-spacing="1">少样本提示 / Few-Shot</text>
+
+  <!-- 金字塔第3层 -->
+  <rect x="280" y="236" width="240" height="52" rx="10" fill="url(#level3Grad)" filter="url(#shadow)"/>
+  <text x="400" y="268" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" letter-spacing="1">思维链 / Chain-of-Thought</text>
+
+  <!-- 金字塔第4层（顶部） -->
+  <rect x="320" y="164" width="160" height="52" rx="10" fill="url(#level4Grad)" filter="url(#shadow)"/>
+  <text x="400" y="196" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" font-weight="bold" fill="#ffffff" letter-spacing="1">思维树 / Tree of Thoughts</text>
+
+  <!-- 连接线（层级之间的视觉连接） -->
+  <line x1="400" y1="380" x2="400" y2="360" stroke="#409EFF" stroke-width="2" stroke-dasharray="4,3" opacity="0.5"/>
+  <line x1="400" y1="308" x2="400" y2="288" stroke="#409EFF" stroke-width="2" stroke-dasharray="4,3" opacity="0.5"/>
+  <line x1="400" y1="236" x2="400" y2="216" stroke="#409EFF" stroke-width="2" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- 右侧箭头 - 进阶方向 -->
+  <g transform="translate(540, 180)">
+    <!-- 箭头线 -->
+    <line x1="0" y1="30" x2="60" y2="30" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="60" y1="30" x2="50" y2="22" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="60" y1="30" x2="50" y2="38" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- 标注文字 -->
+    <text x="30" y="18" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">进阶方向</text>
+    <text x="30" y="58" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666">Next Steps</text>
+  </g>
+
+  <!-- 顶部星星图标 -->
+  <g transform="translate(620, 155)" filter="url(#starGlow)">
+    <polygon points="0,-18 5,-6 18,-6 8,3 12,16 0,9 -12,16 -8,3 -18,-6 -5,-6" fill="#FFD700" opacity="0.9"/>
+    <polygon points="0,-12 3,-4 12,-4 5,2 8,11 0,6 -8,11 -5,2 -12,-4 -3,-4" fill="#FFF3B0" opacity="0.8"/>
+  </g>
+
+  <!-- 层级标签（左侧标注） -->
+  <!-- 第1层标注 -->
+  <text x="170" y="412" text-anchor="end" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">基础</text>
+
+  <!-- 第2层标注 -->
+  <text x="210" y="340" text-anchor="end" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">进阶</text>
+
+  <!-- 第3层标注 -->
+  <text x="250" y="268" text-anchor="end" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">高阶</text>
+
+  <!-- 第4层标注 -->
+  <text x="290" y="196" text-anchor="end" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">专家</text>
+
+  <!-- 底部装饰线 -->
+  <line x1="200" y1="455" x2="600" y2="455" stroke="#409EFF" stroke-width="1.5" opacity="0.3" stroke-linecap="round"/>
+
+  <!-- 底部说明文字 -->
+  <text x="400" y="478" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#999" letter-spacing="1">从基础到专家，逐步掌握提示工程核心技巧</text>
+</svg>

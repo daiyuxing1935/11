@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FF"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="fadeLeft" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(255,255,255,0)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.85)"/>
+    </linearGradient>
+    <linearGradient id="fadeRight" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%" stop-color="rgba(255,255,255,0)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.85)"/>
+    </linearGradient>
+    <filter id="blurLeft">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+    <filter id="blurRight">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.1"/>
+    </filter>
+    <clipPath id="windowClip">
+      <rect x="230" y="60" width="340" height="260" rx="16"/>
+    </clipPath>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">上下文窗口（Context Window）概念</text>
+
+  <!-- 窗口框架 -->
+  <rect x="225" y="55" width="350" height="270" rx="18" fill="none" stroke="#409EFF" stroke-width="3" filter="url(#shadow)"/>
+  <rect x="225" y="55" width="350" height="270" rx="18" fill="rgba(64,158,255,0.04)"/>
+
+  <!-- 窗口内可见内容 -->
+  <g clip-path="url(#windowClip)">
+    <!-- 可见文本行 -->
+    <rect x="250" y="80" width="280" height="18" rx="4" fill="#409EFF" opacity="0.9"/>
+    <rect x="250" y="108" width="260" height="18" rx="4" fill="#409EFF" opacity="0.85"/>
+    <rect x="250" y="136" width="290" height="18" rx="4" fill="#409EFF" opacity="0.9"/>
+    <rect x="250" y="164" width="270" height="18" rx="4" fill="#409EFF" opacity="0.85"/>
+    <rect x="250" y="192" width="285" height="18" rx="4" fill="#409EFF" opacity="0.9"/>
+    <rect x="250" y="220" width="255" height="18" rx="4" fill="#409EFF" opacity="0.85"/>
+    <rect x="250" y="248" width="275" height="18" rx="4" fill="#409EFF" opacity="0.9"/>
+    <rect x="250" y="276" width="265" height="18" rx="4" fill="#409EFF" opacity="0.8"/>
+  </g>
+
+  <!-- 窗口左侧模糊内容 -->
+  <g filter="url(#blurLeft)" opacity="0.3">
+    <rect x="140" y="90" width="90" height="14" rx="3" fill="#409EFF"/>
+    <rect x="120" y="120" width="110" height="14" rx="3" fill="#409EFF"/>
+    <rect x="130" y="150" width="100" height="14" rx="3" fill="#409EFF"/>
+    <rect x="145" y="180" width="85" height="14" rx="3" fill="#409EFF"/>
+    <rect x="125" y="210" width="105" height="14" rx="3" fill="#409EFF"/>
+    <rect x="135" y="240" width="95" height="14" rx="3" fill="#409EFF"/>
+    <rect x="150" y="270" width="80" height="14" rx="3" fill="#409EFF"/>
+  </g>
+  <!-- 左侧淡出遮罩 -->
+  <rect x="100" y="55" width="130" height="270" fill="url(#fadeLeft)"/>
+
+  <!-- 窗口右侧模糊内容 -->
+  <g filter="url(#blurRight)" opacity="0.3">
+    <rect x="575" y="90" width="90" height="14" rx="3" fill="#409EFF"/>
+    <rect x="585" y="120" width="80" height="14" rx="3" fill="#409EFF"/>
+    <rect x="570" y="150" width="100" height="14" rx="3" fill="#409EFF"/>
+    <rect x="580" y="180" width="85" height="14" rx="3" fill="#409EFF"/>
+    <rect x="575" y="210" width="95" height="14" rx="3" fill="#409EFF"/>
+    <rect x="590" y="240" width="75" height="14" rx="3" fill="#409EFF"/>
+    <rect x="580" y="270" width="90" height="14" rx="3" fill="#409EFF"/>
+  </g>
+  <!-- 右侧淡出遮罩 -->
+  <rect x="570" y="55" width="130" height="270" fill="url(#fadeRight)"/>
+
+  <!-- 窗口标签 -->
+  <rect x="245" y="340" width="120" height="26" rx="13" fill="#409EFF" opacity="0.15"/>
+  <text x="305" y="357" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#409EFF" font-weight="bold">窗口可见</text>
+
+  <rect x="440" y="340" width="120" height="26" rx="13" fill="#1a1a2e" opacity="0.08"/>
+  <text x="500" y="357" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" opacity="0.5">窗口外模糊</text>
+
+  <!-- 底部对话模拟 -->
+  <rect x="50" y="395" width="700" height="90" rx="14" fill="white" stroke="#E0E8F0" stroke-width="1.5" filter="url(#shadow)"/>
+
+  <!-- 对话气泡 -->
+  <!-- 旧消息（淡出） -->
+  <rect x="70" y="405" width="180" height="22" rx="11" fill="#F0F4F8" opacity="0.35"/>
+  <text x="160" y="420" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e" opacity="0.3">你好，请问今天天气如何？</text>
+
+  <rect x="270" y="405" width="160" height="22" rx="11" fill="#409EFF" opacity="0.15"/>
+  <text x="350" y="420" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e" opacity="0.25">今天天气晴朗，温度...</text>
+
+  <!-- 中间消息（半透明） -->
+  <rect x="70" y="433" width="200" height="22" rx="11" fill="#F0F4F8" opacity="0.55"/>
+  <text x="170" y="448" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e" opacity="0.5">那明天呢？会下雨吗？</text>
+
+  <rect x="290" y="433" width="190" height="22" rx="11" fill="#409EFF" opacity="0.25"/>
+  <text x="385" y="448" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e" opacity="0.45">明天预计有雨，建议...</text>
+
+  <!-- 最新消息（清晰） -->
+  <rect x="70" y="461" width="220" height="22" rx="11" fill="#F0F4F8"/>
+  <text x="180" y="476" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">好的，那后天呢？</text>
+
+  <rect x="310" y="461" width="200" height="22" rx="11" fill="#409EFF" opacity="0.35"/>
+  <text x="410" y="476" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" opacity="0.7">后天多云转晴，气温...</text>
+
+  <!-- 窗口边界指示箭头 -->
+  <path d="M400 388 L395 380 L405 380 Z" fill="#409EFF" opacity="0.5"/>
+  <line x1="400" y1="388" x2="400" y2="395" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- 问题标注 -->
+  <rect x="610" y="60" width="160" height="44" rx="22" fill="white" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+  <circle cx="630" cy="82" r="10" fill="#409EFF" opacity="0.15"/>
+  <text x="630" y="87" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#409EFF" font-weight="bold">?</text>
+  <text x="660" y="87" font-family="sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">模型记住了什么？</text>
+
+  <!-- 标注1：窗口 -->
+  <line x1="225" y1="55" x2="160" y2="55" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3" opacity="0.6"/>
+  <rect x="80" y="46" width="80" height="20" rx="10" fill="#E8F4FF" stroke="#409EFF" stroke-width="1"/>
+  <text x="120" y="60" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">上下文窗口</text>
+
+  <!-- 标注2：可见 -->
+  <line x1="400" y1="190" x2="400" y2="130" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3" opacity="0.6"/>
+  <rect x="365" y="110" width="70" height="20" rx="10" fill="#E8F4FF" stroke="#409EFF" stroke-width="1"/>
+  <text x="400" y="124" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">可见Token</text>
+
+  <!-- 标注3：模糊 -->
+  <line x1="140" y1="165" x2="100" y2="130" stroke="#1a1a2e" stroke-width="1.2" stroke-dasharray="4,3" opacity="0.4"/>
+  <rect x="60" y="110" width="70" height="20" rx="10" fill="white" stroke="#1a1a2e" stroke-width="0.8" opacity="0.5"/>
+  <text x="95" y="124" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e" opacity="0.5">遗忘Token</text>
+
+  <!-- 标注4：对话 -->
+  <line x1="170" y1="461" x2="170" y2="500" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3" opacity="0.5"/>
+  <rect x="130" y="480" width="80" height="20" rx="10" fill="#E8F4FF" stroke="#409EFF" stroke-width="1"/>
+  <text x="170" y="494" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">对话历史</text>
+
+  <!-- 标注5：边界 -->
+  <line x1="575" y1="190" x2="620" y2="130" stroke="#1a1a2e" stroke-width="1.2" stroke-dasharray="4,3" opacity="0.4"/>
+  <rect x="590" y="110" width="80" height="20" rx="10" fill="white" stroke="#1a1a2e" stroke-width="0.8" opacity="0.5"/>
+  <text x="630" y="124" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e" opacity="0.5">窗口边界</text>
+
+  <!-- 标注6：遗忘 -->
+  <line x1="660" y1="270" x2="720" y2="230" stroke="#1a1a2e" stroke-width="1.2" stroke-dasharray="4,3" opacity="0.4"/>
+  <rect x="690" y="210" width="80" height="20" rx="10" fill="white" stroke="#1a1a2e" stroke-width="0.8" opacity="0.5"/>
+  <text x="730" y="224" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e" opacity="0.5">信息遗忘</text>
+
+</svg>

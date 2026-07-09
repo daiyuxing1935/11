@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="trophyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#FFA500"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">思维之树 · 三大支柱</text>
+
+  <!-- 三角形连线 -->
+  <!-- 底部左 → 底部右 -->
+  <line x1="145" y1="370" x2="655" y2="370" stroke="#409EFF" stroke-width="2.5" stroke-dasharray="6,4" opacity="0.7"/>
+  <!-- 底部左 → 顶部 -->
+  <line x1="145" y1="370" x2="400" y2="105" stroke="#409EFF" stroke-width="2.5" stroke-dasharray="6,4" opacity="0.7"/>
+  <!-- 底部右 → 顶部 -->
+  <line x1="655" y1="370" x2="400" y2="105" stroke="#409EFF" stroke-width="2.5" stroke-dasharray="6,4" opacity="0.7"/>
+
+  <!-- 顶部：战略搜索 -->
+  <g transform="translate(400,105)">
+    <!-- 圆形背景 -->
+    <circle cx="0" cy="0" r="48" fill="white" stroke="#409EFF" stroke-width="2.5"/>
+    <!-- BFS 图标（水平层） -->
+    <rect x="-22" y="-18" width="12" height="12" rx="2" fill="#409EFF" opacity="0.8"/>
+    <rect x="-6" y="-18" width="12" height="12" rx="2" fill="#409EFF" opacity="0.6"/>
+    <rect x="10" y="-18" width="12" height="12" rx="2" fill="#409EFF" opacity="0.4"/>
+    <!-- DFS 图标（垂直路径） -->
+    <rect x="-22" y="-2" width="12" height="12" rx="2" fill="#409EFF" opacity="0.7"/>
+    <rect x="-22" y="14" width="12" height="12" rx="2" fill="#409EFF" opacity="0.5"/>
+    <!-- 箭头 -->
+    <polygon points="18,-6 24,-12 24,0" fill="#409EFF" opacity="0.6"/>
+    <polygon points="-16,28 -22,22 -10,22" fill="#409EFF" opacity="0.5"/>
+  </g>
+  <text x="400" y="175" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">战略搜索</text>
+  <text x="400" y="193" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">BFS / DFS 路径</text>
+
+  <!-- 底部左：多分支生成 -->
+  <g transform="translate(145,370)">
+    <circle cx="0" cy="0" r="48" fill="white" stroke="#409EFF" stroke-width="2.5"/>
+    <!-- 分支树图标 -->
+    <line x1="0" y1="-10" x2="0" y2="20" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="0" y1="-10" x2="-18" y2="-25" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+    <line x1="0" y1="-10" x2="18" y2="-25" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+    <line x1="0" y1="5" x2="-14" y2="-8" stroke="#409EFF" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="0" y1="5" x2="14" y2="-8" stroke="#409EFF" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="0" y1="20" x2="-12" y2="10" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="0" y1="20" x2="12" y2="10" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- 小叶子 -->
+    <circle cx="-18" cy="-28" r="3" fill="#409EFF" opacity="0.6"/>
+    <circle cx="18" cy="-28" r="3" fill="#409EFF" opacity="0.6"/>
+    <circle cx="-14" cy="-11" r="2.5" fill="#409EFF" opacity="0.5"/>
+    <circle cx="14" cy="-11" r="2.5" fill="#409EFF" opacity="0.5"/>
+  </g>
+  <text x="145" y="438" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">多分支生成</text>
+  <text x="145" y="456" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">发散思维路径</text>
+
+  <!-- 底部右：智能评估 -->
+  <g transform="translate(655,370)">
+    <circle cx="0" cy="0" r="48" fill="white" stroke="#409EFF" stroke-width="2.5"/>
+    <!-- 星级评分图标 -->
+    <polygon points="0,-28 5,-16 18,-16 8,-6 12,8 0,0 -12,8 -8,-6 -18,-16 -5,-16" fill="#FFD700" stroke="#E6B800" stroke-width="1"/>
+    <!-- 小星星 -->
+    <polygon points="-22,-8 -20,-14 -18,-8 -24,-4 -16,-4" fill="#FFD700" opacity="0.6"/>
+    <polygon points="22,-8 24,-14 26,-8 20,-4 28,-4" fill="#FFD700" opacity="0.4"/>
+    <!-- 刻度线 -->
+    <line x1="-20" y1="22" x2="20" y2="22" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+    <line x1="-12" y1="28" x2="12" y2="28" stroke="#409EFF" stroke-width="1" opacity="0.3"/>
+  </g>
+  <text x="655" y="438" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">智能评估</text>
+  <text x="655" y="456" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">星级评分机制</text>
+
+  <!-- 中心奖杯图标 + 精度提升标注 -->
+  <g transform="translate(400,245)">
+    <!-- 小奖杯 -->
+    <rect x="-14" y="-18" width="28" height="20" rx="3" fill="url(#trophyGrad)" stroke="#DAA520" stroke-width="1.5"/>
+    <rect x="-10" y="-22" width="20" height="6" rx="2" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+    <!-- 杯身装饰 -->
+    <line x1="-8" y1="-10" x2="8" y2="-10" stroke="#DAA520" stroke-width="0.8" opacity="0.5"/>
+    <!-- 杯座 -->
+    <rect x="-10" y="2" width="20" height="3" rx="1" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+    <rect x="-6" y="5" width="12" height="3" rx="1" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+    <!-- 把手 -->
+    <path d="M14,-12 Q22,-8 18,0" fill="none" stroke="#DAA520" stroke-width="1.5"/>
+    <path d="M-14,-12 Q-22,-8 -18,0" fill="none" stroke="#DAA520" stroke-width="1.5"/>
+    <!-- 精度提升标注 -->
+    <rect x="-38" y="-32" width="76" height="22" rx="11" fill="#1a1a2e" opacity="0.85"/>
+    <text x="0" y="-17" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#FFD700">4% → 74% 精度提升</text>
+  </g>
+
+  <!-- 底部说明文字 -->
+  <text x="400" y="490" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#888">三者协同构成思维之树的完整推理框架</text>
+
+</svg>

@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FF"/>
+      <stop offset="100%" stop-color="#D0EBFF"/>
+    </linearGradient>
+    <linearGradient id="boxShadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f0f7ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">单智能体 vs 多智能体架构对比</text>
+
+  <!-- 分隔线 -->
+  <line x1="400" y1="52" x2="400" y2="470" stroke="#409EFF" stroke-width="1.5" stroke-opacity="0.3" stroke-dasharray="6,4"/>
+
+  <!-- ========== 左侧：单智能体 ========== -->
+  <!-- 左侧标题区域 -->
+  <rect x="30" y="60" width="340" height="36" rx="18" fill="#409EFF" opacity="0.15"/>
+  <text x="200" y="84" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">单智能体</text>
+
+  <!-- 单智能体机器人 -->
+  <g transform="translate(200, 140)">
+    <!-- 机器人身体 -->
+    <rect x="-28" y="-20" width="56" height="50" rx="10" fill="#409EFF" opacity="0.85"/>
+    <!-- 机器人头 -->
+    <rect x="-20" y="-40" width="40" height="28" rx="8" fill="#409EFF" opacity="0.7"/>
+    <!-- 眼睛 -->
+    <circle cx="-8" cy="-28" r="4" fill="#ffffff"/>
+    <circle cx="8" cy="-28" r="4" fill="#ffffff"/>
+    <!-- 天线 -->
+    <line x1="0" y1="-40" x2="0" y2="-52" stroke="#409EFF" stroke-width="2.5"/>
+    <circle cx="0" cy="-54" r="4" fill="#409EFF" opacity="0.9"/>
+    <!-- 手臂 -->
+    <rect x="-42" y="-10" width="14" height="6" rx="3" fill="#409EFF" opacity="0.6"/>
+    <rect x="28" y="-10" width="14" height="6" rx="3" fill="#409EFF" opacity="0.6"/>
+    <!-- 汗滴 -->
+    <text x="30" y="-38" font-size="18" fill="#FF6B6B" opacity="0.8">💧</text>
+    <text x="38" y="-28" font-size="14" fill="#FF6B6B" opacity="0.6">💧</text>
+  </g>
+
+  <!-- 单智能体流程 - 线性排列 -->
+  <g transform="translate(200, 210)">
+    <!-- 理解 -->
+    <rect x="-30" y="0" width="60" height="28" rx="14" fill="#409EFF" opacity="0.2"/>
+    <text x="0" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">理解</text>
+    <!-- 箭头 -->
+    <line x1="0" y1="28" x2="0" y2="48" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+    <!-- 推理 -->
+    <rect x="-30" y="50" width="60" height="28" rx="14" fill="#409EFF" opacity="0.2"/>
+    <text x="0" y="69" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">推理</text>
+    <!-- 箭头 -->
+    <line x1="0" y1="78" x2="0" y2="98" stroke="#409EFF" stroke-width="1.5"/>
+    <!-- 调用工具 -->
+    <rect x="-30" y="100" width="60" height="28" rx="14" fill="#409EFF" opacity="0.2"/>
+    <text x="0" y="119" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">调用工具</text>
+    <!-- 箭头 -->
+    <line x1="0" y1="128" x2="0" y2="148" stroke="#409EFF" stroke-width="1.5"/>
+    <!-- 生成 -->
+    <rect x="-30" y="150" width="60" height="28" rx="14" fill="#409EFF" opacity="0.35"/>
+    <text x="0" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">生成</text>
+  </g>
+
+  <!-- 左侧标注 - 简单架构 -->
+  <rect x="50" y="420" width="140" height="28" rx="14" fill="#409EFF" opacity="0.12"/>
+  <text x="120" y="439" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">架构简单，成本低</text>
+
+  <!-- 左侧缺点标注 -->
+  <rect x="210" y="420" width="140" height="28" rx="14" fill="#FF6B6B" opacity="0.12"/>
+  <text x="280" y="439" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c0392b">负载过高，效率低</text>
+
+  <!-- ========== 右侧：多智能体 ========== -->
+  <!-- 右侧标题区域 -->
+  <rect x="430" y="60" width="340" height="36" rx="18" fill="#409EFF" opacity="0.15"/>
+  <text x="600" y="84" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">多智能体</text>
+
+  <!-- 编排器 -->
+  <g transform="translate(600, 130)">
+    <rect x="-36" y="-18" width="72" height="36" rx="18" fill="#409EFF" opacity="0.85"/>
+    <text x="0" y="6" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#ffffff">编排器</text>
+  </g>
+
+  <!-- 从编排器到三个智能体的箭头 -->
+  <line x1="600" y1="148" x2="530" y2="200" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="600" y1="148" x2="600" y2="200" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="600" y1="148" x2="670" y2="200" stroke="#409EFF" stroke-width="1.5"/>
+
+  <!-- 智能体 A -->
+  <g transform="translate(530, 230)">
+    <rect x="-32" y="-16" width="64" height="32" rx="16" fill="#409EFF" opacity="0.25"/>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">智能体 A</text>
+    <text x="0" y="22" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#666">理解+推理</text>
+  </g>
+
+  <!-- 智能体 B -->
+  <g transform="translate(600, 230)">
+    <rect x="-32" y="-16" width="64" height="32" rx="16" fill="#409EFF" opacity="0.25"/>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">智能体 B</text>
+    <text x="0" y="22" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#666">调用工具</text>
+  </g>
+
+  <!-- 智能体 C -->
+  <g transform="translate(670, 230)">
+    <rect x="-32" y="-16" width="64" height="32" rx="16" fill="#409EFF" opacity="0.25"/>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">智能体 C</text>
+    <text x="0" y="22" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#666">验证+生成</text>
+  </g>
+
+  <!-- 并行指示 -->
+  <text x="600" y="212" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#409EFF" opacity="0.7">并行执行</text>
+
+  <!-- 从三个智能体到聚合器的箭头 -->
+  <line x1="530" y1="262" x2="570" y2="310" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="600" y1="262" x2="600" y2="310" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="670" y1="262" x2="630" y2="310" stroke="#409EFF" stroke-width="1.5"/>
+
+  <!-- 聚合器 -->
+  <g transform="translate(600, 340)">
+    <rect x="-36" y="-18" width="72" height="36" rx="18" fill="#409EFF" opacity="0.7"/>
+    <text x="0" y="6" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#ffffff">聚合器</text>
+  </g>
+
+  <!-- 聚合器输出箭头 -->
+  <line x1="600" y1="358" x2="600" y2="385" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="570" y="387" width="60" height="24" rx="12" fill="#409EFF" opacity="0.35"/>
+  <text x="600" y="404" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1a1a2e">最终输出</text>
+
+  <!-- 右侧标注 - 专业化 -->
+  <rect x="440" y="440" width="145" height="28" rx="14" fill="#409EFF" opacity="0.12"/>
+  <text x="512" y="459" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">专业化，并行，交叉验证</text>
+
+  <!-- 右侧优点标注 -->
+  <rect x="600" y="440" width="145" height="28" rx="14" fill="#67C23A" opacity="0.12"/>
+  <text x="672" y="459" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#2d7d2d">高吞吐，低延迟</text>
+
+  <!-- 箭头标记定义 -->
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#409EFF"/>
+    </marker>
+  </defs>
+
+</svg>

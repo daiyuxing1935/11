@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FF"/>
+      <stop offset="100%" stop-color="#D0EBFF"/>
+    </linearGradient>
+    <linearGradient id="rootGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2B7ED6"/>
+    </linearGradient>
+    <linearGradient id="loraGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#60B0FF"/>
+    </linearGradient>
+    <filter id="loraGlow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 树的主干线条 -->
+  <line x1="400" y1="85" x2="400" y2="125" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="400" y1="125" x2="400" y2="155" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- 水平分支线 -->
+  <line x1="140" y1="155" x2="660" y2="155" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- 垂直线到各节点 -->
+  <line x1="140" y1="155" x2="140" y2="195" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+  <line x1="313" y1="155" x2="313" y2="195" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+  <line x1="487" y1="155" x2="487" y2="195" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+  <line x1="660" y1="155" x2="660" y2="195" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- 根节点：PEFT Methods -->
+  <rect x="310" y="40" width="180" height="45" rx="22" fill="url(#rootGrad)"/>
+  <text x="400" y="68" text-anchor="middle" fill="white" font-family="sans-serif" font-size="16" font-weight="bold">PEFT Methods</text>
+
+  <!-- 子节点：Adapter -->
+  <rect x="85" y="195" width="110" height="40" rx="20" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="140" y="220" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="15" font-weight="bold">Adapter</text>
+  <!-- 插头图标 -->
+  <rect x="100" y="203" width="10" height="6" rx="1" fill="#808080"/>
+  <rect x="103" y="209" width="4" height="5" rx="1" fill="#808080"/>
+  <rect x="101" y="214" width="8" height="3" rx="1" fill="#808080"/>
+
+  <!-- 子节点：Prefix Tuning -->
+  <rect x="258" y="195" width="110" height="40" rx="20" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="313" y="220" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="15" font-weight="bold">Prefix Tuning</text>
+  <!-- 虚拟令牌标签图标 -->
+  <rect x="272" y="203" width="8" height="8" rx="2" fill="#808080"/>
+  <rect x="283" y="203" width="8" height="8" rx="2" fill="#808080"/>
+  <rect x="294" y="203" width="8" height="8" rx="2" fill="#808080"/>
+  <text x="278" y="218" text-anchor="middle" fill="#808080" font-family="sans-serif" font-size="7">⌕</text>
+
+  <!-- 子节点：Prompt Tuning -->
+  <rect x="432" y="195" width="110" height="40" rx="20" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="487" y="220" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="15" font-weight="bold">Prompt Tuning</text>
+  <!-- 软提示向量图标 -->
+  <rect x="446" y="203" width="6" height="8" rx="1" fill="#808080"/>
+  <rect x="455" y="201" width="6" height="12" rx="1" fill="#808080"/>
+  <rect x="464" y="203" width="6" height="8" rx="1" fill="#808080"/>
+  <text x="453" y="218" text-anchor="middle" fill="#808080" font-family="sans-serif" font-size="6">~</text>
+
+  <!-- 子节点：LoRA（高亮） -->
+  <rect x="605" y="195" width="110" height="40" rx="20" fill="white" stroke="#409EFF" stroke-width="2.5" filter="url(#loraGlow)"/>
+  <text x="660" y="220" text-anchor="middle" fill="#409EFF" font-family="sans-serif" font-size="15" font-weight="bold">LoRA</text>
+  <!-- 低秩矩阵分解图标 BA -->
+  <rect x="618" y="203" width="10" height="10" rx="2" fill="#409EFF" opacity="0.3"/>
+  <text x="623" y="211" text-anchor="middle" fill="#409EFF" font-family="sans-serif" font-size="8" font-weight="bold">B</text>
+  <text x="633" y="211" text-anchor="middle" fill="#409EFF" font-family="sans-serif" font-size="8" font-weight="bold">A</text>
+
+  <!-- LoRA 优势列表 -->
+  <rect x="590" y="250" width="140" height="70" rx="8" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.9"/>
+  <text x="660" y="270" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="13" font-weight="bold">优势</text>
+  <line x1="610" y1="278" x2="710" y2="278" stroke="#409EFF" stroke-width="0.5" opacity="0.5"/>
+  <text x="660" y="294" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="12">零推理延迟</text>
+  <text x="660" y="310" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="12">可合并 · 极小存储</text>
+
+  <!-- 标注 1：高效微调 -->
+  <rect x="30" y="100" width="100" height="28" rx="14" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.85"/>
+  <text x="80" y="119" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="13">高效微调</text>
+
+  <!-- 标注 2：参数高效 -->
+  <rect x="30" y="270" width="100" height="28" rx="14" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.85"/>
+  <text x="80" y="289" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="13">参数高效</text>
+
+  <!-- 标注 3：模块化 -->
+  <rect x="30" y="320" width="100" height="28" rx="14" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.85"/>
+  <text x="80" y="339" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="13">模块化</text>
+
+  <!-- 标注 4：即插即用 -->
+  <rect x="200" y="270" width="100" height="28" rx="14" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.85"/>
+  <text x="250" y="289" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="13">即插即用</text>
+
+  <!-- 标注 5：低秩分解 -->
+  <rect x="600" y="340" width="110" height="28" rx="14" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.85"/>
+  <text x="655" y="359" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="13">低秩分解</text>
+
+  <!-- 标注 6：推理友好 -->
+  <rect x="600" y="380" width="110" height="28" rx="14" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.85"/>
+  <text x="655" y="399" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="13">推理友好</text>
+
+  <!-- 连接线从标注到对应节点 -->
+  <line x1="130" y1="114" x2="310" y2="62" stroke="#409EFF" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.5"/>
+  <line x1="130" y1="284" x2="140" y2="235" stroke="#409EFF" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.5"/>
+  <line x1="130" y1="334" x2="140" y2="235" stroke="#409EFF" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.5"/>
+  <line x1="300" y1="284" x2="313" y2="235" stroke="#409EFF" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.5"/>
+  <line x1="655" y1="354" x2="660" y2="260" stroke="#409EFF" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.5"/>
+  <line x1="655" y1="394" x2="660" y2="260" stroke="#409EFF" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- 装饰性小点 -->
+  <circle cx="400" cy="125" r="4" fill="#409EFF" opacity="0.6"/>
+  <circle cx="140" cy="155" r="3" fill="#409EFF" opacity="0.4"/>
+  <circle cx="313" cy="155" r="3" fill="#409EFF" opacity="0.4"/>
+  <circle cx="487" cy="155" r="3" fill="#409EFF" opacity="0.4"/>
+  <circle cx="660" cy="155" r="3" fill="#409EFF" opacity="0.4"/>
+
+  <!-- 标题 -->
+  <text x="400" y="460" text-anchor="middle" fill="#1a1a2e" font-family="sans-serif" font-size="14" opacity="0.6">PEFT 方法家族树状图</text>
+</svg>

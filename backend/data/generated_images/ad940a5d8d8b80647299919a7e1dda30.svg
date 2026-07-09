@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FBFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 标题 -->
+  <text x="400" y="48" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">最佳实践指南</text>
+  <line x1="300" y1="60" x2="500" y2="60" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- 主卡片 - 剪贴板/清单 -->
+  <rect x="65" y="82" width="670" height="390" rx="16" fill="url(#cardGrad)" stroke="#D0E8F8" stroke-width="1.5"/>
+
+  <!-- 顶部装饰条 -->
+  <rect x="65" y="82" width="670" height="6" rx="3" fill="#409EFF"/>
+
+  <!-- 剪贴板图标（左上） -->
+  <g transform="translate(100, 110)">
+    <rect x="0" y="8" width="28" height="34" rx="4" fill="#409EFF" opacity="0.15"/>
+    <rect x="3" y="11" width="22" height="28" rx="3" fill="none" stroke="#409EFF" stroke-width="1.8"/>
+    <rect x="8" y="6" width="12" height="6" rx="2" fill="#409EFF"/>
+    <line x1="8" y1="22" x2="20" y2="22" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="8" y1="28" x2="18" y2="28" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="8" y1="34" x2="16" y2="34" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- 清单标题 -->
+  <text x="140" y="132" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">核心实践清单</text>
+
+  <!-- ===== 第1项：工具设计 ===== -->
+  <g transform="translate(100, 170)">
+    <!-- 编号 -->
+    <circle cx="14" cy="14" r="14" fill="#409EFF"/>
+    <text x="14" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">1</text>
+
+    <!-- 图标：扳手 -->
+    <g transform="translate(50, 4)">
+      <circle cx="12" cy="12" r="10" fill="#409EFF" opacity="0.12"/>
+      <path d="M7 8 L14 15 L17 12 L10 5 Z" fill="none" stroke="#409EFF" stroke-width="1.8" stroke-linejoin="round"/>
+      <circle cx="12" cy="12" r="2" fill="#409EFF"/>
+    </g>
+
+    <!-- 文字 -->
+    <text x="80" y="19" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">工具设计</text>
+    <text x="80" y="37" font-family="Arial, sans-serif" font-size="13" fill="#666">精心设计每个工具，确保易用与高效</text>
+
+    <!-- 勾选标记 -->
+    <g transform="translate(560, 6)">
+      <circle cx="10" cy="10" r="10" fill="#409EFF" opacity="0.12"/>
+      <polyline points="4,10 8,14 16,6" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+
+  <!-- 分隔线 -->
+  <line x1="100" y1="218" x2="700" y2="218" stroke="#E8F0F8" stroke-width="1"/>
+
+  <!-- ===== 第2项：从简开始 ===== -->
+  <g transform="translate(100, 230)">
+    <circle cx="14" cy="14" r="14" fill="#409EFF"/>
+    <text x="14" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">2</text>
+
+    <g transform="translate(50, 4)">
+      <circle cx="12" cy="12" r="10" fill="#409EFF" opacity="0.12"/>
+      <path d="M12 4 Q8 8 10 14 Q12 18 12 20" fill="none" stroke="#409EFF" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M12 4 Q16 8 14 14 Q12 18 12 20" fill="none" stroke="#409EFF" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M10 14 L8 12" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M14 14 L16 12" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+
+    <text x="80" y="19" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">从简开始</text>
+    <text x="80" y="37" font-family="Arial, sans-serif" font-size="13" fill="#666">从小处着手，逐步迭代扩展功能</text>
+
+    <g transform="translate(560, 6)">
+      <circle cx="10" cy="10" r="10" fill="#409EFF" opacity="0.12"/>
+      <polyline points="4,10 8,14 16,6" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+
+  <line x1="100" y1="278" x2="700" y2="278" stroke="#E8F0F8" stroke-width="1"/>
+
+  <!-- ===== 第3项：防御边界 ===== -->
+  <g transform="translate(100, 290)">
+    <circle cx="14" cy="14" r="14" fill="#409EFF"/>
+    <text x="14" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">3</text>
+
+    <g transform="translate(50, 4)">
+      <circle cx="12" cy="12" r="10" fill="#409EFF" opacity="0.12"/>
+      <rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="#409EFF" stroke-width="1.8"/>
+      <path d="M12 4 L12 20 M4 12 L20 12" stroke="#409EFF" stroke-width="1.2" opacity="0.5"/>
+      <circle cx="12" cy="12" r="4" fill="none" stroke="#409EFF" stroke-width="1.8"/>
+    </g>
+
+    <text x="80" y="19" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">防御边界</text>
+    <text x="80" y="37" font-family="Arial, sans-serif" font-size="13" fill="#666">设置安全边界，防止异常与滥用</text>
+
+    <g transform="translate(560, 6)">
+      <circle cx="10" cy="10" r="10" fill="#409EFF" opacity="0.12"/>
+      <polyline points="4,10 8,14 16,6" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+
+  <line x1="100" y1="338" x2="700" y2="338" stroke="#E8F0F8" stroke-width="1"/>
+
+  <!-- ===== 第4项：审计轨迹 ===== -->
+  <g transform="translate(100, 350)">
+    <circle cx="14" cy="14" r="14" fill="#409EFF"/>
+    <text x="14" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">4</text>
+
+    <g transform="translate(50, 4)">
+      <circle cx="12" cy="12" r="10" fill="#409EFF" opacity="0.12"/>
+      <circle cx="8" cy="8" r="2" fill="#409EFF"/>
+      <circle cx="16" cy="6" r="2" fill="#409EFF"/>
+      <circle cx="12" cy="16" r="2" fill="#409EFF"/>
+      <path d="M8 8 Q12 10 16 6" fill="none" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="2,2"/>
+      <path d="M8 8 Q10 14 12 16" fill="none" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="2,2"/>
+      <path d="M16 6 Q14 12 12 16" fill="none" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="2,2"/>
+    </g>
+
+    <text x="80" y="19" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">审计轨迹</text>
+    <text x="80" y="37" font-family="Arial, sans-serif" font-size="13" fill="#666">记录完整操作日志，支持回溯分析</text>
+
+    <g transform="translate(560, 6)">
+      <circle cx="10" cy="10" r="10" fill="#409EFF" opacity="0.12"/>
+      <polyline points="4,10 8,14 16,6" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+
+  <line x1="100" y1="398" x2="700" y2="398" stroke="#E8F0F8" stroke-width="1"/>
+
+  <!-- ===== 第5项：少样本示例 ===== -->
+  <g transform="translate(100, 410)">
+    <circle cx="14" cy="14" r="14" fill="#409EFF"/>
+    <text x="14" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">5</text>
+
+    <g transform="translate(50, 4)">
+      <circle cx="12" cy="12" r="10" fill="#409EFF" opacity="0.12"/>
+      <rect x="5" y="5" width="14" height="14" rx="2" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+      <polygon points="10,8 14,8 14,12 10,12" fill="#409EFF" opacity="0.3"/>
+      <polygon points="10,14 14,14 14,16 10,16" fill="#409EFF" opacity="0.15"/>
+      <text x="16" y="10" font-family="Arial" font-size="7" fill="#409EFF" font-weight="bold">★</text>
+    </g>
+
+    <text x="80" y="19" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">少样本示例</text>
+    <text x="80" y="37" font-family="Arial, sans-serif" font-size="13" fill="#666">提供少量示例，引导模型正确输出</text>
+
+    <g transform="translate(560, 6)">
+      <circle cx="10" cy="10" r="10" fill="#409EFF" opacity="0.12"/>
+      <polyline points="4,10 8,14 16,6" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+
+  <!-- 底部提示 -->
+  <rect x="250" y="462" width="300" height="26" rx="13" fill="#409EFF" opacity="0.08"/>
+  <text x="400" y="479" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF">✓ 遵循这些实践，构建可靠高效的系统</text>
+
+</svg>

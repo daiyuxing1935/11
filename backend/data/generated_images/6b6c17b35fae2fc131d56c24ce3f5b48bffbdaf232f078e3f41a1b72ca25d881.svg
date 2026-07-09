@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d0eaff;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="brainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6ab7ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#409EFF;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="moduleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f7ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e0f0ff;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="aloneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f5f5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e8e8e8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect x="0" y="0" width="800" height="500" fill="url(#bgGrad)" rx="0" ry="0"/>
+
+  <!-- ===== 左侧：单独的 LLM ===== -->
+  <g transform="translate(100, 250)">
+    <!-- 单独的大脑图标 -->
+    <rect x="-45" y="-45" width="90" height="90" rx="20" ry="20" fill="url(#aloneGrad)" stroke="#cccccc" stroke-width="1.5"/>
+    <!-- 大脑图形 -->
+    <ellipse cx="0" cy="-5" rx="25" ry="20" fill="#b0b0b0" opacity="0.5"/>
+    <path d="M-20,-5 Q-25,-20 -15,-25 Q-5,-30 0,-20 Q5,-30 15,-25 Q25,-20 20,-5" fill="#b0b0b0" opacity="0.5"/>
+    <ellipse cx="0" cy="0" rx="18" ry="14" fill="#909090" opacity="0.6"/>
+    <path d="M-12,0 Q-15,-10 -8,-14 Q0,-18 8,-14 Q15,-10 12,0" fill="#808080" opacity="0.5"/>
+    <!-- 对话气泡 -->
+    <path d="M30,-15 Q45,-15 45,-5 Q45,5 35,5 L30,12 L30,5 Q25,5 25,-5 Q25,-15 30,-15Z" fill="#e0e0e0" stroke="#cccccc" stroke-width="1"/>
+    <text x="35" y="-2" text-anchor="middle" font-size="9" fill="#888888">输出</text>
+    <!-- 标签 -->
+    <text x="0" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a2e">LLM 单独</text>
+  </g>
+
+  <!-- ===== 右侧：AI Agent 系统 ===== -->
+  <g transform="translate(480, 250)">
+    <!-- 外框：AI Agent -->
+    <rect x="-175" y="-145" width="350" height="290" rx="20" ry="20" fill="white" stroke="#409EFF" stroke-width="2.5" stroke-dasharray="8,4" opacity="0.95"/>
+    <rect x="-175" y="-145" width="350" height="290" rx="20" ry="20" fill="none" stroke="#409EFF" stroke-width="1" opacity="0.3"/>
+    <!-- 标题标签 -->
+    <rect x="-60" y="-165" width="120" height="28" rx="14" ry="14" fill="#409EFF"/>
+    <text x="0" y="-147" text-anchor="middle" font-size="15" font-weight="bold" fill="white">AI 智能体</text>
+
+    <!-- 中心：LLM 大脑核心 -->
+    <g transform="translate(0, 0)">
+      <!-- 发光效果 -->
+      <circle cx="0" cy="0" r="52" fill="#409EFF" opacity="0.08"/>
+      <circle cx="0" cy="0" r="44" fill="#409EFF" opacity="0.12"/>
+      <!-- 大脑核心主体 -->
+      <rect x="-38" y="-38" width="76" height="76" rx="18" ry="18" fill="url(#brainGrad)" stroke="#2d7dd2" stroke-width="1.5"/>
+      <!-- 大脑纹路 -->
+      <path d="M-20,-10 Q-10,-25 0,-15 Q10,-25 20,-10" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+      <path d="M-18,0 Q-8,-12 0,-5 Q8,-12 18,0" fill="none" stroke="white" stroke-width="1.5" opacity="0.5"/>
+      <path d="M-15,10 Q-5,0 0,5 Q5,0 15,10" fill="none" stroke="white" stroke-width="1.5" opacity="0.4"/>
+      <circle cx="0" cy="-2" r="8" fill="white" opacity="0.2"/>
+      <!-- 中心标签 -->
+      <text x="0" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a2e">LLM 核心</text>
+    </g>
+
+    <!-- 连接线 -->
+    <line x1="0" y1="-38" x2="0" y2="-95" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+    <line x1="38" y1="0" x2="95" y2="0" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+    <line x1="0" y1="38" x2="0" y2="95" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+    <line x1="-38" y1="0" x2="-95" y2="0" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+
+    <!-- 模块 1：工具 - 上方 -->
+    <g transform="translate(0, -110)">
+      <rect x="-32" y="-32" width="64" height="64" rx="14" ry="14" fill="url(#moduleGrad)" stroke="#409EFF" stroke-width="1.5"/>
+      <!-- 工具箱图标 -->
+      <rect x="-14" y="-10" width="16" height="14" rx="2" fill="#409EFF" opacity="0.7"/>
+      <rect x="2" y="-14" width="14" height="18" rx="2" fill="#409EFF" opacity="0.6"/>
+      <circle cx="-6" cy="-3" r="3" fill="white" opacity="0.5"/>
+      <text x="0" y="48" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a2e">工具</text>
+    </g>
+
+    <!-- 模块 2：记忆 - 右侧 -->
+    <g transform="translate(110, 0)">
+      <rect x="-32" y="-32" width="64" height="64" rx="14" ry="14" fill="url(#moduleGrad)" stroke="#409EFF" stroke-width="1.5"/>
+      <!-- 记忆芯片图标 -->
+      <rect x="-14" y="-12" width="28" height="24" rx="3" fill="#409EFF" opacity="0.7"/>
+      <rect x="-8" y="-6" width="16" height="12" rx="1" fill="white" opacity="0.4"/>
+      <line x1="-10" y1="-16" x2="-10" y2="-20" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <line x1="0" y1="-16" x2="0" y2="-20" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <line x1="10" y1="-16" x2="10" y2="-20" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <text x="0" y="48" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a2e">记忆</text>
+    </g>
+
+    <!-- 模块 3：规划 - 下方 -->
+    <g transform="translate(0, 110)">
+      <rect x="-32" y="-32" width="64" height="64" rx="14" ry="14" fill="url(#moduleGrad)" stroke="#409EFF" stroke-width="1.5"/>
+      <!-- 路线图图标 -->
+      <circle cx="-8" cy="-8" r="4" fill="#409EFF" opacity="0.6"/>
+      <circle cx="8" cy="0" r="4" fill="#409EFF" opacity="0.6"/>
+      <circle cx="-4" cy="10" r="4" fill="#409EFF" opacity="0.6"/>
+      <line x1="-8" y1="-8" x2="8" y2="0" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <line x1="8" y1="0" x2="-4" y2="10" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <line x1="-8" y1="-8" x2="-4" y2="10" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <text x="0" y="48" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a2e">规划</text>
+    </g>
+
+    <!-- 模块 4：感知 - 左侧 -->
+    <g transform="translate(-110, 0)">
+      <rect x="-32" y="-32" width="64" height="64" rx="14" ry="14" fill="url(#moduleGrad)" stroke="#409EFF" stroke-width="1.5"/>
+      <!-- 眼睛/传感器图标 -->
+      <ellipse cx="0" cy="-4" rx="16" ry="12" fill="white" stroke="#409EFF" stroke-width="1.5" opacity="0.8"/>
+      <circle cx="0" cy="-4" r="6" fill="#409EFF" opacity="0.6"/>
+      <circle cx="0" cy="-4" r="3" fill="#1a1a2e" opacity="0.4"/>
+      <path d="M-18,-4 Q-10,-18 0,-4" fill="none" stroke="#409EFF" stroke-width="1" opacity="0.4"/>
+      <path d="M18,-4 Q10,-18 0,-4" fill="none" stroke="#409EFF" stroke-width="1" opacity="0.4"/>
+      <text x="0" y="48" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a2e">感知</text>
+    </g>
+  </g>
+
+  <!-- 对比标注：左侧 vs 右侧 -->
+  <text x="300" y="60" text-anchor="middle" font-size="13" fill="#1a1a2e" opacity="0.6">对比：单独 LLM vs AI 智能体</text>
+
+  <!-- 底部说明 -->
+  <text x="400" y="470" text-anchor="middle" font-size="12" fill="#1a1a2e" opacity="0.4">AI 智能体 = LLM 核心 + 工具 + 记忆 + 规划 + 感知</text>
+</svg>

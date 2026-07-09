@@ -1,156 +1,151 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif">
   <defs>
     <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f0f7ff"/>
-      <stop offset="100%" stop-color="#e8f2fb"/>
+      <stop offset="0%" stop-color="#E8F4FF"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
     </linearGradient>
-    <linearGradient id="panelGrad1" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#f5faff"/>
+    <linearGradient id="panelGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FBFF"/>
     </linearGradient>
-    <linearGradient id="panelGrad2" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#f5faff"/>
-    </linearGradient>
-    <linearGradient id="panelGrad3" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#f5faff"/>
-    </linearGradient>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#409EFF" flood-opacity="0.12"/>
+    </filter>
   </defs>
 
   <!-- 背景 -->
-  <rect x="0" y="0" width="800" height="500" fill="url(#bgGrad)"/>
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
 
   <!-- 标题 -->
-  <text x="400" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">角色冲突管理策略</text>
+  <text x="400" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">角色冲突管理策略</text>
+  <line x1="300" y1="48" x2="500" y2="48" stroke="#409EFF" stroke-width="2" stroke-opacity="0.5"/>
 
-  <!-- ====== 面板 1：明确角色边界 ====== -->
-  <rect x="20" y="60" width="240" height="420" rx="10" ry="10" fill="url(#panelGrad1)" stroke="#409EFF" stroke-width="2"/>
-  <rect x="20" y="60" width="240" height="38" rx="10" ry="10" fill="#409EFF"/>
-  <rect x="20" y="88" width="240" height="10" fill="#409EFF"/>
-  <text x="140" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">策略一：明确角色边界</text>
+  <!-- ========== 面板 1：明确角色边界 ========== -->
+  <g filter="url(#shadow)">
+    <rect x="20" y="70" width="240" height="400" rx="10" fill="url(#panelGrad)" stroke="#409EFF" stroke-width="1.5" stroke-opacity="0.3"/>
+    <!-- 面板标题 -->
+    <rect x="20" y="70" width="240" height="36" rx="10" fill="#409EFF" fill-opacity="0.1"/>
+    <text x="140" y="94" text-anchor="middle" font-size="15" font-weight="bold" fill="#409EFF">策略一：明确角色边界</text>
 
-  <!-- 角色卡 A -->
-  <rect x="40" y="115" width="90" height="50" rx="6" fill="#e6f0ff" stroke="#409EFF" stroke-width="1.5"/>
-  <text x="85" y="145" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">角色A</text>
+    <!-- 角色卡片 1 -->
+    <rect x="40" y="130" width="200" height="80" rx="8" fill="#409EFF" fill-opacity="0.08" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="140" y="162" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a2e">角色 A</text>
+    <text x="140" y="182" text-anchor="middle" font-size="11" fill="#666">职责范围明确</text>
+    <!-- 范围线 -->
+    <line x1="40" y1="210" x2="240" y2="210" stroke="#409EFF" stroke-width="2" stroke-opacity="0.6"/>
 
-  <!-- 角色卡 B -->
-  <rect x="150" y="115" width="90" height="50" rx="6" fill="#e6f0ff" stroke="#409EFF" stroke-width="1.5"/>
-  <text x="195" y="145" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">角色B</text>
+    <!-- 协作接口区域 -->
+    <rect x="60" y="218" width="160" height="36" rx="18" fill="#409EFF" fill-opacity="0.15" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="140" y="241" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="bold">协作接口</text>
 
-  <!-- 边界线 A -->
-  <line x1="85" y1="170" x2="85" y2="230" stroke="#409EFF" stroke-width="2" stroke-dasharray="5,3"/>
-  <text x="85" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF">边界</text>
+    <!-- 角色卡片 2 -->
+    <rect x="40" y="270" width="200" height="80" rx="8" fill="#409EFF" fill-opacity="0.08" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="140" y="302" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a2e">角色 B</text>
+    <text x="140" y="322" text-anchor="middle" font-size="11" fill="#666">职责范围明确</text>
+    <!-- 范围线 -->
+    <line x1="40" y1="350" x2="240" y2="350" stroke="#409EFF" stroke-width="2" stroke-opacity="0.6"/>
 
-  <!-- 边界线 B -->
-  <line x1="195" y1="170" x2="195" y2="230" stroke="#409EFF" stroke-width="2" stroke-dasharray="5,3"/>
-  <text x="195" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF">边界</text>
+    <!-- 预防图标 -->
+    <circle cx="140" cy="400" r="22" fill="#409EFF" fill-opacity="0.1" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="140" y="406" text-anchor="middle" font-size="18">🛡</text>
+    <text x="140" y="440" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="bold">预防为主</text>
 
-  <!-- 协作接口区域 -->
-  <rect x="95" y="265" width="90" height="40" rx="6" fill="#d4edda" stroke="#28a745" stroke-width="1.5"/>
-  <text x="140" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">协作接口</text>
+    <!-- 标注 1 -->
+    <rect x="35" y="455" width="210" height="24" rx="12" fill="#409EFF" fill-opacity="0.08"/>
+    <text x="140" y="472" text-anchor="middle" font-size="11" fill="#409EFF">边界清晰 · 协作有序</text>
+  </g>
 
-  <!-- 箭头标注 -->
-  <path d="M140 305 L140 320" stroke="#28a745" stroke-width="2" marker-end="url(#arrowGreen)"/>
-  <text x="140" y="345" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#28a745">预防冲突</text>
+  <!-- ========== 面板 2：协调者角色 ========== -->
+  <g filter="url(#shadow)">
+    <rect x="280" y="70" width="240" height="400" rx="10" fill="url(#panelGrad)" stroke="#409EFF" stroke-width="1.5" stroke-opacity="0.3"/>
+    <!-- 面板标题 -->
+    <rect x="280" y="70" width="240" height="36" rx="10" fill="#409EFF" fill-opacity="0.1"/>
+    <text x="400" y="94" text-anchor="middle" font-size="15" font-weight="bold" fill="#409EFF">策略二：协调者角色</text>
 
-  <!-- 标注：预防为主 -->
-  <rect x="50" y="365" width="180" height="35" rx="6" fill="#fff3cd" stroke="#ffc107" stroke-width="1"/>
-  <text x="140" y="388" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">预防为主</text>
+    <!-- 冲突代理 1 -->
+    <rect x="300" y="130" width="80" height="50" rx="6" fill="#FF6B6B" fill-opacity="0.12" stroke="#FF6B6B" stroke-width="1.5"/>
+    <text x="340" y="160" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a2e">代理 A</text>
 
-  <!-- 范围标注 -->
-  <rect x="50" y="415" width="180" height="35" rx="6" fill="#e6f0ff" stroke="#409EFF" stroke-width="1"/>
-  <text x="140" y="438" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">明确职责范围</text>
+    <!-- 冲突箭头 -->
+    <line x1="380" y1="155" x2="420" y2="155" stroke="#FF6B6B" stroke-width="2" stroke-opacity="0.6"/>
+    <polygon points="420,150 430,155 420,160" fill="#FF6B6B" fill-opacity="0.6"/>
 
-  <!-- ====== 面板 2：协调员角色 ====== -->
-  <rect x="280" y="60" width="240" height="420" rx="10" ry="10" fill="url(#panelGrad2)" stroke="#409EFF" stroke-width="2"/>
-  <rect x="280" y="60" width="240" height="38" rx="10" ry="10" fill="#409EFF"/>
-  <rect x="280" y="88" width="240" height="10" fill="#409EFF"/>
-  <text x="400" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">策略二：协调员角色</text>
+    <!-- 冲突代理 2 -->
+    <rect x="420" y="130" width="80" height="50" rx="6" fill="#FF6B6B" fill-opacity="0.12" stroke="#FF6B6B" stroke-width="1.5"/>
+    <text x="460" y="160" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a2e">代理 B</text>
 
-  <!-- 冲突代理 A -->
-  <rect x="300" y="115" width="80" height="45" rx="6" fill="#ffe0e0" stroke="#ff6b6b" stroke-width="1.5"/>
-  <text x="340" y="142" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">代理A</text>
+    <!-- 冲突标识 -->
+    <text x="400" y="210" text-anchor="middle" font-size="22">⚡</text>
+    <text x="400" y="232" text-anchor="middle" font-size="11" fill="#FF6B6B">冲突</text>
 
-  <!-- 冲突代理 B -->
-  <rect x="420" y="115" width="80" height="45" rx="6" fill="#ffe0e0" stroke="#ff6b6b" stroke-width="1.5"/>
-  <text x="460" y="142" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">代理B</text>
+    <!-- 协调者 -->
+    <rect x="340" y="260" width="120" height="60" rx="30" fill="#409EFF" fill-opacity="0.15" stroke="#409EFF" stroke-width="2"/>
+    <text x="400" y="288" text-anchor="middle" font-size="14" font-weight="bold" fill="#409EFF">协调者</text>
+    <text x="400" y="306" text-anchor="middle" font-size="11" fill="#409EFF">仲裁员</text>
 
-  <!-- 冲突箭头 -->
-  <path d="M380 137 L420 137" stroke="#ff6b6b" stroke-width="2" marker-end="url(#arrowRed)"/>
-  <path d="M420 137 L380 137" stroke="#ff6b6b" stroke-width="2" marker-end="url(#arrowRed)"/>
-  <text x="400" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#ff6b6b">冲突</text>
+    <!-- 连接线：协调者到代理 -->
+    <line x1="360" y1="260" x2="340" y2="180" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3" stroke-opacity="0.5"/>
+    <line x1="440" y1="260" x2="460" y2="180" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3" stroke-opacity="0.5"/>
 
-  <!-- 协调员居中 -->
-  <rect x="345" y="180" width="110" height="50" rx="25" fill="#409EFF" stroke="#1a1a2e" stroke-width="1.5"/>
-  <text x="400" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">协调员</text>
+    <!-- 法槌图标 -->
+    <circle cx="400" cy="360" r="24" fill="#409EFF" fill-opacity="0.1" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="400" y="367" text-anchor="middle" font-size="22">⚖</text>
+    <text x="400" y="398" text-anchor="middle" font-size="11" fill="#409EFF">权威裁决</text>
 
-  <!-- 协调员连接线 -->
-  <line x1="360" y1="230" x2="340" y2="260" stroke="#409EFF" stroke-width="2"/>
-  <line x1="440" y1="230" x2="460" y2="260" stroke="#409EFF" stroke-width="2"/>
+    <!-- 标注 2 -->
+    <rect x="295" y="455" width="210" height="24" rx="12" fill="#409EFF" fill-opacity="0.08"/>
+    <text x="400" y="472" text-anchor="middle" font-size="11" fill="#409EFF">第三方介入 · 公正裁决</text>
+  </g>
 
-  <!-- 裁决决策 -->
-  <rect x="310" y="265" width="180" height="40" rx="6" fill="#e6f0ff" stroke="#409EFF" stroke-width="1.5"/>
-  <text x="400" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">做出绑定决策</text>
+  <!-- ========== 面板 3：升级机制 ========== -->
+  <g filter="url(#shadow)">
+    <rect x="540" y="70" width="240" height="400" rx="10" fill="url(#panelGrad)" stroke="#409EFF" stroke-width="1.5" stroke-opacity="0.3"/>
+    <!-- 面板标题 -->
+    <rect x="540" y="70" width="240" height="36" rx="10" fill="#409EFF" fill-opacity="0.1"/>
+    <text x="660" y="94" text-anchor="middle" font-size="15" font-weight="bold" fill="#409EFF">策略三：升级机制</text>
 
-  <!-- 法槌图标 -->
-  <rect x="370" y="320" width="60" height="50" rx="6" fill="#f0f0f0" stroke="#1a1a2e" stroke-width="1"/>
-  <text x="400" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">⚖️</text>
-  <text x="400" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">法槌</text>
+    <!-- 第 1 级 -->
+    <rect x="560" y="120" width="200" height="70" rx="8" fill="#409EFF" fill-opacity="0.06" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="570" y="142" font-size="12" font-weight="bold" fill="#1a1a2e">第 1 级：直接沟通</text>
+    <text x="570" y="162" font-size="11" fill="#666">代理之间对话协商</text>
+    <!-- 对话气泡 -->
+    <ellipse cx="710" cy="138" rx="22" ry="14" fill="#409EFF" fill-opacity="0.15" stroke="#409EFF" stroke-width="1"/>
+    <ellipse cx="730" cy="148" rx="8" ry="5" fill="#409EFF" fill-opacity="0.15" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="710" y="143" text-anchor="middle" font-size="10" fill="#409EFF">💬</text>
 
-  <!-- 标注 -->
-  <rect x="310" y="390" width="180" height="35" rx="6" fill="#e6f0ff" stroke="#409EFF" stroke-width="1"/>
-  <text x="400" y="413" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">中立仲裁者</text>
+    <!-- 向上箭头 -->
+    <polygon points="660,192 650,192 660,202 670,192" fill="#409EFF" fill-opacity="0.4"/>
+    <line x1="660" y1="190" x2="660" y2="200" stroke="#409EFF" stroke-width="2" stroke-opacity="0.4"/>
 
-  <rect x="310" y="435" width="180" height="35" rx="6" fill="#e6f0ff" stroke="#409EFF" stroke-width="1"/>
-  <text x="400" y="458" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">权威裁决</text>
+    <!-- 第 2 级 -->
+    <rect x="560" y="210" width="200" height="70" rx="8" fill="#409EFF" fill-opacity="0.06" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="570" y="232" font-size="12" font-weight="bold" fill="#1a1a2e">第 2 级：协调调解</text>
+    <text x="570" y="252" font-size="11" fill="#666">协调者介入调解</text>
+    <!-- 调解人图标 -->
+    <circle cx="710" cy="238" r="14" fill="#409EFF" fill-opacity="0.15" stroke="#409EFF" stroke-width="1"/>
+    <text x="710" y="243" text-anchor="middle" font-size="12" fill="#409EFF">🤝</text>
 
-  <!-- ====== 面板 3：升级机制 ====== -->
-  <rect x="540" y="60" width="240" height="420" rx="10" ry="10" fill="url(#panelGrad3)" stroke="#409EFF" stroke-width="2"/>
-  <rect x="540" y="60" width="240" height="38" rx="10" ry="10" fill="#409EFF"/>
-  <rect x="540" y="88" width="240" height="10" fill="#409EFF"/>
-  <text x="660" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">策略三：升级机制</text>
+    <!-- 向上箭头 -->
+    <polygon points="660,282 650,282 660,292 670,282" fill="#409EFF" fill-opacity="0.4"/>
+    <line x1="660" y1="280" x2="660" y2="292" stroke="#409EFF" stroke-width="2" stroke-opacity="0.4"/>
 
-  <!-- 第1级：直接沟通 -->
-  <rect x="560" y="115" width="200" height="65" rx="8" fill="#e6f0ff" stroke="#409EFF" stroke-width="1.5"/>
-  <text x="660" y="138" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">第1级：直接沟通</text>
-  <text x="660" y="162" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF">💬 对话气泡</text>
+    <!-- 第 3 级 -->
+    <rect x="560" y="300" width="200" height="70" rx="8" fill="#409EFF" fill-opacity="0.06" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="570" y="322" font-size="12" font-weight="bold" fill="#1a1a2e">第 3 级：人工干预</text>
+    <text x="570" y="342" font-size="11" fill="#666">运维人员最终裁决</text>
+    <!-- 人手图标 -->
+    <circle cx="710" cy="328" r="14" fill="#409EFF" fill-opacity="0.15" stroke="#409EFF" stroke-width="1"/>
+    <text x="710" y="333" text-anchor="middle" font-size="12" fill="#409EFF">✋</text>
 
-  <!-- 向上箭头 -->
-  <path d="M660 180 L660 200" stroke="#1a1a2e" stroke-width="2" marker-end="url(#arrowDark)"/>
+    <!-- 升级说明 -->
+    <rect x="560" y="390" width="200" height="30" rx="6" fill="#409EFF" fill-opacity="0.08"/>
+    <text x="660" y="410" text-anchor="middle" font-size="11" fill="#409EFF">逐级升级 · 有序解决</text>
 
-  <!-- 第2级：协调员调解 -->
-  <rect x="560" y="205" width="200" height="65" rx="8" fill="#e6f0ff" stroke="#409EFF" stroke-width="1.5"/>
-  <text x="660" y="228" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">第2级：协调员调解</text>
-  <text x="660" y="252" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF">👤 调解人介入</text>
+    <!-- 标注 3 -->
+    <rect x="555" y="455" width="210" height="24" rx="12" fill="#409EFF" fill-opacity="0.08"/>
+    <text x="660" y="472" text-anchor="middle" font-size="11" fill="#409EFF">从对话到人工的路径</text>
+  </g>
 
-  <!-- 向上箭头 -->
-  <path d="M660 270 L660 290" stroke="#1a1a2e" stroke-width="2" marker-end="url(#arrowDark)"/>
-
-  <!-- 第3级：人工操作员 -->
-  <rect x="560" y="295" width="200" height="65" rx="8" fill="#fff3cd" stroke="#ffc107" stroke-width="1.5"/>
-  <text x="660" y="318" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">第3级：人工操作员</text>
-  <text x="660" y="342" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#d69e00">✋ 人工干预</text>
-
-  <!-- 升级阶梯指示 -->
-  <rect x="560" y="380" width="200" height="35" rx="6" fill="#409EFF" stroke="#1a1a2e" stroke-width="1"/>
-  <text x="660" y="403" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">逐级升级</text>
-
-  <rect x="560" y="425" width="200" height="35" rx="6" fill="#e6f0ff" stroke="#409EFF" stroke-width="1"/>
-  <text x="660" y="448" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">自动化 → 人工</text>
-
-  <!-- 图例 / 底部说明 -->
-  <rect x="20" y="490" width="760" height="2" rx="1" fill="#409EFF" opacity="0.3"/>
-
-  <defs>
-    <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#28a745"/>
-    </marker>
-    <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#ff6b6b"/>
-    </marker>
-    <marker id="arrowDark" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#1a1a2e"/>
-    </marker>
-  </defs>
+  <!-- 底部装饰线 -->
+  <line x1="100" y1="490" x2="700" y2="490" stroke="#409EFF" stroke-width="1" stroke-opacity="0.2"/>
 </svg>

@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#D6EEFA"/>
+    </linearGradient>
+    <linearGradient id="bridgeGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#6BB5FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 左侧：服务器机房 -->
+  <rect x="40" y="80" width="280" height="320" rx="12" fill="#FFFFFF" stroke="#409EFF" stroke-width="2" opacity="0.95"/>
+  <rect x="40" y="80" width="280" height="40" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="180" y="106" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">模型训练</text>
+
+  <!-- GPU 服务器机架 -->
+  <rect x="65" y="140" width="230" height="60" rx="6" fill="#F0F7FF" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="75" y="150" width="45" height="40" rx="4" fill="#409EFF" opacity="0.3"/>
+  <rect x="75" y="150" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <rect x="75" y="162" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <rect x="75" y="174" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <text x="98" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">GPU</text>
+
+  <rect x="130" y="150" width="45" height="40" rx="4" fill="#409EFF" opacity="0.3"/>
+  <rect x="130" y="150" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <rect x="130" y="162" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <rect x="130" y="174" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <text x="153" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">GPU</text>
+
+  <rect x="185" y="150" width="45" height="40" rx="4" fill="#409EFF" opacity="0.3"/>
+  <rect x="185" y="150" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <rect x="185" y="162" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <rect x="185" y="174" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <text x="208" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">GPU</text>
+
+  <rect x="240" y="150" width="45" height="40" rx="4" fill="#409EFF" opacity="0.3"/>
+  <rect x="240" y="150" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <rect x="240" y="162" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <rect x="240" y="174" width="45" height="8" rx="2" fill="#409EFF" opacity="0.6"/>
+  <text x="263" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">GPU</text>
+
+  <!-- 第二排服务器 -->
+  <rect x="65" y="215" width="230" height="60" rx="6" fill="#F0F7FF" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="75" y="225" width="45" height="40" rx="4" fill="#409EFF" opacity="0.2"/>
+  <rect x="75" y="225" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <rect x="75" y="237" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <rect x="75" y="249" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <text x="98" y="255" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">GPU</text>
+
+  <rect x="130" y="225" width="45" height="40" rx="4" fill="#409EFF" opacity="0.2"/>
+  <rect x="130" y="225" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <rect x="130" y="237" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <rect x="130" y="249" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <text x="153" y="255" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">GPU</text>
+
+  <rect x="185" y="225" width="45" height="40" rx="4" fill="#409EFF" opacity="0.2"/>
+  <rect x="185" y="225" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <rect x="185" y="237" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <rect x="185" y="249" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <text x="208" y="255" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">GPU</text>
+
+  <rect x="240" y="225" width="45" height="40" rx="4" fill="#409EFF" opacity="0.2"/>
+  <rect x="240" y="225" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <rect x="240" y="237" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <rect x="240" y="249" width="45" height="8" rx="2" fill="#409EFF" opacity="0.5"/>
+  <text x="263" y="255" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">GPU</text>
+
+  <!-- 标注 -->
+  <rect x="65" y="295" width="230" height="36" rx="8" fill="#409EFF" opacity="0.12"/>
+  <text x="180" y="318" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">4×A100 80GB</text>
+
+  <!-- 右侧：部署设备 -->
+  <rect x="480" y="80" width="280" height="320" rx="12" fill="#FFFFFF" stroke="#409EFF" stroke-width="2" opacity="0.95"/>
+  <rect x="480" y="80" width="280" height="40" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="620" y="106" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">部署环境</text>
+
+  <!-- 笔记本电脑 -->
+  <rect x="540" y="150" width="140" height="90" rx="8" fill="#F0F7FF" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="548" y="158" width="124" height="70" rx="4" fill="#FFFFFF" stroke="#409EFF" stroke-width="1" opacity="0.8"/>
+  <rect x="548" y="158" width="124" height="70" rx="4" fill="#409EFF" opacity="0.05"/>
+  <!-- 屏幕内容 -->
+  <rect x="560" y="170" width="100" height="6" rx="3" fill="#409EFF" opacity="0.3"/>
+  <rect x="560" y="182" width="80" height="6" rx="3" fill="#409EFF" opacity="0.2"/>
+  <rect x="560" y="194" width="90" height="6" rx="3" fill="#409EFF" opacity="0.2"/>
+  <rect x="560" y="206" width="60" height="6" rx="3" fill="#409EFF" opacity="0.15"/>
+  <!-- 键盘底座 -->
+  <rect x="535" y="240" width="150" height="8" rx="3" fill="#409EFF" opacity="0.3"/>
+
+  <!-- 手机 -->
+  <rect x="710" y="170" width="30" height="55" rx="5" fill="#F0F7FF" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="714" y="176" width="22" height="40" rx="3" fill="#FFFFFF" stroke="#409EFF" stroke-width="0.8" opacity="0.8"/>
+  <rect x="714" y="176" width="22" height="40" rx="3" fill="#409EFF" opacity="0.05"/>
+  <rect x="720" y="180" width="10" height="4" rx="2" fill="#409EFF" opacity="0.3"/>
+
+  <!-- 警告图标 -->
+  <circle cx="620" cy="290" r="22" fill="#FFE8E8" stroke="#FF6B6B" stroke-width="1.5"/>
+  <text x="620" y="296" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#FF6B6B">!</text>
+
+  <!-- 部署限制标注 -->
+  <rect x="530" y="325" width="180" height="50" rx="8" fill="#409EFF" opacity="0.12"/>
+  <text x="620" y="344" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">24GB 限制</text>
+  <text x="620" y="362" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">&lt;100ms 延迟 / 预算</text>
+
+  <!-- 鸿沟（峡谷） -->
+  <rect x="325" y="100" width="150" height="280" rx="8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>
+
+  <!-- 鸿沟纹理线条 -->
+  <line x1="335" y1="120" x2="465" y2="120" stroke="#409EFF" stroke-width="0.8" opacity="0.2"/>
+  <line x1="335" y1="160" x2="465" y2="160" stroke="#409EFF" stroke-width="0.8" opacity="0.15"/>
+  <line x1="335" y1="200" x2="465" y2="200" stroke="#409EFF" stroke-width="0.8" opacity="0.15"/>
+  <line x1="335" y1="240" x2="465" y2="240" stroke="#409EFF" stroke-width="0.8" opacity="0.15"/>
+  <line x1="335" y1="280" x2="465" y2="280" stroke="#409EFF" stroke-width="0.8" opacity="0.15"/>
+  <line x1="335" y1="320" x2="465" y2="320" stroke="#409EFF" stroke-width="0.8" opacity="0.15"/>
+  <line x1="335" y1="360" x2="465" y2="360" stroke="#409EFF" stroke-width="0.8" opacity="0.2"/>
+
+  <!-- 鸿沟标签 -->
+  <text x="400" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e" transform="rotate(-90, 400, 250)">部署鸿沟</text>
+
+  <!-- 桥梁 -->
+  <rect x="335" y="190" width="130" height="14" rx="7" fill="url(#bridgeGrad)" opacity="0.9"/>
+  <!-- 桥梁木板纹理 -->
+  <line x1="355" y1="190" x2="355" y2="204" stroke="#FFFFFF" stroke-width="1.5" opacity="0.4"/>
+  <line x1="375" y1="190" x2="375" y2="204" stroke="#FFFFFF" stroke-width="1.5" opacity="0.4"/>
+  <line x1="395" y1="190" x2="395" y2="204" stroke="#FFFFFF" stroke-width="1.5" opacity="0.4"/>
+  <line x1="415" y1="190" x2="415" y2="204" stroke="#FFFFFF" stroke-width="1.5" opacity="0.4"/>
+  <line x1="435" y1="190" x2="435" y2="204" stroke="#FFFFFF" stroke-width="1.5" opacity="0.4"/>
+  <line x1="455" y1="190" x2="455" y2="204" stroke="#FFFFFF" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- 桥墩 -->
+  <rect x="340" y="204" width="8" height="20" rx="2" fill="#409EFF" opacity="0.5"/>
+  <rect x="452" y="204" width="8" height="20" rx="2" fill="#409EFF" opacity="0.5"/>
+
+  <!-- 桥梁标签 -->
+  <rect x="345" y="220" width="110" height="28" rx="6" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="400" y="239" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#409EFF">量化 + 推理优化</text>
+
+  <!-- 底部装饰箭头 -->
+  <polygon points="400,260 390,270 410,270" fill="#409EFF" opacity="0.4"/>
+
+</svg>

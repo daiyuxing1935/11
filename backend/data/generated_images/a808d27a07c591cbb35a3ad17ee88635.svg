@@ -1,0 +1,196 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f4ff"/>
+      <stop offset="100%" stop-color="#e8f0fe"/>
+    </linearGradient>
+    <linearGradient id="cardGrad1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8faff"/>
+    </linearGradient>
+    <linearGradient id="cardGrad5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8f4ff"/>
+      <stop offset="100%" stop-color="#d6ecff"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="cardShadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#409EFF" flood-opacity="0.12"/>
+    </filter>
+    <filter id="cardShadow5">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#409EFF" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">ReAct 逐步执行流程</text>
+
+  <!-- 标注1：整体流程 -->
+  <rect x="620" y="50" width="155" height="28" rx="14" fill="#409EFF" opacity="0.9"/>
+  <text x="697" y="69" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">循环迭代过程</text>
+  <line x1="620" y1="64" x2="590" y2="80" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- 第1步卡片 -->
+  <g filter="url(#cardShadow)">
+    <rect x="100" y="60" width="480" height="62" rx="12" fill="url(#cardGrad1)" stroke="#e0e8f5" stroke-width="1"/>
+    <!-- 编号 -->
+    <rect x="100" y="60" width="40" height="62" rx="12" fill="#1a1a2e"/>
+    <rect x="100" y="60" width="40" height="62" rx="12" fill="none" stroke="#1a1a2e" stroke-width="1"/>
+    <text x="120" y="97" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">1</text>
+    <!-- 思考图标 -->
+    <circle cx="165" cy="91" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="165" y="96" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">🧠</text>
+    <!-- 思考文字 -->
+    <text x="190" y="88" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">思考：</text>
+    <text x="240" y="88" font-family="Arial, sans-serif" font-size="14" fill="#333">我需要查询天气信息</text>
+    <!-- 动作图标 -->
+    <circle cx="165" cy="113" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="165" y="118" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">🔍</text>
+    <!-- 动作文字 -->
+    <text x="190" y="110" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">动作：</text>
+    <text x="240" y="110" font-family="Arial, sans-serif" font-size="14" fill="#333">搜索“今日天气”</text>
+    <!-- 观察图标 -->
+    <circle cx="440" cy="91" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="440" y="96" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">📄</text>
+    <!-- 观察文字 -->
+    <text x="465" y="88" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">观察：</text>
+    <text x="515" y="88" font-family="Arial, sans-serif" font-size="14" fill="#333">获取结果</text>
+  </g>
+
+  <!-- 箭头1 -->
+  <line x1="340" y1="122" x2="340" y2="148" stroke="#409EFF" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#409EFF"/>
+    </marker>
+  </defs>
+
+  <!-- 第2步卡片 -->
+  <g filter="url(#cardShadow)">
+    <rect x="100" y="152" width="480" height="62" rx="12" fill="url(#cardGrad1)" stroke="#e0e8f5" stroke-width="1"/>
+    <rect x="100" y="152" width="40" height="62" rx="12" fill="#1a1a2e"/>
+    <rect x="100" y="152" width="40" height="62" rx="12" fill="none" stroke="#1a1a2e" stroke-width="1"/>
+    <text x="120" y="189" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">2</text>
+    <circle cx="165" cy="183" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="165" y="188" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">🧠</text>
+    <text x="190" y="180" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">思考：</text>
+    <text x="240" y="180" font-family="Arial, sans-serif" font-size="14" fill="#333">分析搜索结果数据</text>
+    <circle cx="165" cy="205" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="165" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">🔍</text>
+    <text x="190" y="202" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">动作：</text>
+    <text x="240" y="202" font-family="Arial, sans-serif" font-size="14" fill="#333">提取关键信息</text>
+    <circle cx="440" cy="183" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="440" y="188" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">📄</text>
+    <text x="465" y="180" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">观察：</text>
+    <text x="515" y="180" font-family="Arial, sans-serif" font-size="14" fill="#333">信息已提取</text>
+  </g>
+
+  <!-- 箭头2 -->
+  <line x1="340" y1="214" x2="340" y2="240" stroke="#409EFF" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- 第3步卡片 -->
+  <g filter="url(#cardShadow)">
+    <rect x="100" y="244" width="480" height="62" rx="12" fill="url(#cardGrad1)" stroke="#e0e8f5" stroke-width="1"/>
+    <rect x="100" y="244" width="40" height="62" rx="12" fill="#1a1a2e"/>
+    <rect x="100" y="244" width="40" height="62" rx="12" fill="none" stroke="#1a1a2e" stroke-width="1"/>
+    <text x="120" y="281" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">3</text>
+    <circle cx="165" cy="275" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="165" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">🧠</text>
+    <text x="190" y="272" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">思考：</text>
+    <text x="240" y="272" font-family="Arial, sans-serif" font-size="14" fill="#333">判断是否需要补充信息</text>
+    <circle cx="165" cy="297" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="165" y="302" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">🔍</text>
+    <text x="190" y="294" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">动作：</text>
+    <text x="240" y="294" font-family="Arial, sans-serif" font-size="14" fill="#333">查询更多细节</text>
+    <circle cx="440" cy="275" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="440" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">📄</text>
+    <text x="465" y="272" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">观察：</text>
+    <text x="515" y="272" font-family="Arial, sans-serif" font-size="14" fill="#333">获得新数据</text>
+  </g>
+
+  <!-- 箭头3 -->
+  <line x1="340" y1="306" x2="340" y2="332" stroke="#409EFF" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- 第4步卡片 -->
+  <g filter="url(#cardShadow)">
+    <rect x="100" y="336" width="480" height="62" rx="12" fill="url(#cardGrad1)" stroke="#e0e8f5" stroke-width="1"/>
+    <rect x="100" y="336" width="40" height="62" rx="12" fill="#1a1a2e"/>
+    <rect x="100" y="336" width="40" height="62" rx="12" fill="none" stroke="#1a1a2e" stroke-width="1"/>
+    <text x="120" y="373" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">4</text>
+    <circle cx="165" cy="367" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="165" y="372" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">🧠</text>
+    <text x="190" y="364" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">思考：</text>
+    <text x="240" y="364" font-family="Arial, sans-serif" font-size="14" fill="#333">综合所有信息得出结论</text>
+    <circle cx="165" cy="389" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="165" y="394" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">🔍</text>
+    <text x="190" y="386" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">动作：</text>
+    <text x="240" y="386" font-family="Arial, sans-serif" font-size="14" fill="#333">整理最终结果</text>
+    <circle cx="440" cy="367" r="14" fill="#eef3ff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="440" y="372" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">📄</text>
+    <text x="465" y="364" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">观察：</text>
+    <text x="515" y="364" font-family="Arial, sans-serif" font-size="14" fill="#333">结果已就绪</text>
+  </g>
+
+  <!-- 箭头4 -->
+  <line x1="340" y1="398" x2="340" y2="424" stroke="#409EFF" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- 第5步卡片（高亮） -->
+  <g filter="url(#cardShadow5)">
+    <rect x="100" y="428" width="480" height="62" rx="12" fill="url(#cardGrad5)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="100" y="428" width="40" height="62" rx="12" fill="#1a1a2e"/>
+    <rect x="100" y="428" width="40" height="62" rx="12" fill="none" stroke="#1a1a2e" stroke-width="1"/>
+    <text x="120" y="465" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">5</text>
+    <circle cx="165" cy="459" r="14" fill="#d6ecff" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="165" y="464" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">🧠</text>
+    <text x="190" y="456" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">思考：</text>
+    <text x="240" y="456" font-family="Arial, sans-serif" font-size="14" fill="#333">输出最终答案</text>
+    <circle cx="165" cy="481" r="14" fill="#d6ecff" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="165" y="486" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">🔍</text>
+    <text x="190" y="478" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">动作：</text>
+    <text x="240" y="478" font-family="Arial, sans-serif" font-size="14" fill="#333">生成回答</text>
+    <circle cx="440" cy="459" r="14" fill="#d6ecff" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="440" y="464" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF">📄</text>
+    <text x="465" y="456" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">观察：</text>
+    <text x="515" y="456" font-family="Arial, sans-serif" font-size="14" fill="#333">答案已生成</text>
+  </g>
+
+  <!-- 标注2：思考-动作-观察三元组 -->
+  <rect x="620" y="100" width="155" height="28" rx="14" fill="#409EFF" opacity="0.9"/>
+  <text x="697" y="119" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">三元组结构</text>
+  <line x1="620" y1="114" x2="590" y2="114" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- 标注3：迭代循环 -->
+  <rect x="620" y="200" width="155" height="28" rx="14" fill="#409EFF" opacity="0.9"/>
+  <text x="697" y="219" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">迭代循环</text>
+  <line x1="620" y1="214" x2="590" y2="214" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- 标注4：数据流动 -->
+  <rect x="620" y="300" width="155" height="28" rx="14" fill="#409EFF" opacity="0.9"/>
+  <text x="697" y="319" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">数据流动</text>
+  <line x1="620" y1="314" x2="590" y2="314" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- 标注5：最终答案 -->
+  <rect x="620" y="440" width="155" height="28" rx="14" fill="#409EFF" opacity="0.9"/>
+  <text x="697" y="459" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">最终答案输出</text>
+  <line x1="620" y1="454" x2="590" y2="454" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- 图例 -->
+  <rect x="620" y="350" width="155" height="70" rx="10" fill="#ffffff" stroke="#e0e8f5" stroke-width="1" opacity="0.9"/>
+  <text x="697" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">图例</text>
+  <circle cx="640" cy="388" r="6" fill="#eef3ff" stroke="#409EFF" stroke-width="1"/>
+  <text x="655" y="392" font-family="Arial, sans-serif" font-size="12" fill="#333">思考</text>
+  <circle cx="700" cy="388" r="6" fill="#eef3ff" stroke="#409EFF" stroke-width="1"/>
+  <text x="715" y="392" font-family="Arial, sans-serif" font-size="12" fill="#333">动作</text>
+  <circle cx="640" cy="408" r="6" fill="#eef3ff" stroke="#409EFF" stroke-width="1"/>
+  <text x="655" y="412" font-family="Arial, sans-serif" font-size="12" fill="#333">观察</text>
+  <circle cx="700" cy="408" r="6" fill="#d6ecff" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="715" y="412" font-family="Arial, sans-serif" font-size="12" fill="#333">高亮</text>
+</svg>

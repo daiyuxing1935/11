@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="step1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#7EC2FF"/>
+    </linearGradient>
+    <linearGradient id="step2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#6BB8FF"/>
+    </linearGradient>
+    <linearGradient id="step3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#5AAEFF"/>
+    </linearGradient>
+    <linearGradient id="step4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#4DA6FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- 标题 -->
+  <text x="400" y="48" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">AutoGen 学习路径</text>
+
+  <!-- 副标题 -->
+  <text x="400" y="74" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="14" fill="#5a5a7a">从双Agent对话到自定义回复函数</text>
+
+  <!-- 水平连接箭头线 -->
+  <line x1="100" y1="210" x2="700" y2="210" stroke="#409EFF" stroke-width="3" stroke-dasharray="8,4" opacity="0.5"/>
+
+  <!-- 箭头指示 -->
+  <polygon points="698,205 710,210 698,215" fill="#409EFF" opacity="0.6"/>
+
+  <!-- 步骤1：入门 -->
+  <g>
+    <!-- 台阶 -->
+    <rect x="50" y="180" width="140" height="60" rx="12" fill="url(#step1)" opacity="0.9"/>
+    <rect x="50" y="180" width="140" height="60" rx="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.3"/>
+
+    <!-- 阶段编号 -->
+    <text x="120" y="204" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="11" fill="#FFFFFF" opacity="0.8">阶段 1</text>
+
+    <!-- 阶段标题 -->
+    <text x="120" y="226" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF">入门</text>
+
+    <!-- 旗帜图标 -->
+    <g transform="translate(120, 155)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/>
+      <polygon points="0,0 12,4 0,8" fill="#1a1a2e"/>
+    </g>
+
+    <!-- 标注 -->
+    <text x="120" y="270" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#1a1a2e">双Agent对话</text>
+    <text x="120" y="290" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="11" fill="#5a5a7a">基础交互模式</text>
+  </g>
+
+  <!-- 步骤2：进阶 -->
+  <g>
+    <rect x="230" y="170" width="150" height="70" rx="12" fill="url(#step2)" opacity="0.9"/>
+    <rect x="230" y="170" width="150" height="70" rx="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.3"/>
+
+    <text x="305" y="198" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="11" fill="#FFFFFF" opacity="0.8">阶段 2</text>
+
+    <text x="305" y="222" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF">进阶</text>
+
+    <g transform="translate(305, 145)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/>
+      <polygon points="0,0 14,5 0,10" fill="#1a1a2e"/>
+    </g>
+
+    <text x="305" y="270" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#1a1a2e">GroupChat</text>
+    <text x="305" y="290" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="11" fill="#5a5a7a">多Agent协作</text>
+  </g>
+
+  <!-- 步骤3：高级 -->
+  <g>
+    <rect x="420" y="160" width="150" height="80" rx="12" fill="url(#step3)" opacity="0.9"/>
+    <rect x="420" y="160" width="150" height="80" rx="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.3"/>
+
+    <text x="495" y="192" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="11" fill="#FFFFFF" opacity="0.8">阶段 3</text>
+
+    <text x="495" y="218" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF">高级</text>
+
+    <g transform="translate(495, 135)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/>
+      <polygon points="0,0 16,6 0,12" fill="#1a1a2e"/>
+    </g>
+
+    <text x="495" y="270" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#1a1a2e">人机协作</text>
+    <text x="495" y="290" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="11" fill="#5a5a7a">Human-in-the-loop</text>
+  </g>
+
+  <!-- 步骤4：专家 -->
+  <g>
+    <rect x="610" y="150" width="150" height="90" rx="12" fill="url(#step4)" opacity="0.95"/>
+    <rect x="610" y="150" width="150" height="90" rx="12" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.4"/>
+
+    <text x="685" y="186" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="11" fill="#FFFFFF" opacity="0.8">阶段 4</text>
+
+    <text x="685" y="214" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF">专家</text>
+
+    <g transform="translate(685, 125)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+      <polygon points="0,0 18,7 0,14" fill="#1a1a2e"/>
+    </g>
+
+    <text x="685" y="270" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#1a1a2e">自定义回复</text>
+    <text x="685" y="290" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="11" fill="#5a5a7a">高级函数扩展</text>
+  </g>
+
+  <!-- 连接步骤的上升曲线 -->
+  <path d="M190,210 Q210,195 230,205" stroke="#409EFF" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M380,205 Q400,185 420,200" stroke="#409EFF" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M570,200 Q590,175 610,195" stroke="#409EFF" stroke-width="2" fill="none" opacity="0.4"/>
+
+  <!-- 底部信息区 -->
+  <rect x="50" y="340" width="700" height="130" rx="10" fill="#FFFFFF" opacity="0.7" stroke="#409EFF" stroke-width="1" stroke-opacity="0.2"/>
+
+  <text x="400" y="368" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">延伸阅读</text>
+
+  <g transform="translate(70, 390)">
+    <circle cx="4" cy="4" r="3" fill="#409EFF"/>
+    <text x="14" y="8" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#1a1a2e">AutoGen 官方仓库：github.com/microsoft/autogen</text>
+  </g>
+
+  <g transform="translate(70, 418)">
+    <circle cx="4" cy="4" r="3" fill="#409EFF"/>
+    <text x="14" y="8" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#1a1a2e">AutoGen Studio：可视化构建多Agent工作流</text>
+  </g>
+
+  <g transform="translate(70, 446)">
+    <circle cx="4" cy="4" r="3" fill="#409EFF"/>
+    <text x="14" y="8" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="13" fill="#1a1a2e">AutoGen v0.4 架构升级：事件驱动 + 异步支持</text>
+  </g>
+
+  <!-- 装饰性底部渐变条 -->
+  <rect x="0" y="495" width="800" height="5" fill="#409EFF" opacity="0.3"/>
+</svg>

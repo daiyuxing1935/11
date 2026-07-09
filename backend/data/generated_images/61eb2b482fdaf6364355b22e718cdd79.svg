@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3A8EE6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 标题栏 -->
+  <rect x="200" y="28" width="400" height="50" rx="25" fill="#1a1a2e" opacity="0.95"/>
+  <text x="400" y="60" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="22" font-weight="bold" fill="#FFFFFF" letter-spacing="2">上下文窗口 核心要点</text>
+
+  <!-- 卡片网格：2行3列 -->
+  <!-- 卡片1：Token ≠ 字数 -->
+  <rect x="30" y="105" width="230" height="165" rx="14" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5" opacity="0.95"/>
+  <rect x="30" y="105" width="230" height="165" rx="14" fill="url(#cardGrad)" opacity="0.08"/>
+  <!-- 图标：计数器 -->
+  <circle cx="100" cy="145" r="20" fill="#409EFF" opacity="0.12"/>
+  <text x="100" y="152" text-anchor="middle" font-size="22" fill="#409EFF">🔢</text>
+  <text x="145" y="150" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">Token ≠ 字数</text>
+  <line x1="60" y1="168" x2="230" y2="168" stroke="#409EFF" stroke-width="0.5" opacity="0.3"/>
+  <text x="145" y="190" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#333">始终用 tokenizer 计数</text>
+  <rect x="80" y="208" width="130" height="26" rx="13" fill="#409EFF" opacity="0.1"/>
+  <text x="145" y="226" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF" font-weight="bold">精确控制</text>
+
+  <!-- 卡片2：Key info at beginning and end -->
+  <rect x="285" y="105" width="230" height="165" rx="14" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5" opacity="0.95"/>
+  <rect x="285" y="105" width="230" height="165" rx="14" fill="url(#cardGrad)" opacity="0.08"/>
+  <!-- 图标：两端书签 -->
+  <text x="355" y="148" text-anchor="middle" font-size="20" fill="#409EFF">🔖</text>
+  <text x="380" y="145" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">关键信息在首尾</text>
+  <line x1="310" y1="168" x2="490" y2="168" stroke="#409EFF" stroke-width="0.5" opacity="0.3"/>
+  <text x="400" y="190" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#333">避免“迷失在中间”</text>
+  <rect x="340" y="208" width="120" height="26" rx="13" fill="#409EFF" opacity="0.1"/>
+  <text x="400" y="226" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF" font-weight="bold">位置策略</text>
+
+  <!-- 卡片3：RAG and long context -->
+  <rect x="540" y="105" width="230" height="165" rx="14" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5" opacity="0.95"/>
+  <rect x="540" y="105" width="230" height="165" rx="14" fill="url(#cardGrad)" opacity="0.08"/>
+  <!-- 图标：分叉路径 -->
+  <text x="610" y="148" text-anchor="middle" font-size="20" fill="#409EFF">🔀</text>
+  <text x="640" y="145" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">RAG vs 长上下文</text>
+  <line x1="565" y1="168" x2="745" y2="168" stroke="#409EFF" stroke-width="0.5" opacity="0.3"/>
+  <text x="655" y="190" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#333">按任务类型选择</text>
+  <rect x="600" y="208" width="110" height="26" rx="13" fill="#409EFF" opacity="0.1"/>
+  <text x="655" y="226" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF" font-weight="bold">各有所长</text>
+
+  <!-- 卡片4：Context compression -->
+  <rect x="30" y="300" width="230" height="165" rx="14" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5" opacity="0.95"/>
+  <rect x="30" y="300" width="230" height="165" rx="14" fill="url(#cardGrad)" opacity="0.08"/>
+  <!-- 图标：压缩/展开 -->
+  <text x="100" y="343" text-anchor="middle" font-size="20" fill="#409EFF">📦</text>
+  <text x="145" y="340" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">上下文压缩</text>
+  <line x1="60" y1="363" x2="230" y2="363" stroke="#409EFF" stroke-width="0.5" opacity="0.3"/>
+  <text x="145" y="385" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#333">必备核心技能</text>
+  <rect x="80" y="403" width="130" height="26" rx="13" fill="#409EFF" opacity="0.1"/>
+  <text x="145" y="421" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF" font-weight="bold">精炼信息</text>
+
+  <!-- 卡片5：Needle-in-Haystack -->
+  <rect x="285" y="300" width="230" height="165" rx="14" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5" opacity="0.95"/>
+  <rect x="285" y="300" width="230" height="165" rx="14" fill="url(#cardGrad)" opacity="0.08"/>
+  <!-- 图标：针在书堆中 -->
+  <text x="355" y="343" text-anchor="middle" font-size="20" fill="#409EFF">📌</text>
+  <text x="380" y="340" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">大海捞针测试</text>
+  <line x1="310" y1="363" x2="490" y2="363" stroke="#409EFF" stroke-width="0.5" opacity="0.3"/>
+  <text x="400" y="385" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#333">验证真实能力</text>
+  <rect x="340" y="403" width="120" height="26" rx="13" fill="#409EFF" opacity="0.1"/>
+  <text x="400" y="421" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF" font-weight="bold">能力检验</text>
+
+  <!-- 卡片6：Good input management -->
+  <rect x="540" y="300" width="230" height="165" rx="14" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5" opacity="0.95"/>
+  <rect x="540" y="300" width="230" height="165" rx="14" fill="url(#cardGrad)" opacity="0.08"/>
+  <!-- 图标：质量vs数量 -->
+  <text x="610" y="343" text-anchor="middle" font-size="20" fill="#409EFF">⚖️</text>
+  <text x="640" y="340" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">优质输入管理</text>
+  <line x1="565" y1="363" x2="745" y2="363" stroke="#409EFF" stroke-width="0.5" opacity="0.3"/>
+  <text x="655" y="385" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#333">胜于盲目扩大窗口</text>
+  <rect x="600" y="403" width="110" height="26" rx="13" fill="#409EFF" opacity="0.1"/>
+  <text x="655" y="421" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF" font-weight="bold">质量优先</text>
+
+  <!-- 底部装饰线 -->
+  <line x1="250" y1="480" x2="550" y2="480" stroke="#409EFF" stroke-width="1.5" opacity="0.25" stroke-linecap="round"/>
+  <circle cx="400" cy="480" r="3" fill="#409EFF" opacity="0.4"/>
+</svg>

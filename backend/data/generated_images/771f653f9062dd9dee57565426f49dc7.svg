@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f8ff;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="starGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+  <rect width="800" height="500" fill="none" stroke="#409EFF" stroke-width="1.5" rx="12" opacity="0.3"/>
+
+  <!-- 标题 -->
+  <text x="400" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">智能体能力公式</text>
+
+  <!-- ========== 左侧：OTA 循环 ========== -->
+  <g transform="translate(130, 200)">
+    <!-- OTA 循环图标 -->
+    <circle cx="0" cy="0" r="65" fill="none" stroke="#409EFF" stroke-width="3" stroke-dasharray="8 4" opacity="0.5"/>
+    <!-- 轨道圆 -->
+    <circle cx="0" cy="0" r="55" fill="none" stroke="#409EFF" stroke-width="2.5" opacity="0.7"/>
+
+    <!-- 三个节点 -->
+    <!-- O 节点 - 顶部 -->
+    <circle cx="0" cy="-55" r="16" fill="#409EFF" opacity="0.15"/>
+    <circle cx="0" cy="-55" r="12" fill="#409EFF" opacity="0.3"/>
+    <circle cx="0" cy="-55" r="8" fill="#409EFF"/>
+    <text x="0" y="-52" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">O</text>
+
+    <!-- T 节点 - 右下 -->
+    <circle cx="47.6" cy="27.5" r="16" fill="#409EFF" opacity="0.15"/>
+    <circle cx="47.6" cy="27.5" r="12" fill="#409EFF" opacity="0.3"/>
+    <circle cx="47.6" cy="27.5" r="8" fill="#409EFF"/>
+    <text x="47.6" y="30.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">T</text>
+
+    <!-- A 节点 - 左下 -->
+    <circle cx="-47.6" cy="27.5" r="16" fill="#409EFF" opacity="0.15"/>
+    <circle cx="-47.6" cy="27.5" r="12" fill="#409EFF" opacity="0.3"/>
+    <circle cx="-47.6" cy="27.5" r="8" fill="#409EFF"/>
+    <text x="-47.6" y="30.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">A</text>
+
+    <!-- 旋转箭头 -->
+    <path d="M 0,-70 A 70,70 0 1,1 -49.5,-49.5" fill="none" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <defs>
+      <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#409EFF"/>
+      </marker>
+    </defs>
+
+    <!-- 标签：循环速度 -->
+    <text x="0" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#1a1a2e" font-weight="bold">循环速度</text>
+
+    <!-- 速度表图标 -->
+    <g transform="translate(0, 115)">
+      <circle cx="0" cy="0" r="14" fill="none" stroke="#409EFF" stroke-width="2"/>
+      <path d="M -8,0 A 8,8 0 1,1 8,0" fill="none" stroke="#409EFF" stroke-width="2"/>
+      <line x1="0" y1="0" x2="5" y2="-6" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="2.5" fill="#409EFF"/>
+    </g>
+  </g>
+
+  <!-- ========== 乘号 ========== -->
+  <g transform="translate(310, 200)">
+    <line x1="-18" y1="-18" x2="18" y2="18" stroke="#409EFF" stroke-width="5" stroke-linecap="round"/>
+    <line x1="18" y1="-18" x2="-18" y2="18" stroke="#409EFF" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- ========== 右侧：大脑 + 深度条 ========== -->
+  <g transform="translate(470, 200)">
+    <!-- 大脑图标 -->
+    <g transform="translate(0, -15)">
+      <!-- 大脑轮廓 -->
+      <path d="M -25,-10 C -35,-20 -30,-40 -15,-42 C -5,-44 0,-35 0,-35 C 0,-35 5,-44 15,-42 C 30,-40 35,-20 25,-10 C 30,0 25,15 15,20 C 5,25 -5,25 -15,20 C -25,15 -30,0 -25,-10 Z" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="2"/>
+      <!-- 大脑褶皱 -->
+      <path d="M -15,-30 C -10,-25 -5,-28 0,-30" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <path d="M 5,-30 C 10,-28 15,-25 18,-20" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <path d="M -18,-15 C -12,-12 -8,-18 0,-15" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <path d="M 5,-15 C 12,-18 18,-10 20,-5" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <path d="M -20,0 C -12,3 -5,-2 0,0" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <path d="M 5,0 C 12,-2 18,5 20,10" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+    </g>
+
+    <!-- 深度条 -->
+    <g transform="translate(40, -20)">
+      <!-- 条 1 -->
+      <rect x="0" y="0" width="10" height="20" rx="3" fill="#409EFF" opacity="0.3"/>
+      <!-- 条 2 -->
+      <rect x="14" y="-5" width="10" height="25" rx="3" fill="#409EFF" opacity="0.5"/>
+      <!-- 条 3 -->
+      <rect x="28" y="-10" width="10" height="30" rx="3" fill="#409EFF" opacity="0.7"/>
+      <!-- 条 4 -->
+      <rect x="42" y="-15" width="10" height="35" rx="3" fill="#409EFF"/>
+    </g>
+
+    <!-- 标签：思考深度 -->
+    <text x="0" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#1a1a2e" font-weight="bold">思考深度</text>
+  </g>
+
+  <!-- ========== 等号 ========== -->
+  <g transform="translate(620, 200)">
+    <line x1="-15" y1="-8" x2="15" y2="-8" stroke="#409EFF" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-15" y1="8" x2="15" y2="8" stroke="#409EFF" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- ========== 右侧：星星/灯泡 ========== -->
+  <g transform="translate(700, 200)">
+    <!-- 发光星星 -->
+    <g transform="translate(0, -10)">
+      <!-- 光晕 -->
+      <circle cx="0" cy="0" r="30" fill="#FFD700" opacity="0.1"/>
+      <circle cx="0" cy="0" r="22" fill="#FFD700" opacity="0.15"/>
+      <circle cx="0" cy="0" r="15" fill="#FFD700" opacity="0.2"/>
+
+      <!-- 星星 -->
+      <polygon points="0,-20 5,-7 18,-7 8,3 12,18 0,10 -12,18 -8,3 -18,-7 -5,-7" fill="url(#starGlow)" stroke="#FFA500" stroke-width="1"/>
+
+      <!-- 灯泡底部 -->
+      <rect x="-5" y="18" width="10" height="6" rx="2" fill="#FFA500" opacity="0.6"/>
+      <line x1="-3" y1="24" x2="3" y2="24" stroke="#FFA500" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+
+    <!-- 标签：智能体智能 -->
+    <text x="0" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#1a1a2e" font-weight="bold">智能体智能</text>
+  </g>
+
+  <!-- ========== 底部标注 ========== -->
+  <g transform="translate(130, 370)">
+    <rect x="-70" y="-12" width="140" height="24" rx="12" fill="#409EFF" opacity="0.1"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#409EFF">观察-思考-行动</text>
+  </g>
+
+  <g transform="translate(310, 370)">
+    <rect x="-45" y="-12" width="90" height="24" rx="12" fill="#409EFF" opacity="0.1"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#409EFF">循环迭代</text>
+  </g>
+
+  <g transform="translate(470, 370)">
+    <rect x="-55" y="-12" width="110" height="24" rx="12" fill="#409EFF" opacity="0.1"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#409EFF">多层推理</text>
+  </g>
+
+  <g transform="translate(620, 370)">
+    <rect x="-45" y="-12" width="90" height="24" rx="12" fill="#409EFF" opacity="0.1"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#409EFF">能力涌现</text>
+  </g>
+
+  <g transform="translate(700, 370)">
+    <rect x="-55" y="-12" width="110" height="24" rx="12" fill="#409EFF" opacity="0.1"/>
+    <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#409EFF">智能体能力</text>
+  </g>
+
+  <!-- 底部连接线 -->
+  <g opacity="0.3">
+    <line x1="130" y1="385" x2="130" y2="410" stroke="#409EFF" stroke-width="1"/>
+    <line x1="310" y1="385" x2="310" y2="410" stroke="#409EFF" stroke-width="1"/>
+    <line x1="470" y1="385" x2="470" y2="410" stroke="#409EFF" stroke-width="1"/>
+    <line x1="620" y1="385" x2="620" y2="410" stroke="#409EFF" stroke-width="1"/>
+    <line x1="700" y1="385" x2="700" y2="410" stroke="#409EFF" stroke-width="1"/>
+  </g>
+
+  <!-- 底部公式说明 -->
+  <text x="400" y="460" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" opacity="0.6">智能体能力 = 循环速度 × 思考深度</text>
+
+  <!-- 装饰性底部线条 -->
+  <line x1="200" y1="480" x2="600" y2="480" stroke="#409EFF" stroke-width="1" opacity="0.2"/>
+</svg>

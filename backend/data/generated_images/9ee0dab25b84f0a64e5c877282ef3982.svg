@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="centerGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2B7ED6"/>
+    </linearGradient>
+    <linearGradient id="nodeGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#5AA9FF"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-color="#409EFF" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">多智能体系统五大核心价值</text>
+
+  <!-- 连接线（中心到5个节点） -->
+  <g stroke="#409EFF" stroke-width="1.8" stroke-opacity="0.5" fill="none">
+    <!-- 上 -->
+    <line x1="400" y1="160" x2="400" y2="78"/>
+    <!-- 右上 -->
+    <line x1="400" y1="160" x2="640" y2="110"/>
+    <!-- 右下 -->
+    <line x1="400" y1="160" x2="600" y2="310"/>
+    <!-- 左下 -->
+    <line x1="400" y1="160" x2="200" y2="310"/>
+    <!-- 左上 -->
+    <line x1="400" y1="160" x2="160" y2="110"/>
+  </g>
+
+  <!-- 中心：复杂任务拼图 -->
+  <g transform="translate(400,160)" filter="url(#shadow)">
+    <rect x="-48" y="-48" width="40" height="40" rx="4" fill="#409EFF" opacity="0.3"/>
+    <rect x="-8" y="-48" width="40" height="40" rx="4" fill="#409EFF" opacity="0.5"/>
+    <rect x="-48" y="-8" width="40" height="40" rx="4" fill="#409EFF" opacity="0.5"/>
+    <rect x="-8" y="-8" width="40" height="40" rx="4" fill="url(#centerGrad)"/>
+    <text x="12" y="14" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">复杂</text>
+    <text x="12" y="28" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">任务</text>
+  </g>
+
+  <!-- 节点1：能力互补（上） -->
+  <g transform="translate(400,68)" filter="url(#shadow)">
+    <circle cx="0" cy="0" r="36" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <!-- 两个拼图块 -->
+    <path d="M-16,-10 L-4,-10 L-4,-18 L-2,-18 L-2,-10 L10,-10 L10,10 L-16,10 Z" fill="#409EFF" opacity="0.7"/>
+    <path d="M-10,-10 L-4,-10 L-4,-18 L-2,-18 L-2,-10 L10,-10 L10,10 L-10,10 Z" fill="#409EFF" opacity="0.4"/>
+    <text x="-10" y="4" text-anchor="middle" font-family="sans-serif" font-size="7" fill="white">逻辑</text>
+    <text x="4" y="4" text-anchor="middle" font-family="sans-serif" font-size="7" fill="white">创意</text>
+    <text x="0" y="50" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">能力互补</text>
+  </g>
+
+  <!-- 节点2：专注聚焦（右上） -->
+  <g transform="translate(648,100)" filter="url(#shadow)">
+    <circle cx="0" cy="0" r="36" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <!-- 三个放大镜 -->
+    <circle cx="-10" cy="-8" r="7" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="-5" y1="-3" x2="0" y2="2" stroke="#409EFF" stroke-width="1.5"/>
+    <circle cx="4" cy="-12" r="7" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="9" y1="-7" x2="14" y2="-2" stroke="#409EFF" stroke-width="1.5"/>
+    <circle cx="-2" cy="4" r="7" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="3" y1="9" x2="8" y2="14" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="0" y="50" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">专注聚焦</text>
+  </g>
+
+  <!-- 节点3：错误隔离（右下） -->
+  <g transform="translate(608,310)" filter="url(#shadow)">
+    <circle cx="0" cy="0" r="36" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <!-- 防火墙屏障 -->
+    <rect x="-18" y="-18" width="36" height="36" rx="3" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <line x1="-4" y1="-18" x2="-4" y2="18" stroke="#409EFF" stroke-width="2.5"/>
+    <!-- 错误标记 -->
+    <text x="-14" y="-2" font-family="sans-serif" font-size="9" fill="#E74C3C" font-weight="bold">✕</text>
+    <text x="6" y="4" font-family="sans-serif" font-size="9" fill="#27AE60" font-weight="bold">✓</text>
+    <text x="0" y="50" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">错误隔离</text>
+  </g>
+
+  <!-- 节点4：并行处理（左下） -->
+  <g transform="translate(192,310)" filter="url(#shadow)">
+    <circle cx="0" cy="0" r="36" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <!-- 重叠时钟 -->
+    <circle cx="-6" cy="-4" r="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+    <line x1="-6" y1="-4" x2="-6" y2="-10" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+    <line x1="-6" y1="-4" x2="-1" y2="-4" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+    <circle cx="4" cy="2" r="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.7"/>
+    <line x1="4" y1="2" x2="4" y2="-4" stroke="#409EFF" stroke-width="1" opacity="0.7"/>
+    <line x1="4" y1="2" x2="9" y2="2" stroke="#409EFF" stroke-width="1" opacity="0.7"/>
+    <circle cx="-2" cy="6" r="12" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="-2" y1="6" x2="-2" y2="0" stroke="#409EFF" stroke-width="1"/>
+    <line x1="-2" y1="6" x2="3" y2="6" stroke="#409EFF" stroke-width="1"/>
+    <text x="0" y="50" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">并行处理</text>
+  </g>
+
+  <!-- 节点5：涌现智能（左上） -->
+  <g transform="translate(152,100)" filter="url(#shadow)">
+    <circle cx="0" cy="0" r="36" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <!-- 小点连接成大形状 -->
+    <circle cx="-12" cy="-10" r="3" fill="#409EFF" opacity="0.5"/>
+    <circle cx="0" cy="-14" r="3" fill="#409EFF" opacity="0.5"/>
+    <circle cx="10" cy="-8" r="3" fill="#409EFF" opacity="0.5"/>
+    <circle cx="-8" cy="2" r="3" fill="#409EFF" opacity="0.5"/>
+    <circle cx="8" cy="4" r="3" fill="#409EFF" opacity="0.5"/>
+    <circle cx="0" cy="10" r="3" fill="#409EFF" opacity="0.5"/>
+    <!-- 连接线 -->
+    <polygon points="-12,-10 0,-14 10,-8 8,4 0,10 -8,2" fill="none" stroke="#409EFF" stroke-width="1" opacity="0.6"/>
+    <!-- 发光形状 -->
+    <circle cx="0" cy="0" r="8" fill="#409EFF" opacity="0.2"/>
+    <text x="0" y="50" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">涌现智能</text>
+  </g>
+
+  <!-- 标注 -->
+  <g font-family="sans-serif" font-size="12" fill="#1a1a2e" opacity="0.8">
+    <!-- 标注1：能力互补 -->
+    <rect x="340" y="52" width="16" height="16" rx="3" fill="#409EFF" opacity="0.15"/>
+    <text x="348" y="64" text-anchor="middle" font-size="10" fill="#409EFF" font-weight="bold">1</text>
+    <text x="362" y="64" font-size="12" fill="#1a1a2e">技能协同</text>
+
+    <!-- 标注2：专注聚焦 -->
+    <rect x="588" y="84" width="16" height="16" rx="3" fill="#409EFF" opacity="0.15"/>
+    <text x="596" y="96" text-anchor="middle" font-size="10" fill="#409EFF" font-weight="bold">2</text>
+    <text x="610" y="96" font-size="12" fill="#1a1a2e">分工专注</text>
+
+    <!-- 标注3：错误隔离 -->
+    <rect x="548" y="294" width="16" height="16" rx="3" fill="#409EFF" opacity="0.15"/>
+    <text x="556" y="306" text-anchor="middle" font-size="10" fill="#409EFF" font-weight="bold">3</text>
+    <text x="570" y="306" font-size="12" fill="#1a1a2e">故障隔离</text>
+
+    <!-- 标注4：并行处理 -->
+    <rect x="132" y="294" width="16" height="16" rx="3" fill="#409EFF" opacity="0.15"/>
+    <text x="140" y="306" text-anchor="middle" font-size="10" fill="#409EFF" font-weight="bold">4</text>
+    <text x="154" y="306" font-size="12" fill="#1a1a2e">同步加速</text>
+
+    <!-- 标注5：涌现智能 -->
+    <rect x="92" y="84" width="16" height="16" rx="3" fill="#409EFF" opacity="0.15"/>
+    <text x="100" y="96" text-anchor="middle" font-size="10" fill="#409EFF" font-weight="bold">5</text>
+    <text x="114" y="96" font-size="12" fill="#1a1a2e">整体涌现</text>
+  </g>
+
+  <!-- 底部说明 -->
+  <text x="400" y="470" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" opacity="0.7">多智能体系统通过五大核心价值协同，高效完成复杂任务</text>
+</svg>

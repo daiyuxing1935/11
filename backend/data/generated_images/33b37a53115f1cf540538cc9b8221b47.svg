@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FF"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="beamGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#66B1FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 标题 -->
+  <text x="400" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">LLM 评估：没有最好，只有最合适</text>
+
+  <!-- 天平底座 -->
+  <rect x="360" y="370" width="80" height="12" rx="4" fill="#409EFF"/>
+  <rect x="395" y="382" width="10" height="50" rx="3" fill="#409EFF"/>
+  <polygon points="390,432 410,432 400,445" fill="#409EFF"/>
+
+  <!-- 天平横梁 -->
+  <rect x="150" y="220" width="500" height="10" rx="5" fill="url(#beamGrad)" transform="rotate(-15, 400, 225)"/>
+
+  <!-- 天平支点 -->
+  <polygon points="395,225 405,225 400,370" fill="#409EFF" opacity="0.6"/>
+
+  <!-- 左侧托盘 - 模型 -->
+  <rect x="155" y="240" width="140" height="8" rx="3" fill="#409EFF" transform="rotate(-15, 225, 244)"/>
+  <line x1="225" y1="248" x2="225" y2="290" stroke="#409EFF" stroke-width="3" transform="rotate(-15, 225, 248)"/>
+
+  <!-- 模型图标 -->
+  <rect x="175" y="270" width="100" height="36" rx="6" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1.5" transform="rotate(-15, 225, 288)"/>
+  <text x="225" y="293" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" transform="rotate(-15, 225, 293)">模型 A</text>
+
+  <rect x="160" y="314" width="90" height="32" rx="6" fill="#409EFF" opacity="0.12" stroke="#409EFF" stroke-width="1.5" transform="rotate(-15, 205, 330)"/>
+  <text x="205" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" transform="rotate(-15, 205, 335)">模型 B</text>
+
+  <rect x="190" y="354" width="80" height="30" rx="6" fill="#409EFF" opacity="0.10" stroke="#409EFF" stroke-width="1.5" transform="rotate(-15, 230, 369)"/>
+  <text x="230" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" transform="rotate(-15, 230, 374)">模型 C</text>
+
+  <!-- 右侧托盘 - 评估标准 -->
+  <rect x="505" y="210" width="140" height="8" rx="3" fill="#409EFF" transform="rotate(-15, 575, 214)"/>
+  <line x1="575" y1="218" x2="575" y2="260" stroke="#409EFF" stroke-width="3" transform="rotate(-15, 575, 218)"/>
+
+  <!-- 评估标准卡片 -->
+  <rect x="510" y="240" width="130" height="32" rx="6" fill="#409EFF" opacity="0.2" stroke="#409EFF" stroke-width="1.5" transform="rotate(-15, 575, 256)"/>
+  <text x="575" y="261" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" transform="rotate(-15, 575, 261)">数学能力</text>
+
+  <rect x="520" y="280" width="120" height="32" rx="6" fill="#409EFF" opacity="0.18" stroke="#409EFF" stroke-width="1.5" transform="rotate(-15, 580, 296)"/>
+  <text x="580" y="301" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" transform="rotate(-15, 580, 301)">编程能力</text>
+
+  <rect x="515" y="318" width="125" height="32" rx="6" fill="#409EFF" opacity="0.16" stroke="#409EFF" stroke-width="1.5" transform="rotate(-15, 577, 334)"/>
+  <text x="577" y="339" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" transform="rotate(-15, 577, 339)">写作能力</text>
+
+  <rect x="525" y="354" width="110" height="30" rx="6" fill="#409EFF" opacity="0.14" stroke="#409EFF" stroke-width="1.5" transform="rotate(-15, 580, 369)"/>
+  <text x="580" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" transform="rotate(-15, 580, 374)">知识问答</text>
+
+  <!-- 关键信息横幅 -->
+  <rect x="180" y="430" width="440" height="48" rx="24" fill="#1a1a2e" opacity="0.9"/>
+  <text x="400" y="460" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="bold" fill="#FFFFFF">没有“最好”的模型 — 只有最适合你的任务</text>
+
+  <!-- 标注 1：左侧标签 -->
+  <text x="100" y="300" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" opacity="0.7">候选模型</text>
+  <line x1="130" y1="300" x2="160" y2="300" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- 标注 2：右侧标签 -->
+  <text x="700" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" opacity="0.7">评估维度</text>
+  <line x1="670" y1="270" x2="650" y2="270" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- 标注 3：倾斜方向 -->
+  <text x="620" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF" opacity="0.8">任务导向</text>
+  <line x1="590" y1="208" x2="560" y2="218" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- 标注 4：平衡提示 -->
+  <text x="400" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#409EFF" opacity="0.8">按需评估</text>
+
+  <!-- 装饰性小点 -->
+  <circle cx="80" cy="80" r="4" fill="#409EFF" opacity="0.3"/>
+  <circle cx="720" cy="90" r="3" fill="#409EFF" opacity="0.25"/>
+  <circle cx="50" cy="420" r="3" fill="#409EFF" opacity="0.2"/>
+  <circle cx="750" cy="400" r="4" fill="#409EFF" opacity="0.3"/>
+  <circle cx="680" cy="60" r="2" fill="#409EFF" opacity="0.2"/>
+  <circle cx="120" cy="460" r="2" fill="#409EFF" opacity="0.2"/>
+</svg>

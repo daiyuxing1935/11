@@ -1,15 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif">
   <defs>
     <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#E8F4FD"/>
       <stop offset="100%" stop-color="#F0F8FF"/>
     </linearGradient>
     <linearGradient id="boardGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#2c3e50"/>
-      <stop offset="100%" stop-color="#1a1a2e"/>
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2B7FD4"/>
+    </linearGradient>
+    <linearGradient id="queueGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#5AB0FF"/>
     </linearGradient>
     <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
-      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.12"/>
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.12" flood-color="#409EFF"/>
     </filter>
   </defs>
 
@@ -17,138 +21,155 @@
   <rect width="800" height="500" fill="url(#bgGrad)"/>
 
   <!-- 标题 -->
-  <text x="400" y="32" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">黑板模式 vs 消息队列模式</text>
+  <text x="400" y="32" text-anchor="middle" font-size="18" font-weight="bold" fill="#1a1a2e">黑板模式 vs 消息队列模式</text>
 
-  <!-- ===== 左侧：黑板 ===== -->
-  <g filter="url(#shadow)">
-    <rect x="40" y="55" width="280" height="175" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1.5"/>
-    <!-- 黑板内部 -->
-    <rect x="55" y="68" width="250" height="100" rx="3" fill="url(#boardGrad)"/>
-    <!-- 粉笔字 -->
-    <text x="70" y="90" font-family="sans-serif" font-size="11" fill="#fff" opacity="0.9">任务A: 数据清洗</text>
-    <text x="70" y="108" font-family="sans-serif" font-size="11" fill="#fff" opacity="0.9">任务B: 特征提取</text>
-    <text x="70" y="126" font-family="sans-serif" font-size="11" fill="#fff" opacity="0.9">任务C: 模型训练</text>
-    <text x="70" y="144" font-family="sans-serif" font-size="11" fill="#fff" opacity="0.9">任务D: 结果验证</text>
-    <text x="70" y="162" font-family="sans-serif" font-size="11" fill="#fff" opacity="0.9">任务E: 报告生成</text>
-    <!-- 黑板标注 -->
-    <text x="180" y="185" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#409EFF" font-weight="bold">共享知识库</text>
+  <!-- ========== 左侧：黑板 ========== -->
+  <g transform="translate(50, 55)">
+    <!-- 黑板外框 -->
+    <rect x="0" y="0" width="310" height="195" rx="8" fill="white" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <!-- 标题栏 -->
+    <rect x="0" y="0" width="310" height="32" rx="8" fill="url(#boardGrad)"/>
+    <rect x="0" y="16" width="310" height="16" fill="url(#boardGrad)"/>
+    <text x="155" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="white">黑板模式</text>
+
+    <!-- 黑板内容 - 持久条目 -->
+    <rect x="18" y="44" width="274" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="28" y="59" font-size="12" fill="#1a1a2e">📝 任务A：数据清洗完成</text>
+
+    <rect x="18" y="72" width="274" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="28" y="87" font-size="12" fill="#1a1a2e">📝 任务B：模型训练结果</text>
+
+    <rect x="18" y="100" width="274" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="28" y="115" font-size="12" fill="#1a1a2e">📝 任务C：报表生成</text>
+
+    <rect x="18" y="128" width="274" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="28" y="143" font-size="12" fill="#1a1a2e">📝 任务D：异常检测</text>
+
+    <!-- 累积标注 -->
+    <rect x="100" y="160" width="110" height="20" rx="10" fill="#409EFF" opacity="0.15"/>
+    <text x="155" y="174" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="bold">知识库积累</text>
+
+    <!-- 拉取箭头 - 左侧 -->
+    <g transform="translate(260, 50)">
+      <path d="M10,10 L-8,10 L-2,4 M-2,16 L-8,10" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="18" y="14" font-size="11" fill="#409EFF">拉取</text>
+    </g>
+    <g transform="translate(260, 78)">
+      <path d="M10,10 L-8,10 L-2,4 M-2,16 L-8,10" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="18" y="14" font-size="11" fill="#409EFF">拉取</text>
+    </g>
+    <g transform="translate(260, 106)">
+      <path d="M10,10 L-8,10 L-2,4 M-2,16 L-8,10" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="18" y="14" font-size="11" fill="#409EFF">拉取</text>
+    </g>
+
+    <!-- 标注 -->
+    <text x="155" y="194" text-anchor="middle" font-size="11" fill="#666">Pull 模型 · 持久可见</text>
   </g>
 
-  <!-- 左侧：拉取箭头和角色 -->
-  <g>
-    <!-- 工人1 -->
-    <circle cx="100" cy="260" r="14" fill="#409EFF" opacity="0.85"/>
-    <text x="100" y="264" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#fff">工</text>
-    <text x="100" y="282" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">工人A</text>
-    <!-- 拉取箭头 -->
-    <line x1="100" y1="245" x2="160" y2="230" stroke="#409EFF" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
-    <text x="115" y="238" font-family="sans-serif" font-size="10" fill="#409EFF">拉取</text>
-
-    <!-- 工人2 -->
-    <circle cx="220" cy="260" r="14" fill="#409EFF" opacity="0.85"/>
-    <text x="220" y="264" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#fff">工</text>
-    <text x="220" y="282" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">工人B</text>
-    <line x1="220" y1="245" x2="200" y2="230" stroke="#409EFF" stroke-width="1.8"/>
-    <text x="210" y="238" font-family="sans-serif" font-size="10" fill="#409EFF">拉取</text>
-
-    <!-- 工人3 -->
-    <circle cx="160" cy="270" r="14" fill="#409EFF" opacity="0.85"/>
-    <text x="160" y="274" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#fff">工</text>
-    <text x="160" y="292" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">工人C</text>
-    <line x1="160" y1="255" x2="175" y2="240" stroke="#409EFF" stroke-width="1.8"/>
-  </g>
-
-  <!-- 左侧标注 -->
-  <g>
-    <rect x="55" y="300" width="100" height="22" rx="11" fill="#409EFF" opacity="0.15"/>
-    <text x="105" y="315" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">拉取模型</text>
-    <rect x="195" y="300" width="100" height="22" rx="11" fill="#409EFF" opacity="0.15"/>
-    <text x="245" y="315" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">持久存储</text>
-  </g>
-
-  <!-- ===== 右侧：消息队列 ===== -->
-  <g filter="url(#shadow)">
-    <rect x="480" y="55" width="280" height="175" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1.5"/>
+  <!-- ========== 右侧：消息队列 ========== -->
+  <g transform="translate(440, 55)">
+    <rect x="0" y="0" width="310" height="195" rx="8" fill="white" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="310" height="32" rx="8" fill="url(#queueGrad)"/>
+    <rect x="0" y="16" width="310" height="16" fill="url(#queueGrad)"/>
+    <text x="155" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="white">消息队列模式</text>
 
     <!-- 队列管道 -->
-    <rect x="495" y="80" width="250" height="40" rx="20" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
-    <!-- 队列中的消息 -->
-    <rect x="505" y="88" width="45" height="24" rx="12" fill="#409EFF" opacity="0.8"/>
-    <text x="527" y="104" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#fff">M1</text>
-    <rect x="558" y="88" width="45" height="24" rx="12" fill="#409EFF" opacity="0.65"/>
-    <text x="580" y="104" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#fff">M2</text>
-    <rect x="611" y="88" width="45" height="24" rx="12" fill="#409EFF" opacity="0.5"/>
-    <text x="633" y="104" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#fff">M3</text>
-    <rect x="664" y="88" width="45" height="24" rx="12" fill="#409EFF" opacity="0.35"/>
-    <text x="686" y="104" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#fff">M4</text>
+    <rect x="30" y="55" width="250" height="40" rx="20" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.2"/>
+    <!-- 管道内的消息 -->
+    <circle cx="70" cy="75" r="12" fill="#409EFF" opacity="0.8"/>
+    <text x="70" y="79" text-anchor="middle" font-size="9" fill="white">M1</text>
+    <circle cx="120" cy="75" r="12" fill="#409EFF" opacity="0.6"/>
+    <text x="120" y="79" text-anchor="middle" font-size="9" fill="white">M2</text>
+    <circle cx="170" cy="75" r="12" fill="#409EFF" opacity="0.4"/>
+    <text x="170" y="79" text-anchor="middle" font-size="9" fill="white">M3</text>
 
-    <!-- 队列标注 -->
-    <text x="620" y="140" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#409EFF" font-weight="bold">消息队列</text>
-
-    <!-- 生产者 -->
-    <rect x="530" y="150" width="60" height="24" rx="4" fill="#409EFF" opacity="0.2"/>
-    <text x="560" y="166" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">生产者</text>
-    <line x1="560" y1="150" x2="560" y2="120" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="3,2"/>
-    <text x="575" y="132" font-family="sans-serif" font-size="9" fill="#409EFF">推送</text>
+    <!-- 箭头指示流动方向 -->
+    <path d="M250,75 L270,75" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+    <defs>
+      <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6" fill="#409EFF"/>
+      </marker>
+    </defs>
 
     <!-- 消费者 -->
-    <rect x="650" y="150" width="60" height="24" rx="4" fill="#409EFF" opacity="0.2"/>
-    <text x="680" y="166" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">消费者</text>
-    <line x1="680" y1="150" x2="680" y2="120" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="3,2"/>
-    <text x="695" y="132" font-family="sans-serif" font-size="9" fill="#409EFF">推送</text>
+    <rect x="30" y="115" width="60" height="28" rx="14" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1"/>
+    <text x="60" y="133" text-anchor="middle" font-size="11" fill="#409EFF">消费者A</text>
+    <rect x="110" y="115" width="60" height="28" rx="14" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1"/>
+    <text x="140" y="133" text-anchor="middle" font-size="11" fill="#409EFF">消费者B</text>
+    <rect x="190" y="115" width="60" height="28" rx="14" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1"/>
+    <text x="220" y="133" text-anchor="middle" font-size="11" fill="#409EFF">消费者C</text>
+
+    <!-- 推送箭头 -->
+    <g transform="translate(60, 103)">
+      <path d="M0,0 L0,-12 L-5,-6 M5,-6 L0,-12" fill="none" stroke="#409EFF" stroke-width="1.2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(140, 103)">
+      <path d="M0,0 L0,-12 L-5,-6 M5,-6 L0,-12" fill="none" stroke="#409EFF" stroke-width="1.2" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(220, 103)">
+      <path d="M0,0 L0,-12 L-5,-6 M5,-6 L0,-12" fill="none" stroke="#409EFF" stroke-width="1.2" stroke-linecap="round"/>
+    </g>
+
+    <!-- 消费移除标注 -->
+    <rect x="100" y="155" width="110" height="20" rx="10" fill="#409EFF" opacity="0.12"/>
+    <text x="155" y="169" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="bold">消费后移除</text>
+
+    <text x="155" y="194" text-anchor="middle" font-size="11" fill="#666">Push 模型 · 点对点传递</text>
   </g>
 
-  <!-- 右侧标注 -->
-  <g>
-    <rect x="495" y="300" width="100" height="22" rx="11" fill="#409EFF" opacity="0.15"/>
-    <text x="545" y="315" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">推送模型</text>
-    <rect x="635" y="300" width="100" height="22" rx="11" fill="#409EFF" opacity="0.15"/>
-    <text x="685" y="315" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">消费即删</text>
-  </g>
+  <!-- ========== 决策树 ========== -->
+  <g transform="translate(50, 275)">
+    <text x="350" y="0" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">决策树：如何选择？</text>
 
-  <!-- ===== 决策树 ===== -->
-  <g>
-    <!-- 顶部节点 -->
-    <rect x="340" y="345" width="120" height="28" rx="14" fill="#409EFF"/>
-    <text x="400" y="363" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#fff" font-weight="bold">选择模式</text>
+    <!-- 根节点 -->
+    <rect x="290" y="14" width="120" height="32" rx="16" fill="#409EFF"/>
+    <text x="350" y="35" text-anchor="middle" font-size="13" font-weight="bold" fill="white">任务特性分析</text>
 
     <!-- 分支线 -->
-    <line x1="400" y1="373" x2="400" y2="390" stroke="#1a1a2e" stroke-width="1.5"/>
-    <line x1="180" y1="390" x2="620" y2="390" stroke="#1a1a2e" stroke-width="1.5"/>
-    <line x1="180" y1="390" x2="180" y2="405" stroke="#1a1a2e" stroke-width="1.5"/>
-    <line x1="400" y1="390" x2="400" y2="405" stroke="#1a1a2e" stroke-width="1.5"/>
-    <line x1="620" y1="390" x2="620" y2="405" stroke="#1a1a2e" stroke-width="1.5"/>
+    <line x1="350" y1="46" x2="350" y2="60" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="350" y1="60" x2="120" y2="60" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="350" y1="60" x2="580" y2="60" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="120" y1="60" x2="120" y2="74" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="580" y1="60" x2="580" y2="74" stroke="#409EFF" stroke-width="1.5"/>
 
-    <!-- 分支节点 -->
-    <rect x="100" y="405" width="160" height="28" rx="14" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.2"/>
-    <text x="180" y="423" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e">任务有知识价值？</text>
+    <!-- 条件节点 -->
+    <rect x="30" y="74" width="180" height="32" rx="16" fill="white" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="120" y="95" text-anchor="middle" font-size="12" fill="#1a1a2e">任务有知识价值？</text>
 
-    <rect x="320" y="405" width="160" height="28" rx="14" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.2"/>
-    <text x="400" y="423" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e">需要精确负载均衡？</text>
+    <rect x="490" y="74" width="180" height="32" rx="16" fill="white" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="580" y="95" text-anchor="middle" font-size="12" fill="#1a1a2e">需要精确负载均衡？</text>
 
-    <rect x="540" y="405" width="160" height="28" rx="14" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.2"/>
-    <text x="620" y="423" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e">需要保证消息顺序？</text>
+    <!-- 条件分支线 -->
+    <line x1="120" y1="106" x2="120" y2="118" stroke="#409EFF" stroke-width="1.2"/>
+    <line x1="580" y1="106" x2="580" y2="118" stroke="#409EFF" stroke-width="1.2"/>
 
-    <!-- 结果线 -->
-    <line x1="180" y1="433" x2="180" y2="448" stroke="#1a1a2e" stroke-width="1.5"/>
-    <line x1="400" y1="433" x2="400" y2="448" stroke="#1a1a2e" stroke-width="1.5"/>
-    <line x1="620" y1="433" x2="620" y2="448" stroke="#1a1a2e" stroke-width="1.5"/>
+    <!-- 是/否标签 -->
+    <text x="95" y="115" text-anchor="end" font-size="11" fill="#409EFF" font-weight="bold">是</text>
+    <text x="145" y="115" text-anchor="start" font-size="11" fill="#999">否→MQ</text>
+    <text x="555" y="115" text-anchor="end" font-size="11" fill="#409EFF" font-weight="bold">是</text>
+    <text x="605" y="115" text-anchor="start" font-size="11" fill="#999">否→黑板</text>
 
-    <!-- 结果 -->
-    <rect x="120" y="448" width="120" height="26" rx="13" fill="#409EFF" opacity="0.85"/>
-    <text x="180" y="466" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#fff">→ 黑板模式</text>
+    <!-- 结果节点 -->
+    <rect x="45" y="118" width="150" height="30" rx="15" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1"/>
+    <text x="120" y="138" text-anchor="middle" font-size="13" font-weight="bold" fill="#409EFF">✅ 黑板模式</text>
 
-    <rect x="340" y="448" width="120" height="26" rx="13" fill="#409EFF" opacity="0.85"/>
-    <text x="400" y="466" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#fff">→ 消息队列</text>
+    <rect x="505" y="118" width="150" height="30" rx="15" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1"/>
+    <text x="580" y="138" text-anchor="middle" font-size="13" font-weight="bold" fill="#409EFF">✅ 消息队列</text>
 
-    <rect x="560" y="448" width="120" height="26" rx="13" fill="#409EFF" opacity="0.85"/>
-    <text x="620" y="466" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#fff">→ 消息队列</text>
+    <!-- 额外条件：消息顺序 -->
+    <line x1="580" y1="148" x2="580" y2="162" stroke="#409EFF" stroke-width="1.2"/>
+    <rect x="490" y="162" width="180" height="32" rx="16" fill="white" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="580" y="183" text-anchor="middle" font-size="12" fill="#1a1a2e">需要保证消息顺序？</text>
+
+    <line x1="580" y1="194" x2="580" y2="206" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="555" y="203" text-anchor="end" font-size="11" fill="#409EFF" font-weight="bold">是</text>
+    <text x="605" y="203" text-anchor="start" font-size="11" fill="#999">否→黑板</text>
+
+    <rect x="505" y="206" width="150" height="30" rx="15" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1"/>
+    <text x="580" y="226" text-anchor="middle" font-size="13" font-weight="bold" fill="#409EFF">✅ 消息队列</text>
   </g>
 
-  <!-- 箭头标记定义 -->
-  <defs>
-    <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#409EFF"/>
-    </marker>
-  </defs>
+  <!-- 底部标注 -->
+  <text x="400" y="490" text-anchor="middle" font-size="11" fill="#999">教育配图 · 架构模式对比 · 扁平化设计</text>
 </svg>

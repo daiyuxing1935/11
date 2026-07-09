@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e8f4fd"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fbff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 标题 -->
+  <text x="400" y="32" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">模型选择决策流程</text>
+
+  <!-- ===== 流程步骤 ===== -->
+
+  <!-- 步骤1 -->
+  <rect x="30" y="52" width="110" height="44" rx="8" fill="#409EFF" opacity="0.15"/>
+  <rect x="30" y="52" width="110" height="44" rx="8" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="85" y="72" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">定义任务</text>
+  <text x="85" y="88" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">分类·回归·生成</text>
+
+  <!-- 箭头1→2 -->
+  <line x1="140" y1="74" x2="175" y2="74" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#409EFF"/>
+    </marker>
+  </defs>
+
+  <!-- 步骤2 -->
+  <rect x="180" y="52" width="110" height="44" rx="8" fill="#409EFF" opacity="0.15"/>
+  <rect x="180" y="52" width="110" height="44" rx="8" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="235" y="72" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">查找基准</text>
+  <text x="235" y="88" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">匹配数据集</text>
+
+  <!-- 箭头2→3 -->
+  <line x1="290" y1="74" x2="325" y2="74" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- 步骤3 -->
+  <rect x="330" y="52" width="110" height="44" rx="8" fill="#409EFF" opacity="0.15"/>
+  <rect x="330" y="52" width="110" height="44" rx="8" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="385" y="72" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">查看排行</text>
+  <text x="385" y="88" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">排行榜卡片</text>
+
+  <!-- 箭头3→4 -->
+  <line x1="440" y1="74" x2="475" y2="74" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- 步骤4 -->
+  <rect x="480" y="52" width="110" height="44" rx="8" fill="#409EFF" opacity="0.15"/>
+  <rect x="480" y="52" width="110" height="44" rx="8" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="535" y="72" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">查看子分数</text>
+  <text x="535" y="88" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">放大镜探查</text>
+
+  <!-- 箭头4→5 -->
+  <line x1="590" y1="74" x2="625" y2="74" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- 步骤5 -->
+  <rect x="630" y="52" width="110" height="44" rx="8" fill="#409EFF" opacity="0.15"/>
+  <rect x="630" y="52" width="110" height="44" rx="8" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="685" y="72" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">自我评估</text>
+  <text x="685" y="88" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">自定义测试</text>
+
+  <!-- 箭头5→6 -->
+  <line x1="685" y1="96" x2="685" y2="130" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- 步骤6 -->
+  <rect x="630" y="135" width="110" height="44" rx="8" fill="#409EFF" opacity="0.15"/>
+  <rect x="630" y="135" width="110" height="44" rx="8" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="685" y="155" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">部署成本</text>
+  <text x="685" y="171" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">GPU成本评估</text>
+
+  <!-- ===== 最佳实践卡片 ===== -->
+  <text x="400" y="210" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">构建评估集的最佳实践</text>
+
+  <!-- 卡片1 -->
+  <rect x="30" y="225" width="115" height="70" rx="8" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.2" opacity="0.9"/>
+  <text x="87" y="248" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">多样性</text>
+  <text x="87" y="268" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">覆盖不同场景</text>
+  <text x="87" y="284" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">和输入类型</text>
+
+  <!-- 卡片2 -->
+  <rect x="160" y="225" width="115" height="70" rx="8" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.2" opacity="0.9"/>
+  <text x="217" y="248" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">代表性</text>
+  <text x="217" y="268" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">匹配真实分布</text>
+  <text x="217" y="284" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">避免偏差</text>
+
+  <!-- 卡片3 -->
+  <rect x="290" y="225" width="115" height="70" rx="8" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.2" opacity="0.9"/>
+  <text x="347" y="248" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">可重复性</text>
+  <text x="347" y="268" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">固定数据集</text>
+  <text x="347" y="284" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">随机种子</text>
+
+  <!-- 卡片4 -->
+  <rect x="420" y="225" width="115" height="70" rx="8" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.2" opacity="0.9"/>
+  <text x="477" y="248" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">公平性</text>
+  <text x="477" y="268" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">均衡各子群</text>
+  <text x="477" y="284" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">样本数量</text>
+
+  <!-- 卡片5 -->
+  <rect x="550" y="225" width="115" height="70" rx="8" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.2" opacity="0.9"/>
+  <text x="607" y="248" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">标注质量</text>
+  <text x="607" y="268" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">专家审核</text>
+  <text x="607" y="284" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">一致性检查</text>
+
+  <!-- 卡片6 -->
+  <rect x="680" y="225" width="100" height="70" rx="8" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.2" opacity="0.9"/>
+  <text x="730" y="248" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">安全性</text>
+  <text x="730" y="268" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">对抗测试</text>
+  <text x="730" y="284" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#555">边界案例</text>
+
+  <!-- ===== 底部说明 ===== -->
+  <rect x="200" y="315" width="400" height="36" rx="18" fill="#409EFF" opacity="0.1"/>
+  <text x="400" y="338" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1a1a2e">💡 选择模型时，请结合任务需求和部署约束综合考量</text>
+
+  <!-- ===== 装饰元素 ===== -->
+
+  <!-- 步骤1 图标 -->
+  <circle cx="55" cy="62" r="6" fill="#409EFF" opacity="0.3"/>
+
+  <!-- 步骤3 排行榜图标 -->
+  <rect x="348" y="60" width="8" height="6" rx="1" fill="#409EFF" opacity="0.4"/>
+  <rect x="348" y="68" width="12" height="4" rx="1" fill="#409EFF" opacity="0.3"/>
+
+  <!-- 步骤4 放大镜图标 -->
+  <circle cx="518" cy="62" r="5" fill="none" stroke="#409EFF" stroke-width="1.2" opacity="0.5"/>
+  <line x1="522" y1="66" x2="526" y2="70" stroke="#409EFF" stroke-width="1.2" opacity="0.5"/>
+
+  <!-- 步骤6 GPU图标 -->
+  <rect x="672" y="143" width="12" height="8" rx="1" fill="#409EFF" opacity="0.3"/>
+  <rect x="674" y="145" width="8" height="4" rx="1" fill="#409EFF" opacity="0.2"/>
+
+  <!-- 连接线装饰 -->
+  <circle cx="157" cy="74" r="2" fill="#409EFF" opacity="0.5"/>
+  <circle cx="307" cy="74" r="2" fill="#409EFF" opacity="0.5"/>
+  <circle cx="457" cy="74" r="2" fill="#409EFF" opacity="0.5"/>
+  <circle cx="607" cy="74" r="2" fill="#409EFF" opacity="0.5"/>
+
+</svg>

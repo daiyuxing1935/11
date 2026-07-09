@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="managerGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2D7FE0"/>
+    </linearGradient>
+    <linearGradient id="workerGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5BA3F5"/>
+      <stop offset="100%" stop-color="#409EFF"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#409EFF" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">Manager-Worker 架构图</text>
+
+  <!-- ========== 管理智能体 ========== -->
+  <g filter="url(#shadow)">
+    <rect x="280" y="58" width="240" height="52" rx="12" fill="url(#managerGrad)"/>
+    <text x="400" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">管理智能体</text>
+  </g>
+
+  <!-- 职责标注 - 5个 -->
+  <!-- 1. 任务分解 - 左上 -->
+  <g>
+    <rect x="100" y="48" width="130" height="38" rx="10" fill="#ffffff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="165" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">任务分解</text>
+    <!-- 拼图图标 -->
+    <g transform="translate(108, 56)">
+      <rect x="0" y="0" width="8" height="8" rx="1.5" fill="#409EFF" opacity="0.7"/>
+      <rect x="6" y="4" width="8" height="8" rx="1.5" fill="#409EFF" opacity="0.5"/>
+      <rect x="2" y="6" width="8" height="8" rx="1.5" fill="#409EFF" opacity="0.9"/>
+    </g>
+  </g>
+
+  <!-- 2. 工人调度 - 右上 -->
+  <g>
+    <rect x="570" y="48" width="130" height="38" rx="10" fill="#ffffff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="635" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">工人调度</text>
+    <!-- 日历图标 -->
+    <g transform="translate(578, 56)">
+      <rect x="0" y="0" width="10" height="10" rx="1.5" fill="none" stroke="#409EFF" stroke-width="1.2"/>
+      <line x1="0" y1="3" x2="10" y2="3" stroke="#409EFF" stroke-width="1.2"/>
+      <line x1="3" y1="0" x2="3" y2="2" stroke="#409EFF" stroke-width="1"/>
+      <line x1="7" y1="0" x2="7" y2="2" stroke="#409EFF" stroke-width="1"/>
+    </g>
+  </g>
+
+  <!-- 3. 进度跟踪 - 左中 -->
+  <g>
+    <rect x="50" y="108" width="130" height="38" rx="10" fill="#ffffff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="115" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">进度跟踪</text>
+    <!-- 进度条图标 -->
+    <g transform="translate(58, 118)">
+      <rect x="0" y="0" width="14" height="5" rx="2" fill="#E8F4FD" stroke="#409EFF" stroke-width="0.8"/>
+      <rect x="0" y="0" width="9" height="5" rx="2" fill="#409EFF"/>
+    </g>
+  </g>
+
+  <!-- 4. 结果聚合 - 右中 -->
+  <g>
+    <rect x="620" y="108" width="130" height="38" rx="10" fill="#ffffff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="685" y="132" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">结果聚合</text>
+    <!-- 合并箭头图标 -->
+    <g transform="translate(628, 118)">
+      <line x1="0" y1="8" x2="6" y2="2" stroke="#409EFF" stroke-width="1.2"/>
+      <line x1="12" y1="8" x2="6" y2="2" stroke="#409EFF" stroke-width="1.2"/>
+      <line x1="6" y1="2" x2="6" y2="0" stroke="#409EFF" stroke-width="1.2"/>
+      <polygon points="4,0 6,-2 8,0" fill="#409EFF"/>
+    </g>
+  </g>
+
+  <!-- 5. 异常处理 - 右下 -->
+  <g>
+    <rect x="620" y="168" width="130" height="38" rx="10" fill="#ffffff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="685" y="192" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">异常处理</text>
+    <!-- 盾牌图标 -->
+    <g transform="translate(628, 176)">
+      <path d="M6,0 L12,3 L12,7 C12,10 6,13 6,13 C6,13 0,10 0,7 L0,3 Z" fill="none" stroke="#409EFF" stroke-width="1.2"/>
+      <text x="6" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="#409EFF">!</text>
+    </g>
+  </g>
+
+  <!-- ========== 连接线：管理 → 工人 ========== -->
+  <!-- 管理到工人A -->
+  <line x1="340" y1="110" x2="120" y2="260" stroke="#409EFF" stroke-width="1.8" stroke-dasharray="6,3" opacity="0.6"/>
+  <!-- 双向箭头 -->
+  <polygon points="120,260 128,252 128,268" fill="#409EFF" opacity="0.7"/>
+  <polygon points="340,110 332,118 332,102" fill="#409EFF" opacity="0.7"/>
+
+  <!-- 管理到工人B -->
+  <line x1="400" y1="110" x2="400" y2="260" stroke="#409EFF" stroke-width="1.8" stroke-dasharray="6,3" opacity="0.6"/>
+  <polygon points="400,260 408,252 392,252" fill="#409EFF" opacity="0.7"/>
+  <polygon points="400,110 408,118 392,118" fill="#409EFF" opacity="0.7"/>
+
+  <!-- 管理到工人C -->
+  <line x1="460" y1="110" x2="680" y2="260" stroke="#409EFF" stroke-width="1.8" stroke-dasharray="6,3" opacity="0.6"/>
+  <polygon points="680,260 672,252 672,268" fill="#409EFF" opacity="0.7"/>
+  <polygon points="460,110 468,118 468,102" fill="#409EFF" opacity="0.7"/>
+
+  <!-- 标签：任务分配 / 结果上报 -->
+  <text x="215" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8" transform="rotate(-30, 215, 195)">任务分配 →</text>
+  <text x="215" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8" transform="rotate(-30, 215, 210)">← 结果上报</text>
+
+  <text x="400" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8">任务分配 ↓</text>
+  <text x="400" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8">↑ 结果上报</text>
+
+  <text x="585" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8" transform="rotate(30, 585, 195)">任务分配 →</text>
+  <text x="585" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8" transform="rotate(30, 585, 210)">← 结果上报</text>
+
+  <!-- ========== 工人A ========== -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="260" width="160" height="110" rx="12" fill="#ffffff" stroke="#409EFF" stroke-width="2"/>
+    <rect x="50" y="260" width="160" height="32" rx="12" fill="url(#workerGrad)"/>
+    <rect x="50" y="280" width="160" height="12" fill="url(#workerGrad)"/>
+    <text x="130" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">工人 A</text>
+
+    <text x="65" y="312" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">专注领域：数据清洗</text>
+    <text x="65" y="332" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">工具集：Python, SQL</text>
+
+    <!-- 工具图标 -->
+    <g transform="translate(170, 316)">
+      <rect x="0" y="0" width="16" height="12" rx="2" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+      <text x="8" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#409EFF">Py</text>
+    </g>
+    <g transform="translate(170, 336)">
+      <rect x="0" y="0" width="16" height="12" rx="2" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+      <text x="8" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="#409EFF">SQL</text>
+    </g>
+  </g>
+
+  <!-- ========== 工人B ========== -->
+  <g filter="url(#shadow)">
+    <rect x="320" y="260" width="160" height="110" rx="12" fill="#ffffff" stroke="#409EFF" stroke-width="2"/>
+    <rect x="320" y="260" width="160" height="32" rx="12" fill="url(#workerGrad)"/>
+    <rect x="320" y="280" width="160" height="12" fill="url(#workerGrad)"/>
+    <text x="400" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">工人 B</text>
+
+    <text x="335" y="312" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">专注领域：特征工程</text>
+    <text x="335" y="332" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">工具集：NumPy, Spark</text>
+
+    <g transform="translate(440, 316)">
+      <rect x="0" y="0" width="16" height="12" rx="2" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+      <text x="8" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="#409EFF">NP</text>
+    </g>
+    <g transform="translate(440, 336)">
+      <rect x="0" y="0" width="16" height="12" rx="2" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+      <text x="8" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="5" fill="#409EFF">SP</text>
+    </g>
+  </g>
+
+  <!-- ========== 工人C ========== -->
+  <g filter="url(#shadow)">
+    <rect x="590" y="260" width="160" height="110" rx="12" fill="#ffffff" stroke="#409EFF" stroke-width="2"/>
+    <rect x="590" y="260" width="160" height="32" rx="12" fill="url(#workerGrad)"/>
+    <rect x="590" y="280" width="160" height="12" fill="url(#workerGrad)"/>
+    <text x="670" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">工人 C</text>
+
+    <text x="605" y="312" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">专注领域：模型训练</text>
+    <text x="605" y="332" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">工具集：PyTorch, TF</text>
+
+    <g transform="translate(710, 316)">
+      <rect x="0" y="0" width="16" height="12" rx="2" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+      <text x="8" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="5" fill="#409EFF">PT</text>
+    </g>
+    <g transform="translate(710, 336)">
+      <rect x="0" y="0" width="16" height="12" rx="2" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+      <text x="8" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="5" fill="#409EFF">TF</text>
+    </g>
+  </g>
+
+  <!-- ========== 底部说明 ========== -->
+  <text x="400" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" opacity="0.6">管理智能体负责任务分解、调度与监控，工人智能体专注执行具体领域任务</text>
+
+  <!-- 图例 -->
+  <g transform="translate(280, 440)">
+    <rect x="0" y="0" width="240" height="36" rx="8" fill="#ffffff" stroke="#409EFF" stroke-width="1" opacity="0.8"/>
+    <line x1="15" y1="18" x2="40" y2="18" stroke="#409EFF" stroke-width="1.8" stroke-dasharray="6,3" opacity="0.6"/>
+    <polygon points="40,18 36,14 36,22" fill="#409EFF" opacity="0.7"/>
+    <text x="50" y="22" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">双向通信（任务分配 / 结果上报）</text>
+  </g>
+</svg>

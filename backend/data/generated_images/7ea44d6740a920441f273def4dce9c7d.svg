@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#6BB5FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 标题 -->
+  <text x="400" y="42" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">LLM 评估的六大独特挑战</text>
+
+  <!-- 连接线（六边形） -->
+  <line x1="400" y1="85" x2="560" y2="155" stroke="#409EFF" stroke-width="1.5" stroke-opacity="0.5"/>
+  <line x1="560" y1="155" x2="520" y2="310" stroke="#409EFF" stroke-width="1.5" stroke-opacity="0.5"/>
+  <line x1="520" y1="310" x2="280" y2="310" stroke="#409EFF" stroke-width="1.5" stroke-opacity="0.5"/>
+  <line x1="280" y1="310" x2="240" y2="155" stroke="#409EFF" stroke-width="1.5" stroke-opacity="0.5"/>
+  <line x1="240" y1="155" x2="400" y2="85" stroke="#409EFF" stroke-width="1.5" stroke-opacity="0.5"/>
+  <!-- 对角线 -->
+  <line x1="400" y1="85" x2="400" y2="420" stroke="#409EFF" stroke-width="1" stroke-opacity="0.25"/>
+  <line x1="240" y1="155" x2="560" y2="155" stroke="#409EFF" stroke-width="1" stroke-opacity="0.25"/>
+  <line x1="280" y1="310" x2="520" y2="310" stroke="#409EFF" stroke-width="1" stroke-opacity="0.25"/>
+
+  <!-- 中心节点 -->
+  <circle cx="400" cy="250" r="18" fill="url(#iconGrad)" opacity="0.15"/>
+  <circle cx="400" cy="250" r="10" fill="#409EFF" opacity="0.4"/>
+  <circle cx="400" cy="250" r="4" fill="#409EFF"/>
+
+  <!-- ========== 图标 1：答案多样（顶部） ========== -->
+  <g transform="translate(400, 85)">
+    <circle cx="0" cy="0" r="38" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <rect x="-18" y="-14" width="12" height="12" rx="2" fill="#409EFF" opacity="0.7"/>
+    <rect x="-3" y="-14" width="12" height="12" rx="2" fill="#409EFF" opacity="0.5"/>
+    <rect x="12" y="-14" width="12" height="12" rx="2" fill="#409EFF" opacity="0.3"/>
+    <line x1="-12" y1="4" x2="18" y2="4" stroke="#1a1a2e" stroke-width="1.5"/>
+    <line x1="-12" y1="10" x2="18" y2="10" stroke="#1a1a2e" stroke-width="1.5"/>
+    <line x1="-12" y1="16" x2="10" y2="16" stroke="#1a1a2e" stroke-width="1.5"/>
+  </g>
+  <text x="400" y="145" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">答案多样</text>
+
+  <!-- ========== 图标 2：开放任务（右上） ========== -->
+  <g transform="translate(560, 155)">
+    <circle cx="0" cy="0" r="38" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <rect x="-6" y="-18" width="18" height="22" rx="3" fill="#409EFF" opacity="0.6"/>
+    <rect x="-6" y="-18" width="18" height="8" rx="3" fill="#409EFF"/>
+    <line x1="8" y1="-8" x2="20" y2="-20" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="22" cy="-22" r="4" fill="#409EFF"/>
+    <line x1="-2" y1="10" x2="-2" y2="18" stroke="#1a1a2e" stroke-width="1.5"/>
+    <line x1="-8" y1="14" x2="4" y2="14" stroke="#1a1a2e" stroke-width="1.5"/>
+  </g>
+  <text x="560" y="215" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">开放任务</text>
+
+  <!-- ========== 图标 3：部分正确（右下） ========== -->
+  <g transform="translate(520, 310)">
+    <circle cx="0" cy="0" r="38" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <rect x="-18" y="-6" width="36" height="14" rx="7" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="-18" y="-6" width="22" height="14" rx="7" fill="#409EFF" opacity="0.7"/>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white" font-weight="bold">60%</text>
+    <line x1="-12" y1="16" x2="12" y2="16" stroke="#1a1a2e" stroke-width="1.5"/>
+    <line x1="-8" y1="22" x2="8" y2="22" stroke="#1a1a2e" stroke-width="1.5"/>
+  </g>
+  <text x="520" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">部分正确</text>
+
+  <!-- ========== 图标 4：数据污染（左下） ========== -->
+  <g transform="translate(280, 310)">
+    <circle cx="0" cy="0" r="38" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <rect x="-8" y="-18" width="16" height="28" rx="3" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="-4" y="-14" width="8" height="12" rx="2" fill="#409EFF" opacity="0.5"/>
+    <path d="M-8,10 Q-14,18 -6,22 Q0,24 6,20 Q12,16 8,10" fill="#409EFF" opacity="0.4"/>
+    <circle cx="-2" cy="14" r="3" fill="#409EFF"/>
+    <circle cx="4" cy="18" r="2" fill="#409EFF"/>
+  </g>
+  <text x="280" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">数据污染</text>
+
+  <!-- ========== 图标 5：主观性（左上） ========== -->
+  <g transform="translate(240, 155)">
+    <circle cx="0" cy="0" r="38" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <circle cx="-10" cy="-8" r="7" fill="#409EFF" opacity="0.5"/>
+    <circle cx="10" cy="-8" r="7" fill="#409EFF" opacity="0.3"/>
+    <circle cx="-10" cy="-8" r="4" fill="#409EFF"/>
+    <circle cx="10" cy="-8" r="4" fill="#409EFF" opacity="0.6"/>
+    <path d="M-16,12 Q-10,6 -4,12 Q0,16 4,12 Q10,6 16,12" stroke="#1a1a2e" stroke-width="1.5" fill="none"/>
+    <line x1="-6" y1="18" x2="6" y2="18" stroke="#1a1a2e" stroke-width="1.5"/>
+    <line x1="-4" y1="22" x2="4" y2="22" stroke="#1a1a2e" stroke-width="1.5"/>
+  </g>
+  <text x="240" y="215" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">主观性强</text>
+
+  <!-- ========== 图标 6：多维能力（底部） ========== -->
+  <g transform="translate(400, 420)">
+    <circle cx="0" cy="0" r="38" fill="white" stroke="#409EFF" stroke-width="2"/>
+    <!-- 雷达图 -->
+    <polygon points="0,-16 14,-8 14,8 0,16 -14,8 -14,-8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.2"/>
+    <polygon points="0,-10 8,-5 8,5 0,10 -8,5 -8,-5" fill="#409EFF" opacity="0.4"/>
+    <line x1="0" y1="-16" x2="0" y2="16" stroke="#409EFF" stroke-width="0.5" opacity="0.5"/>
+    <line x1="-14" y1="0" x2="14" y2="0" stroke="#409EFF" stroke-width="0.5" opacity="0.5"/>
+    <circle cx="0" cy="-16" r="2" fill="#409EFF"/>
+    <circle cx="14" cy="-8" r="2" fill="#409EFF"/>
+    <circle cx="14" cy="8" r="2" fill="#409EFF"/>
+    <circle cx="0" cy="16" r="2" fill="#409EFF"/>
+    <circle cx="-14" cy="8" r="2" fill="#409EFF"/>
+    <circle cx="-14" cy="-8" r="2" fill="#409EFF"/>
+  </g>
+  <text x="400" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">多维能力</text>
+
+</svg>

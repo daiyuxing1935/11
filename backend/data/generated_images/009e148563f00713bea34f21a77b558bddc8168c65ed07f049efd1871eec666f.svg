@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8f4ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f8ff;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f7fbff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 连接线 - 五角星模式 -->
+  <g stroke="#409EFF" stroke-width="1.8" fill="none" opacity="0.6">
+    <!-- 外圈五边形 -->
+    <line x1="400" y1="68" x2="594" y2="188"/>
+    <line x1="594" y1="188" x2="520" y2="398"/>
+    <line x1="520" y1="398" x2="280" y2="398"/>
+    <line x1="280" y1="398" x2="206" y2="188"/>
+    <line x1="206" y1="188" x2="400" y2="68"/>
+    <!-- 内五角星 -->
+    <line x1="400" y1="68" x2="520" y2="398"/>
+    <line x1="594" y1="188" x2="280" y2="398"/>
+    <line x1="520" y1="398" x2="206" y2="188"/>
+    <line x1="280" y1="398" x2="400" y2="68"/>
+    <line x1="206" y1="188" x2="594" y2="188"/>
+  </g>
+
+  <!-- 卡片1：目标明确 - 顶部 -->
+  <g transform="translate(400,68)">
+    <rect x="-72" y="-52" width="144" height="104" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5" filter="drop-shadow(0 2px 6px rgba(64,158,255,0.15))"/>
+    <!-- 靶心图标 -->
+    <circle cx="0" cy="-14" r="18" fill="none" stroke="#409EFF" stroke-width="2"/>
+    <circle cx="0" cy="-14" r="11" fill="none" stroke="#409EFF" stroke-width="1.8"/>
+    <circle cx="0" cy="-14" r="5" fill="#409EFF"/>
+    <line x1="-18" y1="-14" x2="18" y2="-14" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+    <line x1="0" y1="-32" x2="0" y2="4" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+    <!-- 标签 -->
+    <text x="0" y="30" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">目标明确</text>
+    <text x="0" y="46" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666">Goal Clarity</text>
+  </g>
+
+  <!-- 卡片2：工具精简 - 右上 -->
+  <g transform="translate(594,188)">
+    <rect x="-72" y="-52" width="144" height="104" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5" filter="drop-shadow(0 2px 6px rgba(64,158,255,0.15))"/>
+    <!-- 工具图标 -->
+    <g transform="translate(0,-12)">
+      <!-- 扳手 -->
+      <g transform="translate(-18,0)">
+        <rect x="-3" y="-10" width="6" height="20" rx="2" fill="#409EFF" opacity="0.7"/>
+        <circle cx="0" cy="-10" r="5" fill="none" stroke="#409EFF" stroke-width="2"/>
+      </g>
+      <!-- 螺丝刀 -->
+      <g transform="translate(0,0)">
+        <rect x="-2" y="-12" width="4" height="22" rx="1" fill="#409EFF"/>
+        <rect x="-4" y="-14" width="8" height="4" rx="1" fill="#409EFF" opacity="0.8"/>
+      </g>
+      <!-- 锤子 -->
+      <g transform="translate(18,0)">
+        <rect x="-2" y="-10" width="4" height="20" rx="1" fill="#409EFF" opacity="0.7"/>
+        <rect x="-8" y="-14" width="16" height="8" rx="2" fill="#409EFF"/>
+      </g>
+    </g>
+    <text x="0" y="16" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF" font-style="italic">“少即是多”</text>
+    <!-- 标签 -->
+    <text x="0" y="32" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">工具精简</text>
+    <text x="0" y="46" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666">Tool Simplicity</text>
+  </g>
+
+  <!-- 卡片3：人机协同 - 右下 -->
+  <g transform="translate(520,398)">
+    <rect x="-72" y="-52" width="144" height="104" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5" filter="drop-shadow(0 2px 6px rgba(64,158,255,0.15))"/>
+    <!-- 人机握手图标 -->
+    <g transform="translate(0,-12)">
+      <!-- 人手 -->
+      <path d="M-18,2 Q-22,-4 -18,-10 Q-14,-14 -10,-10 L-6,-4 Q-4,0 -6,4 L-10,6" fill="none" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- 机器手 -->
+      <path d="M18,2 Q22,-4 18,-10 Q14,-14 10,-10 L6,-4 Q4,0 6,4 L10,6" fill="none" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <!-- 对勾 -->
+      <circle cx="0" cy="-2" r="7" fill="#409EFF" opacity="0.15"/>
+      <path d="M-3,-2 L0,1 L4,-4" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <!-- 标签 -->
+    <text x="0" y="30" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">人机协同</text>
+    <text x="0" y="46" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666">Human-in-the-Loop</text>
+  </g>
+
+  <!-- 卡片4：容错机制 - 左下 -->
+  <g transform="translate(280,398)">
+    <rect x="-72" y="-52" width="144" height="104" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5" filter="drop-shadow(0 2px 6px rgba(64,158,255,0.15))"/>
+    <!-- 盾牌+重试图标 -->
+    <g transform="translate(0,-14)">
+      <!-- 盾牌 -->
+      <path d="M-14,-8 L-14,4 Q-14,12 0,18 Q14,12 14,4 L14,-8 L0,-14 Z" fill="none" stroke="#409EFF" stroke-width="2"/>
+      <path d="M-8,-4 L-3,2 L8,-6" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- 重试箭头 -->
+      <path d="M18,-2 Q22,-8 18,-14 Q12,-20 6,-16" fill="none" stroke="#409EFF" stroke-width="1.8" stroke-linecap="round"/>
+      <polygon points="6,-16 10,-12 4,-12" fill="#409EFF"/>
+    </g>
+    <!-- 标签 -->
+    <text x="0" y="30" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">容错机制</text>
+    <text x="0" y="46" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666">Fault Tolerance</text>
+  </g>
+
+  <!-- 卡片5：可观测性 - 左上 -->
+  <g transform="translate(206,188)">
+    <rect x="-72" y="-52" width="144" height="104" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5" filter="drop-shadow(0 2px 6px rgba(64,158,255,0.15))"/>
+    <!-- 放大镜+透明机器人图标 -->
+    <g transform="translate(0,-14)">
+      <!-- 放大镜 -->
+      <circle cx="-8" cy="-6" r="10" fill="none" stroke="#409EFF" stroke-width="2"/>
+      <line x1="-1" y1="1" x2="6" y2="8" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- 机器人内部齿轮 -->
+      <g transform="translate(10,2)">
+        <circle cx="0" cy="0" r="6" fill="none" stroke="#409EFF" stroke-width="1.2" opacity="0.5"/>
+        <circle cx="0" cy="0" r="3" fill="none" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+        <line x1="0" y1="-6" x2="0" y2="6" stroke="#409EFF" stroke-width="0.8" opacity="0.3"/>
+        <line x1="-6" y1="0" x2="6" y2="0" stroke="#409EFF" stroke-width="0.8" opacity="0.3"/>
+      </g>
+      <!-- 思维气泡 -->
+      <circle cx="16" cy="-14" r="3" fill="#409EFF" opacity="0.2"/>
+      <circle cx="22" cy="-18" r="4" fill="#409EFF" opacity="0.15"/>
+      <circle cx="28" cy="-22" r="5" fill="#409EFF" opacity="0.1"/>
+    </g>
+    <!-- 标签 -->
+    <text x="0" y="30" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">可观测性</text>
+    <text x="0" y="46" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666">Observability</text>
+  </g>
+
+  <!-- 中心标题 -->
+  <g transform="translate(400,250)">
+    <rect x="-90" y="-22" width="180" height="44" rx="22" fill="#1a1a2e" opacity="0.9"/>
+    <text x="0" y="2" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">AI 系统设计原则</text>
+  </g>
+
+  <!-- 底部说明 -->
+  <text x="400" y="480" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#8899aa">五大核心原则 · 相互关联 · 协同作用</text>
+
+</svg>

@@ -1,129 +1,145 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
   <defs>
     <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f0f7ff"/>
-      <stop offset="100%" stop-color="#e8f2fb"/>
+      <stop offset="0%" stop-color="#E8F4FF"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
     </linearGradient>
-    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#1a1a2e" flood-opacity="0.08"/>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FBFF"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#409EFF" flood-opacity="0.12"/>
+    </filter>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
     </filter>
   </defs>
 
   <!-- 背景 -->
   <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
 
-  <!-- 中心标题 -->
-  <text x="400" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">不同场景，不同侧重</text>
+  <!-- 标题 -->
+  <text x="400" y="48" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e" letter-spacing="2">不同场景，不同侧重</text>
+  <text x="400" y="72" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#5a5a7a" letter-spacing="1">Different Scenarios, Different Priorities</text>
 
-  <!-- 4张场景卡片：每张宽155，间距30，总宽：4*155 + 3*30 = 710，起始x=45 -->
-  <!-- 卡片1：交易系统 -->
-  <g filter="url(#cardShadow)">
-    <rect x="45" y="85" width="155" height="340" rx="12" fill="#ffffff" stroke="#e0e8f0" stroke-width="1"/>
-    <rect x="45" y="85" width="155" height="60" rx="12" fill="#1a1a2e"/>
-    <rect x="45" y="125" width="155" height="20" fill="#1a1a2e"/>
-    <text x="122" y="112" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">交易系统</text>
-
+  <!-- 卡片容器：四张卡片水平排列 -->
+  <!-- 卡片1: 交易系统 -->
+  <g transform="translate(40, 100)" filter="url(#shadow)">
+    <rect width="160" height="290" rx="12" fill="url(#cardGrad)" stroke="#E0ECF5" stroke-width="1.2"/>
     <!-- 图标区域 -->
-    <rect x="75" y="160" width="95" height="70" rx="8" fill="#f0f7ff"/>
-    <!-- 股票折线图 -->
-    <polyline points="85,210 100,195 115,205 130,180 145,190 160,170" fill="none" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="160" cy="170" r="3" fill="#409EFF"/>
+    <rect x="55" y="20" width="50" height="50" rx="25" fill="#E8F4FF"/>
+    <!-- 股票图 -->
+    <polyline points="68,50 78,42 88,48 98,35 105,40" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
     <!-- 闪电图标 -->
-    <polygon points="132,165 125,185 133,185 128,200 140,178 132,178 137,165" fill="#409EFF"/>
-
-    <!-- 优先级标签 - 发光效果 -->
-    <rect x="65" y="250" width="115" height="36" rx="18" fill="#409EFF" opacity="0.15"/>
-    <rect x="65" y="250" width="115" height="36" rx="18" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.6"/>
-    <text x="122" y="273" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#409EFF">响应性</text>
-
-    <!-- 描述 -->
-    <text x="122" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5a6a7a">实时响应市场</text>
-    <text x="122" y="338" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5a6a7a">变化与交易信号</text>
+    <polygon points="82,52 78,60 86,60 80,70" fill="#409EFF" opacity="0.8"/>
+    <!-- 标签 -->
+    <text x="80" y="95" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">交易系统</text>
+    <text x="80" y="115" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#7a7a9a">Trading System</text>
+    <!-- 特性：响应性（高亮） -->
+    <rect x="20" y="140" width="120" height="32" rx="16" fill="#409EFF" opacity="0.12"/>
+    <circle cx="36" cy="156" r="6" fill="#409EFF" filter="url(#glow)"/>
+    <text x="48" y="161" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" fill="#409EFF">响应性</text>
+    <!-- 其他特性 -->
+    <text x="80" y="200" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">主动性</text>
+    <text x="80" y="222" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">社交能力</text>
+    <text x="80" y="244" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">自主性</text>
+    <!-- 标注 -->
+    <rect x="30" y="262" width="100" height="18" rx="9" fill="#1a1a2e" opacity="0.08"/>
+    <text x="80" y="275" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#1a1a2e">实时响应优先</text>
   </g>
 
-  <!-- 卡片2：个人助手 -->
-  <g filter="url(#cardShadow)">
-    <rect x="230" y="85" width="155" height="340" rx="12" fill="#ffffff" stroke="#e0e8f0" stroke-width="1"/>
-    <rect x="230" y="85" width="155" height="60" rx="12" fill="#1a1a2e"/>
-    <rect x="230" y="125" width="155" height="20" fill="#1a1a2e"/>
-    <text x="307" y="112" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">个人助手</text>
-
+  <!-- 卡片2: 个人助理 -->
+  <g transform="translate(220, 100)" filter="url(#shadow)">
+    <rect width="160" height="290" rx="12" fill="url(#cardGrad)" stroke="#E0ECF5" stroke-width="1.2"/>
     <!-- 图标区域 -->
-    <rect x="260" y="160" width="95" height="70" rx="8" fill="#f0f7ff"/>
+    <rect x="55" y="20" width="50" height="50" rx="25" fill="#E8F4FF"/>
     <!-- 日历 -->
-    <rect x="272" y="170" width="36" height="40" rx="4" fill="none" stroke="#409EFF" stroke-width="2"/>
-    <line x1="272" y1="180" x2="308" y2="180" stroke="#409EFF" stroke-width="2"/>
-    <text x="290" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#409EFF" font-weight="bold">15</text>
-    <!-- 前进箭头 -->
-    <polygon points="315,195 330,200 315,205" fill="#409EFF"/>
-    <line x1="322" y1="200" x2="340" y2="200" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
-
-    <!-- 优先级标签 - 发光效果 -->
-    <rect x="250" y="250" width="115" height="36" rx="18" fill="#409EFF" opacity="0.15"/>
-    <rect x="250" y="250" width="115" height="36" rx="18" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.6"/>
-    <text x="307" y="273" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#409EFF">主动性</text>
-
-    <!-- 描述 -->
-    <text x="307" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5a6a7a">主动提醒日程</text>
-    <text x="307" y="338" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5a6a7a">与待办事项</text>
+    <rect x="62" y="28" width="36" height="34" rx="4" fill="none" stroke="#409EFF" stroke-width="1.8"/>
+    <line x1="62" y1="38" x2="98" y2="38" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="80" y="52" text-anchor="middle" font-family="Arial" font-size="10" fill="#409EFF" font-weight="bold">15</text>
+    <!-- 前箭头 -->
+    <polygon points="100,45 108,45 104,40" fill="#409EFF" opacity="0.7"/>
+    <polygon points="100,45 108,45 104,50" fill="#409EFF" opacity="0.7"/>
+    <!-- 标签 -->
+    <text x="80" y="95" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">个人助理</text>
+    <text x="80" y="115" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#7a7a9a">Personal Assistant</text>
+    <!-- 特性：主动性（高亮） -->
+    <rect x="20" y="140" width="120" height="32" rx="16" fill="#409EFF" opacity="0.12"/>
+    <circle cx="36" cy="156" r="6" fill="#409EFF" filter="url(#glow)"/>
+    <text x="48" y="161" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" fill="#409EFF">主动性</text>
+    <!-- 其他特性 -->
+    <text x="80" y="200" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">响应性</text>
+    <text x="80" y="222" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">社交能力</text>
+    <text x="80" y="244" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">自主性</text>
+    <!-- 标注 -->
+    <rect x="30" y="262" width="100" height="18" rx="9" fill="#1a1a2e" opacity="0.08"/>
+    <text x="80" y="275" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#1a1a2e">主动建议优先</text>
   </g>
 
-  <!-- 卡片3：客服系统 -->
-  <g filter="url(#cardShadow)">
-    <rect x="415" y="85" width="155" height="340" rx="12" fill="#ffffff" stroke="#e0e8f0" stroke-width="1"/>
-    <rect x="415" y="85" width="155" height="60" rx="12" fill="#1a1a2e"/>
-    <rect x="415" y="125" width="155" height="20" fill="#1a1a2e"/>
-    <text x="492" y="112" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">客服系统</text>
-
+  <!-- 卡片3: 客服系统 -->
+  <g transform="translate(400, 100)" filter="url(#shadow)">
+    <rect width="160" height="290" rx="12" fill="url(#cardGrad)" stroke="#E0ECF5" stroke-width="1.2"/>
     <!-- 图标区域 -->
-    <rect x="445" y="160" width="95" height="70" rx="8" fill="#f0f7ff"/>
+    <rect x="55" y="20" width="50" height="50" rx="25" fill="#E8F4FF"/>
     <!-- 耳机 -->
-    <circle cx="480" cy="197" r="18" fill="none" stroke="#409EFF" stroke-width="2.5"/>
-    <path d="M462,195 Q462,175 480,175 Q498,175 498,195" fill="none" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
-    <rect x="470" y="207" width="8" height="12" rx="3" fill="#409EFF"/>
-    <rect x="482" y="207" width="8" height="12" rx="3" fill="#409EFF"/>
-    <!-- 双人图标 -->
-    <circle cx="522" cy="185" r="6" fill="none" stroke="#409EFF" stroke-width="1.8"/>
-    <path d="M516,198 Q516,190 522,190 Q528,190 528,198" fill="none" stroke="#409EFF" stroke-width="1.8" stroke-linecap="round"/>
-    <circle cx="534" cy="190" r="5" fill="none" stroke="#409EFF" stroke-width="1.5"/>
-    <path d="M529,200 Q529,194 534,194 Q539,194 539,200" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
-
-    <!-- 优先级标签 - 发光效果 -->
-    <rect x="435" y="250" width="115" height="36" rx="18" fill="#409EFF" opacity="0.15"/>
-    <rect x="435" y="250" width="115" height="36" rx="18" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.6"/>
-    <text x="492" y="273" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#409EFF">社交能力</text>
-
-    <!-- 描述 -->
-    <text x="492" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5a6a7a">多轮对话与</text>
-    <text x="492" y="338" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5a6a7a">情绪识别</text>
+    <circle cx="80" cy="42" r="12" fill="none" stroke="#409EFF" stroke-width="2"/>
+    <path d="M68,42 Q68,55 72,58" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+    <path d="M92,42 Q92,55 88,58" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+    <!-- 两人图标 -->
+    <circle cx="74" cy="62" r="4" fill="#409EFF" opacity="0.5"/>
+    <circle cx="86" cy="62" r="4" fill="#409EFF" opacity="0.5"/>
+    <!-- 标签 -->
+    <text x="80" y="95" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">客服系统</text>
+    <text x="80" y="115" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#7a7a9a">Customer Service</text>
+    <!-- 特性：社交能力（高亮） -->
+    <rect x="20" y="140" width="120" height="32" rx="16" fill="#409EFF" opacity="0.12"/>
+    <circle cx="36" cy="156" r="6" fill="#409EFF" filter="url(#glow)"/>
+    <text x="48" y="161" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" fill="#409EFF">社交能力</text>
+    <!-- 其他特性 -->
+    <text x="80" y="200" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">响应性</text>
+    <text x="80" y="222" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">主动性</text>
+    <text x="80" y="244" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">自主性</text>
+    <!-- 标注 -->
+    <rect x="30" y="262" width="100" height="18" rx="9" fill="#1a1a2e" opacity="0.08"/>
+    <text x="80" y="275" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#1a1a2e">人机交互优先</text>
   </g>
 
-  <!-- 卡片4：研究系统 -->
-  <g filter="url(#cardShadow)">
-    <rect x="600" y="85" width="155" height="340" rx="12" fill="#ffffff" stroke="#e0e8f0" stroke-width="1"/>
-    <rect x="600" y="85" width="155" height="60" rx="12" fill="#1a1a2e"/>
-    <rect x="600" y="125" width="155" height="20" fill="#1a1a2e"/>
-    <text x="677" y="112" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">研究系统</text>
-
+  <!-- 卡片4: 研究系统 -->
+  <g transform="translate(580, 100)" filter="url(#shadow)">
+    <rect width="160" height="290" rx="12" fill="url(#cardGrad)" stroke="#E0ECF5" stroke-width="1.2"/>
     <!-- 图标区域 -->
-    <rect x="630" y="160" width="95" height="70" rx="8" fill="#f0f7ff"/>
+    <rect x="55" y="20" width="50" height="50" rx="25" fill="#E8F4FF"/>
     <!-- 放大镜 -->
-    <circle cx="670" cy="190" r="14" fill="none" stroke="#409EFF" stroke-width="2.5"/>
-    <line x1="680" y1="200" x2="692" y2="212" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- 大脑图标 -->
-    <path d="M710,185 Q715,175 720,185 Q725,178 728,188 Q732,182 730,195 Q728,200 722,200 Q720,205 715,200 Q710,205 708,200 Q702,200 700,195 Q698,182 702,188 Q705,178 710,185Z" fill="none" stroke="#409EFF" stroke-width="1.8" stroke-linejoin="round"/>
-
-    <!-- 优先级标签 - 发光效果 -->
-    <rect x="620" y="250" width="115" height="36" rx="18" fill="#409EFF" opacity="0.15"/>
-    <rect x="620" y="250" width="115" height="36" rx="18" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.6"/>
-    <text x="677" y="273" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#409EFF">自主性</text>
-
-    <!-- 描述 -->
-    <text x="677" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5a6a7a">自主检索与</text>
-    <text x="677" y="338" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5a6a7a">知识推理</text>
+    <circle cx="78" cy="38" r="10" fill="none" stroke="#409EFF" stroke-width="2"/>
+    <line x1="85" y1="45" x2="92" y2="52" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- 大脑 -->
+    <path d="M70,55 Q72,50 76,52 Q80,48 84,52 Q88,50 90,55 Q88,60 84,62 Q80,65 76,62 Q72,60 70,55Z" fill="#409EFF" opacity="0.4"/>
+    <path d="M74,56 Q76,54 80,56 Q84,54 86,56" fill="none" stroke="#409EFF" stroke-width="1.2"/>
+    <!-- 标签 -->
+    <text x="80" y="95" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">研究系统</text>
+    <text x="80" y="115" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#7a7a9a">Research System</text>
+    <!-- 特性：自主性（高亮） -->
+    <rect x="20" y="140" width="120" height="32" rx="16" fill="#409EFF" opacity="0.12"/>
+    <circle cx="36" cy="156" r="6" fill="#409EFF" filter="url(#glow)"/>
+    <text x="48" y="161" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" fill="#409EFF">自主性</text>
+    <!-- 其他特性 -->
+    <text x="80" y="200" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">响应性</text>
+    <text x="80" y="222" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">主动性</text>
+    <text x="80" y="244" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">社交能力</text>
+    <!-- 标注 -->
+    <rect x="30" y="262" width="100" height="18" rx="9" fill="#1a1a2e" opacity="0.08"/>
+    <text x="80" y="275" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#1a1a2e">自主探索优先</text>
   </g>
 
-  <!-- 底部总结标注 -->
-  <rect x="200" y="450" width="400" height="36" rx="18" fill="#1a1a2e" opacity="0.85"/>
-  <text x="400" y="473" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">核心特征 → 场景匹配</text>
+  <!-- 底部说明 -->
+  <text x="400" y="440" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7a7a9a">每个场景根据核心需求突出一个首要特性，兼顾其他能力</text>
+
+  <!-- 装饰性底部线条 -->
+  <line x1="200" y1="465" x2="600" y2="465" stroke="#409EFF" stroke-width="1.5" opacity="0.2" stroke-linecap="round"/>
+  <circle cx="400" cy="465" r="3" fill="#409EFF" opacity="0.3"/>
 </svg>

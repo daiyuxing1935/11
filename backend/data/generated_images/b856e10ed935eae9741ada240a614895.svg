@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F7FBFF"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#409EFF" flood-opacity="0.15"/>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">示例选择策略 · 决策指南</text>
+  <line x1="280" y1="48" x2="520" y2="48" stroke="#409EFF" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- ===== 卡片 1：随机选择 ===== -->
+  <g transform="translate(30, 70)">
+    <rect width="350" height="150" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <!-- 骰子图标 -->
+    <rect x="20" y="20" width="40" height="40" rx="6" fill="#409EFF" opacity="0.15"/>
+    <rect x="28" y="28" width="24" height="24" rx="3" fill="none" stroke="#409EFF" stroke-width="2"/>
+    <circle cx="35" cy="35" r="2" fill="#409EFF"/>
+    <circle cx="45" cy="35" r="2" fill="#409EFF"/>
+    <circle cx="40" cy="43" r="2" fill="#409EFF"/>
+    <text x="70" y="38" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">随机选择</text>
+    <text x="70" y="56" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8">Random</text>
+    <!-- 随机抽样示意图 -->
+    <g transform="translate(20, 75)">
+      <rect x="0" y="0" width="310" height="60" rx="6" fill="#F0F8FF"/>
+      <circle cx="30" cy="30" r="6" fill="#409EFF" opacity="0.4"/>
+      <circle cx="55" cy="20" r="6" fill="#409EFF" opacity="0.4"/>
+      <circle cx="80" cy="35" r="6" fill="#409EFF" opacity="0.4"/>
+      <circle cx="105" cy="25" r="6" fill="#409EFF" opacity="0.4"/>
+      <circle cx="130" cy="40" r="6" fill="#409EFF" opacity="0.4"/>
+      <circle cx="155" cy="22" r="6" fill="#409EFF" opacity="0.4"/>
+      <circle cx="180" cy="38" r="6" fill="#409EFF" opacity="0.4"/>
+      <circle cx="205" cy="28" r="6" fill="#409EFF" opacity="0.4"/>
+      <!-- 高亮随机选中的 -->
+      <circle cx="55" cy="20" r="8" fill="none" stroke="#FF6B6B" stroke-width="2" stroke-dasharray="3,2"/>
+      <circle cx="130" cy="40" r="8" fill="none" stroke="#FF6B6B" stroke-width="2" stroke-dasharray="3,2"/>
+      <circle cx="180" cy="38" r="8" fill="none" stroke="#FF6B6B" stroke-width="2" stroke-dasharray="3,2"/>
+      <text x="240" y="35" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.6">均匀随机抽取</text>
+    </g>
+  </g>
+
+  <!-- ===== 卡片 2：KNN相似度 ===== -->
+  <g transform="translate(420, 70)">
+    <rect width="350" height="150" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <text x="20" y="38" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">KNN相似度</text>
+    <text x="20" y="56" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8">KNN-Based</text>
+    <!-- 向量空间图 -->
+    <g transform="translate(20, 75)">
+      <rect x="0" y="0" width="310" height="60" rx="6" fill="#F0F8FF"/>
+      <!-- 坐标轴 -->
+      <line x1="10" y1="50" x2="290" y2="50" stroke="#1a1a2e" stroke-width="0.5" opacity="0.3"/>
+      <line x1="10" y1="50" x2="10" y2="5" stroke="#1a1a2e" stroke-width="0.5" opacity="0.3"/>
+      <!-- 示例点 -->
+      <circle cx="60" cy="35" r="5" fill="#409EFF" opacity="0.6"/>
+      <circle cx="100" cy="20" r="5" fill="#409EFF" opacity="0.6"/>
+      <circle cx="150" cy="40" r="5" fill="#409EFF" opacity="0.6"/>
+      <circle cx="200" cy="15" r="5" fill="#409EFF" opacity="0.6"/>
+      <circle cx="230" cy="42" r="5" fill="#409EFF" opacity="0.6"/>
+      <circle cx="120" cy="45" r="5" fill="#409EFF" opacity="0.6"/>
+      <!-- 测试点 -->
+      <circle cx="140" cy="28" r="7" fill="#FF6B6B" opacity="0.8"/>
+      <text x="136" y="25" font-family="Arial, sans-serif" font-size="8" fill="#FF6B6B" font-weight="bold">★</text>
+      <!-- 连线到3个最近邻 -->
+      <line x1="140" y1="28" x2="100" y2="20" stroke="#409EFF" stroke-width="1.2" opacity="0.6" stroke-dasharray="3,2"/>
+      <line x1="140" y1="28" x2="120" y2="45" stroke="#409EFF" stroke-width="1.2" opacity="0.6" stroke-dasharray="3,2"/>
+      <line x1="140" y1="28" x2="150" y2="40" stroke="#409EFF" stroke-width="1.2" opacity="0.6" stroke-dasharray="3,2"/>
+      <text x="250" y="35" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.6">k=3 最近邻</text>
+    </g>
+  </g>
+
+  <!-- ===== 卡片 3：MMR多样性 ===== -->
+  <g transform="translate(30, 250)">
+    <rect width="350" height="150" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <text x="20" y="38" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">MMR多样性</text>
+    <text x="20" y="56" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8">MMR Diversity</text>
+    <!-- 天平图标 -->
+    <g transform="translate(20, 75)">
+      <rect x="0" y="0" width="310" height="60" rx="6" fill="#F0F8FF"/>
+      <!-- 天平 -->
+      <line x1="155" y1="10" x2="155" y2="50" stroke="#1a1a2e" stroke-width="2"/>
+      <line x1="80" y1="30" x2="230" y2="30" stroke="#1a1a2e" stroke-width="2"/>
+      <line x1="80" y1="30" x2="80" y2="50" stroke="#1a1a2e" stroke-width="1.5"/>
+      <line x1="230" y1="30" x2="230" y2="50" stroke="#1a1a2e" stroke-width="1.5"/>
+      <!-- 左盘：相关性 -->
+      <rect x="55" y="42" width="50" height="16" rx="3" fill="#409EFF" opacity="0.2"/>
+      <text x="80" y="54" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#1a1a2e">相关性</text>
+      <!-- 右盘：多样性 -->
+      <rect x="205" y="42" width="50" height="16" rx="3" fill="#409EFF" opacity="0.2"/>
+      <text x="230" y="54" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#1a1a2e">多样性</text>
+      <!-- λ 符号 -->
+      <text x="155" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#409EFF">λ</text>
+      <text x="270" y="35" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.6">平衡参数</text>
+    </g>
+  </g>
+
+  <!-- ===== 卡片 4：聚类中心 ===== -->
+  <g transform="translate(420, 250)">
+    <rect width="350" height="150" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <text x="20" y="38" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">聚类中心</text>
+    <text x="20" y="56" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8">Cluster-Centroid</text>
+    <!-- 散点图 -->
+    <g transform="translate(20, 75)">
+      <rect x="0" y="0" width="310" height="60" rx="6" fill="#F0F8FF"/>
+      <!-- 坐标轴 -->
+      <line x1="10" y1="50" x2="290" y2="50" stroke="#1a1a2e" stroke-width="0.5" opacity="0.3"/>
+      <line x1="10" y1="50" x2="10" y2="5" stroke="#1a1a2e" stroke-width="0.5" opacity="0.3"/>
+      <!-- 聚类1 - 蓝色 -->
+      <circle cx="50" cy="35" r="4" fill="#409EFF" opacity="0.5"/>
+      <circle cx="65" cy="28" r="4" fill="#409EFF" opacity="0.5"/>
+      <circle cx="40" cy="40" r="4" fill="#409EFF" opacity="0.5"/>
+      <circle cx="55" cy="42" r="4" fill="#409EFF" opacity="0.5"/>
+      <circle cx="52" cy="33" r="5" fill="#409EFF" stroke="#1a1a2e" stroke-width="1.2"/>
+      <!-- 聚类2 - 绿色 -->
+      <circle cx="160" cy="20" r="4" fill="#67C23A" opacity="0.5"/>
+      <circle cx="175" cy="15" r="4" fill="#67C23A" opacity="0.5"/>
+      <circle cx="150" cy="25" r="4" fill="#67C23A" opacity="0.5"/>
+      <circle cx="168" cy="28" r="4" fill="#67C23A" opacity="0.5"/>
+      <circle cx="163" cy="22" r="5" fill="#67C23A" stroke="#1a1a2e" stroke-width="1.2"/>
+      <!-- 聚类3 - 橙色 -->
+      <circle cx="250" cy="38" r="4" fill="#E6A23C" opacity="0.5"/>
+      <circle cx="265" cy="32" r="4" fill="#E6A23C" opacity="0.5"/>
+      <circle cx="240" cy="42" r="4" fill="#E6A23C" opacity="0.5"/>
+      <circle cx="255" cy="45" r="4" fill="#E6A23C" opacity="0.5"/>
+      <circle cx="252" cy="39" r="5" fill="#E6A23C" stroke="#1a1a2e" stroke-width="1.2"/>
+      <!-- 测试点 -->
+      <circle cx="70" cy="30" r="6" fill="#FF6B6B" opacity="0.8"/>
+      <text x="66" y="27" font-family="Arial, sans-serif" font-size="8" fill="#FF6B6B" font-weight="bold">★</text>
+      <text x="270" y="15" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.6">聚类分配</text>
+    </g>
+  </g>
+
+  <!-- ===== 决策树流程图 ===== -->
+  <g transform="translate(100, 425)">
+    <!-- 决策树连接线 -->
+    <path d="M0,0 L300,0" stroke="#409EFF" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <path d="M150,0 L150,-15" stroke="#409EFF" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <path d="M150,-15 L-80,-15" stroke="#409EFF" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <path d="M150,-15 L380,-15" stroke="#409EFF" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <path d="M-80,-15 L-80,-30" stroke="#409EFF" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <path d="M380,-15 L380,-30" stroke="#409EFF" stroke-width="1.5" fill="none" opacity="0.4"/>
+
+    <!-- 决策节点 -->
+    <rect x="-15" y="-10" width="30" height="20" rx="10" fill="#409EFF" opacity="0.2" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e" font-weight="bold">?</text>
+
+    <!-- 分支标签 -->
+    <text x="-120" y="-20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e" opacity="0.6">数据量小</text>
+    <text x="420" y="-20" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e" opacity="0.6">数据量大</text>
+
+    <!-- 叶子节点 -->
+    <rect x="-140" y="-42" width="120" height="22" rx="11" fill="#409EFF" opacity="0.1" stroke="#409EFF" stroke-width="1"/>
+    <text x="-80" y="-27" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">随机 / KNN</text>
+
+    <rect x="320" y="-42" width="120" height="22" rx="11" fill="#409EFF" opacity="0.1" stroke="#409EFF" stroke-width="1"/>
+    <text x="380" y="-27" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">MMR / 聚类</text>
+  </g>
+
+  <!-- 标注 -->
+  <g font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">
+    <text x="205" y="65">①</text>
+    <text x="595" y="65">②</text>
+    <text x="205" y="245">③</text>
+    <text x="595" y="245">④</text>
+  </g>
+</svg>

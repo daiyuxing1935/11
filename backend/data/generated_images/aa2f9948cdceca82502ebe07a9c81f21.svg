@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FE"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="centerGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#6BB5FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 中心节点 -->
+  <circle cx="400" cy="250" r="52" fill="url(#centerGrad)" stroke="#3B8EE6" stroke-width="2"/>
+  <text x="400" y="242" text-anchor="middle" fill="#FFFFFF" font-size="15" font-weight="bold" font-family="sans-serif">大模型能力</text>
+  <text x="400" y="262" text-anchor="middle" fill="#FFFFFF" font-size="15" font-weight="bold" font-family="sans-serif">评估体系</text>
+
+  <!-- 分支1：知识理解（右上） -->
+  <line x1="445" y1="218" x2="600" y2="100" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="600" cy="100" r="32" fill="#E8F4FE" stroke="#409EFF" stroke-width="2"/>
+  <text x="600" y="94" text-anchor="middle" fill="#1a1a2e" font-size="13" font-weight="bold" font-family="sans-serif">知识理解</text>
+  <text x="600" y="112" text-anchor="middle" fill="#409EFF" font-size="16">📖</text>
+  <!-- 子节点 -->
+  <text x="660" y="80" fill="#1a1a2e" font-size="13" font-family="sans-serif">MMLU</text>
+  <text x="660" y="100" fill="#1a1a2e" font-size="13" font-family="sans-serif">C-Eval</text>
+  <text x="660" y="120" fill="#1a1a2e" font-size="13" font-family="sans-serif">AGIEval</text>
+
+  <!-- 分支2：推理能力（右侧） -->
+  <line x1="452" y1="250" x2="620" y2="250" stroke="#5CB0FF" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="620" cy="250" r="32" fill="#E8F4FE" stroke="#5CB0FF" stroke-width="2"/>
+  <text x="620" y="244" text-anchor="middle" fill="#1a1a2e" font-size="13" font-weight="bold" font-family="sans-serif">推理能力</text>
+  <text x="620" y="262" text-anchor="middle" fill="#5CB0FF" font-size="16">⚙️🧠</text>
+  <!-- 子节点 -->
+  <text x="680" y="230" fill="#1a1a2e" font-size="13" font-family="sans-serif">GSM8K</text>
+  <text x="680" y="250" fill="#1a1a2e" font-size="13" font-family="sans-serif">MATH</text>
+  <text x="680" y="270" fill="#1a1a2e" font-size="13" font-family="sans-serif">BBH</text>
+
+  <!-- 分支3：语言能力（右下） -->
+  <line x1="445" y1="282" x2="600" y2="400" stroke="#7EC4FF" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="600" cy="400" r="32" fill="#E8F4FE" stroke="#7EC4FF" stroke-width="2"/>
+  <text x="600" y="394" text-anchor="middle" fill="#1a1a2e" font-size="13" font-weight="bold" font-family="sans-serif">语言能力</text>
+  <text x="600" y="412" text-anchor="middle" fill="#7EC4FF" font-size="16">💬</text>
+  <!-- 子节点 -->
+  <text x="660" y="380" fill="#1a1a2e" font-size="13" font-family="sans-serif">WMT</text>
+  <text x="660" y="400" fill="#1a1a2e" font-size="13" font-family="sans-serif">GLUE</text>
+  <text x="660" y="420" fill="#1a1a2e" font-size="13" font-family="sans-serif">BLEU</text>
+
+  <!-- 分支4：代码能力（左下） -->
+  <line x1="355" y1="282" x2="200" y2="400" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="200" cy="400" r="32" fill="#E8F4FE" stroke="#409EFF" stroke-width="2"/>
+  <text x="200" y="394" text-anchor="middle" fill="#1a1a2e" font-size="13" font-weight="bold" font-family="sans-serif">代码能力</text>
+  <text x="200" y="412" text-anchor="middle" fill="#409EFF" font-size="16">&lt;/&gt;</text>
+  <!-- 子节点 -->
+  <text x="120" y="380" fill="#1a1a2e" font-size="13" font-family="sans-serif">HumanEval</text>
+  <text x="120" y="400" fill="#1a1a2e" font-size="13" font-family="sans-serif">MBPP</text>
+  <text x="120" y="420" fill="#1a1a2e" font-size="13" font-family="sans-serif">CodeX</text>
+
+  <!-- 分支5：对齐安全（左侧） -->
+  <line x1="348" y1="250" x2="180" y2="250" stroke="#5CB0FF" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="180" cy="250" r="32" fill="#E8F4FE" stroke="#5CB0FF" stroke-width="2"/>
+  <text x="180" y="244" text-anchor="middle" fill="#1a1a2e" font-size="13" font-weight="bold" font-family="sans-serif">对齐安全</text>
+  <text x="180" y="262" text-anchor="middle" fill="#5CB0FF" font-size="16">🛡️✓</text>
+  <!-- 子节点 -->
+  <text x="100" y="230" fill="#1a1a2e" font-size="13" font-family="sans-serif">RLHF</text>
+  <text x="100" y="250" fill="#1a1a2e" font-size="13" font-family="sans-serif">红队测试</text>
+  <text x="100" y="270" fill="#1a1a2e" font-size="13" font-family="sans-serif">安全对齐</text>
+
+  <!-- 分支6：对话交互（左上） -->
+  <line x1="355" y1="218" x2="200" y2="100" stroke="#7EC4FF" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="200" cy="100" r="32" fill="#E8F4FE" stroke="#7EC4FF" stroke-width="2"/>
+  <text x="200" y="94" text-anchor="middle" fill="#1a1a2e" font-size="13" font-weight="bold" font-family="sans-serif">对话交互</text>
+  <text x="200" y="112" text-anchor="middle" fill="#7EC4FF" font-size="16">💬💬</text>
+  <!-- 子节点 -->
+  <text x="120" y="80" fill="#1a1a2e" font-size="13" font-family="sans-serif">MT-Bench</text>
+  <text x="120" y="100" fill="#1a1a2e" font-size="13" font-family="sans-serif">Chatbot</text>
+  <text x="120" y="120" fill="#1a1a2e" font-size="13" font-family="sans-serif">多轮对话</text>
+
+  <!-- 标注1 -->
+  <rect x="700" y="60" width="85" height="24" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="742" y="76" text-anchor="middle" fill="#1a1a2e" font-size="13" font-family="sans-serif">全面评估</text>
+
+  <!-- 标注2 -->
+  <rect x="700" y="140" width="85" height="24" rx="12" fill="#5CB0FF" opacity="0.15"/>
+  <text x="742" y="156" text-anchor="middle" fill="#1a1a2e" font-size="13" font-family="sans-serif">多维指标</text>
+
+  <!-- 标注3 -->
+  <rect x="700" y="220" width="85" height="24" rx="12" fill="#7EC4FF" opacity="0.15"/>
+  <text x="742" y="236" text-anchor="middle" fill="#1a1a2e" font-size="13" font-family="sans-serif">标准化</text>
+
+  <!-- 标注4 -->
+  <rect x="10" y="60" width="85" height="24" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="52" y="76" text-anchor="middle" fill="#1a1a2e" font-size="13" font-family="sans-serif">可量化</text>
+
+  <!-- 标注5 -->
+  <rect x="10" y="140" width="85" height="24" rx="12" fill="#5CB0FF" opacity="0.15"/>
+  <text x="52" y="156" text-anchor="middle" fill="#1a1a2e" font-size="13" font-family="sans-serif">可对比</text>
+
+  <!-- 标注6 -->
+  <rect x="10" y="220" width="85" height="24" rx="12" fill="#7EC4FF" opacity="0.15"/>
+  <text x="52" y="236" text-anchor="middle" fill="#1a1a2e" font-size="13" font-family="sans-serif">可追踪</text>
+
+  <!-- 底部说明 -->
+  <text x="400" y="480" text-anchor="middle" fill="#1a1a2e" font-size="14" font-family="sans-serif" opacity="0.7">LLM 能力评估维度 · 覆盖知识、推理、语言、代码、安全与对话</text>
+</svg>

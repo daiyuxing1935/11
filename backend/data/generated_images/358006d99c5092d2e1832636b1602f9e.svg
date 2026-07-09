@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="brokerGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2B7ED6"/>
+    </linearGradient>
+    <linearGradient id="nodeGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E6F1FF"/>
+      <stop offset="100%" stop-color="#D6E8FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">基于主题的发布/订阅 — 层次化主题命名</text>
+
+  <!-- ==================== 左侧：主题层次树 ==================== -->
+  <text x="30" y="72" font-size="15" font-weight="bold" fill="#1a1a2e">主题层次树</text>
+
+  <!-- 根节点 -->
+  <rect x="40" y="82" width="180" height="28" rx="14" fill="#409EFF" opacity="0.15"/>
+  <text x="130" y="100" text-anchor="middle" font-size="14" fill="#1a1a2e" font-weight="bold">根 (root)</text>
+
+  <!-- 第1层：task, system, data, agent -->
+  <line x1="130" y1="110" x2="130" y2="125" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="130" y1="125" x2="55" y2="125" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="130" y1="125" x2="130" y2="125" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="130" y1="125" x2="205" y2="125" stroke="#409EFF" stroke-width="1.5"/>
+
+  <rect x="40" y="125" width="30" height="22" rx="11" fill="#409EFF" opacity="0.2"/>
+  <text x="55" y="140" text-anchor="middle" font-size="12" fill="#1a1a2e">task</text>
+
+  <rect x="115" y="125" width="30" height="22" rx="11" fill="#409EFF" opacity="0.2"/>
+  <text x="130" y="140" text-anchor="middle" font-size="12" fill="#1a1a2e">system</text>
+
+  <rect x="190" y="125" width="30" height="22" rx="11" fill="#409EFF" opacity="0.2"/>
+  <text x="205" y="140" text-anchor="middle" font-size="12" fill="#1a1a2e">data</text>
+
+  <rect x="265" y="125" width="30" height="22" rx="11" fill="#409EFF" opacity="0.2"/>
+  <text x="280" y="140" text-anchor="middle" font-size="12" fill="#1a1a2e">agent</text>
+
+  <!-- 第2层：task 子节点 -->
+  <line x1="55" y1="147" x2="55" y2="162" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="40" y="162" width="30" height="22" rx="11" fill="#409EFF" opacity="0.2"/>
+  <text x="55" y="177" text-anchor="middle" font-size="12" fill="#1a1a2e">research</text>
+
+  <!-- 第3层：research 子节点 -->
+  <line x1="55" y1="184" x2="55" y2="199" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="55" y1="199" x2="30" y2="199" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="55" y1="199" x2="80" y2="199" stroke="#409EFF" stroke-width="1.5"/>
+
+  <rect x="15" y="199" width="30" height="22" rx="11" fill="#409EFF" opacity="0.25"/>
+  <text x="30" y="214" text-anchor="middle" font-size="11" fill="#1a1a2e">completed</text>
+
+  <rect x="65" y="199" width="30" height="22" rx="11" fill="#409EFF" opacity="0.25"/>
+  <text x="80" y="214" text-anchor="middle" font-size="11" fill="#1a1a2e">failed</text>
+
+  <!-- system 子节点 -->
+  <line x1="130" y1="147" x2="130" y2="162" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="115" y="162" width="30" height="22" rx="11" fill="#409EFF" opacity="0.2"/>
+  <text x="130" y="177" text-anchor="middle" font-size="12" fill="#1a1a2e">alert</text>
+
+  <line x1="130" y1="184" x2="130" y2="199" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="115" y="199" width="30" height="22" rx="11" fill="#409EFF" opacity="0.25"/>
+  <text x="130" y="214" text-anchor="middle" font-size="11" fill="#1a1a2e">critical</text>
+
+  <!-- data 子节点 -->
+  <line x1="205" y1="147" x2="205" y2="162" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="190" y="162" width="30" height="22" rx="11" fill="#409EFF" opacity="0.2"/>
+  <text x="205" y="177" text-anchor="middle" font-size="12" fill="#1a1a2e">updated</text>
+
+  <line x1="205" y1="184" x2="205" y2="199" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="190" y="199" width="30" height="22" rx="11" fill="#409EFF" opacity="0.25"/>
+  <text x="205" y="214" text-anchor="middle" font-size="11" fill="#1a1a2e">knowledge_base</text>
+
+  <!-- agent 子节点 -->
+  <line x1="280" y1="147" x2="280" y2="162" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="265" y="162" width="30" height="22" rx="11" fill="#409EFF" opacity="0.2"/>
+  <text x="280" y="177" text-anchor="middle" font-size="12" fill="#1a1a2e">status</text>
+
+  <line x1="280" y1="184" x2="280" y2="199" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="265" y="199" width="30" height="22" rx="11" fill="#409EFF" opacity="0.25"/>
+  <text x="280" y="214" text-anchor="middle" font-size="11" fill="#1a1a2e">online</text>
+
+  <!-- 主题名称示例 -->
+  <rect x="15" y="240" width="290" height="18" rx="4" fill="#409EFF" opacity="0.08"/>
+  <text x="20" y="254" font-size="11" fill="#409EFF" font-weight="bold">task.research.completed</text>
+
+  <rect x="15" y="260" width="290" height="18" rx="4" fill="#409EFF" opacity="0.08"/>
+  <text x="20" y="274" font-size="11" fill="#409EFF" font-weight="bold">task.research.failed</text>
+
+  <rect x="15" y="280" width="290" height="18" rx="4" fill="#409EFF" opacity="0.08"/>
+  <text x="20" y="294" font-size="11" fill="#409EFF" font-weight="bold">system.alert.critical</text>
+
+  <rect x="15" y="300" width="290" height="18" rx="4" fill="#409EFF" opacity="0.08"/>
+  <text x="20" y="314" font-size="11" fill="#409EFF" font-weight="bold">data.updated.knowledge_base</text>
+
+  <rect x="15" y="320" width="290" height="18" rx="4" fill="#409EFF" opacity="0.08"/>
+  <text x="20" y="334" font-size="11" fill="#409EFF" font-weight="bold">agent.status.online</text>
+
+  <!-- ==================== 中间：Broker ==================== -->
+  <rect x="340" y="65" width="140" height="50" rx="25" fill="url(#brokerGrad)" stroke="#2B7ED6" stroke-width="1.5"/>
+  <text x="410" y="88" text-anchor="middle" font-size="16" font-weight="bold" fill="#fff">消息代理</text>
+  <text x="410" y="105" text-anchor="middle" font-size="11" fill="#D6E8FF">主题匹配引擎</text>
+
+  <!-- 箭头：左侧到 Broker -->
+  <line x1="305" y1="90" x2="340" y2="90" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#409EFF"/>
+    </marker>
+  </defs>
+
+  <!-- 主题匹配逻辑 -->
+  <rect x="345" y="130" width="130" height="80" rx="8" fill="#fff" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="410" y="150" text-anchor="middle" font-size="12" fill="#1a1a2e" font-weight="bold">匹配逻辑</text>
+  <text x="355" y="170" font-size="11" fill="#1a1a2e">通配符匹配</text>
+  <text x="355" y="186" font-size="11" fill="#1a1a2e">路由表查找</text>
+  <text x="355" y="202" font-size="11" fill="#1a1a2e">消息分发</text>
+
+  <!-- ==================== 右侧：订阅模式 ==================== -->
+  <text x="530" y="72" font-size="15" font-weight="bold" fill="#1a1a2e">订阅模式</text>
+
+  <!-- 通配符说明 -->
+  <rect x="520" y="82" width="260" height="55" rx="8" fill="#fff" stroke="#409EFF" stroke-width="1"/>
+  <text x="535" y="100" font-size="13" fill="#1a1a2e" font-weight="bold">* (单级星号)</text>
+  <text x="535" y="118" font-size="12" fill="#555">匹配一个层级: task.*.completed</text>
+  <text x="535" y="133" font-size="11" fill="#777">→ 匹配 task.research.completed</text>
+
+  <!-- 箭头：Broker 到右侧 -->
+  <line x1="480" y1="90" x2="520" y2="90" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- 示例：匹配 task.*.completed -->
+  <rect x="520" y="150" width="260" height="75" rx="8" fill="#fff" stroke="#E0E0E0" stroke-width="1"/>
+  <text x="535" y="170" font-size="13" fill="#1a1a2e" font-weight="bold">匹配: task.*.completed</text>
+
+  <rect x="535" y="180" width="120" height="18" rx="4" fill="#E8F5E9"/>
+  <text x="540" y="193" font-size="11" fill="#2E7D32">✓ task.research.completed</text>
+
+  <rect x="535" y="200" width="150" height="18" rx="4" fill="#FFEBEE"/>
+  <text x="540" y="213" font-size="11" fill="#C62828">✗ task.research.sub.completed</text>
+
+  <!-- 示例：匹配 task.# -->
+  <rect x="520" y="238" width="260" height="75" rx="8" fill="#fff" stroke="#E0E0E0" stroke-width="1"/>
+  <text x="535" y="258" font-size="13" fill="#1a1a2e" font-weight="bold">匹配: task.#</text>
+
+  <rect x="535" y="268" width="130" height="18" rx="4" fill="#E8F5E9"/>
+  <text x="540" y="281" font-size="11" fill="#2E7D32">✓ task.research.completed</text>
+
+  <rect x="535" y="288" width="130" height="18" rx="4" fill="#E8F5E9"/>
+  <text x="540" y="301" font-size="11" fill="#2E7D32">✓ task.research.failed</text>
+
+  <!-- # 通配符说明 -->
+  <rect x="520" y="326" width="260" height="40" rx="8" fill="#fff" stroke="#409EFF" stroke-width="1"/>
+  <text x="535" y="344" font-size="13" fill="#1a1a2e" font-weight="bold"># (多级哈希)</text>
+  <text x="535" y="360" font-size="12" fill="#555">匹配所有子主题: task.#</text>
+
+  <!-- ==================== 底部标注 ==================== -->
+  <!-- 标注1 -->
+  <rect x="40" y="370" width="160" height="24" rx="12" fill="#409EFF" opacity="0.12"/>
+  <text x="120" y="386" text-anchor="middle" font-size="13" fill="#409EFF" font-weight="bold">层次化命名</text>
+
+  <!-- 标注2 -->
+  <rect x="230" y="370" width="160" height="24" rx="12" fill="#409EFF" opacity="0.12"/>
+  <text x="310" y="386" text-anchor="middle" font-size="13" fill="#409EFF" font-weight="bold">点号分隔</text>
+
+  <!-- 标注3 -->
+  <rect x="420" y="370" width="160" height="24" rx="12" fill="#409EFF" opacity="0.12"/>
+  <text x="500" y="386" text-anchor="middle" font-size="13" fill="#409EFF" font-weight="bold">通配符匹配</text>
+
+  <!-- 标注4 -->
+  <rect x="610" y="370" width="160" height="24" rx="12" fill="#409EFF" opacity="0.12"/>
+  <text x="690" y="386" text-anchor="middle" font-size="13" fill="#409EFF" font-weight="bold">灵活订阅</text>
+
+  <!-- 标注5 -->
+  <rect x="40" y="410" width="160" height="24" rx="12" fill="#409EFF" opacity="0.12"/>
+  <text x="120" y="426" text-anchor="middle" font-size="13" fill="#409EFF" font-weight="bold">精确匹配</text>
+
+  <!-- 标注6 -->
+  <rect x="230" y="410" width="160" height="24" rx="12" fill="#409EFF" opacity="0.12"/>
+  <text x="310" y="426" text-anchor="middle" font-size="13" fill="#409EFF" font-weight="bold">消息路由</text>
+
+  <!-- 底部连接线 -->
+  <line x1="120" y1="394" x2="120" y2="410" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="310" y1="394" x2="310" y2="410" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="500" y1="394" x2="500" y2="410" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="690" y1="394" x2="690" y2="410" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+
+  <!-- 底部区域分隔线 -->
+  <line x1="20" y1="360" x2="780" y2="360" stroke="#409EFF" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- 底部说明 -->
+  <text x="400" y="465" text-anchor="middle" font-size="12" fill="#888">发布者发送消息到主题 → 代理根据订阅模式匹配 → 分发给对应订阅者</text>
+
+</svg>

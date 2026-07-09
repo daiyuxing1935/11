@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="encGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3A8FE0"/>
+    </linearGradient>
+    <linearGradient id="decGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3A8FE0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="32" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">Transformer 架构</text>
+
+  <!-- ==================== 编码器（左列） ==================== -->
+
+  <!-- 编码器标签 -->
+  <text x="200" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">编码器（N 层）</text>
+
+  <!-- 编码器第1层 -->
+  <!-- 多头自注意力 -->
+  <rect x="80" y="75" width="240" height="55" rx="10" fill="url(#encGrad)" stroke="#2E8BCC" stroke-width="1.5"/>
+  <text x="200" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">多头自注意力</text>
+  <text x="200" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#D6E9FF">Multi-Head Self-Attention</text>
+
+  <!-- 残差连接 + 层归一化（自注意力旁） -->
+  <line x1="320" y1="102" x2="370" y2="102" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <rect x="370" y="90" width="60" height="24" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="400" y="106" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">层归一化</text>
+
+  <!-- 残差箭头从输入到输出 -->
+  <line x1="80" y1="130" x2="80" y2="155" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="80" y1="155" x2="320" y2="155" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="320" y1="155" x2="320" y2="145" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+  <!-- 前馈网络 -->
+  <rect x="80" y="160" width="240" height="55" rx="10" fill="url(#encGrad)" stroke="#2E8BCC" stroke-width="1.5"/>
+  <text x="200" y="185" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">前馈网络</text>
+  <text x="200" y="205" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#D6E9FF">Feed-Forward Network</text>
+
+  <!-- 残差连接 + 层归一化（前馈网络旁） -->
+  <line x1="320" y1="187" x2="370" y2="187" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="370" y="175" width="60" height="24" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="400" y="191" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">层归一化</text>
+
+  <!-- 残差箭头 -->
+  <line x1="80" y1="215" x2="80" y2="240" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="80" y1="240" x2="320" y2="240" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="320" y1="240" x2="320" y2="228" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+  <!-- 编码器第2层（示意N层） -->
+  <rect x="80" y="250" width="240" height="55" rx="10" fill="url(#encGrad)" stroke="#2E8BCC" stroke-width="1.5"/>
+  <text x="200" y="275" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">多头自注意力</text>
+  <text x="200" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#D6E9FF">Multi-Head Self-Attention</text>
+
+  <line x1="320" y1="277" x2="370" y2="277" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="370" y="265" width="60" height="24" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="400" y="281" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">层归一化</text>
+
+  <rect x="80" y="335" width="240" height="55" rx="10" fill="url(#encGrad)" stroke="#2E8BCC" stroke-width="1.5"/>
+  <text x="200" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">前馈网络</text>
+  <text x="200" y="380" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#D6E9FF">Feed-Forward Network</text>
+
+  <line x1="320" y1="362" x2="370" y2="362" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="370" y="350" width="60" height="24" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="400" y="366" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">层归一化</text>
+
+  <!-- N层省略号 -->
+  <text x="200" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1a1a2e">⋮</text>
+
+  <!-- 输入嵌入 -->
+  <rect x="80" y="420" width="240" height="40" rx="8" fill="#D6E9FF" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="200" y="445" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">输入嵌入</text>
+
+  <!-- 输入箭头 -->
+  <line x1="200" y1="460" x2="200" y2="480" stroke="#409EFF" stroke-width="2"/>
+  <polygon points="195,475 200,485 205,475" fill="#409EFF"/>
+  <text x="200" y="498" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">输入</text>
+
+  <!-- 从输入嵌入到编码器的箭头 -->
+  <line x1="200" y1="420" x2="200" y2="405" stroke="#409EFF" stroke-width="1.5"/>
+  <polygon points="195,410 200,400 205,410" fill="#409EFF"/>
+
+  <!-- ==================== 解码器（右列） ==================== -->
+
+  <!-- 解码器标签 -->
+  <text x="600" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">解码器（N 层）</text>
+
+  <!-- 掩码多头自注意力 -->
+  <rect x="480" y="75" width="240" height="55" rx="10" fill="url(#decGrad)" stroke="#2E8BCC" stroke-width="1.5"/>
+  <text x="600" y="98" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#ffffff" font-weight="bold">掩码多头自注意力</text>
+  <text x="600" y="118" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#D6E9FF">Masked Self-Attention</text>
+
+  <!-- 残差连接 + 层归一化 -->
+  <line x1="720" y1="102" x2="750" y2="102" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="750" y="90" width="50" height="24" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="775" y="106" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">层归一化</text>
+
+  <!-- 交叉注意力 -->
+  <rect x="480" y="160" width="240" height="55" rx="10" fill="url(#decGrad)" stroke="#2E8BCC" stroke-width="1.5"/>
+  <text x="600" y="183" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">交叉注意力</text>
+  <text x="600" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#D6E9FF">Cross-Attention</text>
+
+  <!-- 从编码器到交叉注意力的箭头 -->
+  <line x1="440" y1="187" x2="475" y2="187" stroke="#409EFF" stroke-width="1.8" stroke-dasharray="6,3"/>
+  <polygon points="470,182 480,187 470,192" fill="#409EFF"/>
+  <text x="458" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">编码器输出</text>
+
+  <!-- 残差连接 + 层归一化 -->
+  <line x1="720" y1="187" x2="750" y2="187" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="750" y="175" width="50" height="24" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="775" y="191" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">层归一化</text>
+
+  <!-- 前馈网络 -->
+  <rect x="480" y="245" width="240" height="55" rx="10" fill="url(#decGrad)" stroke="#2E8BCC" stroke-width="1.5"/>
+  <text x="600" y="268" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" font-weight="bold">前馈网络</text>
+  <text x="600" y="288" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#D6E9FF">Feed-Forward Network</text>
+
+  <!-- 残差连接 + 层归一化 -->
+  <line x1="720" y1="272" x2="750" y2="272" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="750" y="260" width="50" height="24" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="775" y="276" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">层归一化</text>
+
+  <!-- 解码器第2层（示意N层） -->
+  <rect x="480" y="330" width="240" height="55" rx="10" fill="url(#decGrad)" stroke="#2E8BCC" stroke-width="1.5"/>
+  <text x="600" y="353" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#ffffff" font-weight="bold">掩码多头自注意力</text>
+  <text x="600" y="373" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#D6E9FF">Masked Self-Attention</text>
+
+  <line x1="720" y1="357" x2="750" y2="357" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="750" y="345" width="50" height="24" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="775" y="361" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">层归一化</text>
+
+  <!-- N层省略号 -->
+  <text x="600" y="405" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1a1a2e">⋮</text>
+
+  <!-- 输出嵌入 -->
+  <rect x="480" y="420" width="240" height="40" rx="8" fill="#D6E9FF" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="600" y="445" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">输出嵌入</text>
+
+  <!-- 输出箭头 -->
+  <line x1="600" y1="75" x2="600" y2="55" stroke="#409EFF" stroke-width="2"/>
+  <polygon points="595,60 600,50 605,60" fill="#409EFF"/>
+  <text x="600" y="48" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e">输出</text>
+
+  <!-- 从输出嵌入到解码器的箭头 -->
+  <line x1="600" y1="420" x2="600" y2="405" stroke="#409EFF" stroke-width="1.5"/>
+  <polygon points="595,410 600,400 605,410" fill="#409EFF"/>
+
+  <!-- 解码器内部连接箭头 -->
+  <line x1="480" y1="130" x2="480" y2="155" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="480" y1="155" x2="720" y2="155" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="720" y1="155" x2="720" y2="142" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+  <line x1="480" y1="215" x2="480" y2="240" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="480" y1="240" x2="720" y2="240" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="720" y1="240" x2="720" y2="228" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+  <line x1="480" y1="300" x2="480" y2="325" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="480" y1="325" x2="720" y2="325" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="720" y1="325" x2="720" y2="313" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+  <!-- 标注 -->
+  <rect x="55" y="65" width="18" height="18" rx="3" fill="#409EFF"/>
+  <text x="64" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#fff" font-weight="bold">1</text>
+  <text x="78" y="78" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">N 层堆叠</text>
+
+  <rect x="55" y="145" width="18" height="18" rx="3" fill="#409EFF"/>
+  <text x="64" y="158" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#fff" font-weight="bold">2</text>
+  <text x="78" y="158" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">残差连接</text>
+
+  <rect x="55" y="230" width="18" height="18" rx="3" fill="#409EFF"/>
+  <text x="64" y="243" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#fff" font-weight="bold">3</text>
+  <text x="78" y="243" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">层归一化</text>
+
+  <rect x="440" y="145" width="18" height="18" rx="3" fill="#409EFF"/>
+  <text x="449" y="158" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#fff" font-weight="bold">4</text>
+  <text x="463" y="158" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">交叉注意力</text>
+
+  <rect x="440" y="230" width="18" height="18" rx="3" fill="#409EFF"/>
+  <text x="449" y="243" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#fff" font-weight="bold">5</text>
+  <text x="463" y="243" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">掩码自注意力</text>
+
+  <rect x="440" y="65" width="18" height="18" rx="3" fill="#409EFF"/>
+  <text x="449" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#fff" font-weight="bold">6</text>
+  <text x="463" y="78" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">编码器-解码器</text>
+</svg>

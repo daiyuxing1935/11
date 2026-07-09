@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#D0EBF9"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FBFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 主卡片 -->
+  <rect x="30" y="20" width="740" height="460" fill="url(#cardGrad)" rx="16" stroke="#D6E8F5" stroke-width="1.5"/>
+
+  <!-- 标题栏装饰 -->
+  <rect x="30" y="20" width="740" height="60" fill="#1a1a2e" rx="16"/>
+  <rect x="30" y="60" width="740" height="20" fill="#1a1a2e"/>
+
+  <!-- 标题 -->
+  <text x="400" y="56" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="22" font-weight="bold" fill="#FFFFFF" letter-spacing="3">预训练与微调 核心要点</text>
+
+  <!-- 四个知识卡片 2x2 排列 -->
+  <!-- 卡片 1：预训练 -->
+  <rect x="55" y="100" width="330" height="155" rx="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="55" y="100" width="330" height="155" rx="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.4"/>
+  <rect x="55" y="100" width="330" height="42" rx="12" fill="#409EFF" opacity="0.2"/>
+  <rect x="55" y="130" width="330" height="12" fill="#409EFF" opacity="0.2"/>
+
+  <!-- 地球图标 -->
+  <circle cx="85" cy="121" r="14" fill="#409EFF" opacity="0.9"/>
+  <ellipse cx="85" cy="121" rx="8" ry="14" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>
+  <ellipse cx="85" cy="121" rx="14" ry="6" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>
+  <line x1="71" y1="121" x2="99" y2="121" stroke="#FFFFFF" stroke-width="1.2"/>
+
+  <!-- 书本图标在地球下方 -->
+  <rect x="77" y="126" width="16" height="10" rx="1" fill="#FFFFFF" opacity="0"/>
+  <text x="85" y="136" text-anchor="middle" font-size="10" fill="#FFFFFF" opacity="0.8">📚</text>
+
+  <text x="115" y="127" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">预训练 = 通识教育 + 世界知识</text>
+  <text x="75" y="160" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">在大规模通用语料上学习语言规律、</text>
+  <text x="75" y="182" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">事实知识和推理能力，形成基础模型。</text>
+  <text x="75" y="210" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">成本高，需数千 GPU 小时及 TB 级数据。</text>
+
+  <!-- 标注 1 -->
+  <rect x="75" y="226" width="62" height="22" rx="11" fill="#409EFF" opacity="0.15"/>
+  <text x="106" y="241" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="11" fill="#409EFF">基础能力</text>
+
+  <!-- 卡片 2：微调 -->
+  <rect x="415" y="100" width="330" height="155" rx="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="415" y="100" width="330" height="155" rx="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.4"/>
+  <rect x="415" y="100" width="330" height="42" rx="12" fill="#409EFF" opacity="0.2"/>
+  <rect x="415" y="130" width="330" height="12" fill="#409EFF" opacity="0.2"/>
+
+  <!-- 靶心图标 -->
+  <circle cx="445" cy="121" r="14" fill="#409EFF" opacity="0.9"/>
+  <circle cx="445" cy="121" r="10" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>
+  <circle cx="445" cy="121" r="5" fill="none" stroke="#FFFFFF" stroke-width="1.2"/>
+  <circle cx="445" cy="121" r="2" fill="#FFFFFF"/>
+
+  <!-- 齿轮图标 -->
+  <text x="445" y="138" text-anchor="middle" font-size="10" fill="#FFFFFF" opacity="0.8">⚙️</text>
+
+  <text x="475" y="127" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">微调 = 专业技能训练</text>
+  <text x="435" y="160" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">在特定领域数据上调整模型参数，</text>
+  <text x="435" y="182" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">使模型掌握专业知识和任务能力。</text>
+  <text x="435" y="210" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">成本适中，需领域标注数据与计算资源。</text>
+
+  <!-- 标注 2 -->
+  <rect x="435" y="226" width="62" height="22" rx="11" fill="#409EFF" opacity="0.15"/>
+  <text x="466" y="241" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="11" fill="#409EFF">领域适配</text>
+
+  <!-- 卡片 3：LoRA -->
+  <rect x="55" y="280" width="330" height="155" rx="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="55" y="280" width="330" height="155" rx="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.4"/>
+  <rect x="55" y="280" width="330" height="42" rx="12" fill="#409EFF" opacity="0.2"/>
+  <rect x="55" y="310" width="330" height="12" fill="#409EFF" opacity="0.2"/>
+
+  <!-- 大锁图标 -->
+  <rect x="73" y="109" width="24" height="18" rx="3" fill="#409EFF" opacity="0"/>
+  <rect x="75" y="295" width="20" height="16" rx="3" fill="#409EFF" opacity="0.9"/>
+  <path d="M79 295 V290 A6 6 0 0 1 91 290 V295" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+  <circle cx="85" cy="302" r="2" fill="#FFFFFF"/>
+
+  <!-- 小齿轮 -->
+  <text x="100" y="310" font-size="12" fill="#FFFFFF" opacity="0.9">⚙️</text>
+
+  <text x="115" y="307" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">LoRA：高效微调（仅 0.1%-1% 参数）</text>
+  <text x="75" y="340" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">通过低秩分解矩阵适配器，冻结原模型</text>
+  <text x="75" y="362" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">权重，仅训练少量新增参数即可适配。</text>
+  <text x="75" y="390" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">显存需求降低 70%，训练速度提升 3 倍。</text>
+
+  <!-- 标注 3 -->
+  <rect x="75" y="406" width="62" height="22" rx="11" fill="#409EFF" opacity="0.15"/>
+  <text x="106" y="421" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="11" fill="#409EFF">参数高效</text>
+
+  <!-- 卡片 4：FT vs RAG -->
+  <rect x="415" y="280" width="330" height="155" rx="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="415" y="280" width="330" height="155" rx="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.4"/>
+  <rect x="415" y="280" width="330" height="42" rx="12" fill="#409EFF" opacity="0.2"/>
+  <rect x="415" y="310" width="330" height="12" fill="#409EFF" opacity="0.2"/>
+
+  <!-- 分叉路径决策图标 -->
+  <circle cx="445" cy="301" r="14" fill="#409EFF" opacity="0.9"/>
+  <line x1="445" y1="291" x2="445" y2="301" stroke="#FFFFFF" stroke-width="1.5"/>
+  <line x1="445" y1="301" x2="435" y2="311" stroke="#FFFFFF" stroke-width="1.5"/>
+  <line x1="445" y1="301" x2="455" y2="311" stroke="#FFFFFF" stroke-width="1.5"/>
+  <circle cx="445" cy="291" r="2" fill="#FFFFFF"/>
+  <circle cx="435" cy="311" r="2" fill="#FFFFFF"/>
+  <circle cx="455" cy="311" r="2" fill="#FFFFFF"/>
+
+  <text x="475" y="307" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">按需选择：微调 vs RAG</text>
+  <text x="435" y="340" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">需要模型掌握新知识、改变行为 → 微调</text>
+  <text x="435" y="362" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">需要实时更新知识、引用外部源 → RAG</text>
+  <text x="435" y="390" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="13" fill="#4A5568">两者可结合使用，兼顾能力与时效性。</text>
+
+  <!-- 标注 4 -->
+  <rect x="435" y="406" width="62" height="22" rx="11" fill="#409EFF" opacity="0.15"/>
+  <text x="466" y="421" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="11" fill="#409EFF">策略选择</text>
+
+  <!-- 底部装饰线 -->
+  <line x1="60" y1="460" x2="740" y2="460" stroke="#409EFF" stroke-width="1" opacity="0.2"/>
+
+  <!-- 底部小字 -->
+  <text x="400" y="474" text-anchor="middle" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="11" fill="#A0B4C8">知识卡片 · AI 模型训练核心概念</text>
+
+</svg>

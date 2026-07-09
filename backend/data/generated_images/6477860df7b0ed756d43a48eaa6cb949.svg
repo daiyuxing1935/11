@@ -1,86 +1,134 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
   <defs>
-    <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#409EFF"/>
-    </marker>
-    <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#E6A23C"/>
-    </marker>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="judgeGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2B7ED6"/>
+    </linearGradient>
   </defs>
 
   <!-- 背景 -->
-  <rect width="800" height="500" fill="#FFFFFF"/>
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
 
   <!-- 标题 -->
-  <text x="400" y="32" text-anchor="middle" font-size="18" font-weight="bold" fill="#303133" font-family="sans-serif">结构化辩论裁决流程</text>
+  <text x="400" y="32" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">辩论式决议 · 三回合流程</text>
 
-  <!-- ===== 第1轮：开场陈述 ===== -->
-  <rect x="30" y="50" width="740" height="110" rx="8" fill="#F0F9FF" stroke="#409EFF" stroke-width="1.5"/>
-  <text x="45" y="72" font-size="14" font-weight="bold" fill="#409EFF" font-family="sans-serif">第1轮 · 开场陈述</text>
+  <!-- ===== 第一轮：开篇陈述 ===== -->
+  <rect x="30" y="55" width="340" height="105" rx="10" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="30" y="55" width="340" height="28" rx="10" fill="#409EFF"/>
+  <rect x="30" y="73" width="340" height="10" fill="#409EFF"/>
+  <text x="200" y="74" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">第1轮 · 开篇陈述</text>
 
-  <!-- 代理人A -->
-  <rect x="60" y="85" width="100" height="36" rx="18" fill="#409EFF"/>
-  <text x="110" y="108" text-anchor="middle" font-size="14" fill="#FFF" font-weight="bold" font-family="sans-serif">代理人A</text>
-  <rect x="60" y="128" width="160" height="22" rx="4" fill="#E6F0FF" stroke="#409EFF" stroke-width="1"/>
-  <text x="140" y="144" text-anchor="middle" font-size="13" fill="#303133" font-family="sans-serif">论点卡片：支持监管</text>
+  <!-- 正方A -->
+  <rect x="48" y="92" width="140" height="55" rx="6" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="118" y="110" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a2e">Agent A · 正方</text>
+  <rect x="55" y="118" width="50" height="20" rx="3" fill="#409EFF" opacity="0.15"/>
+  <text x="80" y="132" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">论点卡</text>
+  <rect x="112" y="118" width="50" height="20" rx="3" fill="#409EFF" opacity="0.15"/>
+  <text x="137" y="132" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">论点卡</text>
 
-  <!-- 代理人B -->
-  <rect x="640" y="85" width="100" height="36" rx="18" fill="#E6A23C"/>
-  <text x="690" y="108" text-anchor="middle" font-size="14" fill="#FFF" font-weight="bold" font-family="sans-serif">代理人B</text>
-  <rect x="580" y="128" width="160" height="22" rx="4" fill="#FFF5E6" stroke="#E6A23C" stroke-width="1"/>
-  <text x="660" y="144" text-anchor="middle" font-size="13" fill="#303133" font-family="sans-serif">论点卡片：反对监管</text>
+  <!-- 反方B -->
+  <rect x="212" y="92" width="140" height="55" rx="6" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="282" y="110" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a2e">Agent B · 反方</text>
+  <rect x="219" y="118" width="50" height="20" rx="3" fill="#409EFF" opacity="0.15"/>
+  <text x="244" y="132" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">论点卡</text>
+  <rect x="276" y="118" width="50" height="20" rx="3" fill="#409EFF" opacity="0.15"/>
+  <text x="301" y="132" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">论点卡</text>
 
-  <!-- 连接线 -->
-  <line x1="220" y1="106" x2="580" y2="106" stroke="#DCDFE6" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- 箭头 1→2 -->
+  <path d="M370,107 L400,107 L400,175 L430,175" stroke="#409EFF" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)"/>
+  <defs><marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#409EFF"/></marker></defs>
 
-  <!-- ===== 第2轮：反驳 ===== -->
-  <rect x="30" y="175" width="740" height="110" rx="8" fill="#FFF5F5" stroke="#F56C6C" stroke-width="1.5"/>
-  <text x="45" y="197" font-size="14" font-weight="bold" fill="#F56C6C" font-family="sans-serif">第2轮 · 反驳</text>
+  <!-- ===== 第二轮：反驳 ===== -->
+  <rect x="30" y="180" width="340" height="105" rx="10" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="30" y="180" width="340" height="28" rx="10" fill="#409EFF"/>
+  <rect x="30" y="198" width="340" height="10" fill="#409EFF"/>
+  <text x="200" y="199" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">第2轮 · 反驳</text>
 
-  <!-- 代理人A 反驳 -->
-  <rect x="60" y="210" width="100" height="36" rx="18" fill="#409EFF"/>
-  <text x="110" y="233" text-anchor="middle" font-size="14" fill="#FFF" font-weight="bold" font-family="sans-serif">代理人A</text>
   <!-- 反驳箭头 A→B -->
-  <line x1="160" y1="228" x2="540" y2="228" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
-  <text x="350" y="222" text-anchor="middle" font-size="12" fill="#409EFF" font-family="sans-serif">反驳：成本论据不充分</text>
-
-  <!-- 代理人B 反驳 -->
-  <rect x="640" y="210" width="100" height="36" rx="18" fill="#E6A23C"/>
-  <text x="690" y="233" text-anchor="middle" font-size="14" fill="#FFF" font-weight="bold" font-family="sans-serif">代理人B</text>
+  <line x1="100" y1="225" x2="190" y2="240" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="130" y="220" font-family="sans-serif" font-size="9" fill="#FF6B6B">反驳</text>
   <!-- 反驳箭头 B→A -->
-  <line x1="640" y1="250" x2="260" y2="250" stroke="#E6A23C" stroke-width="2" marker-end="url(#arrowOrange)"/>
-  <text x="450" y="256" text-anchor="middle" font-size="12" fill="#E6A23C" font-family="sans-serif">反驳：数据样本过小</text>
+  <line x1="260" y1="225" x2="170" y2="240" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="230" y="220" font-family="sans-serif" font-size="9" fill="#FF6B6B">反驳</text>
 
-  <!-- 弱点标注 -->
-  <rect x="290" y="268" width="100" height="18" rx="9" fill="#F56C6C"/>
-  <text x="340" y="281" text-anchor="middle" font-size="11" fill="#FFF" font-family="sans-serif">暴露弱点</text>
+  <rect x="48" y="245" width="140" height="28" rx="4" fill="#FFF0F0" stroke="#FF6B6B" stroke-width="1"/>
+  <text x="118" y="263" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">指出对方漏洞</text>
 
-  <!-- ===== 第3轮：总结陈词 ===== -->
-  <rect x="30" y="300" width="740" height="80" rx="8" fill="#F0FFF0" stroke="#67C23A" stroke-width="1.5"/>
-  <text x="45" y="322" font-size="14" font-weight="bold" fill="#67C23A" font-family="sans-serif">第3轮 · 总结陈词</text>
+  <rect x="212" y="245" width="140" height="28" rx="4" fill="#FFF0F0" stroke="#FF6B6B" stroke-width="1"/>
+  <text x="282" y="263" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">指出对方漏洞</text>
 
-  <rect x="60" y="335" width="100" height="36" rx="18" fill="#409EFF"/>
-  <text x="110" y="358" text-anchor="middle" font-size="14" fill="#FFF" font-weight="bold" font-family="sans-serif">代理人A</text>
+  <!-- 箭头 2→3 -->
+  <path d="M370,232 L400,232 L400,300 L430,300" stroke="#409EFF" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)"/>
 
-  <rect x="640" y="335" width="100" height="36" rx="18" fill="#E6A23C"/>
-  <text x="690" y="358" text-anchor="middle" font-size="14" fill="#FFF" font-weight="bold" font-family="sans-serif">代理人B</text>
+  <!-- ===== 第三轮：总结 ===== -->
+  <rect x="30" y="305" width="340" height="105" rx="10" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="30" y="305" width="340" height="28" rx="10" fill="#409EFF"/>
+  <rect x="30" y="323" width="340" height="10" fill="#409EFF"/>
+  <text x="200" y="324" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">第3轮 · 总结陈词</text>
 
-  <text x="400" y="352" text-anchor="middle" font-size="13" fill="#606266" font-family="sans-serif">双方提交最终总结</text>
+  <rect x="48" y="342" width="140" height="55" rx="6" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="118" y="362" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a2e">Agent A · 总结</text>
+  <text x="118" y="382" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">最终观点陈述</text>
 
-  <!-- ===== 法官 ===== -->
-  <rect x="250" y="395" width="300" height="50" rx="25" fill="#409EFF"/>
-  <text x="400" y="425" text-anchor="middle" font-size="16" font-weight="bold" fill="#FFF" font-family="sans-serif">⚖ 法官 · 综合评估裁决</text>
+  <rect x="212" y="342" width="140" height="55" rx="6" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
+  <text x="282" y="362" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a2e">Agent B · 总结</text>
+  <text x="282" y="382" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">最终观点陈述</text>
 
-  <!-- 法官连接线 -->
-  <line x1="400" y1="380" x2="400" y2="395" stroke="#409EFF" stroke-width="2"/>
+  <!-- ===== 裁判 ===== -->
+  <rect x="30" y="425" width="340" height="50" rx="25" fill="url(#judgeGrad)"/>
+  <text x="200" y="450" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="white">⚖ 裁判 Agent · 评估并裁决</text>
+  <text x="200" y="465" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#E0F0FF">综合双方论点，做出最终判决</text>
 
   <!-- ===== 右侧收益列表 ===== -->
-  <rect x="30" y="460" width="740" height="30" rx="6" fill="#F5F7FA"/>
-  <text x="45" y="480" font-size="14" font-weight="bold" fill="#409EFF" font-family="sans-serif">收益：</text>
-  <text x="130" y="480" font-size="14" fill="#303133" font-family="sans-serif">深度探索</text>
-  <text x="260" y="480" font-size="14" fill="#303133" font-family="sans-serif">弱点暴露</text>
-  <text x="390" y="480" font-size="14" fill="#303133" font-family="sans-serif">增强信心</text>
+  <rect x="430" y="55" width="340" height="420" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="600" y="85" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">辩论收益</text>
+  <line x1="460" y1="95" x2="740" y2="95" stroke="#409EFF" stroke-width="1" opacity="0.3"/>
 
-  <!-- 标注 -->
-  <text x="45" y="500" font-size="11" fill="#909399" font-family="sans-serif">注：所有论点卡片均经过结构化审查</text>
+  <!-- 收益1 -->
+  <rect x="460" y="115" width="280" height="90" rx="8" fill="#E8F4FD"/>
+  <circle cx="490" cy="160" r="18" fill="#409EFF"/>
+  <text x="490" y="165" text-anchor="middle" font-family="sans-serif" font-size="14" fill="white" font-weight="bold">1</text>
+  <text x="520" y="148" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">深度探索</text>
+  <text x="520" y="168" font-family="sans-serif" font-size="11" fill="#555">从多角度深入剖析问题</text>
+  <text x="520" y="185" font-family="sans-serif" font-size="11" fill="#555">挖掘潜在论点与论据</text>
+
+  <!-- 收益2 -->
+  <rect x="460" y="220" width="280" height="90" rx="8" fill="#E8F4FD"/>
+  <circle cx="490" cy="265" r="18" fill="#409EFF"/>
+  <text x="490" y="270" text-anchor="middle" font-family="sans-serif" font-size="14" fill="white" font-weight="bold">2</text>
+  <text x="520" y="253" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">弱点暴露</text>
+  <text x="520" y="273" font-family="sans-serif" font-size="11" fill="#555">通过反驳揭示论证缺陷</text>
+  <text x="520" y="290" font-family="sans-serif" font-size="11" fill="#555">消除逻辑盲点与漏洞</text>
+
+  <!-- 收益3 -->
+  <rect x="460" y="325" width="280" height="90" rx="8" fill="#E8F4FD"/>
+  <circle cx="490" cy="370" r="18" fill="#409EFF"/>
+  <text x="490" y="375" text-anchor="middle" font-family="sans-serif" font-size="14" fill="white" font-weight="bold">3</text>
+  <text x="520" y="358" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">增强自信</text>
+  <text x="520" y="378" font-family="sans-serif" font-size="11" fill="#555">在辩论中锻炼表达能力</text>
+  <text x="520" y="395" font-family="sans-serif" font-size="11" fill="#555">提升逻辑思维与自信心</text>
+
+  <!-- 底部标注 -->
+  <rect x="460" y="435" width="280" height="28" rx="14" fill="#409EFF" opacity="0.1"/>
+  <text x="600" y="453" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">通过结构化辩论达成高质量决议</text>
+
+  <!-- 流程标注 -->
+  <text x="400" y="145" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#409EFF">▼</text>
+  <text x="400" y="270" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#409EFF">▼</text>
+
+  <!-- 标注1 -->
+  <rect x="385" y="50" width="30" height="16" rx="3" fill="#409EFF"/>
+  <text x="400" y="62" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white">1</text>
+
+  <!-- 标注2 -->
+  <rect x="385" y="175" width="30" height="16" rx="3" fill="#409EFF"/>
+  <text x="400" y="187" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white">2</text>
+
+  <!-- 标注3 -->
+  <rect x="385" y="300" width="30" height="16" rx="3" fill="#409EFF"/>
+  <text x="400" y="312" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white">3</text>
 </svg>

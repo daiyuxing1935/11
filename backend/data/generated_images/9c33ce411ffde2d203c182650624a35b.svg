@@ -4,164 +4,171 @@
       <stop offset="0%" stop-color="#E8F4FD"/>
       <stop offset="100%" stop-color="#F0F8FF"/>
     </linearGradient>
-    <linearGradient id="pipeGrad" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="stepGrad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#409EFF"/>
       <stop offset="100%" stop-color="#6BB5FF"/>
     </linearGradient>
-    <filter id="shadow" x="-2" y="-2" width="8" height="8">
-      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.1"/>
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-color="#409EFF" flood-opacity="0.15"/>
     </filter>
   </defs>
 
   <!-- 背景 -->
-  <rect width="800" height="500" fill="url(#bgGrad)"/>
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+  <rect x="0" y="0" width="800" height="500" fill="none" stroke="#D0E8F8" stroke-width="1" rx="8"/>
 
   <!-- 标题 -->
-  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">专家评审流程（6步）</text>
+  <text x="400" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">专家评审流程（六步）</text>
+  <line x1="280" y1="48" x2="520" y2="48" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
 
-  <!-- 连接主线 -->
-  <rect x="60" y="220" width="680" height="6" rx="3" fill="url(#pipeGrad)" opacity="0.5"/>
+  <!-- 连接线（水平管道） -->
+  <line x1="85" y1="140" x2="715" y2="140" stroke="#409EFF" stroke-width="2.5" stroke-dasharray="6,4" opacity="0.4"/>
+  <line x1="85" y1="310" x2="715" y2="310" stroke="#409EFF" stroke-width="2.5" stroke-dasharray="6,4" opacity="0.4"/>
 
-  <!-- 步骤1：发布 -->
-  <g transform="translate(60, 150)">
-    <rect x="0" y="0" width="95" height="95" rx="12" fill="white" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
-    <circle cx="47" cy="20" r="14" fill="#409EFF"/>
-    <text x="47" y="25" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">1</text>
+  <!-- 步骤1：发布问题 -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="100" width="95" height="80" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="30" y="100" width="95" height="80" rx="12" fill="url(#stepGrad)" opacity="0.08"/>
+    <circle cx="77" cy="125" r="16" fill="#409EFF" opacity="0.12"/>
     <!-- 文档图标 -->
-    <rect x="30" y="38" width="34" height="26" rx="3" fill="none" stroke="#409EFF" stroke-width="1.8"/>
-    <line x1="36" y1="46" x2="58" y2="46" stroke="#409EFF" stroke-width="1.2"/>
-    <line x1="36" y1="52" x2="54" y2="52" stroke="#409EFF" stroke-width="1.2"/>
+    <rect x="65" y="116" width="24" height="18" rx="2" fill="#409EFF" opacity="0.7"/>
+    <line x1="69" y1="122" x2="85" y2="122" stroke="#409EFF" stroke-width="1.2"/>
+    <line x1="69" y1="126" x2="85" y2="126" stroke="#409EFF" stroke-width="1.2"/>
+    <line x1="69" y1="130" x2="80" y2="130" stroke="#409EFF" stroke-width="1.2"/>
     <!-- 广播图标 -->
-    <path d="M68 42 Q74 48 68 54" fill="none" stroke="#409EFF" stroke-width="1.5"/>
-    <path d="M72 38 Q80 48 72 58" fill="none" stroke="#409EFF" stroke-width="1.5"/>
-    <circle cx="66" cy="48" r="2" fill="#409EFF"/>
-    <text x="47" y="82" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">发布</text>
+    <path d="M90 118 Q95 125 90 132" fill="none" stroke="#409EFF" stroke-width="1.2"/>
+    <path d="M94 115 Q100 125 94 135" fill="none" stroke="#409EFF" stroke-width="1"/>
+    <circle cx="88" cy="125" r="2" fill="#409EFF"/>
+    <text x="77" y="160" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" font-weight="bold">发布问题</text>
   </g>
 
   <!-- 箭头1 -->
-  <polygon points="160,197 170,192 170,202" fill="#409EFF"/>
+  <polygon points="130,140 142,135 142,145" fill="#409EFF" opacity="0.6"/>
 
   <!-- 步骤2：独立评审 -->
-  <g transform="translate(175, 130)">
-    <rect x="0" y="0" width="110" height="115" rx="12" fill="white" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
-    <circle cx="55" cy="20" r="14" fill="#409EFF"/>
-    <text x="55" y="25" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">2</text>
-    <!-- 三个隔间 -->
-    <rect x="8" y="40" width="28" height="40" rx="3" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
-    <circle cx="22" cy="52" r="6" fill="#409EFF" opacity="0.6"/>
-    <rect x="10" y="62" width="24" height="3" rx="1" fill="#409EFF" opacity="0.4"/>
-    <rect x="10" y="68" width="24" height="3" rx="1" fill="#409EFF" opacity="0.4"/>
-
-    <rect x="41" y="40" width="28" height="40" rx="3" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
-    <circle cx="55" cy="52" r="6" fill="#409EFF" opacity="0.6"/>
-    <rect x="43" y="62" width="24" height="3" rx="1" fill="#409EFF" opacity="0.4"/>
-    <rect x="43" y="68" width="24" height="3" rx="1" fill="#409EFF" opacity="0.4"/>
-
-    <rect x="74" y="40" width="28" height="40" rx="3" fill="#E8F4FD" stroke="#409EFF" stroke-width="1"/>
-    <circle cx="88" cy="52" r="6" fill="#409EFF" opacity="0.6"/>
-    <rect x="76" y="62" width="24" height="3" rx="1" fill="#409EFF" opacity="0.4"/>
-    <rect x="76" y="68" width="24" height="3" rx="1" fill="#409EFF" opacity="0.4"/>
-
-    <text x="55" y="100" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">独立评审</text>
+  <g filter="url(#shadow)">
+    <rect x="148" y="85" width="115" height="110" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="148" y="85" width="115" height="110" rx="12" fill="url(#stepGrad)" opacity="0.06"/>
+    <text x="205" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" font-weight="bold">独立评审</text>
+    <!-- 三位专家隔墙独立评审 -->
+    <!-- 专家1 -->
+    <rect x="155" y="112" width="28" height="32" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="0.8"/>
+    <circle cx="169" cy="120" r="5" fill="#409EFF" opacity="0.5"/>
+    <rect x="160" y="128" width="18" height="12" rx="2" fill="#409EFF" opacity="0.2"/>
+    <!-- 隔墙 -->
+    <rect x="184" y="110" width="3" height="36" rx="1" fill="#409EFF" opacity="0.3"/>
+    <!-- 专家2 -->
+    <rect x="190" y="112" width="28" height="32" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="0.8"/>
+    <circle cx="204" cy="120" r="5" fill="#409EFF" opacity="0.5"/>
+    <rect x="195" y="128" width="18" height="12" rx="2" fill="#409EFF" opacity="0.2"/>
+    <!-- 隔墙 -->
+    <rect x="219" y="110" width="3" height="36" rx="1" fill="#409EFF" opacity="0.3"/>
+    <!-- 专家3 -->
+    <rect x="225" y="112" width="28" height="32" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="0.8"/>
+    <circle cx="239" cy="120" r="5" fill="#409EFF" opacity="0.5"/>
+    <rect x="230" y="128" width="18" height="12" rx="2" fill="#409EFF" opacity="0.2"/>
+    <!-- 标注：防锚定 -->
+    <text x="205" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#409EFF" opacity="0.8">防锚定</text>
   </g>
 
   <!-- 箭头2 -->
-  <polygon points="290,197 300,192 300,202" fill="#409EFF"/>
+  <polygon points="268,140 280,135 280,145" fill="#409EFF" opacity="0.6"/>
 
   <!-- 步骤3：意见收集 -->
-  <g transform="translate(305, 140)">
-    <rect x="0" y="0" width="100" height="105" rx="12" fill="white" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
-    <circle cx="50" cy="20" r="14" fill="#409EFF"/>
-    <text x="50" y="25" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">3</text>
+  <g filter="url(#shadow)">
+    <rect x="286" y="85" width="105" height="110" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="286" y="85" width="105" height="110" rx="12" fill="url(#stepGrad)" opacity="0.06"/>
+    <text x="338" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" font-weight="bold">意见收集</text>
     <!-- 三张意见卡汇聚 -->
-    <rect x="8" y="42" width="22" height="16" rx="2" fill="#409EFF" opacity="0.3"/>
-    <rect x="14" y="42" width="22" height="16" rx="2" fill="#409EFF" opacity="0.5"/>
-    <rect x="20" y="42" width="22" height="16" rx="2" fill="#409EFF" opacity="0.7"/>
+    <rect x="295" y="115" width="22" height="16" rx="2" fill="#409EFF" opacity="0.15" transform="rotate(-15 306 123)"/>
+    <rect x="315" y="112" width="22" height="16" rx="2" fill="#409EFF" opacity="0.25"/>
+    <rect x="335" y="115" width="22" height="16" rx="2" fill="#409EFF" opacity="0.15" transform="rotate(15 346 123)"/>
+    <!-- 汇聚点 -->
+    <circle cx="338" cy="145" r="8" fill="#409EFF" opacity="0.2"/>
+    <circle cx="338" cy="145" r="4" fill="#409EFF" opacity="0.4"/>
     <!-- 汇聚箭头 -->
-    <line x1="30" y1="58" x2="50" y2="70" stroke="#409EFF" stroke-width="1.2"/>
-    <line x1="50" y1="58" x2="50" y2="70" stroke="#409EFF" stroke-width="1.2"/>
-    <line x1="70" y1="58" x2="50" y2="70" stroke="#409EFF" stroke-width="1.2"/>
-    <circle cx="50" cy="74" r="6" fill="#409EFF" opacity="0.5"/>
-    <text x="50" y="92" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">意见收集</text>
+    <line x1="306" y1="131" x2="334" y2="143" stroke="#409EFF" stroke-width="0.8" opacity="0.4"/>
+    <line x1="326" y1="128" x2="334" y2="143" stroke="#409EFF" stroke-width="0.8" opacity="0.4"/>
+    <line x1="346" y1="131" x2="342" y2="143" stroke="#409EFF" stroke-width="0.8" opacity="0.4"/>
+    <text x="338" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#409EFF" opacity="0.8">汇总</text>
   </g>
 
   <!-- 箭头3 -->
-  <polygon points="410,197 420,192 420,202" fill="#409EFF"/>
+  <polygon points="396,140 408,135 408,145" fill="#409EFF" opacity="0.6"/>
 
   <!-- 步骤4：交叉讨论 -->
-  <g transform="translate(425, 135)">
-    <rect x="0" y="0" width="105" height="110" rx="12" fill="white" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
-    <circle cx="52" cy="20" r="14" fill="#409EFF"/>
-    <text x="52" y="25" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">4</text>
-    <!-- 圆桌 -->
-    <ellipse cx="52" cy="60" rx="30" ry="18" fill="none" stroke="#409EFF" stroke-width="1.5"/>
-    <!-- 三个专家 -->
-    <circle cx="30" cy="48" r="7" fill="#409EFF" opacity="0.5"/>
-    <circle cx="52" cy="42" r="7" fill="#409EFF" opacity="0.7"/>
-    <circle cx="74" cy="48" r="7" fill="#409EFF" opacity="0.5"/>
+  <g filter="url(#shadow)">
+    <rect x="414" y="85" width="105" height="110" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="414" y="85" width="105" height="110" rx="12" fill="url(#stepGrad)" opacity="0.06"/>
+    <text x="466" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" font-weight="bold">交叉讨论</text>
+    <!-- 圆桌会议 -->
+    <ellipse cx="466" cy="140" rx="28" ry="18" fill="none" stroke="#409EFF" stroke-width="1" opacity="0.3"/>
+    <circle cx="466" cy="140" r="6" fill="#409EFF" opacity="0.15"/>
+    <!-- 三位专家 -->
+    <circle cx="450" cy="128" r="6" fill="#409EFF" opacity="0.3"/>
+    <circle cx="482" cy="128" r="6" fill="#409EFF" opacity="0.3"/>
+    <circle cx="466" cy="155" r="6" fill="#409EFF" opacity="0.3"/>
     <!-- 对话气泡 -->
-    <path d="M18 38 Q10 30 18 26 Q26 22 30 28" fill="none" stroke="#409EFF" stroke-width="1.2"/>
-    <path d="M52 32 Q52 24 58 22 Q64 24 64 30" fill="none" stroke="#409EFF" stroke-width="1.2"/>
-    <path d="M80 38 Q88 30 82 26 Q76 22 72 28" fill="none" stroke="#409EFF" stroke-width="1.2"/>
-    <text x="52" y="96" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">交叉讨论</text>
+    <path d="M445 118 Q440 112 448 112 L458 112 Q463 112 460 118 L455 122 L450 118 Z" fill="#409EFF" opacity="0.12"/>
+    <path d="M478 118 Q483 112 475 112 L465 112 Q460 112 463 118 L468 122 L473 118 Z" fill="#409EFF" opacity="0.12"/>
+    <path d="M458 163 Q453 168 461 168 L471 168 Q476 168 473 163 L468 159 L463 163 Z" fill="#409EFF" opacity="0.12"/>
+    <text x="466" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#409EFF" opacity="0.8">讨论</text>
   </g>
 
   <!-- 箭头4 -->
-  <polygon points="535,197 545,192 545,202" fill="#409EFF"/>
+  <polygon points="524,140 536,135 536,145" fill="#409EFF" opacity="0.6"/>
 
   <!-- 步骤5：投票决策 -->
-  <g transform="translate(550, 140)">
-    <rect x="0" y="0" width="95" height="105" rx="12" fill="white" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
-    <circle cx="47" cy="20" r="14" fill="#409EFF"/>
-    <text x="47" y="25" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">5</text>
+  <g filter="url(#shadow)">
+    <rect x="542" y="85" width="95" height="110" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="542" y="85" width="95" height="110" rx="12" fill="url(#stepGrad)" opacity="0.06"/>
+    <text x="589" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" font-weight="bold">投票决策</text>
     <!-- 投票箱 -->
-    <rect x="22" y="45" width="50" height="35" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
-    <rect x="22" y="45" width="50" height="8" rx="2" fill="#409EFF" opacity="0.3"/>
-    <line x1="35" y1="45" x2="35" y2="80" stroke="#409EFF" stroke-width="0.8"/>
-    <line x1="59" y1="45" x2="59" y2="80" stroke="#409EFF" stroke-width="0.8"/>
-    <!-- 投入的票 -->
-    <rect x="30" y="38" width="12" height="8" rx="1" fill="#409EFF" transform="rotate(-15,36,42)"/>
-    <rect x="48" y="36" width="12" height="8" rx="1" fill="#409EFF" opacity="0.7" transform="rotate(10,54,40)"/>
-    <text x="47" y="92" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">投票决策</text>
+    <rect x="570" y="125" width="28" height="22" rx="3" fill="#409EFF" opacity="0.12" stroke="#409EFF" stroke-width="1"/>
+    <rect x="568" y="123" width="32" height="5" rx="2" fill="#409EFF" opacity="0.2"/>
+    <text x="584" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#1a1a2e">票箱</text>
+    <!-- 投票纸条 -->
+    <rect x="575" y="118" width="8" height="6" rx="1" fill="#409EFF" opacity="0.3" transform="rotate(-20 579 121)"/>
+    <rect x="585" y="116" width="8" height="6" rx="1" fill="#409EFF" opacity="0.4" transform="rotate(10 589 119)"/>
+    <rect x="580" y="120" width="8" height="6" rx="1" fill="#409EFF" opacity="0.2" transform="rotate(-5 584 123)"/>
+    <text x="589" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#409EFF" opacity="0.8">表决</text>
   </g>
 
   <!-- 箭头5 -->
-  <polygon points="650,197 660,192 660,202" fill="#409EFF"/>
+  <polygon points="642,140 654,135 654,145" fill="#409EFF" opacity="0.6"/>
 
   <!-- 步骤6：结果输出 -->
-  <g transform="translate(665, 145)">
-    <rect x="0" y="0" width="100" height="100" rx="12" fill="white" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
-    <circle cx="50" cy="20" r="14" fill="#409EFF"/>
-    <text x="50" y="25" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">6</text>
+  <g filter="url(#shadow)">
+    <rect x="660" y="100" width="110" height="80" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="660" y="100" width="110" height="80" rx="12" fill="url(#stepGrad)" opacity="0.08"/>
     <!-- 最终文档 -->
-    <rect x="25" y="40" width="50" height="38" rx="3" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
-    <line x1="32" y1="50" x2="68" y2="50" stroke="#409EFF" stroke-width="1.2"/>
-    <line x1="32" y1="56" x2="60" y2="56" stroke="#409EFF" stroke-width="1.2"/>
-    <line x1="32" y1="62" x2="64" y2="62" stroke="#409EFF" stroke-width="1.2"/>
-    <line x1="32" y1="68" x2="56" y2="68" stroke="#409EFF" stroke-width="1.2"/>
-    <!-- 推理链标记 -->
-    <path d="M78 55 L82 50 L86 55 L82 60 Z" fill="#409EFF" opacity="0.4"/>
-    <text x="50" y="88" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">结果输出</text>
+    <rect x="685" y="115" width="30" height="22" rx="2" fill="#409EFF" opacity="0.12" stroke="#409EFF" stroke-width="0.8"/>
+    <line x1="690" y1="121" x2="710" y2="121" stroke="#409EFF" stroke-width="0.8"/>
+    <line x1="690" y1="125" x2="710" y2="125" stroke="#409EFF" stroke-width="0.8"/>
+    <line x1="690" y1="129" x2="705" y2="129" stroke="#409EFF" stroke-width="0.8"/>
+    <!-- 推理链 -->
+    <circle cx="720" cy="118" r="3" fill="#409EFF" opacity="0.3"/>
+    <line x1="723" y1="118" x2="730" y2="125" stroke="#409EFF" stroke-width="0.8" opacity="0.3"/>
+    <circle cx="730" cy="125" r="3" fill="#409EFF" opacity="0.3"/>
+    <line x1="733" y1="125" x2="740" y2="132" stroke="#409EFF" stroke-width="0.8" opacity="0.3"/>
+    <circle cx="740" cy="132" r="3" fill="#409EFF" opacity="0.3"/>
+    <text x="715" y="160" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" font-weight="bold">结果输出</text>
   </g>
 
   <!-- 底部标注 -->
-  <g font-family="sans-serif" font-size="12" fill="#1a1a2e" opacity="0.7">
-    <text x="107" y="290" text-anchor="middle">发布稿件</text>
-    <text x="230" y="290" text-anchor="middle">专家独立审稿</text>
-    <text x="355" y="290" text-anchor="middle">收集审稿意见</text>
-    <text x="477" y="290" text-anchor="middle">专家交叉讨论</text>
-    <text x="597" y="290" text-anchor="middle">投票表决</text>
-    <text x="715" y="290" text-anchor="middle">生成最终结果</text>
+  <g font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e" opacity="0.7">
+    <text x="77" y="210" text-anchor="middle">① 发布</text>
+    <text x="205" y="210" text-anchor="middle">② 独立评审</text>
+    <text x="338" y="210" text-anchor="middle">③ 收集</text>
+    <text x="466" y="210" text-anchor="middle">④ 讨论</text>
+    <text x="589" y="210" text-anchor="middle">⑤ 投票</text>
+    <text x="715" y="210" text-anchor="middle">⑥ 输出</text>
   </g>
 
   <!-- 底部说明 -->
-  <text x="400" y="340" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" opacity="0.6">防止锚定效应 · 独立评审 · 交叉验证 · 集体决策</text>
+  <text x="400" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.7">专家评审流程 · 六步闭环</text>
 
   <!-- 装饰性圆点 -->
-  <circle cx="60" cy="220" r="4" fill="#409EFF"/>
-  <circle cx="175" cy="220" r="4" fill="#409EFF"/>
-  <circle cx="305" cy="220" r="4" fill="#409EFF"/>
-  <circle cx="425" cy="220" r="4" fill="#409EFF"/>
-  <circle cx="550" cy="220" r="4" fill="#409EFF"/>
-  <circle cx="665" cy="220" r="4" fill="#409EFF"/>
+  <circle cx="30" cy="140" r="3" fill="#409EFF" opacity="0.2"/>
+  <circle cx="770" cy="140" r="3" fill="#409EFF" opacity="0.2"/>
 </svg>

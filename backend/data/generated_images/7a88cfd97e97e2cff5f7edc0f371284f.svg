@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F5FAFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- 标题 -->
+  <text x="400" y="42" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">AI 幻觉（AI Hallucination）</text>
+
+  <!-- 定义卡片 -->
+  <rect x="150" y="70" width="500" height="60" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="400" y="106" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#1a1a2e" font-weight="bold">大语言模型生成流畅但事实错误的内容</text>
+
+  <!-- 标注1：定义 -->
+  <line x1="130" y1="100" x2="100" y2="100" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="88" y="96" text-anchor="end" font-family="sans-serif" font-size="14" fill="#409EFF">核心定义</text>
+
+  <!-- 概率分布图区域 -->
+  <rect x="100" y="170" width="600" height="180" rx="10" fill="none" stroke="#D0E8F8" stroke-width="1"/>
+
+  <!-- Y轴 -->
+  <line x1="160" y1="180" x2="160" y2="340" stroke="#1a1a2e" stroke-width="1.5"/>
+  <!-- X轴 -->
+  <line x1="160" y1="340" x2="680" y2="340" stroke="#1a1a2e" stroke-width="1.5"/>
+
+  <!-- Y轴标签 -->
+  <text x="148" y="200" text-anchor="end" font-family="sans-serif" font-size="13" fill="#1a1a2e">高</text>
+  <text x="148" y="340" text-anchor="end" font-family="sans-serif" font-size="13" fill="#1a1a2e">低</text>
+
+  <!-- X轴标签 -->
+  <text x="400" y="370" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1a1a2e">Token 序列</text>
+
+  <!-- 概率分布曲线 - 主峰 -->
+  <path d="M180,335 C200,335 220,330 240,310 C260,290 280,260 300,240 C320,220 340,210 360,215 C380,220 400,235 420,250 C440,265 460,280 480,290 C500,300 520,310 540,315 C560,320 580,325 600,330 C620,335 640,335 660,335"
+        fill="none" stroke="#409EFF" stroke-width="2.5"/>
+
+  <!-- 填充区域（主峰下） -->
+  <path d="M180,335 C200,335 220,330 240,310 C260,290 280,260 300,240 C320,220 340,210 360,215 C380,220 400,235 420,250 C440,265 460,280 480,290 C500,300 520,310 540,315 C560,320 580,325 600,330 C620,335 640,335 660,335 Z"
+        fill="#409EFF" fill-opacity="0.08"/>
+
+  <!-- 数据缺失区域 - 间隙 -->
+  <rect x="370" y="215" width="50" height="120" fill="#FFFFFF" opacity="0.7"/>
+  <line x1="370" y1="215" x2="370" y2="335" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="420" y1="215" x2="420" y2="335" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- 缺失区域标注 -->
+  <text x="395" y="200" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#FF6B6B">训练数据缺失</text>
+
+  <!-- 幻觉填充 - 在缺失区域画一个虚线连接 -->
+  <path d="M360,215 C370,210 380,208 395,210 C410,212 420,215 425,218"
+        fill="none" stroke="#FF8C00" stroke-width="2" stroke-dasharray="5,3"/>
+
+  <!-- 标注2：模型选择 -->
+  <line x1="300" y1="240" x2="270" y2="210" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="258" y="206" text-anchor="end" font-family="sans-serif" font-size="14" fill="#409EFF">选择最合理</text>
+  <text x="258" y="224" text-anchor="end" font-family="sans-serif" font-size="14" fill="#409EFF">的下一个词</text>
+
+  <!-- 标注3：幻觉输出 -->
+  <line x1="500" y1="290" x2="530" y2="260" stroke="#FF8C00" stroke-width="1.5"/>
+  <text x="542" y="256" text-anchor="start" font-family="sans-serif" font-size="14" fill="#FF8C00">产生幻觉</text>
+  <text x="542" y="274" text-anchor="start" font-family="sans-serif" font-size="14" fill="#FF8C00">错误内容</text>
+
+  <!-- 脑补拼图图标 -->
+  <g transform="translate(530, 400)">
+    <!-- 大脑轮廓 -->
+    <circle cx="0" cy="0" r="28" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+    <path d="M-8,-12 C-12,-8 -14,-2 -12,4 C-10,10 -6,14 0,16 C6,14 10,10 12,4 C14,-2 12,-8 8,-12"
+          fill="none" stroke="#1a1a2e" stroke-width="1.2"/>
+    <!-- 大脑褶皱 -->
+    <path d="M-5,-6 C-3,-8 0,-9 3,-7" fill="none" stroke="#1a1a2e" stroke-width="0.8"/>
+    <path d="M-8,0 C-5,2 -2,3 2,1" fill="none" stroke="#1a1a2e" stroke-width="0.8"/>
+    <path d="M-4,6 C-1,8 2,9 5,7" fill="none" stroke="#1a1a2e" stroke-width="0.8"/>
+
+    <!-- 拼图缺口 -->
+    <rect x="18" y="-6" width="14" height="12" rx="2" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.2"/>
+    <!-- 拼图凸起 -->
+    <circle cx="25" cy="-6" r="4" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.2"/>
+    <circle cx="25" cy="6" r="4" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.2"/>
+
+    <!-- 拼图片（正在填入） -->
+    <rect x="30" y="-4" width="10" height="8" rx="1.5" fill="#409EFF" opacity="0.7"/>
+    <circle cx="35" cy="-4" r="3" fill="#409EFF" opacity="0.7"/>
+    <circle cx="35" cy="4" r="3" fill="#409EFF" opacity="0.7"/>
+
+    <!-- 箭头表示填入方向 -->
+    <path d="M28,0 L32,0" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrow)"/>
+  </g>
+
+  <defs>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#409EFF"/>
+    </marker>
+  </defs>
+
+  <!-- 标注4：脑补 -->
+  <line x1="565" y1="400" x2="600" y2="380" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="612" y="376" text-anchor="start" font-family="sans-serif" font-size="14" fill="#409EFF">模型本能</text>
+  <text x="612" y="394" text-anchor="start" font-family="sans-serif" font-size="14" fill="#409EFF">“填空”</text>
+
+  <!-- 标注5：概率分布 -->
+  <line x1="400" y1="340" x2="400" y2="390" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="400" y="408" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#409EFF">概率分布</text>
+
+  <!-- 底部说明 -->
+  <text x="400" y="480" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#666666">模型在缺失训练数据的区域，会强行用概率最高的词“填空”，导致看似合理但事实错误的内容</text>
+
+</svg>

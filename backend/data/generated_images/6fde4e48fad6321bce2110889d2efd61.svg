@@ -1,0 +1,238 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#D0ECFA"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-2%" y="-2%" width="104%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#409EFF" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- 标题 -->
+  <text x="400" y="32" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">四种文本生成采样策略对比</text>
+
+  <!-- ==================== 左上：贪心解码 ==================== -->
+  <rect x="30" y="52" width="355" height="200" rx="14" fill="white" filter="url(#cardShadow)"/>
+  <rect x="30" y="52" width="355" height="200" rx="14" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+
+  <!-- 卡片标题 -->
+  <rect x="30" y="52" width="355" height="34" rx="14" fill="#409EFF"/>
+  <rect x="30" y="72" width="355" height="14" fill="#409EFF"/>
+  <text x="207" y="74" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">贪心解码 (Greedy)</text>
+
+  <!-- 概率分布图 -->
+  <rect x="55" y="100" width="140" height="80" rx="4" fill="none" stroke="#ddd" stroke-width="1"/>
+  <!-- 柱状条 -->
+  <rect x="62" y="155" width="12" height="25" rx="2" fill="#B0D4FF"/>
+  <rect x="78" y="140" width="12" height="40" rx="2" fill="#B0D4FF"/>
+  <rect x="94" y="120" width="12" height="60" rx="2" fill="#B0D4FF"/>
+  <rect x="110" y="100" width="12" height="80" rx="2" fill="#409EFF"/>
+  <rect x="126" y="130" width="12" height="50" rx="2" fill="#B0D4FF"/>
+  <rect x="142" y="145" width="12" height="35" rx="2" fill="#B0D4FF"/>
+  <rect x="158" y="150" width="12" height="30" rx="2" fill="#B0D4FF"/>
+  <rect x="174" y="160" width="12" height="20" rx="2" fill="#B0D4FF"/>
+
+  <!-- 标注箭头和文字 -->
+  <line x1="116" y1="98" x2="116" y2="80" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arrowSmall)"/>
+  <defs>
+    <marker id="arrowSmall" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L5,3 L0,6" fill="#1a1a2e"/>
+    </marker>
+  </defs>
+  <text x="116" y="76" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e">最高概率</text>
+
+  <!-- 文字说明 -->
+  <text x="55" y="200" font-family="sans-serif" font-size="12" fill="#1a1a2e">选择概率最高的词</text>
+  <text x="55" y="218" font-family="sans-serif" font-size="12" fill="#1a1a2e">确定性最高，可能重复</text>
+
+  <!-- 标注 -->
+  <rect x="210" y="100" width="155" height="28" rx="6" fill="#FFF3E0"/>
+  <text x="287" y="118" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#E65100">⚠ 易陷入重复循环</text>
+
+  <rect x="210" y="138" width="155" height="28" rx="6" fill="#E8F5E9"/>
+  <text x="287" y="156" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#2E7D32">✓ 输出最稳定</text>
+
+  <rect x="210" y="176" width="155" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="287" y="194" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1565C0">常用于翻译、摘要</text>
+
+  <!-- ==================== 右上：温度采样 ==================== -->
+  <rect x="415" y="52" width="355" height="200" rx="14" fill="white" filter="url(#cardShadow)"/>
+  <rect x="415" y="52" width="355" height="200" rx="14" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+
+  <rect x="415" y="52" width="355" height="34" rx="14" fill="#409EFF"/>
+  <rect x="415" y="72" width="355" height="14" fill="#409EFF"/>
+  <text x="592" y="74" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">温度采样 (Temperature)</text>
+
+  <!-- 三个小分布图 -->
+  <!-- T=0.3 -->
+  <rect x="430" y="98" width="105" height="65" rx="4" fill="none" stroke="#ddd" stroke-width="1"/>
+  <rect x="434" y="148" width="6" height="15" rx="1" fill="#B0D4FF"/>
+  <rect x="443" y="140" width="6" height="23" rx="1" fill="#B0D4FF"/>
+  <rect x="452" y="128" width="6" height="35" rx="1" fill="#B0D4FF"/>
+  <rect x="461" y="115" width="6" height="48" rx="1" fill="#409EFF"/>
+  <rect x="470" y="125" width="6" height="38" rx="1" fill="#B0D4FF"/>
+  <rect x="479" y="138" width="6" height="25" rx="1" fill="#B0D4FF"/>
+  <rect x="488" y="145" width="6" height="18" rx="1" fill="#B0D4FF"/>
+  <rect x="497" y="150" width="6" height="13" rx="1" fill="#B0D4FF"/>
+  <rect x="506" y="153" width="6" height="10" rx="1" fill="#B0D4FF"/>
+  <rect x="515" y="155" width="6" height="8" rx="1" fill="#B0D4FF"/>
+  <text x="482" y="174" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">T=0.3</text>
+  <text x="482" y="186" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#666">锐利分布</text>
+
+  <!-- T=1.0 -->
+  <rect x="545" y="98" width="105" height="65" rx="4" fill="none" stroke="#ddd" stroke-width="1"/>
+  <rect x="549" y="150" width="6" height="13" rx="1" fill="#B0D4FF"/>
+  <rect x="558" y="140" width="6" height="23" rx="1" fill="#B0D4FF"/>
+  <rect x="567" y="128" width="6" height="35" rx="1" fill="#B0D4FF"/>
+  <rect x="576" y="118" width="6" height="45" rx="1" fill="#409EFF"/>
+  <rect x="585" y="125" width="6" height="38" rx="1" fill="#B0D4FF"/>
+  <rect x="594" y="135" width="6" height="28" rx="1" fill="#B0D4FF"/>
+  <rect x="603" y="145" width="6" height="18" rx="1" fill="#B0D4FF"/>
+  <rect x="612" y="150" width="6" height="13" rx="1" fill="#B0D4FF"/>
+  <rect x="621" y="155" width="6" height="8" rx="1" fill="#B0D4FF"/>
+  <rect x="630" y="158" width="6" height="5" rx="1" fill="#B0D4FF"/>
+  <text x="597" y="174" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">T=1.0</text>
+  <text x="597" y="186" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#666">自然分布</text>
+
+  <!-- T=1.5 -->
+  <rect x="660" y="98" width="105" height="65" rx="4" fill="none" stroke="#ddd" stroke-width="1"/>
+  <rect x="664" y="148" width="6" height="15" rx="1" fill="#B0D4FF"/>
+  <rect x="673" y="140" width="6" height="23" rx="1" fill="#B0D4FF"/>
+  <rect x="682" y="132" width="6" height="31" rx="1" fill="#B0D4FF"/>
+  <rect x="691" y="128" width="6" height="35" rx="1" fill="#409EFF"/>
+  <rect x="700" y="132" width="6" height="31" rx="1" fill="#B0D4FF"/>
+  <rect x="709" y="138" width="6" height="25" rx="1" fill="#B0D4FF"/>
+  <rect x="718" y="145" width="6" height="18" rx="1" fill="#B0D4FF"/>
+  <rect x="727" y="148" width="6" height="15" rx="1" fill="#B0D4FF"/>
+  <rect x="736" y="152" width="6" height="11" rx="1" fill="#B0D4FF"/>
+  <rect x="745" y="155" width="6" height="8" rx="1" fill="#B0D4FF"/>
+  <text x="712" y="174" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">T=1.5</text>
+  <text x="712" y="186" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#666">平坦分布</text>
+
+  <!-- 标注 -->
+  <rect x="430" y="200" width="155" height="22" rx="5" fill="#E3F2FD"/>
+  <text x="507" y="215" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1565C0">低T：确定性高</text>
+
+  <rect x="595" y="200" width="155" height="22" rx="5" fill="#E3F2FD"/>
+  <text x="672" y="215" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1565C0">高T：多样性高</text>
+
+  <!-- ==================== 左下：Top-K / Top-P ==================== -->
+  <rect x="30" y="272" width="355" height="210" rx="14" fill="white" filter="url(#cardShadow)"/>
+  <rect x="30" y="272" width="355" height="210" rx="14" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+
+  <rect x="30" y="272" width="355" height="34" rx="14" fill="#409EFF"/>
+  <rect x="30" y="292" width="355" height="14" fill="#409EFF"/>
+  <text x="207" y="294" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">Top-K / Top-P 采样</text>
+
+  <!-- 概率分布图 -->
+  <rect x="55" y="320" width="160" height="85" rx="4" fill="none" stroke="#ddd" stroke-width="1"/>
+  <!-- 柱状条 -->
+  <rect x="62" y="378" width="10" height="27" rx="2" fill="#E0E0E0"/>
+  <rect x="75" y="370" width="10" height="35" rx="2" fill="#E0E0E0"/>
+  <rect x="88" y="358" width="10" height="47" rx="2" fill="#B0D4FF"/>
+  <rect x="101" y="345" width="10" height="60" rx="2" fill="#409EFF"/>
+  <rect x="114" y="350" width="10" height="55" rx="2" fill="#409EFF"/>
+  <rect x="127" y="360" width="10" height="45" rx="2" fill="#B0D4FF"/>
+  <rect x="140" y="368" width="10" height="37" rx="2" fill="#E0E0E0"/>
+  <rect x="153" y="375" width="10" height="30" rx="2" fill="#E0E0E0"/>
+  <rect x="166" y="380" width="10" height="25" rx="2" fill="#E0E0E0"/>
+  <rect x="179" y="385" width="10" height="20" rx="2" fill="#E0E0E0"/>
+  <rect x="192" y="388" width="10" height="17" rx="2" fill="#E0E0E0"/>
+  <rect x="205" y="390" width="10" height="15" rx="2" fill="#E0E0E0"/>
+
+  <!-- 截断线 -->
+  <line x1="115" y1="318" x2="115" y2="405" stroke="#E65100" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="115" y="316" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#E65100">K=50</text>
+
+  <!-- 累积概率阈值线 -->
+  <line x1="140" y1="318" x2="140" y2="405" stroke="#2E7D32" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="140" y="316" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2E7D32">P=0.9</text>
+
+  <!-- 标注 -->
+  <rect x="55" y="420" width="155" height="22" rx="5" fill="#FFF3E0"/>
+  <text x="132" y="435" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#E65100">Top-K：固定候选数</text>
+
+  <rect x="55" y="448" width="155" height="22" rx="5" fill="#E8F5E9"/>
+  <text x="132" y="463" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#2E7D32">Top-P：动态候选集</text>
+
+  <!-- 右侧说明 -->
+  <rect x="230" y="320" width="140" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="300" y="338" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1565C0">平衡质量与多样性</text>
+
+  <rect x="230" y="358" width="140" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="300" y="376" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1565C0">避免低概率词</text>
+
+  <rect x="230" y="396" width="140" height="28" rx="6" fill="#E3F2FD"/>
+  <text x="300" y="414" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1565C0">ChatGPT 常用</text>
+
+  <!-- ==================== 右下：束搜索 ==================== -->
+  <rect x="415" y="272" width="355" height="210" rx="14" fill="white" filter="url(#cardShadow)"/>
+  <rect x="415" y="272" width="355" height="210" rx="14" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+
+  <rect x="415" y="272" width="355" height="34" rx="14" fill="#409EFF"/>
+  <rect x="415" y="292" width="355" height="14" fill="#409EFF"/>
+  <text x="592" y="294" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">束搜索 (Beam Search)</text>
+
+  <!-- 树状图 -->
+  <!-- 根节点 -->
+  <circle cx="592" cy="335" r="8" fill="#409EFF"/>
+  <text x="592" y="338" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white">S</text>
+
+  <!-- 第一层 -->
+  <line x1="592" y1="343" x2="545" y2="370" stroke="#ccc" stroke-width="1.5"/>
+  <line x1="592" y1="343" x2="592" y2="370" stroke="#ccc" stroke-width="1.5"/>
+  <line x1="592" y1="343" x2="639" y2="370" stroke="#ccc" stroke-width="1.5"/>
+
+  <circle cx="545" cy="370" r="6" fill="#B0D4FF"/>
+  <circle cx="592" cy="370" r="6" fill="#B0D4FF"/>
+  <circle cx="639" cy="370" r="6" fill="#B0D4FF"/>
+
+  <!-- 第二层 -->
+  <line x1="545" y1="376" x2="518" y2="400" stroke="#ccc" stroke-width="1.5"/>
+  <line x1="545" y1="376" x2="545" y2="400" stroke="#ccc" stroke-width="1.5"/>
+  <line x1="545" y1="376" x2="572" y2="400" stroke="#ccc" stroke-width="1.5"/>
+
+  <line x1="592" y1="376" x2="578" y2="400" stroke="#ccc" stroke-width="1.5"/>
+  <line x1="592" y1="376" x2="592" y2="400" stroke="#ccc" stroke-width="1.5"/>
+  <line x1="592" y1="376" x2="606" y2="400" stroke="#ccc" stroke-width="1.5"/>
+
+  <line x1="639" y1="376" x2="625" y2="400" stroke="#ccc" stroke-width="1.5"/>
+  <line x1="639" y1="376" x2="639" y2="400" stroke="#ccc" stroke-width="1.5"/>
+  <line x1="639" y1="376" x2="653" y2="400" stroke="#ccc" stroke-width="1.5"/>
+
+  <!-- 第二层节点 -->
+  <circle cx="518" cy="400" r="5" fill="#B0D4FF"/>
+  <circle cx="545" cy="400" r="5" fill="#B0D4FF"/>
+  <circle cx="572" cy="400" r="5" fill="#B0D4FF"/>
+  <circle cx="578" cy="400" r="5" fill="#B0D4FF"/>
+  <circle cx="592" cy="400" r="5" fill="#B0D4FF"/>
+  <circle cx="606" cy="400" r="5" fill="#B0D4FF"/>
+  <circle cx="625" cy="400" r="5" fill="#B0D4FF"/>
+  <circle cx="639" cy="400" r="5" fill="#B0D4FF"/>
+  <circle cx="653" cy="400" r="5" fill="#B0D4FF"/>
+
+  <!-- 高亮路径 -->
+  <line x1="592" y1="343" x2="639" y2="370" stroke="#409EFF" stroke-width="2.5"/>
+  <line x1="639" y1="376" x2="653" y2="400" stroke="#409EFF" stroke-width="2.5"/>
+  <circle cx="639" cy="370" r="6" fill="#409EFF" stroke="#1a1a2e" stroke-width="1.5"/>
+  <circle cx="653" cy="400" r="5" fill="#409EFF" stroke="#1a1a2e" stroke-width="1.5"/>
+
+  <!-- 标注 -->
+  <rect x="500" y="420" width="155" height="22" rx="5" fill="#E3F2FD"/>
+  <text x="577" y="435" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1565C0">B=3 束宽</text>
+
+  <rect x="500" y="448" width="155" height="22" rx="5" fill="#E8F5E9"/>
+  <text x="577" y="463" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#2E7D32">保持多条候选路径</text>
+
+  <!-- 右侧说明 -->
+  <rect x="665" y="320" width="95" height="28" rx="6" fill="#FFF3E0"/>
+  <text x="712" y="338" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#E65100">全局最优</text>
+
+  <rect x="665" y="358" width="95" height="28" rx="6" fill="#FFF3E0"/>
+  <text x="712" y="376" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#E65100">计算量大</text>
+
+</svg>

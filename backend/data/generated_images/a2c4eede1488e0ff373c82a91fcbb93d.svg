@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F7FBFF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F7FBFF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F7FBFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- 顶部毕业帽图标 -->
+  <g transform="translate(400, 38)">
+    <!-- 毕业帽 -->
+    <rect x="-22" y="-6" width="44" height="8" rx="2" fill="#409EFF"/>
+    <polygon points="-22,-6 0,-20 22,-6" fill="#409EFF"/>
+    <rect x="-4" y="2" width="8" height="10" rx="1" fill="#409EFF"/>
+    <!-- 流苏 -->
+    <line x1="18" y1="-10" x2="24" y2="4" stroke="#409EFF" stroke-width="1.5"/>
+    <circle cx="24" cy="5" r="2" fill="#409EFF"/>
+    <!-- 书本底座 -->
+    <rect x="-16" y="12" width="32" height="4" rx="1" fill="#B0D4F1"/>
+  </g>
+
+  <!-- 标题 -->
+  <text x="400" y="78" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">ReAct 三大核心原则</text>
+
+  <!-- 卡片 1 -->
+  <g transform="translate(100, 110)">
+    <rect x="0" y="0" width="600" height="90" rx="14" fill="url(#cardGrad1)" stroke="#D0E8F7" stroke-width="1.5"/>
+    <!-- 阴影 -->
+    <rect x="0" y="0" width="600" height="90" rx="14" fill="none" stroke="#B0D4F1" stroke-width="1" opacity="0.3" transform="translate(0, 3)"/>
+
+    <!-- 编号圆圈 -->
+    <circle cx="45" cy="45" r="22" fill="#409EFF"/>
+    <text x="45" y="52" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#FFFFFF">1</text>
+
+    <!-- 图标：问号→放大镜 -->
+    <g transform="translate(130, 45)">
+      <!-- 问号 -->
+      <text x="-15" y="8" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="bold" fill="#409EFF">?</text>
+      <!-- 箭头 -->
+      <line x1="5" y1="0" x2="25" y2="0" stroke="#409EFF" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+      <polygon points="25,0 18,-5 18,5" fill="#409EFF"/>
+      <!-- 放大镜 -->
+      <circle cx="40" cy="0" r="12" fill="none" stroke="#409EFF" stroke-width="3"/>
+      <line x1="49" y1="9" x2="56" y2="16" stroke="#409EFF" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <!-- 文字标注 -->
+    <text x="220" y="42" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">不知道？先搜索</text>
+    <text x="220" y="66" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#5A6A7A">遇到问题主动检索信息</text>
+  </g>
+
+  <!-- 卡片 2 -->
+  <g transform="translate(100, 220)">
+    <rect x="0" y="0" width="600" height="90" rx="14" fill="url(#cardGrad2)" stroke="#D0E8F7" stroke-width="1.5"/>
+    <rect x="0" y="0" width="600" height="90" rx="14" fill="none" stroke="#B0D4F1" stroke-width="1" opacity="0.3" transform="translate(0, 3)"/>
+
+    <!-- 编号圆圈 -->
+    <circle cx="45" cy="45" r="22" fill="#409EFF"/>
+    <text x="45" y="52" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#FFFFFF">2</text>
+
+    <!-- 图标：大脑+方向箭头 -->
+    <g transform="translate(120, 45)">
+      <!-- 大脑轮廓 -->
+      <ellipse cx="0" cy="0" rx="18" ry="14" fill="none" stroke="#409EFF" stroke-width="2.5"/>
+      <path d="M-10,-8 Q-5,-14 0,-8 Q5,-14 10,-8" fill="none" stroke="#409EFF" stroke-width="2"/>
+      <path d="M-12,0 Q-8,6 0,0 Q8,6 12,0" fill="none" stroke="#409EFF" stroke-width="2"/>
+      <!-- 思维波纹 -->
+      <path d="M22,-8 Q28,-12 34,-8" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.6"/>
+      <path d="M24,-2 Q30,-6 36,-2" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.6"/>
+      <!-- 方向箭头 -->
+      <line x1="38" y1="-5" x2="52" y2="-5" stroke="#409EFF" stroke-width="2.5"/>
+      <polygon points="52,-5 45,-10 45,0" fill="#409EFF"/>
+    </g>
+
+    <!-- 文字标注 -->
+    <text x="220" y="42" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">先思考再行动</text>
+    <text x="220" y="66" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#5A6A7A">分析推理后再做出决策</text>
+  </g>
+
+  <!-- 卡片 3 -->
+  <g transform="translate(100, 330)">
+    <rect x="0" y="0" width="600" height="90" rx="14" fill="url(#cardGrad3)" stroke="#D0E8F7" stroke-width="1.5"/>
+    <rect x="0" y="0" width="600" height="90" rx="14" fill="none" stroke="#B0D4F1" stroke-width="1" opacity="0.3" transform="translate(0, 3)"/>
+
+    <!-- 编号圆圈 -->
+    <circle cx="45" cy="45" r="22" fill="#409EFF"/>
+    <text x="45" y="52" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#FFFFFF">3</text>
+
+    <!-- 图标：循环反馈箭头+调整节点 -->
+    <g transform="translate(120, 45)">
+      <!-- 循环箭头 -->
+      <path d="M-15,0 A20,20 0 1,1 15,0" fill="none" stroke="#409EFF" stroke-width="2.5"/>
+      <polygon points="15,0 8,-6 8,6" fill="#409EFF"/>
+      <path d="M-15,0 A20,20 0 0,0 15,0" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.4"/>
+      <!-- 调整节点 -->
+      <circle cx="-8" cy="-12" r="4" fill="#409EFF"/>
+      <circle cx="12" cy="-8" r="4" fill="#409EFF"/>
+      <circle cx="0" cy="14" r="4" fill="#409EFF"/>
+      <!-- 节点连线 -->
+      <line x1="-8" y1="-12" x2="0" y2="14" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <line x1="12" y1="-8" x2="0" y2="14" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+      <line x1="-8" y1="-12" x2="12" y2="-8" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+    </g>
+
+    <!-- 文字标注 -->
+    <text x="220" y="42" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">根据结果调整</text>
+    <text x="220" y="66" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#5A6A7A">反馈迭代持续优化</text>
+  </g>
+
+  <!-- 底部连接线（装饰） -->
+  <g transform="translate(400, 440)">
+    <line x1="-250" y1="0" x2="250" y2="0" stroke="#D0E8F7" stroke-width="1.5"/>
+    <circle cx="-250" cy="0" r="3" fill="#409EFF" opacity="0.5"/>
+    <circle cx="0" cy="0" r="3" fill="#409EFF" opacity="0.5"/>
+    <circle cx="250" cy="0" r="3" fill="#409EFF" opacity="0.5"/>
+  </g>
+
+  <!-- 底部小字 -->
+  <text x="400" y="468" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#8A9AAE">ReAct = 推理（Reasoning）+ 行动（Acting）</text>
+</svg>

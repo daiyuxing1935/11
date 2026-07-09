@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="Microsoft YaHei, PingFang SC, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F7FAFC"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">大语言模型偏见来源</text>
+  <line x1="300" y1="48" x2="500" y2="48" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- 中心节点：训练数据 -->
+  <ellipse cx="400" cy="155" rx="72" ry="28" fill="#409EFF" opacity="0.9"/>
+  <text x="400" y="160" text-anchor="middle" font-size="16" font-weight="bold" fill="#FFFFFF">训练数据</text>
+
+  <!-- 连接线：中心到四个卡片 -->
+  <!-- 左上 -->
+  <path d="M345 168 Q260 200 195 230" stroke="#1a1a2e" stroke-width="1.8" fill="none" opacity="0.35"/>
+  <!-- 右上 -->
+  <path d="M455 168 Q540 200 605 230" stroke="#1a1a2e" stroke-width="1.8" fill="none" opacity="0.35"/>
+  <!-- 左下 -->
+  <path d="M360 178 Q280 280 195 340" stroke="#1a1a2e" stroke-width="1.8" fill="none" opacity="0.35"/>
+  <!-- 右下 -->
+  <path d="M440 178 Q520 280 605 340" stroke="#1a1a2e" stroke-width="1.8" fill="none" opacity="0.35"/>
+
+  <!-- 卡片 1：表征偏见（左上） -->
+  <rect x="98" y="215" width="185" height="115" rx="12" fill="url(#cardGrad)" stroke="#E0E8F0" stroke-width="1.2"/>
+  <rect x="98" y="215" width="185" height="32" rx="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="98" y="235" width="185" height="12" fill="#409EFF" opacity="0.12"/>
+  <!-- 橙色强调条 -->
+  <rect x="98" y="215" width="5" height="115" rx="2" fill="#FF8C42"/>
+  <text x="120" y="237" font-size="15" font-weight="bold" fill="#1a1a2e">表征偏见</text>
+  <!-- 图标：人群图标，一个过大 -->
+  <circle cx="130" cy="275" r="8" fill="#409EFF" opacity="0.5"/>
+  <circle cx="150" cy="275" r="8" fill="#409EFF" opacity="0.5"/>
+  <circle cx="170" cy="275" r="12" fill="#FF8C42" opacity="0.7"/>
+  <circle cx="195" cy="275" r="8" fill="#409EFF" opacity="0.5"/>
+  <circle cx="215" cy="275" r="8" fill="#409EFF" opacity="0.5"/>
+  <circle cx="235" cy="275" r="8" fill="#409EFF" opacity="0.5"/>
+  <text x="190" y="310" text-anchor="middle" font-size="12" fill="#666">群体表示不均</text>
+
+  <!-- 卡片 2：历史偏见（右上） -->
+  <rect x="517" y="215" width="185" height="115" rx="12" fill="url(#cardGrad)" stroke="#E0E8F0" stroke-width="1.2"/>
+  <rect x="517" y="215" width="185" height="32" rx="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="517" y="235" width="185" height="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="517" y="215" width="5" height="115" rx="2" fill="#FF8C42"/>
+  <text x="539" y="237" font-size="15" font-weight="bold" fill="#1a1a2e">历史偏见</text>
+  <!-- 图标：古卷 + 性别符号 -->
+  <rect x="540" y="258" width="22" height="28" rx="3" fill="#409EFF" opacity="0.3" transform="rotate(-8, 551, 272)"/>
+  <rect x="568" y="258" width="22" height="28" rx="3" fill="#409EFF" opacity="0.3" transform="rotate(5, 579, 272)"/>
+  <text x="555" y="270" text-anchor="middle" font-size="10" fill="#1a1a2e" transform="rotate(-8, 551, 272)">史</text>
+  <text x="583" y="270" text-anchor="middle" font-size="10" fill="#1a1a2e" transform="rotate(5, 579, 272)">书</text>
+  <!-- 性别符号 -->
+  <text x="610" y="272" font-size="16" fill="#FF8C42">♂</text>
+  <text x="630" y="272" font-size="16" fill="#409EFF">♀</text>
+  <text x="650" y="272" font-size="16" fill="#FF8C42" opacity="0.5">♂</text>
+  <text x="670" y="272" font-size="16" fill="#409EFF" opacity="0.5">♀</text>
+  <text x="610" y="310" font-size="12" fill="#666">历史数据性别失衡</text>
+
+  <!-- 卡片 3：语言偏见（左下） -->
+  <rect x="98" y="325" width="185" height="115" rx="12" fill="url(#cardGrad)" stroke="#E0E8F0" stroke-width="1.2"/>
+  <rect x="98" y="325" width="185" height="32" rx="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="98" y="345" width="185" height="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="98" y="325" width="5" height="115" rx="2" fill="#FF8C42"/>
+  <text x="120" y="347" font-size="15" font-weight="bold" fill="#1a1a2e">语言偏见</text>
+  <!-- 图标：地球 + 英文主导 -->
+  <circle cx="155" cy="385" r="20" fill="#409EFF" opacity="0.12" stroke="#409EFF" stroke-width="1.2"/>
+  <ellipse cx="155" cy="385" rx="20" ry="8" fill="none" stroke="#409EFF" stroke-width="0.8" opacity="0.4"/>
+  <ellipse cx="155" cy="385" rx="8" ry="20" fill="none" stroke="#409EFF" stroke-width="0.8" opacity="0.4"/>
+  <text x="155" y="389" text-anchor="middle" font-size="9" fill="#1a1a2e" font-weight="bold">EN</text>
+  <text x="195" y="380" font-size="11" fill="#FF8C42" font-weight="bold">EN</text>
+  <text x="215" y="380" font-size="9" fill="#999">中文</text>
+  <text x="195" y="398" font-size="9" fill="#999">日本語</text>
+  <text x="215" y="398" font-size="9" fill="#999">한국어</text>
+  <text x="190" y="425" text-anchor="middle" font-size="12" fill="#666">英语数据占主导</text>
+
+  <!-- 卡片 4：确认偏见（右下） -->
+  <rect x="517" y="325" width="185" height="115" rx="12" fill="url(#cardGrad)" stroke="#E0E8F0" stroke-width="1.2"/>
+  <rect x="517" y="325" width="185" height="32" rx="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="517" y="345" width="185" height="12" fill="#409EFF" opacity="0.12"/>
+  <rect x="517" y="325" width="5" height="115" rx="2" fill="#FF8C42"/>
+  <text x="539" y="347" font-size="15" font-weight="bold" fill="#1a1a2e">确认偏见</text>
+  <!-- 图标：回音室 -->
+  <circle cx="575" cy="385" r="22" fill="none" stroke="#FF8C42" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="575" cy="385" r="15" fill="none" stroke="#FF8C42" stroke-width="1.2" opacity="0.6"/>
+  <circle cx="575" cy="385" r="8" fill="#FF8C42" opacity="0.2"/>
+  <!-- 循环箭头 -->
+  <path d="M555 370 Q560 360 575 358 Q590 360 595 370" stroke="#FF8C42" stroke-width="1.2" fill="none" marker-end="url(#arrowO)"/>
+  <path d="M595 400 Q590 410 575 412 Q560 410 555 400" stroke="#FF8C42" stroke-width="1.2" fill="none" marker-end="url(#arrowO)"/>
+  <path d="M555 370 Q545 385 555 400" stroke="#FF8C42" stroke-width="1.2" fill="none" marker-end="url(#arrowO)"/>
+  <path d="M595 370 Q605 385 595 400" stroke="#FF8C42" stroke-width="1.2" fill="none" marker-end="url(#arrowO)"/>
+  <defs>
+    <marker id="arrowO" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6" fill="#FF8C42"/>
+    </marker>
+  </defs>
+  <text x="575" y="389" text-anchor="middle" font-size="8" fill="#1a1a2e">回音</text>
+  <text x="630" y="380" font-size="11" fill="#FF8C42">↻</text>
+  <text x="645" y="380" font-size="11" fill="#FF8C42">↻</text>
+  <text x="660" y="380" font-size="11" fill="#FF8C42" opacity="0.6">↻</text>
+  <text x="640" y="410" text-anchor="middle" font-size="12" fill="#666">同质观点循环</text>
+
+  <!-- 标注 1：数据来源 -->
+  <text x="400" y="130" text-anchor="middle" font-size="13" fill="#1a1a2e" opacity="0.7">数据源</text>
+
+  <!-- 标注 2：偏见传播 -->
+  <text x="270" y="200" text-anchor="middle" font-size="12" fill="#1a1a2e" opacity="0.5" transform="rotate(-25, 270, 200)">偏见传播</text>
+  <text x="530" y="200" text-anchor="middle" font-size="12" fill="#1a1a2e" opacity="0.5" transform="rotate(25, 530, 200)">偏见传播</text>
+
+  <!-- 底部说明 -->
+  <text x="400" y="478" text-anchor="middle" font-size="12" fill="#999">LLM 偏见来源分析 · 教育配图</text>
+
+</svg>

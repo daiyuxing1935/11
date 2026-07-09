@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#D0ECFA"/>
+    </linearGradient>
+    <linearGradient id="leftBox" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0F4F8"/>
+      <stop offset="100%" stop-color="#E2E8F0"/>
+    </linearGradient>
+    <linearGradient id="rightBox" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E6F3FF"/>
+      <stop offset="100%" stop-color="#D0E8FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">聊天机器人 vs 智能代理</text>
+
+  <!-- 左侧区域 -->
+  <rect x="30" y="55" width="340" height="400" rx="12" fill="url(#leftBox)" stroke="#B0C4DE" stroke-width="1.5"/>
+
+  <!-- 左侧机器人脸 -->
+  <circle cx="200" cy="140" r="50" fill="#D0D8E0" stroke="#A0B0C0" stroke-width="2"/>
+  <rect x="175" y="155" width="50" height="8" rx="4" fill="#8899AA"/>
+  <!-- 眼睛（无表情） -->
+  <circle cx="180" cy="128" r="6" fill="#8899AA"/>
+  <circle cx="220" cy="128" r="6" fill="#8899AA"/>
+
+  <!-- 左侧标签 -->
+  <text x="200" y="210" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#6B7B8D">ChatBot: 能说话</text>
+
+  <!-- 气泡 -->
+  <rect x="120" y="230" width="160" height="36" rx="18" fill="white" stroke="#B0C4DE" stroke-width="1.2"/>
+  <text x="200" y="253" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#6B7B8D">你好！有什么可以帮你？</text>
+
+  <rect x="140" y="278" width="120" height="32" rx="16" fill="white" stroke="#B0C4DE" stroke-width="1.2"/>
+  <text x="200" y="298" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#6B7B8D">我不太明白</text>
+
+  <rect x="130" y="322" width="140" height="32" rx="16" fill="white" stroke="#B0C4DE" stroke-width="1.2"/>
+  <text x="200" y="342" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#6B7B8D">请稍等...</text>
+
+  <!-- 思考气泡 -->
+  <circle cx="160" cy="370" r="8" fill="white" stroke="#B0C4DE" stroke-width="1"/>
+  <circle cx="148" cy="385" r="12" fill="white" stroke="#B0C4DE" stroke-width="1"/>
+  <rect x="120" y="395" width="56" height="28" rx="14" fill="white" stroke="#B0C4DE" stroke-width="1"/>
+  <text x="148" y="414" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#8899AA">？</text>
+
+  <!-- 标注1 -->
+  <line x1="245" y1="140" x2="310" y2="100" stroke="#1a1a2e" stroke-width="1" stroke-dasharray="3,2"/>
+  <rect x="295" y="88" width="70" height="24" rx="4" fill="#1a1a2e"/>
+  <text x="330" y="104" text-anchor="middle" font-family="sans-serif" font-size="13" fill="white">只有嘴</text>
+
+  <!-- 分隔虚线 -->
+  <line x1="385" y1="60" x2="385" y2="450" stroke="#409EFF" stroke-width="2" stroke-dasharray="8,6" opacity="0.6"/>
+
+  <!-- 中间问题 -->
+  <text x="400" y="260" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#409EFF" transform="rotate(-90,400,260)">聊天机器人还是工作代理？</text>
+
+  <!-- 右侧区域 -->
+  <rect x="430" y="55" width="340" height="400" rx="12" fill="url(#rightBox)" stroke="#409EFF" stroke-width="1.5"/>
+
+  <!-- 右侧机器人全身 -->
+  <!-- 头 -->
+  <circle cx="600" cy="130" r="40" fill="#409EFF" stroke="#3070C0" stroke-width="2"/>
+  <circle cx="588" cy="122" r="5" fill="white"/>
+  <circle cx="612" cy="122" r="5" fill="white"/>
+  <rect x="585" y="142" width="30" height="6" rx="3" fill="white"/>
+
+  <!-- 身体 -->
+  <rect x="575" y="170" width="50" height="60" rx="6" fill="#409EFF" stroke="#3070C0" stroke-width="1.5"/>
+
+  <!-- 手臂 -->
+  <rect x="555" y="178" width="20" height="10" rx="4" fill="#409EFF" stroke="#3070C0" stroke-width="1"/>
+  <rect x="625" y="178" width="20" height="10" rx="4" fill="#409EFF" stroke="#3070C0" stroke-width="1"/>
+
+  <!-- 手 -->
+  <rect x="548" y="188" width="14" height="14" rx="3" fill="#3070C0"/>
+  <rect x="638" y="188" width="14" height="14" rx="3" fill="#3070C0"/>
+
+  <!-- 桌子 -->
+  <rect x="510" y="240" width="180" height="8" rx="2" fill="#8899AA"/>
+  <rect x="520" y="248" width="8" height="40" fill="#A0B0C0"/>
+  <rect x="672" y="248" width="8" height="40" fill="#A0B0C0"/>
+
+  <!-- 桌面工具 -->
+  <rect x="530" y="210" width="30" height="20" rx="3" fill="#FFD700" stroke="#D4A800" stroke-width="1"/>
+  <rect x="570" y="215" width="24" height="14" rx="2" fill="#FF6B6B" stroke="#D05050" stroke-width="1"/>
+  <rect x="610" y="212" width="28" height="18" rx="3" fill="#66CDAA" stroke="#4CAF80" stroke-width="1"/>
+  <rect x="650" y="216" width="20" height="12" rx="2" fill="#9370DB" stroke="#7B5CB8" stroke-width="1"/>
+
+  <!-- 数据库图标 -->
+  <ellipse cx="560" cy="280" rx="20" ry="8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="540" y1="280" x2="540" y2="300" stroke="#409EFF" stroke-width="1.5"/>
+  <ellipse cx="560" cy="300" rx="20" ry="8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="580" y1="280" x2="580" y2="300" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="560" y="322" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">数据库</text>
+
+  <!-- API 连接 -->
+  <rect x="610" y="275" width="60" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.2"/>
+  <text x="640" y="290" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">API 连接</text>
+
+  <!-- 动作项 -->
+  <rect x="530" y="345" width="140" height="28" rx="6" fill="white" stroke="#409EFF" stroke-width="1"/>
+  <text x="600" y="363" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">✓ 自动执行任务</text>
+
+  <rect x="530" y="380" width="140" height="28" rx="6" fill="white" stroke="#409EFF" stroke-width="1"/>
+  <text x="600" y="398" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">✓ 调用工具</text>
+
+  <rect x="530" y="415" width="140" height="28" rx="6" fill="white" stroke="#409EFF" stroke-width="1"/>
+  <text x="600" y="433" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">✓ 处理数据</text>
+
+  <!-- 右侧标签 -->
+  <text x="600" y="465" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#409EFF">AI 代理: 能工作</text>
+
+  <!-- 标注2 -->
+  <line x1="645" y1="130" x2="720" y2="100" stroke="#1a1a2e" stroke-width="1" stroke-dasharray="3,2"/>
+  <rect x="705" y="88" width="60" height="24" rx="4" fill="#1a1a2e"/>
+  <text x="735" y="104" text-anchor="middle" font-family="sans-serif" font-size="13" fill="white">有手</text>
+
+  <!-- 标注3 -->
+  <line x1="680" y1="220" x2="740" y2="200" stroke="#1a1a2e" stroke-width="1" stroke-dasharray="3,2"/>
+  <rect x="725" y="188" width="60" height="24" rx="4" fill="#1a1a2e"/>
+  <text x="755" y="204" text-anchor="middle" font-family="sans-serif" font-size="13" fill="white">使用工具</text>
+
+  <!-- 底部转换箭头 -->
+  <rect x="130" y="460" width="540" height="30" rx="6" fill="white" stroke="#409EFF" stroke-width="1.2" opacity="0.9"/>
+  <!-- 左侧小机器人 -->
+  <circle cx="170" cy="475" r="10" fill="#D0D8E0" stroke="#A0B0C0" stroke-width="1"/>
+  <rect x="163" y="478" width="14" height="3" rx="1.5" fill="#8899AA"/>
+  <!-- 加号 -->
+  <text x="210" y="480" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#409EFF" font-weight="bold">+</text>
+  <!-- 插件 -->
+  <rect x="225" y="468" width="30" height="14" rx="3" fill="#FFD700" stroke="#D4A800" stroke-width="1"/>
+  <text x="240" y="478" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#1a1a2e">插件</text>
+  <!-- 箭头 -->
+  <polygon points="280,475 300,470 300,480" fill="#409EFF"/>
+  <!-- 右侧大机器人 -->
+  <circle cx="340" cy="475" r="12" fill="#409EFF" stroke="#3070C0" stroke-width="1"/>
+  <rect x="332" y="478" width="16" height="4" rx="2" fill="white"/>
+  <!-- 红叉 -->
+  <text x="390" y="480" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#FF4444" font-weight="bold">✗</text>
+  <!-- 文字 -->
+  <text x="500" y="480" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">加一个 API 调用不能成为代理</text>
+
+  <!-- 标注4 -->
+  <line x1="390" y1="475" x2="430" y2="440" stroke="#1a1a2e" stroke-width="1" stroke-dasharray="3,2"/>
+  <rect x="415" y="428" width="65" height="24" rx="4" fill="#1a1a2e"/>
+  <text x="447" y="444" text-anchor="middle" font-family="sans-serif" font-size="13" fill="white">误区</text>
+
+</svg>

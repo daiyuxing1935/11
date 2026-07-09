@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e0f0ff"/>
+    </linearGradient>
+    <linearGradient id="ringOuter" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#409EFF" stop-opacity="0.06"/>
+    </linearGradient>
+    <linearGradient id="ringMiddle" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#409EFF" stop-opacity="0.09"/>
+    </linearGradient>
+    <linearGradient id="ringInner" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#409EFF" stop-opacity="0.12"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1a1a2e">多智能体系统安全层架构</text>
+  <line x1="280" y1="48" x2="520" y2="48" stroke="#409EFF" stroke-width="2" opacity="0.5"/>
+
+  <!-- ============ 外圈：智能体权限 ============ -->
+  <circle cx="400" cy="270" r="195" fill="url(#ringOuter)" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>
+  <circle cx="400" cy="270" r="195" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.3"/>
+
+  <!-- 外圈标签 -->
+  <rect x="310" y="62" width="180" height="28" rx="14" fill="#409EFF" opacity="0.15"/>
+  <text x="400" y="81" text-anchor="middle" font-size="15" font-weight="700" fill="#409EFF">① 智能体权限（最小权限）</text>
+
+  <!-- 智能体 1 -->
+  <g transform="translate(230, 130)">
+    <circle cx="0" cy="0" r="18" fill="#409EFF" opacity="0.2"/>
+    <circle cx="0" cy="0" r="12" fill="#409EFF" opacity="0.5"/>
+    <text x="0" y="4" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">A1</text>
+    <rect x="-48" y="22" width="96" height="44" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1" opacity="0.85"/>
+    <text x="0" y="38" text-anchor="middle" font-size="10" fill="#1a1a2e">工具：检索、计算</text>
+    <text x="0" y="54" text-anchor="middle" font-size="10" fill="#1a1a2e">数据：用户DB（只读）</text>
+  </g>
+
+  <!-- 智能体 2 -->
+  <g transform="translate(400, 100)">
+    <circle cx="0" cy="0" r="18" fill="#409EFF" opacity="0.2"/>
+    <circle cx="0" cy="0" r="12" fill="#409EFF" opacity="0.5"/>
+    <text x="0" y="4" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">A2</text>
+    <rect x="-48" y="22" width="96" height="44" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1" opacity="0.85"/>
+    <text x="0" y="38" text-anchor="middle" font-size="10" fill="#1a1a2e">工具：邮件、日历</text>
+    <text x="0" y="54" text-anchor="middle" font-size="10" fill="#1a1a2e">数据：联系人（读写）</text>
+  </g>
+
+  <!-- 智能体 3 -->
+  <g transform="translate(555, 150)">
+    <circle cx="0" cy="0" r="18" fill="#409EFF" opacity="0.2"/>
+    <circle cx="0" cy="0" r="12" fill="#409EFF" opacity="0.5"/>
+    <text x="0" y="4" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">A3</text>
+    <rect x="-48" y="22" width="96" height="44" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1" opacity="0.85"/>
+    <text x="0" y="38" text-anchor="middle" font-size="10" fill="#1a1a2e">工具：分析、报表</text>
+    <text x="0" y="54" text-anchor="middle" font-size="10" fill="#1a1a2e">数据：日志（追加）</text>
+  </g>
+
+  <!-- ============ 中圈：数据安全 ============ -->
+  <circle cx="400" cy="270" r="130" fill="url(#ringMiddle)" stroke="#409EFF" stroke-width="2" opacity="0.4"/>
+  <circle cx="400" cy="270" r="130" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.25"/>
+
+  <!-- 中圈标签 -->
+  <rect x="310" y="132" width="180" height="28" rx="14" fill="#409EFF" opacity="0.2"/>
+  <text x="400" y="151" text-anchor="middle" font-size="15" font-weight="700" fill="#409EFF">② 数据安全</text>
+
+  <!-- 加密锁 -->
+  <g transform="translate(310, 210)">
+    <rect x="-20" y="-15" width="40" height="30" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="-8" y="-25" width="16" height="12" rx="8" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="-6" y="-5" width="12" height="8" rx="2" fill="#409EFF" opacity="0.4"/>
+    <text x="0" y="22" text-anchor="middle" font-size="10" fill="#1a1a2e">加密存储</text>
+  </g>
+
+  <!-- API 密钥 -->
+  <g transform="translate(430, 195)">
+    <rect x="-22" y="-12" width="44" height="24" rx="4" fill="#fff" stroke="#409EFF" stroke-width="1"/>
+    <text x="0" y="3" text-anchor="middle" font-size="9" fill="#1a1a2e">KEY-α</text>
+    <text x="0" y="16" text-anchor="middle" font-size="8" fill="#409EFF">环境专用</text>
+  </g>
+
+  <!-- 审计日志 -->
+  <g transform="translate(350, 265)">
+    <rect x="-18" y="-12" width="36" height="24" rx="3" fill="#fff" stroke="#409EFF" stroke-width="1"/>
+    <line x1="-12" y1="-5" x2="12" y2="-5" stroke="#409EFF" stroke-width="0.8" opacity="0.6"/>
+    <line x1="-12" y1="0" x2="12" y2="0" stroke="#409EFF" stroke-width="0.8" opacity="0.6"/>
+    <line x1="-12" y1="5" x2="8" y2="5" stroke="#409EFF" stroke-width="0.8" opacity="0.6"/>
+    <text x="0" y="20" text-anchor="middle" font-size="9" fill="#1a1a2e">审计日志</text>
+  </g>
+
+  <!-- 数据保留计时器 -->
+  <g transform="translate(480, 260)">
+    <circle cx="0" cy="0" r="14" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="0" y1="0" x2="0" y2="-10" stroke="#409EFF" stroke-width="1.2"/>
+    <line x1="0" y1="0" x2="8" y2="0" stroke="#409EFF" stroke-width="1.2"/>
+    <circle cx="0" cy="0" r="2" fill="#409EFF"/>
+    <text x="0" y="22" text-anchor="middle" font-size="9" fill="#1a1a2e">保留计时</text>
+  </g>
+
+  <!-- ============ 内圈：输入/输出过滤 ============ -->
+  <circle cx="400" cy="270" r="70" fill="url(#ringInner)" stroke="#409EFF" stroke-width="2.5" opacity="0.5"/>
+  <circle cx="400" cy="270" r="70" fill="none" stroke="#409EFF" stroke-width="2" opacity="0.3"/>
+
+  <!-- 内圈标签 -->
+  <rect x="310" y="195" width="180" height="26" rx="13" fill="#409EFF" opacity="0.25"/>
+  <text x="400" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#409EFF">③ 输入/输出过滤</text>
+
+  <!-- 输入验证 -->
+  <g transform="translate(370, 250)">
+    <rect x="-16" y="-10" width="32" height="20" rx="4" fill="#fff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="0" y="3" text-anchor="middle" font-size="8" fill="#1a1a2e">✓ 验证</text>
+    <text x="0" y="16" text-anchor="middle" font-size="8" fill="#409EFF">输入门</text>
+  </g>
+
+  <!-- 输出清理 -->
+  <g transform="translate(430, 250)">
+    <rect x="-16" y="-10" width="32" height="20" rx="4" fill="#fff" stroke="#409EFF" stroke-width="1.2"/>
+    <text x="0" y="3" text-anchor="middle" font-size="8" fill="#1a1a2e">✂ 清理</text>
+    <text x="0" y="16" text-anchor="middle" font-size="8" fill="#409EFF">输出过滤</text>
+  </g>
+
+  <!-- 提示注入防御 -->
+  <g transform="translate(400, 290)">
+    <rect x="-18" y="-8" width="36" height="16" rx="4" fill="#ff6b6b" opacity="0.15" stroke="#ff6b6b" stroke-width="1"/>
+    <text x="0" y="3" text-anchor="middle" font-size="8" fill="#d63031">防火墙</text>
+    <text x="0" y="16" text-anchor="middle" font-size="8" fill="#409EFF">注入防御</text>
+  </g>
+
+  <!-- ============ 标注 ============ -->
+
+  <!-- 标注 1：最小权限 -->
+  <line x1="280" y1="130" x2="200" y2="100" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,3"/>
+  <rect x="110" y="85" width="80" height="22" rx="11" fill="#409EFF" opacity="0.12"/>
+  <text x="150" y="100" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="600">最小权限</text>
+
+  <!-- 标注 2：加密保护 -->
+  <line x1="290" y1="210" x2="200" y2="230" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,3"/>
+  <rect x="110" y="218" width="80" height="22" rx="11" fill="#409EFF" opacity="0.12"/>
+  <text x="150" y="233" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="600">加密保护</text>
+
+  <!-- 标注 3：密钥隔离 -->
+  <line x1="452" y1="195" x2="540" y2="180" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,3"/>
+  <rect x="548" y="168" width="80" height="22" rx="11" fill="#409EFF" opacity="0.12"/>
+  <text x="588" y="183" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="600">密钥隔离</text>
+
+  <!-- 标注 4：审计追溯 -->
+  <line x1="370" y1="285" x2="280" y2="320" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,3"/>
+  <rect x="190" y="310" width="80" height="22" rx="11" fill="#409EFF" opacity="0.12"/>
+  <text x="230" y="325" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="600">审计追溯</text>
+
+  <!-- 标注 5：输入校验 -->
+  <line x1="370" y1="250" x2="300" y2="250" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,3"/>
+  <rect x="210" y="238" width="80" height="22" rx="11" fill="#409EFF" opacity="0.12"/>
+  <text x="250" y="253" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="600">输入校验</text>
+
+  <!-- 标注 6：注入防御 -->
+  <line x1="418" y1="306" x2="500" y2="340" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,3"/>
+  <rect x="508" y="328" width="80" height="22" rx="11" fill="#409EFF" opacity="0.12"/>
+  <text x="548" y="343" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="600">注入防御</text>
+
+  <!-- 底部说明 -->
+  <text x="400" y="470" text-anchor="middle" font-size="12" fill="#666" opacity="0.7">多智能体系统安全架构 · 纵深防御设计</text>
+
+</svg>

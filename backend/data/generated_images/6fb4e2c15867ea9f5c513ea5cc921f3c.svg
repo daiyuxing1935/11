@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FF"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="funnelGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2B7ED6"/>
+    </linearGradient>
+    <linearGradient id="chipGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#1A6FC4"/>
+    </linearGradient>
+    <filter id="shadow" x="-2" y="-2" width="4" height="4">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="32" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">预训练过程示意图</text>
+
+  <!-- ===== 顶部：数据源图标 ===== -->
+  <!-- 地球（网络） -->
+  <g transform="translate(100, 65)">
+    <circle cx="0" cy="0" r="16" fill="none" stroke="#409EFF" stroke-width="2"/>
+    <ellipse cx="0" cy="0" rx="8" ry="16" fill="none" stroke="#409EFF" stroke-width="1.2"/>
+    <line x1="-16" y1="0" x2="16" y2="0" stroke="#409EFF" stroke-width="1.2"/>
+    <circle cx="0" cy="0" r="4" fill="#409EFF" opacity="0.3"/>
+  </g>
+  <text x="100" y="92" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">网络</text>
+
+  <!-- 书堆 -->
+  <g transform="translate(200, 58)">
+    <rect x="-14" y="-6" width="22" height="16" rx="1" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="-10" y="-10" width="22" height="16" rx="1" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="-6" y="-14" width="22" height="16" rx="1" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="-2" y1="-10" x2="8" y2="-10" stroke="#409EFF" stroke-width="0.8"/>
+    <line x1="-2" y1="-6" x2="8" y2="-6" stroke="#409EFF" stroke-width="0.8"/>
+  </g>
+  <text x="200" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">书籍</text>
+
+  <!-- 学术论文 -->
+  <g transform="translate(300, 62)">
+    <rect x="-12" y="-14" width="20" height="24" rx="1" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="-7" y1="-8" x2="7" y2="-8" stroke="#409EFF" stroke-width="0.8"/>
+    <line x1="-7" y1="-4" x2="7" y2="-4" stroke="#409EFF" stroke-width="0.8"/>
+    <line x1="-7" y1="0" x2="7" y2="0" stroke="#409EFF" stroke-width="0.8"/>
+    <line x1="-7" y1="4" x2="3" y2="4" stroke="#409EFF" stroke-width="0.8"/>
+    <rect x="-12" y="-14" width="20" height="24" rx="1" fill="#409EFF" opacity="0.08"/>
+  </g>
+  <text x="300" y="87" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">论文</text>
+
+  <!-- 代码括号 -->
+  <g transform="translate(400, 62)">
+    <text x="0" y="0" text-anchor="middle" font-family="Courier, monospace" font-size="22" fill="#409EFF" font-weight="bold">&lt;/&gt;</text>
+  </g>
+  <text x="400" y="87" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">代码</text>
+
+  <!-- Wikipedia W -->
+  <g transform="translate(500, 62)">
+    <circle cx="0" cy="0" r="16" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="0" y="6" text-anchor="middle" font-family="Georgia, serif" font-size="18" fill="#409EFF" font-weight="bold">W</text>
+  </g>
+  <text x="500" y="87" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">维基百科</text>
+
+  <!-- 更多数据源省略号 -->
+  <g transform="translate(590, 62)">
+    <circle cx="-8" cy="0" r="3" fill="#409EFF" opacity="0.5"/>
+    <circle cx="0" cy="0" r="3" fill="#409EFF" opacity="0.5"/>
+    <circle cx="8" cy="0" r="3" fill="#409EFF" opacity="0.5"/>
+  </g>
+  <text x="590" y="87" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">更多...</text>
+
+  <!-- ===== 漏斗 ===== -->
+  <g transform="translate(400, 100)">
+    <!-- 漏斗上部 -->
+    <path d="M-120,0 L120,0 L60,60 L-60,60 Z" fill="url(#funnelGrad)" opacity="0.2" stroke="#409EFF" stroke-width="1.5"/>
+    <!-- 漏斗内部箭头 -->
+    <path d="M-80,10 L0,40 L80,10" fill="none" stroke="#409EFF" stroke-width="1.5" marker-end="none"/>
+    <polygon points="0,45 -5,35 5,35" fill="#409EFF"/>
+    <!-- 漏斗标签 -->
+    <text x="0" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">数据收集与预处理</text>
+  </g>
+
+  <!-- ===== 中部：GPU集群 ===== -->
+  <g transform="translate(400, 210)">
+    <!-- 集群背景框 -->
+    <rect x="-140" y="-25" width="280" height="80" rx="6" fill="#409EFF" opacity="0.06" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+
+    <!-- GPU芯片网格 4x3 -->
+    <g>
+      <!-- 第1行 -->
+      <rect x="-120" y="-15" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <rect x="-80" y="-15" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <rect x="-40" y="-15" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <rect x="0" y="-15" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <rect x="40" y="-15" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <rect x="80" y="-15" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <!-- 第2行 -->
+      <rect x="-120" y="12" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <rect x="-80" y="12" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <rect x="-40" y="12" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <rect x="0" y="12" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <rect x="40" y="12" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+      <rect x="80" y="12" width="28" height="20" rx="2" fill="url(#chipGrad)" opacity="0.7"/>
+    </g>
+
+    <!-- 发光连接线 -->
+    <g stroke="#409EFF" stroke-width="0.8" opacity="0.5">
+      <line x1="-92" y1="-15" x2="-92" y2="12"/>
+      <line x1="-52" y1="-15" x2="-52" y2="12"/>
+      <line x1="-12" y1="-15" x2="-12" y2="12"/>
+      <line x1="28" y1="-15" x2="28" y2="12"/>
+      <line x1="68" y1="-15" x2="68" y2="12"/>
+    </g>
+
+    <!-- 集群标签 -->
+    <text x="0" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">大规模 GPU 集群（数千张）</text>
+  </g>
+
+  <!-- ===== 从GPU到底部模型的箭头 ===== -->
+  <g transform="translate(400, 300)">
+    <line x1="0" y1="0" x2="0" y2="30" stroke="#409EFF" stroke-width="2" marker-end="none"/>
+    <polygon points="0,35 -6,27 6,27" fill="#409EFF"/>
+  </g>
+
+  <!-- ===== 底部：基础模型 ===== -->
+  <g transform="translate(400, 360)">
+    <!-- 模型图标 -->
+    <rect x="-45" y="-20" width="90" height="40" rx="8" fill="#409EFF" opacity="0.12" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">基础模型</text>
+
+    <!-- 对话气泡 -->
+    <g transform="translate(130, -30)">
+      <rect x="-95" y="-25" width="190" height="65" rx="8" fill="white" stroke="#409EFF" stroke-width="1.2" filter="url(#shadow)"/>
+      <polygon points="-80,40 -70,20 -60,40" fill="white" stroke="#409EFF" stroke-width="1.2"/>
+      <polygon points="-80,40 -70,22 -62,40" fill="white"/>
+      <text x="-75" y="-8" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">用户：法国的首都是</text>
+      <text x="-75" y="10" font-family="Arial, sans-serif" font-size="11" fill="#409EFF" font-weight="bold">模型：什么？德国的首都...</text>
+      <text x="-75" y="28" font-family="Arial, sans-serif" font-size="10" fill="#888">（原始 next-token 预测行为）</text>
+    </g>
+  </g>
+
+  <!-- ===== 标注 ===== -->
+  <!-- 标注1：数据规模 -->
+  <g transform="translate(640, 130)">
+    <rect x="0" y="0" width="145" height="32" rx="4" fill="white" stroke="#409EFF" stroke-width="1" filter="url(#shadow)"/>
+    <text x="72" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">数据规模: 万亿 Token</text>
+  </g>
+
+  <!-- 标注2：训练成本 -->
+  <g transform="translate(640, 175)">
+    <rect x="0" y="0" width="145" height="32" rx="4" fill="white" stroke="#409EFF" stroke-width="1" filter="url(#shadow)"/>
+    <text x="72" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">训练: 数千GPU, 数周</text>
+  </g>
+
+  <!-- 标注3：成本 -->
+  <g transform="translate(640, 220)">
+    <rect x="0" y="0" width="145" height="32" rx="4" fill="white" stroke="#409EFF" stroke-width="1" filter="url(#shadow)"/>
+    <text x="72" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">成本: 数百万美元</text>
+  </g>
+
+  <!-- 标注4：数据源 -->
+  <g transform="translate(640, 85)">
+    <rect x="0" y="0" width="145" height="32" rx="4" fill="white" stroke="#409EFF" stroke-width="1" filter="url(#shadow)"/>
+    <text x="72" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">多源数据收集</text>
+  </g>
+
+  <!-- 标注5：预训练 -->
+  <g transform="translate(15, 210)">
+    <rect x="0" y="0" width="100" height="32" rx="4" fill="white" stroke="#409EFF" stroke-width="1" filter="url(#shadow)"/>
+    <text x="50" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">预训练阶段</text>
+  </g>
+
+  <!-- 标注6：模型产出 -->
+  <g transform="translate(15, 360)">
+    <rect x="0" y="0" width="100" height="32" rx="4" fill="white" stroke="#409EFF" stroke-width="1" filter="url(#shadow)"/>
+    <text x="50" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">模型产出</text>
+  </g>
+
+</svg>

@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <filter id="shadow" x="-2" y="-2" width="8" height="8">
+      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="32" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">三种架构模式对比</text>
+
+  <!-- ========== 左侧：集中式 ========== -->
+  <g transform="translate(0,0)">
+    <!-- 区域标题 -->
+    <rect x="20" y="50" width="240" height="32" rx="6" fill="#409EFF" opacity="0.15"/>
+    <text x="140" y="71" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">集中式</text>
+
+    <!-- 编排器节点 -->
+    <rect x="90" y="100" width="100" height="36" rx="18" fill="#409EFF" filter="url(#shadow)"/>
+    <text x="140" y="123" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#fff" font-weight="bold">编排器</text>
+
+    <!-- 连线：编排器 → 代理 -->
+    <line x1="140" y1="136" x2="80" y2="190" stroke="#409EFF" stroke-width="1.8" opacity="0.6"/>
+    <line x1="140" y1="136" x2="140" y2="190" stroke="#409EFF" stroke-width="1.8" opacity="0.6"/>
+    <line x1="140" y1="136" x2="200" y2="190" stroke="#409EFF" stroke-width="1.8" opacity="0.6"/>
+
+    <!-- 代理节点 -->
+    <rect x="35" y="196" width="90" height="32" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="80" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">代理 A</text>
+
+    <rect x="95" y="196" width="90" height="32" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="140" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">代理 B</text>
+
+    <rect x="155" y="196" width="90" height="32" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="200" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">代理 C</text>
+
+    <!-- 优缺点 -->
+    <text x="140" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">✓ 协调简单</text>
+    <text x="140" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">✗ 单点故障</text>
+  </g>
+
+  <!-- 分隔线 -->
+  <line x1="275" y1="55" x2="275" y2="290" stroke="#409EFF" stroke-width="1" opacity="0.25" stroke-dasharray="4,3"/>
+
+  <!-- ========== 中间：去中心化 ========== -->
+  <g transform="translate(0,0)">
+    <rect x="285" y="50" width="240" height="32" rx="6" fill="#409EFF" opacity="0.15"/>
+    <text x="405" y="71" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">去中心化</text>
+
+    <!-- 网格连接线 -->
+    <line x1="335" y1="120" x2="405" y2="120" stroke="#409EFF" stroke-width="1.8" opacity="0.4"/>
+    <line x1="335" y1="120" x2="335" y2="190" stroke="#409EFF" stroke-width="1.8" opacity="0.4"/>
+    <line x1="335" y1="120" x2="405" y2="190" stroke="#409EFF" stroke-width="1.8" opacity="0.4"/>
+    <line x1="405" y1="120" x2="335" y2="190" stroke="#409EFF" stroke-width="1.8" opacity="0.4"/>
+    <line x1="405" y1="120" x2="405" y2="190" stroke="#409EFF" stroke-width="1.8" opacity="0.4"/>
+    <line x1="335" y1="190" x2="405" y2="190" stroke="#409EFF" stroke-width="1.8" opacity="0.4"/>
+
+    <!-- 节点 -->
+    <rect x="300" y="104" width="70" height="32" rx="16" fill="#409EFF" filter="url(#shadow)"/>
+    <text x="335" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#fff" font-weight="bold">节点 1</text>
+
+    <rect x="370" y="104" width="70" height="32" rx="16" fill="#409EFF" filter="url(#shadow)"/>
+    <text x="405" y="124" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#fff" font-weight="bold">节点 2</text>
+
+    <rect x="300" y="174" width="70" height="32" rx="16" fill="#409EFF" filter="url(#shadow)"/>
+    <text x="335" y="194" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#fff" font-weight="bold">节点 3</text>
+
+    <rect x="370" y="174" width="70" height="32" rx="16" fill="#409EFF" filter="url(#shadow)"/>
+    <text x="405" y="194" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#fff" font-weight="bold">节点 4</text>
+
+    <!-- 优缺点 -->
+    <text x="405" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">✓ 高容错</text>
+    <text x="405" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">✗ 协调复杂</text>
+  </g>
+
+  <!-- 分隔线 -->
+  <line x1="540" y1="55" x2="540" y2="290" stroke="#409EFF" stroke-width="1" opacity="0.25" stroke-dasharray="4,3"/>
+
+  <!-- ========== 右侧：混合式（推荐） ========== -->
+  <g transform="translate(0,0)">
+    <rect x="550" y="50" width="230" height="32" rx="6" fill="#409EFF" opacity="0.15"/>
+    <text x="665" y="71" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">混合式（推荐）</text>
+
+    <!-- 全局协调层 -->
+    <rect x="590" y="95" width="150" height="30" rx="15" fill="#409EFF" filter="url(#shadow)"/>
+    <text x="665" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#fff" font-weight="bold">全局协调层</text>
+
+    <!-- 连线：全局 → 域协调器 -->
+    <line x1="615" y1="125" x2="615" y2="160" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+    <line x1="665" y1="125" x2="665" y2="160" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+    <line x1="715" y1="125" x2="715" y2="160" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+
+    <!-- 域协调器 -->
+    <rect x="580" y="165" width="70" height="28" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="615" y="183" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e" font-weight="bold">域 A</text>
+
+    <rect x="655" y="165" width="70" height="28" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="690" y="183" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e" font-weight="bold">域 B</text>
+
+    <rect x="730" y="165" width="70" height="28" rx="6" fill="#fff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="765" y="183" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e" font-weight="bold">域 C</text>
+
+    <!-- 连线：域协调器 → 代理 -->
+    <line x1="600" y1="193" x2="590" y2="225" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+    <line x1="615" y1="193" x2="615" y2="225" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+    <line x1="630" y1="193" x2="640" y2="225" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+
+    <line x1="680" y1="193" x2="670" y2="225" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+    <line x1="690" y1="193" x2="690" y2="225" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+    <line x1="700" y1="193" x2="710" y2="225" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+
+    <line x1="750" y1="193" x2="740" y2="225" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+    <line x1="765" y1="193" x2="765" y2="225" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+    <line x1="780" y1="193" x2="790" y2="225" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+
+    <!-- 代理节点 -->
+    <rect x="572" y="230" width="36" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1" opacity="0.8"/>
+    <text x="590" y="244" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e">代理</text>
+
+    <rect x="612" y="230" width="36" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1" opacity="0.8"/>
+    <text x="630" y="244" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e">代理</text>
+
+    <rect x="652" y="230" width="36" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1" opacity="0.8"/>
+    <text x="670" y="244" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e">代理</text>
+
+    <rect x="692" y="230" width="36" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1" opacity="0.8"/>
+    <text x="710" y="244" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e">代理</text>
+
+    <rect x="732" y="230" width="36" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1" opacity="0.8"/>
+    <text x="750" y="244" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e">代理</text>
+
+    <rect x="772" y="230" width="36" height="22" rx="4" fill="#E8F4FD" stroke="#409EFF" stroke-width="1" opacity="0.8"/>
+    <text x="790" y="244" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e">代理</text>
+
+    <!-- 优缺点 -->
+    <text x="665" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">✓ 平衡扩展与管控</text>
+  </g>
+
+  <!-- 底部说明 -->
+  <rect x="20" y="310" width="760" height="40" rx="8" fill="#409EFF" opacity="0.08"/>
+  <text x="400" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" opacity="0.7">混合式架构：全局协调层负责跨域调度，域协调器管理各自代理，兼顾效率与可靠性</text>
+
+</svg>

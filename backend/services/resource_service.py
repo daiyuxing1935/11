@@ -273,37 +273,34 @@ def get_local_material(knowledge: str) -> dict:
 
 
 def _inject_cached_images(content: str) -> str:
-    """在 markdown 内容中自动注入已缓存的 SVG 配图"""
-    import hashlib
-    import re as _re
-    from database import get_db as _get_db
+    """注入已缓存 SVG 为 base64 图片"""
+    import hashlib, re as _re, base64
+    from database import get_db as _gdb
 
-    def _replace_prompt(match):
-        body = match.group(2).strip()
-        if not body or len(body) < 10:
-            return match.group(0)
-        prompt_hash = hashlib.md5(body.encode()).hexdigest()
-        conn = _get_db()
-        row = conn.execute(
-            "SELECT svg_content FROM generated_images WHERE prompt_hash = ? AND svg_content IS NOT NULL LIMIT 1",
-            (prompt_hash,)
-        ).fetchone()
-        conn.close()
-        if row and row["svg_content"]:
-            svg = row["svg_content"]
-            if 'viewBox=' not in svg[:200]:
-                svg = svg.replace('<svg', '<svg viewBox="0 0 800 500"')
-            img_tag = '<div style="margin:20px 0;text-align:center;overflow:hidden;max-height:800px;border-radius:8px;background:#fafbfc;padding:8px"><img src="data:image/svg+xml;base64,' + __import__('base64').b64encode(svg.encode()).decode() + '" style="max-width:100%;height:auto" /></div>'
-            return img_tag + '\n\n> 📝 配图提示词：' + body[:80] + '...\n'
-        return match.group(0)
+    conn = _gdb()
+    rows = conn.execute("SELECT prompt_hash, svg_content FROM generated_images WHERE svg_content IS NOT NULL").fetchall()
+    conn.close()
+    cache = {r["prompt_hash"]: r["svg_content"] for r in rows if r["svg_content"]}
+    if not cache:
+        return content
 
-    content = _re.sub(
-        r'(?:\*\*)?Image-Prompt\([^)]+\):(?:\*\*)?\s*(.+?)(?=\n\n(?:#|\*\*Image-Prompt|Image-Prompt)|\n(?:#|\*\*Image-Prompt|Image-Prompt)|$)',
-        _replace_prompt,
-        content,
-        flags=_re.DOTALL
-    )
-    return content
+    def _repl(m):
+        body = m.group(1).strip()
+        # Strip optional ``` markers
+        if body.startswith('```'): body = body[3:]
+        if body.endswith('```'): body = body[:-3]
+        body = body.strip()
+        if len(body) < 10:
+            return m.group(0)
+        h = hashlib.sha256(body.encode()).hexdigest()
+        svg = cache.get(h)
+        if svg:
+            b64 = base64.b64encode(svg.encode()).decode()
+            return f'<div style="margin:20px 0;text-align:center"><img src="data:image/svg+xml;base64,{b64}" style="max-width:100%;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08)" /></div>'
+        return m.group(0)
+
+    pattern = r'(?:\*\*)?Image-Prompt\([^)]+\):(?:\*\*)?\s*(.+?)(?=\n\n(?:#|\*\*Image-Prompt|Image-Prompt)|\n(?:#|\*\*Image-Prompt|Image-Prompt)|$)'
+    return _re.sub(pattern, _repl, content, flags=_re.DOTALL)
 
 
 def _read_material_file(rel_path: str, tag: str) -> dict:
@@ -313,6 +310,7 @@ def _read_material_file(rel_path: str, tag: str) -> dict:
         try:
             with open(full_path, 'r', encoding='utf-8') as f:
                 content = f.read()
+            content = _inject_cached_images(content)
             return {
                 "found": True,
                 "content": content,

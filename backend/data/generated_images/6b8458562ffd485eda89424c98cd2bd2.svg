@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e0f0ff"/>
+    </linearGradient>
+    <linearGradient id="pyramidGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2b7bd6"/>
+    </linearGradient>
+    <linearGradient id="pyramidGrad2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5aabff"/>
+      <stop offset="100%" stop-color="#409EFF"/>
+    </linearGradient>
+    <linearGradient id="pyramidGrad3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7bbdff"/>
+      <stop offset="100%" stop-color="#5aabff"/>
+    </linearGradient>
+    <linearGradient id="pyramidGrad4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a0d0ff"/>
+      <stop offset="100%" stop-color="#7bbdff"/>
+    </linearGradient>
+    <linearGradient id="pyramidGrad5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c0e0ff"/>
+      <stop offset="100%" stop-color="#a0d0ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">结构化提示词金字塔</text>
+  <line x1="300" y1="48" x2="500" y2="48" stroke="#409EFF" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- ===== 左侧：一句话提示 ===== -->
+  <rect x="30" y="65" width="240" height="80" rx="12" fill="#fff" stroke="#409EFF" stroke-width="1.5" opacity="0.9"/>
+  <rect x="30" y="65" width="240" height="28" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="150" y="84" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">一句话提示</text>
+  <text x="150" y="108" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#555">“写一首关于秋天的诗”</text>
+  <text x="150" y="132" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#999">≈ 命令行</text>
+
+  <!-- 左侧标注箭头 -->
+  <line x1="270" y1="105" x2="310" y2="105" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="310,100 320,105 310,110" fill="#409EFF"/>
+
+  <!-- ===== 右侧：金字塔结构 ===== -->
+  <rect x="470" y="65" width="300" height="80" rx="12" fill="#fff" stroke="#409EFF" stroke-width="1.5" opacity="0.9"/>
+  <rect x="470" y="65" width="300" height="28" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="620" y="84" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">结构化提示</text>
+  <text x="620" y="108" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#555">元信息 + 系统指令 + 用户指令 + 输出格式 + 示例</text>
+  <text x="620" y="132" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#999">≈ .py 文件</text>
+
+  <!-- 右侧标注箭头 -->
+  <line x1="430" y1="105" x2="470" y2="105" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="470,100 460,105 470,110" fill="#409EFF"/>
+
+  <!-- ===== 对比标签 ===== -->
+  <text x="400" y="170" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e" opacity="0.7">VS</text>
+
+  <!-- ===== 金字塔 ===== -->
+  <!-- 第4层（最宽） -->
+  <polygon points="200,460 600,460 560,410 240,410" fill="url(#pyramidGrad5)" stroke="#409EFF" stroke-width="1.5" rx="4"/>
+  <text x="400" y="445" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">第4层: 示例 / Examples</text>
+
+  <!-- 第3层 -->
+  <polygon points="240,410 560,410 520,360 280,360" fill="url(#pyramidGrad4)" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="400" y="395" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">第3层: 输出格式 / Output Schema</text>
+
+  <!-- 第2层 -->
+  <polygon points="280,360 520,360 480,310 320,310" fill="url(#pyramidGrad3)" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="400" y="345" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">第2层: 用户指令 / User Prompt</text>
+
+  <!-- 第1层 -->
+  <polygon points="320,310 480,310 450,260 350,260" fill="url(#pyramidGrad2)" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="400" y="295" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e">第1层: 系统指令 / System Prompt</text>
+
+  <!-- 第0层（最窄） -->
+  <polygon points="350,260 450,260 430,220 370,220" fill="url(#pyramidGrad)" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="400" y="248" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" font-weight="bold" fill="#fff">第0层: 元信息 / Meta</text>
+
+  <!-- ===== 图标 ===== -->
+  <!-- 第0层图标：版本标签 -->
+  <circle cx="440" cy="240" r="10" fill="#fff" opacity="0.3"/>
+  <text x="440" y="244" text-anchor="middle" font-size="10" fill="#fff">ⓘ</text>
+
+  <!-- 第1层图标：卷轴 -->
+  <circle cx="340" cy="285" r="10" fill="#fff" opacity="0.3"/>
+  <text x="340" y="289" text-anchor="middle" font-size="10" fill="#1a1a2e">📜</text>
+
+  <!-- 第2层图标：任务板 -->
+  <circle cx="480" cy="335" r="10" fill="#fff" opacity="0.3"/>
+  <text x="480" y="339" text-anchor="middle" font-size="10" fill="#1a1a2e">📋</text>
+
+  <!-- 第3层图标：JSON括号 -->
+  <circle cx="290" cy="385" r="10" fill="#fff" opacity="0.3"/>
+  <text x="290" y="389" text-anchor="middle" font-size="10" fill="#1a1a2e">{ }</text>
+
+  <!-- 第4层图标：示例卡片 -->
+  <circle cx="560" cy="435" r="10" fill="#fff" opacity="0.3"/>
+  <text x="560" y="439" text-anchor="middle" font-size="10" fill="#1a1a2e">📇</text>
+
+  <!-- ===== 标注 ===== -->
+  <!-- 标注1：结构化 -->
+  <rect x="610" y="215" width="80" height="24" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="650" y="232" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF">结构化</text>
+
+  <!-- 标注2：分层设计 -->
+  <rect x="610" y="270" width="80" height="24" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="650" y="287" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF">分层设计</text>
+
+  <!-- 标注3：明确 -->
+  <rect x="610" y="325" width="80" height="24" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="650" y="342" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF">明确</text>
+
+  <!-- 标注4：可复用 -->
+  <rect x="610" y="380" width="80" height="24" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="650" y="397" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF">可复用</text>
+
+  <!-- 标注5：精准 -->
+  <rect x="610" y="435" width="80" height="24" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="650" y="452" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF">精准</text>
+
+  <!-- 标注6：高效 -->
+  <rect x="100" y="215" width="80" height="24" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="140" y="232" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF">模糊</text>
+
+  <!-- 左侧标注 -->
+  <rect x="100" y="270" width="80" height="24" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="140" y="287" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF">不确定</text>
+
+  <rect x="100" y="325" width="80" height="24" rx="12" fill="#409EFF" opacity="0.15"/>
+  <text x="140" y="342" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#409EFF">难复用</text>
+
+  <!-- ===== 底部装饰线 ===== -->
+  <line x1="200" y1="480" x2="600" y2="480" stroke="#409EFF" stroke-width="1" opacity="0.2" stroke-linecap="round"/>
+
+  <!-- 底部小标签 -->
+  <text x="400" y="495" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#999" opacity="0.6">结构化提示词 · 教育配图</text>
+</svg>

@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="arrowGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#1a1a2e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+  <rect x="1" y="1" width="798" height="498" fill="none" stroke="#409EFF" stroke-width="1.5" rx="12" opacity="0.3"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">提示方式对比 · 从混乱到清晰</text>
+  <line x1="280" y1="48" x2="520" y2="48" stroke="#409EFF" stroke-width="2" opacity="0.5"/>
+
+  <!-- ==================== 左侧：混乱区 ==================== -->
+  <rect x="30" y="65" width="340" height="390" rx="14" fill="white" stroke="#409EFF" stroke-width="1.5" opacity="0.7"/>
+  <rect x="30" y="65" width="340" height="36" rx="14" fill="#409EFF" opacity="0.15"/>
+  <text x="200" y="89" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">一句话提示的困境</text>
+
+  <!-- 混乱对话气泡 - 来回往返 -->
+  <!-- 用户气泡1 -->
+  <rect x="55" y="115" width="130" height="34" rx="16" fill="#409EFF" opacity="0.12" stroke="#409EFF" stroke-width="1.2"/>
+  <text x="120" y="136" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">写个方案</text>
+
+  <!-- AI气泡1 -->
+  <rect x="210" y="115" width="135" height="34" rx="16" fill="#1a1a2e" opacity="0.08" stroke="#1a1a2e" stroke-width="1"/>
+  <text x="277" y="136" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">什么方案？</text>
+
+  <!-- 用户气泡2 -->
+  <rect x="55" y="162" width="130" height="34" rx="16" fill="#409EFF" opacity="0.12" stroke="#409EFF" stroke-width="1.2"/>
+  <text x="120" y="183" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">营销方案</text>
+
+  <!-- AI气泡2 -->
+  <rect x="210" y="162" width="135" height="34" rx="16" fill="#1a1a2e" opacity="0.08" stroke="#1a1a2e" stroke-width="1"/>
+  <text x="277" y="183" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">具体产品？</text>
+
+  <!-- 用户气泡3 -->
+  <rect x="55" y="209" width="130" height="34" rx="16" fill="#409EFF" opacity="0.12" stroke="#409EFF" stroke-width="1.2"/>
+  <text x="120" y="230" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">新产品</text>
+
+  <!-- AI气泡3 -->
+  <rect x="210" y="209" width="135" height="34" rx="16" fill="#1a1a2e" opacity="0.08" stroke="#1a1a2e" stroke-width="1"/>
+  <text x="277" y="230" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">目标人群？</text>
+
+  <!-- 循环箭头 -->
+  <path d="M 140 255 Q 200 275 260 255" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+  <polygon points="255,250 265,255 255,260" fill="#409EFF" opacity="0.6"/>
+
+  <!-- 困惑用户头像 -->
+  <circle cx="120" cy="300" r="22" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1.5"/>
+  <circle cx="120" cy="294" r="7" fill="#1a1a2e" opacity="0.4"/>
+  <ellipse cx="120" cy="312" rx="10" ry="6" fill="#1a1a2e" opacity="0.3"/>
+  <!-- 困惑表情 - 皱眉 -->
+  <line x1="112" y1="290" x2="116" y2="292" stroke="#1a1a2e" stroke-width="1.2" opacity="0.5"/>
+  <line x1="128" y1="290" x2="124" y2="292" stroke="#1a1a2e" stroke-width="1.2" opacity="0.5"/>
+  <text x="120" y="340" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e" opacity="0.7">困惑的用户</text>
+
+  <!-- 不一致的AI输出 -->
+  <rect x="190" y="280" width="155" height="28" rx="8" fill="#1a1a2e" opacity="0.06" stroke="#1a1a2e" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <text x="267" y="298" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e" opacity="0.6">输出A：太宽泛</text>
+
+  <rect x="190" y="316" width="155" height="28" rx="8" fill="#1a1a2e" opacity="0.06" stroke="#1a1a2e" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <text x="267" y="334" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e" opacity="0.6">输出B：不相关</text>
+
+  <rect x="190" y="352" width="155" height="28" rx="8" fill="#1a1a2e" opacity="0.06" stroke="#1a1a2e" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <text x="267" y="370" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e" opacity="0.6">输出C：不一致</text>
+
+  <!-- 左侧标注 -->
+  <rect x="55" y="400" width="90" height="26" rx="13" fill="#409EFF" opacity="0.2"/>
+  <text x="100" y="417" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">来回试探</text>
+
+  <rect x="165" y="400" width="90" height="26" rx="13" fill="#409EFF" opacity="0.2"/>
+  <text x="210" y="417" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">效率低下</text>
+
+  <rect x="270" y="400" width="80" height="26" rx="13" fill="#409EFF" opacity="0.2"/>
+  <text x="310" y="417" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">结果随机</text>
+
+  <!-- ==================== 中间：转换箭头 ==================== -->
+  <g transform="translate(385, 230)">
+    <!-- 箭头主体 -->
+    <line x1="0" y1="0" x2="20" y2="0" stroke="url(#arrowGrad)" stroke-width="3"/>
+    <polygon points="20,-6 30,0 20,6" fill="#409EFF"/>
+
+    <!-- 齿轮1 -->
+    <circle cx="5" cy="-18" r="8" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <circle cx="5" cy="-18" r="3" fill="#409EFF" opacity="0.5"/>
+    <line x1="5" y1="-28" x2="5" y2="-8" stroke="#409EFF" stroke-width="1" opacity="0.4"/>
+    <line x1="-3" y1="-18" x2="13" y2="-18" stroke="#409EFF" stroke-width="1" opacity="0.4"/>
+
+    <!-- 齿轮2 -->
+    <circle cx="15" cy="18" r="8" fill="none" stroke="#1a1a2e" stroke-width="1.5"/>
+    <circle cx="15" cy="18" r="3" fill="#1a1a2e" opacity="0.5"/>
+    <line x1="15" y1="8" x2="15" y2="28" stroke="#1a1a2e" stroke-width="1" opacity="0.4"/>
+    <line x1="5" y1="18" x2="25" y2="18" stroke="#1a1a2e" stroke-width="1" opacity="0.4"/>
+
+    <!-- 转换文字 -->
+    <text x="15" y="40" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF" font-weight="bold">优化</text>
+  </g>
+
+  <!-- ==================== 右侧：结构化区 ==================== -->
+  <rect x="430" y="65" width="340" height="390" rx="14" fill="white" stroke="#1a1a2e" stroke-width="1.5" opacity="0.7"/>
+  <rect x="430" y="65" width="340" height="36" rx="14" fill="#1a1a2e" opacity="0.08"/>
+  <text x="600" y="89" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">结构化提示</text>
+
+  <!-- 结构化文档 -->
+  <rect x="455" y="115" width="290" height="310" rx="10" fill="white" stroke="#409EFF" stroke-width="1.2" opacity="0.5"/>
+
+  <!-- Role 部分 -->
+  <rect x="470" y="130" width="260" height="44" rx="6" fill="#409EFF" opacity="0.08"/>
+  <circle cx="483" cy="152" r="8" fill="#409EFF" opacity="0.3"/>
+  <text x="483" y="156" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">R</text>
+  <text x="498" y="148" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">角色</text>
+  <text x="498" y="164" font-family="sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">资深营销专家</text>
+
+  <!-- Task 部分 -->
+  <rect x="470" y="184" width="260" height="44" rx="6" fill="#409EFF" opacity="0.08"/>
+  <circle cx="483" cy="206" r="8" fill="#409EFF" opacity="0.3"/>
+  <text x="483" y="210" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">T</text>
+  <text x="498" y="202" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">任务</text>
+  <text x="498" y="218" font-family="sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">制定新品营销策略</text>
+
+  <!-- Constraints 部分 -->
+  <rect x="470" y="238" width="260" height="44" rx="6" fill="#409EFF" opacity="0.08"/>
+  <circle cx="483" cy="260" r="8" fill="#409EFF" opacity="0.3"/>
+  <text x="483" y="264" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">C</text>
+  <text x="498" y="256" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">约束</text>
+  <text x="498" y="272" font-family="sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">预算50万，周期3个月</text>
+
+  <!-- Format 部分 -->
+  <rect x="470" y="292" width="260" height="44" rx="6" fill="#409EFF" opacity="0.08"/>
+  <circle cx="483" cy="314" r="8" fill="#409EFF" opacity="0.3"/>
+  <text x="483" y="318" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">F</text>
+  <text x="498" y="310" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">格式</text>
+  <text x="498" y="326" font-family="sans-serif" font-size="11" fill="#1a1a2e" opacity="0.7">分点输出，附案例</text>
+
+  <!-- 精确输出 -->
+  <rect x="470" y="350" width="260" height="34" rx="8" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1.2"/>
+  <text x="600" y="371" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">✓ 一次输出精准结果</text>
+
+  <!-- 右侧标注 -->
+  <rect x="470" y="400" width="80" height="26" rx="13" fill="#1a1a2e" opacity="0.1"/>
+  <text x="510" y="417" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">清晰明确</text>
+
+  <rect x="560" y="400" width="80" height="26" rx="13" fill="#1a1a2e" opacity="0.1"/>
+  <text x="600" y="417" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">高效精准</text>
+
+  <rect x="650" y="400" width="80" height="26" rx="13" fill="#1a1a2e" opacity="0.1"/>
+  <text x="690" y="417" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">可复用</text>
+
+  <!-- 底部装饰线 -->
+  <line x1="100" y1="460" x2="700" y2="460" stroke="#409EFF" stroke-width="1" opacity="0.2"/>
+  <text x="400" y="480" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF" opacity="0.5">好的提示词 = 好的结果 · 结构化让AI更懂你</text>
+
+</svg>

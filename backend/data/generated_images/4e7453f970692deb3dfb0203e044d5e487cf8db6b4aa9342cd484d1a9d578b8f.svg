@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e8f4f8"/>
+    </linearGradient>
+    <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f5faff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">基于规则的智能体架构</text>
+
+  <!-- ===== 传感器输入（左侧） ===== -->
+  <rect x="60" y="120" width="130" height="100" rx="12" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="2"/>
+  <!-- 卫星天线图标 -->
+  <circle cx="125" cy="155" r="16" fill="none" stroke="#1a1a2e" stroke-width="2"/>
+  <line x1="125" y1="171" x2="125" y2="185" stroke="#1a1a2e" stroke-width="2"/>
+  <line x1="110" y1="178" x2="140" y2="178" stroke="#1a1a2e" stroke-width="2"/>
+  <line x1="125" y1="185" x2="115" y2="200" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="125" y1="185" x2="135" y2="200" stroke="#1a1a2e" stroke-width="1.5"/>
+  <!-- 眼睛符号 -->
+  <ellipse cx="125" cy="155" rx="6" ry="4" fill="#1a1a2e"/>
+  <circle cx="125" cy="155" r="2" fill="white"/>
+  <text x="125" y="218" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">传感器输入</text>
+
+  <!-- 箭头 1 -->
+  <line x1="190" y1="170" x2="270" y2="170" stroke="#409EFF" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+  <defs>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#409EFF"/>
+    </marker>
+  </defs>
+
+  <!-- ===== 规则框（中央） ===== -->
+  <rect x="280" y="90" width="240" height="160" rx="14" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="2.5"/>
+  <text x="400" y="118" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#1a1a2e" font-weight="bold">规则库</text>
+
+  <!-- 规则卡片 1 -->
+  <rect x="298" y="132" width="204" height="34" rx="6" fill="#f0f7ff" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="310" y="153" font-family="sans-serif" font-size="13" fill="#1a1a2e">如果 检测到障碍物</text>
+  <text x="470" y="153" text-anchor="end" font-family="sans-serif" font-size="13" fill="#409EFF" font-weight="bold">→ 停止</text>
+
+  <!-- 规则卡片 2 -->
+  <rect x="298" y="174" width="204" height="34" rx="6" fill="#f0f7ff" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="310" y="195" font-family="sans-serif" font-size="13" fill="#1a1a2e">如果 路径畅通</text>
+  <text x="470" y="195" text-anchor="end" font-family="sans-serif" font-size="13" fill="#409EFF" font-weight="bold">→ 前进</text>
+
+  <!-- 规则卡片 3 -->
+  <rect x="298" y="216" width="204" height="26" rx="6" fill="#f0f7ff" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="310" y="234" font-family="sans-serif" font-size="12" fill="#1a1a2e">如果 到达目标</text>
+  <text x="470" y="234" text-anchor="end" font-family="sans-serif" font-size="12" fill="#409EFF" font-weight="bold">→ 停止</text>
+
+  <!-- 箭头 2 -->
+  <line x1="520" y1="170" x2="600" y2="170" stroke="#409EFF" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- ===== 动作输出（右侧） ===== -->
+  <rect x="610" y="120" width="130" height="100" rx="12" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="2"/>
+  <!-- 齿轮图标 -->
+  <circle cx="675" cy="155" r="14" fill="none" stroke="#1a1a2e" stroke-width="2"/>
+  <circle cx="675" cy="155" r="5" fill="#1a1a2e"/>
+  <line x1="675" y1="141" x2="675" y2="145" stroke="#1a1a2e" stroke-width="2"/>
+  <line x1="675" y1="165" x2="675" y2="169" stroke="#1a1a2e" stroke-width="2"/>
+  <line x1="661" y1="155" x2="665" y2="155" stroke="#1a1a2e" stroke-width="2"/>
+  <line x1="685" y1="155" x2="689" y2="155" stroke="#1a1a2e" stroke-width="2"/>
+  <!-- 手符号 -->
+  <path d="M670,165 Q670,175 675,178 Q680,175 680,165" fill="none" stroke="#1a1a2e" stroke-width="1.5"/>
+  <text x="675" y="218" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">动作输出</text>
+
+  <!-- ===== 底部“无内部状态”区域 ===== -->
+  <line x1="120" y1="320" x2="680" y2="320" stroke="#ccc" stroke-width="1" stroke-dasharray="5,5"/>
+
+  <!-- 无内部状态标签 -->
+  <text x="400" y="350" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#999" font-style="italic">无内部状态</text>
+
+  <!-- 被划掉的图标 -->
+  <!-- 记忆（被划掉） -->
+  <rect x="160" y="370" width="100" height="60" rx="8" fill="#f9f9f9" stroke="#ddd" stroke-width="1.5"/>
+  <text x="210" y="400" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#bbb">记忆</text>
+  <line x1="165" y1="365" x2="255" y2="435" stroke="#ff6b6b" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- 规划（被划掉） -->
+  <rect x="350" y="370" width="100" height="60" rx="8" fill="#f9f9f9" stroke="#ddd" stroke-width="1.5"/>
+  <text x="400" y="400" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#bbb">规划</text>
+  <line x1="355" y1="365" x2="445" y2="435" stroke="#ff6b6b" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- 世界模型（被划掉） -->
+  <rect x="540" y="370" width="100" height="60" rx="8" fill="#f9f9f9" stroke="#ddd" stroke-width="1.5"/>
+  <text x="590" y="400" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#bbb">世界模型</text>
+  <line x1="545" y1="365" x2="635" y2="435" stroke="#ff6b6b" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- 底部说明文字 -->
+  <text x="400" y="470" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#aaa">基于规则的智能体：直接根据条件-动作规则做出反应，不维护内部状态</text>
+</svg>

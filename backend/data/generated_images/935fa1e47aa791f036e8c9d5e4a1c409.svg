@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e8f4fd"/>
+    </linearGradient>
+    <linearGradient id="card1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3b8ee0"/>
+    </linearGradient>
+    <linearGradient id="card2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3580d0"/>
+    </linearGradient>
+    <linearGradient id="card3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2e72c0"/>
+    </linearGradient>
+    <linearGradient id="card4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3a7ae0"/>
+      <stop offset="100%" stop-color="#2560a8"/>
+    </linearGradient>
+    <linearGradient id="card5" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3068c0"/>
+      <stop offset="100%" stop-color="#1a4a8a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- 标题区域 -->
+  <rect x="280" y="20" width="240" height="44" rx="22" fill="#1a1a2e" opacity="0.08"/>
+  <text x="400" y="49" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">模型规模对比</text>
+
+  <!-- 问号图标和文字 -->
+  <circle cx="400" cy="100" r="24" fill="#1a1a2e" opacity="0.1"/>
+  <text x="400" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#1a1a2e">?</text>
+  <text x="400" y="142" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">越大越聪明？</text>
+
+  <!-- 水平轴线 -->
+  <line x1="60" y1="420" x2="740" y2="420" stroke="#409EFF" stroke-width="2" opacity="0.3" stroke-dasharray="6,4"/>
+
+  <!-- 模型卡片 - 1B -->
+  <g transform="translate(70, 180)">
+    <rect x="0" y="0" width="80" height="110" rx="12" fill="url(#card1)" opacity="0.85"/>
+    <rect x="0" y="0" width="80" height="110" rx="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+    <text x="40" y="62" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#fff">1B</text>
+    <text x="40" y="84" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#e8f4fd" opacity="0.8">参数</text>
+    <!-- 大脑图标 - 简单 -->
+    <circle cx="40" cy="28" r="12" fill="#fff" opacity="0.9"/>
+    <path d="M34 26 Q40 22 46 26 Q48 30 46 34 Q40 36 34 34 Q32 30 34 26Z" fill="#409EFF" opacity="0.6"/>
+    <path d="M36 28 Q40 25 44 28" fill="none" stroke="#409EFF" stroke-width="1.2" opacity="0.6"/>
+  </g>
+
+  <!-- 模型卡片 - 7B -->
+  <g transform="translate(210, 170)">
+    <rect x="0" y="0" width="100" height="130" rx="12" fill="url(#card2)" opacity="0.88"/>
+    <rect x="0" y="0" width="100" height="130" rx="12" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.5"/>
+    <text x="50" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#fff">7B</text>
+    <text x="50" y="96" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#e8f4fd" opacity="0.8">参数</text>
+    <!-- 大脑图标 - 稍复杂 -->
+    <circle cx="50" cy="32" r="15" fill="#fff" opacity="0.9"/>
+    <path d="M42 28 Q50 23 58 28 Q60 34 58 38 Q50 42 42 38 Q40 34 42 28Z" fill="#409EFF" opacity="0.5"/>
+    <path d="M44 30 Q50 26 56 30" fill="none" stroke="#409EFF" stroke-width="1.2" opacity="0.5"/>
+    <path d="M46 34 Q50 31 54 34" fill="none" stroke="#409EFF" stroke-width="1" opacity="0.4"/>
+  </g>
+
+  <!-- 模型卡片 - 13B -->
+  <g transform="translate(360, 155)">
+    <rect x="0" y="0" width="120" height="155" rx="14" fill="url(#card3)" opacity="0.9"/>
+    <rect x="0" y="0" width="120" height="155" rx="14" fill="none" stroke="#3a7ae0" stroke-width="1.5" opacity="0.5"/>
+    <text x="60" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="bold" fill="#fff">13B</text>
+    <text x="60" y="112" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#e8f4fd" opacity="0.8">参数</text>
+    <!-- 大脑图标 - 中等复杂度 -->
+    <circle cx="60" cy="36" r="18" fill="#fff" opacity="0.9"/>
+    <path d="M50 30 Q60 24 70 30 Q72 38 70 44 Q60 48 50 44 Q48 38 50 30Z" fill="#409EFF" opacity="0.45"/>
+    <path d="M52 33 Q60 28 68 33" fill="none" stroke="#409EFF" stroke-width="1.3" opacity="0.45"/>
+    <path d="M54 38 Q60 34 66 38" fill="none" stroke="#409EFF" stroke-width="1.1" opacity="0.4"/>
+    <path d="M56 42 Q60 39 64 42" fill="none" stroke="#409EFF" stroke-width="1" opacity="0.35"/>
+  </g>
+
+  <!-- 模型卡片 - 70B -->
+  <g transform="translate(520, 135)">
+    <rect x="0" y="0" width="140" height="185" rx="14" fill="url(#card4)" opacity="0.92"/>
+    <rect x="0" y="0" width="140" height="185" rx="14" fill="none" stroke="#3068c0" stroke-width="1.5" opacity="0.5"/>
+    <text x="70" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#fff">70B</text>
+    <text x="70" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#e8f4fd" opacity="0.8">参数</text>
+    <!-- 大脑图标 - 复杂 -->
+    <circle cx="70" cy="42" r="22" fill="#fff" opacity="0.9"/>
+    <path d="M56 34 Q70 26 84 34 Q88 44 84 52 Q70 58 56 52 Q52 44 56 34Z" fill="#409EFF" opacity="0.4"/>
+    <path d="M58 38 Q70 30 82 38" fill="none" stroke="#409EFF" stroke-width="1.4" opacity="0.4"/>
+    <path d="M60 44 Q70 37 80 44" fill="none" stroke="#409EFF" stroke-width="1.2" opacity="0.35"/>
+    <path d="M62 49 Q70 43 78 49" fill="none" stroke="#409EFF" stroke-width="1.1" opacity="0.3"/>
+    <path d="M64 53 Q70 48 76 53" fill="none" stroke="#409EFF" stroke-width="1" opacity="0.25"/>
+  </g>
+
+  <!-- 模型卡片 - 405B -->
+  <g transform="translate(690, 110)">
+    <rect x="-15" y="0" width="160" height="220" rx="16" fill="url(#card5)" opacity="0.95"/>
+    <rect x="-15" y="0" width="160" height="220" rx="16" fill="none" stroke="#1a4a8a" stroke-width="2" opacity="0.5"/>
+    <text x="65" y="118" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" font-weight="bold" fill="#fff">405B</text>
+    <text x="65" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#e8f4fd" opacity="0.8">参数</text>
+    <!-- 大脑图标 - 最复杂 -->
+    <circle cx="65" cy="50" r="26" fill="#fff" opacity="0.9"/>
+    <path d="M48 40 Q65 30 82 40 Q86 52 82 62 Q65 70 48 62 Q44 52 48 40Z" fill="#409EFF" opacity="0.35"/>
+    <path d="M50 45 Q65 35 80 45" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.35"/>
+    <path d="M52 52 Q65 43 78 52" fill="none" stroke="#409EFF" stroke-width="1.3" opacity="0.3"/>
+    <path d="M54 58 Q65 50 76 58" fill="none" stroke="#409EFF" stroke-width="1.2" opacity="0.25"/>
+    <path d="M56 63 Q65 56 74 63" fill="none" stroke="#409EFF" stroke-width="1.1" opacity="0.2"/>
+    <path d="M58 67 Q65 61 72 67" fill="none" stroke="#409EFF" stroke-width="1" opacity="0.15"/>
+  </g>
+
+  <!-- 底部标注 -->
+  <g transform="translate(0, 440)">
+    <text x="110" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" opacity="0.5">小规模</text>
+    <text x="400" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" opacity="0.5">模型规模</text>
+    <text x="690" y="0" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" opacity="0.5">大规模</text>
+  </g>
+
+  <!-- 箭头指示 -->
+  <g transform="translate(400, 460)">
+    <line x1="-300" y1="0" x2="300" y2="0" stroke="#409EFF" stroke-width="2" opacity="0.3" marker-end="url(#arrow)"/>
+    <polygon points="300,-6 315,0 300,6" fill="#409EFF" opacity="0.4"/>
+  </g>
+
+  <!-- 标注1 - 左上 -->
+  <g transform="translate(60, 300)">
+    <rect x="0" y="0" width="90" height="26" rx="13" fill="#1a1a2e" opacity="0.06"/>
+    <text x="45" y="18" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e" opacity="0.7">轻量级</text>
+  </g>
+
+  <!-- 标注2 - 中上 -->
+  <g transform="translate(350, 318)">
+    <rect x="0" y="0" width="90" height="26" rx="13" fill="#1a1a2e" opacity="0.06"/>
+    <text x="45" y="18" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e" opacity="0.7">中等规模</text>
+  </g>
+
+  <!-- 标注3 - 右上 -->
+  <g transform="translate(640, 340)">
+    <rect x="0" y="0" width="90" height="26" rx="13" fill="#1a1a2e" opacity="0.06"/>
+    <text x="45" y="18" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e" opacity="0.7">超大规模</text>
+  </g>
+
+  <!-- 标注4 - 底部左侧 -->
+  <g transform="translate(130, 390)">
+    <rect x="0" y="0" width="80" height="22" rx="11" fill="#409EFF" opacity="0.08"/>
+    <text x="40" y="15" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#409EFF">效率优先</text>
+  </g>
+
+  <!-- 标注5 - 底部右侧 -->
+  <g transform="translate(560, 390)">
+    <rect x="0" y="0" width="80" height="22" rx="11" fill="#409EFF" opacity="0.08"/>
+    <text x="40" y="15" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#409EFF">能力优先</text>
+  </g>
+
+  <!-- 标注6 - 中间下方 -->
+  <g transform="translate(355, 395)">
+    <rect x="0" y="0" width="90" height="22" rx="11" fill="#1a1a2e" opacity="0.05"/>
+    <text x="45" y="15" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e" opacity="0.6">权衡之选</text>
+  </g>
+
+  <!-- 底部装饰线 -->
+  <rect x="300" y="478" width="200" height="3" rx="1.5" fill="#409EFF" opacity="0.2"/>
+
+</svg>

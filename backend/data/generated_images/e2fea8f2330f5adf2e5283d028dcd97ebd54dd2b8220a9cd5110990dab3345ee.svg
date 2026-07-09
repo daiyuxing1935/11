@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#D0ECF9"/>
+    </linearGradient>
+    <linearGradient id="cardGradMyth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5F5F5"/>
+      <stop offset="100%" stop-color="#EAEAEA"/>
+    </linearGradient>
+    <linearGradient id="cardGradTruth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E6F0FF"/>
+      <stop offset="100%" stop-color="#D6E8FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">AI 智能体常见误解与真相</text>
+
+  <!-- 分隔线 -->
+  <line x1="400" y1="50" x2="400" y2="480" stroke="#B0D4F1" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- 左侧：误解列 -->
+  <text x="115" y="72" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">❌ 常见误解</text>
+
+  <!-- 误解卡片 1 -->
+  <rect x="20" y="88" width="190" height="60" rx="8" fill="url(#cardGradMyth)" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="115" y="108" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#888">误解 1</text>
+  <text x="115" y="128" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">简单聊天 + 插件</text>
+  <text x="115" y="143" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#999">= 智能体</text>
+  <circle cx="30" cy="96" r="8" fill="#FF6B6B" opacity="0.8"/>
+  <text x="30" y="100" text-anchor="middle" font-family="sans-serif" font-size="12" fill="white" font-weight="bold">✕</text>
+
+  <!-- 误解卡片 2 -->
+  <rect x="20" y="162" width="190" height="60" rx="8" fill="url(#cardGradMyth)" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="115" y="182" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#888">误解 2</text>
+  <text x="115" y="202" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">体积越大越智能</text>
+  <text x="115" y="217" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#999">巨型机器人</text>
+  <circle cx="30" cy="170" r="8" fill="#FF6B6B" opacity="0.8"/>
+  <text x="30" y="174" text-anchor="middle" font-family="sans-serif" font-size="12" fill="white" font-weight="bold">✕</text>
+
+  <!-- 误解卡片 3 -->
+  <rect x="20" y="236" width="190" height="60" rx="8" fill="url(#cardGradMyth)" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="115" y="256" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#888">误解 3</text>
+  <text x="115" y="276" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">完全自主运行</text>
+  <text x="115" y="291" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#999">无需人类监督</text>
+  <circle cx="30" cy="244" r="8" fill="#FF6B6B" opacity="0.8"/>
+  <text x="30" y="248" text-anchor="middle" font-family="sans-serif" font-size="12" fill="white" font-weight="bold">✕</text>
+
+  <!-- 误解卡片 4 -->
+  <rect x="20" y="310" width="190" height="60" rx="8" fill="url(#cardGradMyth)" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="115" y="330" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#888">误解 4</text>
+  <text x="115" y="350" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">大脑 > 身体</text>
+  <text x="115" y="365" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#999">重智能轻执行</text>
+  <circle cx="30" cy="318" r="8" fill="#FF6B6B" opacity="0.8"/>
+  <text x="30" y="322" text-anchor="middle" font-family="sans-serif" font-size="12" fill="white" font-weight="bold">✕</text>
+
+  <!-- 误解卡片 5 -->
+  <rect x="20" y="384" width="190" height="60" rx="8" fill="url(#cardGradMyth)" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="115" y="404" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#888">误解 5</text>
+  <text x="115" y="424" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">AI 取代传统软件</text>
+  <text x="115" y="439" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#999">完全替代</text>
+  <circle cx="30" cy="392" r="8" fill="#FF6B6B" opacity="0.8"/>
+  <text x="30" y="396" text-anchor="middle" font-family="sans-serif" font-size="12" fill="white" font-weight="bold">✕</text>
+
+  <!-- 右侧：真相列 -->
+  <text x="685" y="72" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">✅ 事实真相</text>
+
+  <!-- 真相卡片 1 -->
+  <rect x="590" y="88" width="190" height="60" rx="8" fill="url(#cardGradTruth)" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="685" y="108" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#409EFF">真相 1</text>
+  <text x="685" y="128" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#333">规划 + 记忆 + 工具</text>
+  <text x="685" y="143" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666">完整智能体</text>
+  <circle cx="600" cy="96" r="8" fill="#67C23A" opacity="0.9"/>
+  <text x="600" y="100" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">✓</text>
+
+  <!-- 真相卡片 2 -->
+  <rect x="590" y="162" width="190" height="60" rx="8" fill="url(#cardGradTruth)" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="685" y="182" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#409EFF">真相 2</text>
+  <text x="685" y="202" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#333">规模适中</text>
+  <text x="685" y="217" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666">匹配任务需求</text>
+  <circle cx="600" cy="170" r="8" fill="#67C23A" opacity="0.9"/>
+  <text x="600" y="174" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">✓</text>
+
+  <!-- 真相卡片 3 -->
+  <rect x="590" y="236" width="190" height="60" rx="8" fill="url(#cardGradTruth)" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="685" y="256" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#409EFF">真相 3</text>
+  <text x="685" y="276" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#333">人机协作</text>
+  <text x="685" y="291" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666">人类监督指导</text>
+  <circle cx="600" cy="244" r="8" fill="#67C23A" opacity="0.9"/>
+  <text x="600" y="248" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">✓</text>
+
+  <!-- 真相卡片 4 -->
+  <rect x="590" y="310" width="190" height="60" rx="8" fill="url(#cardGradTruth)" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="685" y="330" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#409EFF">真相 4</text>
+  <text x="685" y="350" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#333">智能与执行平衡</text>
+  <text x="685" y="365" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666">脑体协调发展</text>
+  <circle cx="600" cy="318" r="8" fill="#67C23A" opacity="0.9"/>
+  <text x="600" y="322" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">✓</text>
+
+  <!-- 真相卡片 5 -->
+  <rect x="590" y="384" width="190" height="60" rx="8" fill="url(#cardGradTruth)" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="685" y="404" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#409EFF">真相 5</text>
+  <text x="685" y="424" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#333">AI + 传统软件</text>
+  <text x="685" y="439" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666">协同共存</text>
+  <circle cx="600" cy="392" r="8" fill="#67C23A" opacity="0.9"/>
+  <text x="600" y="396" text-anchor="middle" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">✓</text>
+
+  <!-- 底部说明 -->
+  <text x="400" y="478" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#999">左：5 个常见误解 ｜ 右：5 个对应真相</text>
+
+</svg>

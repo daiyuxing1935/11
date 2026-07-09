@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="centerGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#6BB5FF"/>
+    </linearGradient>
+    <linearGradient id="nodeGrad1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E8F4FD"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="48" text-anchor="middle" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">ReAct 循环推理模型</text>
+
+  <!-- 三个节点之间的箭头（顺时针循环） -->
+  <!-- 箭头：Thought → Action（右上到右下） -->
+  <path d="M 530 155 Q 600 200 560 280" fill="none" stroke="#409EFF" stroke-width="2.5" stroke-dasharray="6,4"/>
+  <polygon points="558,275 548,278 560,285" fill="#409EFF"/>
+
+  <!-- 箭头：Action → Observation（右下到左下） -->
+  <path d="M 470 370 Q 400 420 330 370" fill="none" stroke="#409EFF" stroke-width="2.5" stroke-dasharray="6,4"/>
+  <polygon points="335,372 330,360 325,372" fill="#409EFF"/>
+
+  <!-- 箭头：Observation → Thought（左下到右上） -->
+  <path d="M 270 280 Q 200 200 270 155" fill="none" stroke="#409EFF" stroke-width="2.5" stroke-dasharray="6,4"/>
+  <polygon points="268,160 278,157 265,150" fill="#409EFF"/>
+
+  <!-- 节点1：Thought（思考）- 顶部 -->
+  <circle cx="400" cy="130" r="48" fill="url(#nodeGrad1)" stroke="#409EFF" stroke-width="2.5"/>
+  <!-- 大脑图标 -->
+  <g transform="translate(400,130)">
+    <path d="M-18,-8 C-22,-14 -16,-22 -8,-20 C-4,-24 4,-24 8,-20 C16,-22 22,-14 18,-8 C22,-2 20,8 14,12 C12,18 4,22 0,20 C-4,22 -12,18 -14,12 C-20,8 -22,-2 -18,-8Z" fill="none" stroke="#409EFF" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M-6,-14 C-4,-10 0,-8 0,-8 C0,-8 4,-10 6,-14" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M-10,-4 C-6,-2 0,0 0,0 C0,0 6,-2 10,-4" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M-8,4 C-4,6 0,7 0,7 C0,7 4,6 8,4" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <text x="400" y="198" text-anchor="middle" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">思考</text>
+
+  <!-- 节点2：Action（行动）- 右下 -->
+  <circle cx="490" cy="340" r="48" fill="url(#nodeGrad1)" stroke="#409EFF" stroke-width="2.5"/>
+  <!-- 齿轮/扳手图标 -->
+  <g transform="translate(490,340)">
+    <circle cx="0" cy="0" r="12" fill="none" stroke="#409EFF" stroke-width="2"/>
+    <circle cx="0" cy="0" r="5" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="-14" y1="-8" x2="-8" y2="-14" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+    <line x1="8" y1="-14" x2="14" y2="-8" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+    <line x1="14" y1="8" x2="8" y2="14" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-8" y1="14" x2="-14" y2="8" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-16" y1="0" x2="-10" y2="0" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+    <line x1="10" y1="0" x2="16" y2="0" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <text x="490" y="408" text-anchor="middle" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">行动</text>
+
+  <!-- 节点3：Observation（观察）- 左下 -->
+  <circle cx="310" cy="340" r="48" fill="url(#nodeGrad1)" stroke="#409EFF" stroke-width="2.5"/>
+  <!-- 眼睛图标 -->
+  <g transform="translate(310,340)">
+    <path d="M-20,0 C-16,-12 -8,-18 0,-18 C8,-18 16,-12 20,0 C16,12 8,18 0,18 C-8,18 -16,12 -20,0Z" fill="none" stroke="#409EFF" stroke-width="2"/>
+    <circle cx="0" cy="0" r="7" fill="none" stroke="#409EFF" stroke-width="2"/>
+    <circle cx="0" cy="0" r="3" fill="#409EFF" opacity="0.5"/>
+  </g>
+  <text x="310" y="408" text-anchor="middle" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">观察</text>
+
+  <!-- 中心机器人/AI图标 -->
+  <g transform="translate(400,250)">
+    <rect x="-28" y="-32" width="56" height="56" rx="14" fill="url(#centerGrad)" opacity="0.15"/>
+    <rect x="-24" y="-28" width="48" height="48" rx="12" fill="url(#centerGrad)" opacity="0.25"/>
+    <!-- 机器人头部 -->
+    <rect x="-14" y="-18" width="28" height="22" rx="6" fill="#409EFF" opacity="0.9"/>
+    <!-- 眼睛 -->
+    <circle cx="-6" cy="-8" r="3" fill="white"/>
+    <circle cx="6" cy="-8" r="3" fill="white"/>
+    <!-- 天线 -->
+    <line x1="0" y1="-18" x2="0" y2="-26" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="0" cy="-28" r="3" fill="#409EFF"/>
+    <!-- 嘴巴 -->
+    <rect x="-6" y="-1" width="12" height="2" rx="1" fill="white" opacity="0.8"/>
+    <!-- 身体 -->
+    <rect x="-12" y="6" width="24" height="16" rx="4" fill="#409EFF" opacity="0.7"/>
+    <!-- 手臂 -->
+    <rect x="-20" y="8" width="6" height="12" rx="3" fill="#409EFF" opacity="0.6"/>
+    <rect x="14" y="8" width="6" height="12" rx="3" fill="#409EFF" opacity="0.6"/>
+  </g>
+
+  <!-- 循环标注 -->
+  <!-- 顶部标注 -->
+  <rect x="340" y="68" width="120" height="28" rx="14" fill="#409EFF" opacity="0.12"/>
+  <text x="400" y="87" text-anchor="middle" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="13" fill="#409EFF" font-weight="bold">循环推理</text>
+
+  <!-- 右上标注 -->
+  <rect x="555" y="200" width="80" height="26" rx="13" fill="#409EFF" opacity="0.1"/>
+  <text x="595" y="218" text-anchor="middle" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="12" fill="#409EFF">推理驱动</text>
+
+  <!-- 底部标注 -->
+  <rect x="340" y="440" width="120" height="26" rx="13" fill="#409EFF" opacity="0.1"/>
+  <text x="400" y="458" text-anchor="middle" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="12" fill="#409EFF">持续迭代</text>
+
+  <!-- 左下标注 -->
+  <rect x="165" y="310" width="80" height="26" rx="13" fill="#409EFF" opacity="0.1"/>
+  <text x="205" y="328" text-anchor="middle" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="12" fill="#409EFF">信息收集</text>
+
+  <!-- 底部说明文字 -->
+  <text x="400" y="485" text-anchor="middle" font-family="system-ui, 'Microsoft YaHei', sans-serif" font-size="12" fill="#1a1a2e" opacity="0.5">思考 → 行动 → 观察 → 循环</text>
+</svg>
