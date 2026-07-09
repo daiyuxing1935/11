@@ -1,0 +1,204 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-size="18" font-weight="bold" fill="#1a1a2e">投资决策冲突解决案例</text>
+
+  <!-- ====== 三位分析师 ====== -->
+  <!-- 技术分析师 -->
+  <g transform="translate(60, 70)">
+    <rect x="0" y="0" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="0" y="0" width="200" height="28" rx="10" fill="#409EFF"/>
+    <rect x="0" y="18" width="200" height="10" fill="#409EFF"/>
+    <text x="100" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">技术分析师</text>
+    <!-- 图表图标 -->
+    <g transform="translate(20, 50)">
+      <rect x="0" y="15" width="25" height="20" rx="2" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+      <polyline points="3,32 8,22 13,28 18,18 22,25" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="30" y="28" font-size="11" fill="#1a1a2e">📈 买入</text>
+    </g>
+    <text x="100" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="#409EFF">建议：买入</text>
+  </g>
+
+  <!-- 基本面分析师 -->
+  <g transform="translate(300, 70)">
+    <rect x="0" y="0" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#E6A23C" stroke-width="1.5"/>
+    <rect x="0" y="0" width="200" height="28" rx="10" fill="#E6A23C"/>
+    <rect x="0" y="18" width="200" height="10" fill="#E6A23C"/>
+    <text x="100" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">基本面分析师</text>
+    <!-- 表格图标 -->
+    <g transform="translate(20, 50)">
+      <rect x="0" y="0" width="25" height="25" rx="2" fill="none" stroke="#E6A23C" stroke-width="1.5"/>
+      <line x1="0" y1="8" x2="25" y2="8" stroke="#E6A23C" stroke-width="1"/>
+      <line x1="0" y1="16" x2="25" y2="16" stroke="#E6A23C" stroke-width="1"/>
+      <line x1="12" y1="0" x2="12" y2="25" stroke="#E6A23C" stroke-width="1"/>
+      <text x="30" y="17" font-size="11" fill="#1a1a2e">📊 持有</text>
+    </g>
+    <text x="100" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="#E6A23C">建议：持有</text>
+  </g>
+
+  <!-- 新闻情绪分析师 -->
+  <g transform="translate(540, 70)">
+    <rect x="0" y="0" width="200" height="110" rx="10" fill="url(#cardGrad)" stroke="#F56C6C" stroke-width="1.5"/>
+    <rect x="0" y="0" width="200" height="28" rx="10" fill="#F56C6C"/>
+    <rect x="0" y="18" width="200" height="10" fill="#F56C6C"/>
+    <text x="100" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">新闻情绪分析师</text>
+    <!-- 报纸图标 -->
+    <g transform="translate(18, 48)">
+      <rect x="0" y="0" width="22" height="22" rx="1" fill="none" stroke="#F56C6C" stroke-width="1.5"/>
+      <line x1="3" y1="5" x2="19" y2="5" stroke="#F56C6C" stroke-width="1"/>
+      <line x1="3" y1="10" x2="19" y2="10" stroke="#F56C6C" stroke-width="1"/>
+      <line x1="3" y1="15" x2="14" y2="15" stroke="#F56C6C" stroke-width="1"/>
+      <text x="28" y="15" font-size="11" fill="#1a1a2e">📰 卖出</text>
+    </g>
+    <text x="100" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="#F56C6C">建议：卖出</text>
+  </g>
+
+  <!-- ====== 流程步骤 ====== -->
+  <!-- 步骤1：收集详细分析 -->
+  <g transform="translate(60, 220)">
+    <rect x="0" y="0" width="160" height="120" rx="10" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="0" y="0" width="160" height="26" rx="10" fill="#409EFF"/>
+    <rect x="0" y="16" width="160" height="10" fill="#409EFF"/>
+    <text x="80" y="19" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">步骤1</text>
+    <text x="80" y="42" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a1a2e">收集详细分析</text>
+    <!-- 三张分析卡片 -->
+    <rect x="12" y="52" width="40" height="20" rx="3" fill="#E8F4FD" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="32" y="65" text-anchor="middle" font-size="9" fill="#409EFF">技术</text>
+    <rect x="60" y="52" width="40" height="20" rx="3" fill="#FDF6EC" stroke="#E6A23C" stroke-width="0.8"/>
+    <text x="80" y="65" text-anchor="middle" font-size="9" fill="#E6A23C">基本面</text>
+    <rect x="108" y="52" width="40" height="20" rx="3" fill="#FEF0F0" stroke="#F56C6C" stroke-width="0.8"/>
+    <text x="128" y="65" text-anchor="middle" font-size="9" fill="#F56C6C">新闻</text>
+    <text x="80" y="98" text-anchor="middle" font-size="11" fill="#666">三份独立报告</text>
+  </g>
+
+  <!-- 箭头1 -->
+  <g transform="translate(225, 275)">
+    <polygon points="0,0 20,8 0,16" fill="#409EFF"/>
+  </g>
+
+  <!-- 步骤2：加权投票 -->
+  <g transform="translate(250, 220)">
+    <rect x="0" y="0" width="160" height="120" rx="10" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="0" y="0" width="160" height="26" rx="10" fill="#409EFF"/>
+    <rect x="0" y="16" width="160" height="10" fill="#409EFF"/>
+    <text x="80" y="19" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">步骤2</text>
+    <text x="80" y="42" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a1a2e">加权投票</text>
+    <text x="80" y="62" text-anchor="middle" font-size="11" fill="#409EFF">技术：1.0</text>
+    <text x="80" y="80" text-anchor="middle" font-size="11" fill="#E6A23C">基本面：1.5</text>
+    <text x="80" y="98" text-anchor="middle" font-size="11" fill="#F56C6C">新闻：0.8</text>
+  </g>
+
+  <!-- 箭头2 -->
+  <g transform="translate(415, 275)">
+    <polygon points="0,0 20,8 0,16" fill="#409EFF"/>
+  </g>
+
+  <!-- 步骤3：高度分歧时辩论 -->
+  <g transform="translate(440, 220)">
+    <rect x="0" y="0" width="160" height="120" rx="10" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="0" y="0" width="160" height="26" rx="10" fill="#409EFF"/>
+    <rect x="0" y="16" width="160" height="10" fill="#409EFF"/>
+    <text x="80" y="19" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">步骤3</text>
+    <text x="80" y="42" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a1a2e">高度分歧时辩论</text>
+    <!-- 两个辩论小人 -->
+    <g transform="translate(20, 55)">
+      <circle cx="10" cy="8" r="6" fill="#409EFF"/>
+      <rect x="4" y="16" width="12" height="14" rx="3" fill="#409EFF"/>
+      <text x="10" y="38" text-anchor="middle" font-size="9" fill="#409EFF">技术</text>
+    </g>
+    <g transform="translate(110, 55)">
+      <circle cx="10" cy="8" r="6" fill="#F56C6C"/>
+      <rect x="4" y="16" width="12" height="14" rx="3" fill="#F56C6C"/>
+      <text x="10" y="38" text-anchor="middle" font-size="9" fill="#F56C6C">新闻</text>
+    </g>
+    <text x="80" y="105" text-anchor="middle" font-size="10" fill="#666">共识度 &lt; 0.6</text>
+  </g>
+
+  <!-- 箭头3 -->
+  <g transform="translate(605, 275)">
+    <polygon points="0,0 20,8 0,16" fill="#409EFF"/>
+  </g>
+
+  <!-- 步骤4：仍不确定则人工审核 -->
+  <g transform="translate(630, 220)">
+    <rect x="0" y="0" width="140" height="120" rx="10" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="0" y="0" width="140" height="26" rx="10" fill="#409EFF"/>
+    <rect x="0" y="16" width="140" height="10" fill="#409EFF"/>
+    <text x="70" y="19" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">步骤4</text>
+    <text x="70" y="42" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a1a2e">人工审核</text>
+    <!-- 人形图标 -->
+    <g transform="translate(50, 55)">
+      <circle cx="20" cy="10" r="8" fill="#409EFF"/>
+      <rect x="8" y="20" width="24" height="28" rx="5" fill="#409EFF"/>
+      <text x="20" y="62" text-anchor="middle" font-size="9" fill="#fff">👤</text>
+    </g>
+    <text x="70" y="105" text-anchor="middle" font-size="10" fill="#666">最终决策</text>
+  </g>
+
+  <!-- ====== 标注 ====== -->
+  <!-- 标注1：三位分析师 -->
+  <g>
+    <line x1="60" y1="185" x2="60" y2="200" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="60" y="213" text-anchor="middle" font-size="11" fill="#409EFF">三位分析师</text>
+  </g>
+
+  <!-- 标注2：独立分析 -->
+  <g>
+    <line x1="140" y1="185" x2="140" y2="200" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="140" y="213" text-anchor="middle" font-size="11" fill="#409EFF">独立分析</text>
+  </g>
+
+  <!-- 标注3：加权机制 -->
+  <g>
+    <line x1="330" y1="345" x2="330" y2="360" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="330" y="375" text-anchor="middle" font-size="11" fill="#409EFF">加权机制</text>
+  </g>
+
+  <!-- 标注4：共识阈值 -->
+  <g>
+    <line x1="520" y1="345" x2="520" y2="360" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="520" y="375" text-anchor="middle" font-size="11" fill="#409EFF">共识阈值</text>
+  </g>
+
+  <!-- 标注5：人工干预 -->
+  <g>
+    <line x1="700" y1="345" x2="700" y2="360" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="700" y="375" text-anchor="middle" font-size="11" fill="#409EFF">人工干预</text>
+  </g>
+
+  <!-- 标注6：决策流程 -->
+  <g>
+    <line x1="400" y1="185" x2="400" y2="200" stroke="#409EFF" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="400" y="213" text-anchor="middle" font-size="11" fill="#409EFF">决策流程</text>
+  </g>
+
+  <!-- ====== 底部说明 ====== -->
+  <text x="400" y="430" text-anchor="middle" font-size="12" fill="#999">案例研究：当技术分析、基本面分析和新闻情绪分析给出不同建议时的解决框架</text>
+
+  <!-- 图例 -->
+  <g transform="translate(200, 455)">
+    <rect x="0" y="0" width="400" height="30" rx="15" fill="#fff" stroke="#E0E0E0" stroke-width="0.8"/>
+    <circle cx="30" cy="15" r="5" fill="#409EFF"/>
+    <text x="40" y="19" font-size="10" fill="#666">买入</text>
+    <circle cx="110" cy="15" r="5" fill="#E6A23C"/>
+    <text x="120" y="19" font-size="10" fill="#666">持有</text>
+    <circle cx="190" cy="15" r="5" fill="#F56C6C"/>
+    <text x="200" y="19" font-size="10" fill="#666">卖出</text>
+    <circle cx="270" cy="15" r="5" fill="#409EFF" opacity="0.4"/>
+    <text x="280" y="19" font-size="10" fill="#666">共识 &lt; 0.6</text>
+    <text x="370" y="19" font-size="10" fill="#999">| 权重</text>
+  </g>
+</svg>

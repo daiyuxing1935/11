@@ -4,182 +4,218 @@
       <stop offset="0%" stop-color="#f0f7ff"/>
       <stop offset="100%" stop-color="#e8f2fb"/>
     </linearGradient>
-    <linearGradient id="boxGrad1" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#409EFF"/>
-      <stop offset="100%" stop-color="#3a8ee6"/>
+      <stop offset="100%" stop-color="#2d7fd3"/>
     </linearGradient>
-    <linearGradient id="boxGrad2" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#5aabff"/>
-      <stop offset="100%" stop-color="#409EFF"/>
-    </linearGradient>
-    <linearGradient id="boxGrad3" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1a1a2e"/>
-      <stop offset="100%" stop-color="#2d2d5e"/>
+    <linearGradient id="brainGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#5aabf5"/>
     </linearGradient>
   </defs>
 
   <!-- 背景 -->
   <rect width="800" height="500" fill="url(#bgGrad)"/>
 
-  <!-- 标题 -->
-  <text x="400" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">从传统程序到AI智能体</text>
+  <!-- 顶部标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">程序 → 知识 → 智能体的演进</text>
 
-  <!-- 左侧面板 - 传统程序（传送带机器） -->
-  <rect x="40" y="70" width="220" height="240" rx="12" fill="white" stroke="#409EFF" stroke-width="2" opacity="0.95"/>
-  
-  <!-- 传送带主体 -->
-  <rect x="65" y="130" width="170" height="30" rx="4" fill="#409EFF" opacity="0.3"/>
-  <rect x="65" y="130" width="170" height="6" rx="3" fill="#409EFF"/>
-  
-  <!-- 齿轮 -->
-  <circle cx="80" cy="145" r="12" fill="none" stroke="#409EFF" stroke-width="2"/>
-  <circle cx="80" cy="145" r="4" fill="#409EFF"/>
-  <line x1="72" y1="145" x2="88" y2="145" stroke="#409EFF" stroke-width="2"/>
-  <line x1="80" y1="137" x2="80" y2="153" stroke="#409EFF" stroke-width="2"/>
-  
-  <circle cx="220" cy="145" r="12" fill="none" stroke="#409EFF" stroke-width="2"/>
-  <circle cx="220" cy="145" r="4" fill="#409EFF"/>
-  <line x1="212" y1="145" x2="228" y2="145" stroke="#409EFF" stroke-width="2"/>
-  <line x1="220" y1="137" x2="220" y2="153" stroke="#409EFF" stroke-width="2"/>
-  
-  <!-- 传送带上的方块 -->
-  <rect x="100" y="135" width="16" height="12" rx="2" fill="#409EFF" opacity="0.7"/>
-  <rect x="125" y="135" width="16" height="12" rx="2" fill="#409EFF" opacity="0.5"/>
-  <rect x="150" y="135" width="16" height="12" rx="2" fill="#409EFF" opacity="0.7"/>
-  <rect x="175" y="135" width="16" height="12" rx="2" fill="#409EFF" opacity="0.5"/>
-  
-  <!-- 固定路径箭头 -->
-  <path d="M65 180 L100 180 L100 170 L120 185 L100 200 L100 190 L65 190 Z" fill="#409EFF" opacity="0.4"/>
-  <path d="M145 180 L180 180 L180 170 L200 185 L180 200 L180 190 L145 190 Z" fill="#409EFF" opacity="0.4"/>
-  
-  <!-- 标签 -->
-  <text x="150" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">传统程序</text>
-  <text x="150" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#409EFF">固定规则</text>
-  <text x="150" y="245" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#409EFF">预设路径</text>
-  <text x="150" y="265" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#409EFF">机械执行</text>
+  <!-- ===== 左侧面板：传统程序 ===== -->
+  <g transform="translate(40, 65)">
+    <!-- 面板背景 -->
+    <rect x="0" y="0" width="220" height="280" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5" opacity="0.95"/>
+    <rect x="0" y="0" width="220" height="280" rx="12" fill="#f5f9ff" opacity="0.5"/>
 
-  <!-- 中间面板 - LLM（大脑图书馆） -->
-  <rect x="290" y="70" width="220" height="240" rx="12" fill="white" stroke="#5aabff" stroke-width="2" opacity="0.95"/>
-  
-  <!-- 大脑形状 -->
-  <ellipse cx="400" cy="155" rx="50" ry="40" fill="#5aabff" opacity="0.15"/>
-  <path d="M360 145 Q370 120 390 130 Q395 115 410 125 Q420 110 435 130 Q450 120 445 145 Q455 155 445 165 Q450 180 435 185 Q420 195 410 185 Q395 195 385 185 Q365 180 370 165 Q360 155 360 145 Z" fill="#5aabff" opacity="0.25" stroke="#5aabff" stroke-width="1.5"/>
-  
-  <!-- 书架线条 -->
-  <line x1="330" y1="165" x2="470" y2="165" stroke="#5aabff" stroke-width="1" opacity="0.4"/>
-  <line x1="330" y1="180" x2="470" y2="180" stroke="#5aabff" stroke-width="1" opacity="0.4"/>
-  
-  <!-- 书籍 -->
-  <rect x="335" y="140" width="8" height="22" rx="1" fill="#409EFF" opacity="0.7"/>
-  <rect x="346" y="138" width="7" height="24" rx="1" fill="#5aabff" opacity="0.6"/>
-  <rect x="356" y="142" width="9" height="20" rx="1" fill="#409EFF" opacity="0.5"/>
-  <rect x="368" y="139" width="7" height="23" rx="1" fill="#5aabff" opacity="0.7"/>
-  <rect x="420" y="140" width="8" height="22" rx="1" fill="#409EFF" opacity="0.6"/>
-  <rect x="431" y="138" width="7" height="24" rx="1" fill="#5aabff" opacity="0.5"/>
-  <rect x="441" y="142" width="9" height="20" rx="1" fill="#409EFF" opacity="0.7"/>
-  <rect x="453" y="139" width="7" height="23" rx="1" fill="#5aabff" opacity="0.6"/>
-  
-  <!-- 知识光芒 -->
-  <circle cx="400" cy="108" r="4" fill="#5aabff" opacity="0.5"/>
-  <circle cx="400" cy="108" r="8" fill="#5aabff" opacity="0.2"/>
-  <circle cx="370" cy="115" r="3" fill="#5aabff" opacity="0.4"/>
-  <circle cx="430" cy="115" r="3" fill="#5aabff" opacity="0.4"/>
-  <circle cx="355" cy="130" r="2" fill="#5aabff" opacity="0.3"/>
-  <circle cx="445" cy="130" r="2" fill="#5aabff" opacity="0.3"/>
-  
-  <!-- 无手标志 -->
-  <circle cx="400" cy="200" r="14" fill="none" stroke="#5aabff" stroke-width="1.5" opacity="0.5"/>
-  <line x1="392" y1="192" x2="408" y2="208" stroke="#5aabff" stroke-width="1.5" opacity="0.5"/>
-  
-  <!-- 标签 -->
-  <text x="400" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">大语言模型</text>
-  <text x="400" y="235" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5aabff">海量知识</text>
-  <text x="400" y="255" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5aabff">理解推理</text>
-  <text x="400" y="275" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#5aabff">无法行动</text>
+    <!-- 标题 -->
+    <rect x="10" y="10" width="200" height="36" rx="18" fill="url(#blueGrad)"/>
+    <text x="110" y="33" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="15" fill="white" font-weight="bold">传统程序</text>
 
-  <!-- 右侧面板 - AI智能体（机器人厨师） -->
-  <rect x="540" y="70" width="220" height="240" rx="12" fill="white" stroke="#1a1a2e" stroke-width="2" opacity="0.95"/>
-  
-  <!-- 机器人厨师身体 -->
-  <rect x="605" y="150" width="50" height="55" rx="8" fill="#1a1a2e" opacity="0.15"/>
-  <rect x="610" y="155" width="40" height="45" rx="6" fill="#1a1a2e" opacity="0.25"/>
-  
-  <!-- 机器人头 -->
-  <rect x="610" y="118" width="40" height="32" rx="6" fill="#1a1a2e" opacity="0.2"/>
-  <rect x="615" y="123" width="12" height="8" rx="3" fill="#409EFF" opacity="0.7"/>
-  <rect x="633" y="123" width="12" height="8" rx="3" fill="#409EFF" opacity="0.7"/>
-  <rect x="622" y="136" width="16" height="4" rx="2" fill="#1a1a2e" opacity="0.3"/>
-  
-  <!-- 厨师帽 -->
-  <rect x="612" y="108" width="36" height="12" rx="4" fill="white" stroke="#1a1a2e" stroke-width="1" opacity="0.8"/>
-  <rect x="618" y="98" width="24" height="12" rx="6" fill="white" stroke="#1a1a2e" stroke-width="1" opacity="0.8"/>
-  
-  <!-- 手臂 -->
-  <line x1="608" y1="165" x2="585" y2="145" stroke="#1a1a2e" stroke-width="3" stroke-linecap="round"/>
-  <line x1="652" y1="165" x2="675" y2="145" stroke="#1a1a2e" stroke-width="3" stroke-linecap="round"/>
-  
-  <!-- 锅 -->
-  <ellipse cx="585" cy="148" rx="18" ry="6" fill="#409EFF" opacity="0.4"/>
-  <rect x="567" y="140" width="36" height="8" rx="3" fill="#409EFF" opacity="0.3"/>
-  
-  <!-- 铲子 -->
-  <line x1="675" y1="145" x2="690" y2="155" stroke="#1a1a2e" stroke-width="2"/>
-  <ellipse cx="692" cy="158" rx="6" ry="4" fill="#409EFF" opacity="0.5"/>
-  
-  <!-- 火焰 -->
-  <path d="M570 155 Q575 148 580 155 Q583 150 588 155" fill="none" stroke="#409EFF" stroke-width="1.5" opacity="0.6"/>
-  
-  <!-- 食材 -->
-  <circle cx="660" cy="185" r="5" fill="#409EFF" opacity="0.4"/>
-  <circle cx="672" cy="188" r="4" fill="#5aabff" opacity="0.3"/>
-  <rect x="640" y="183" width="8" height="6" rx="2" fill="#409EFF" opacity="0.3"/>
-  
-  <!-- 食谱 -->
-  <rect x="580" y="115" width="22" height="18" rx="2" fill="white" stroke="#409EFF" stroke-width="1"/>
-  <line x1="584" y1="120" x2="598" y2="120" stroke="#409EFF" stroke-width="1" opacity="0.6"/>
-  <line x1="584" y1="125" x2="596" y2="125" stroke="#409EFF" stroke-width="1" opacity="0.6"/>
-  <line x1="584" y1="130" x2="594" y2="130" stroke="#409EFF" stroke-width="1" opacity="0.6"/>
-  
-  <!-- 标签 -->
-  <text x="650" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">AI智能体</text>
-  <text x="650" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">主动行动</text>
-  <text x="650" y="245" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">使用工具</text>
-  <text x="650" y="265" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">自主决策</text>
+    <!-- 传送带机器 -->
+    <rect x="25" y="65" width="170" height="40" rx="6" fill="#e0eaf5" stroke="#409EFF" stroke-width="1"/>
+    <text x="110" y="90" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="13" fill="#1a1a2e">传送带</text>
 
-  <!-- 桥梁对比 - 底部 -->
-  <rect x="80" y="340" width="640" height="130" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5" opacity="0.9"/>
-  
-  <!-- 三阶对比 -->
-  <!-- 第一阶：工具 -->
-  <rect x="110" y="365" width="160" height="50" rx="8" fill="url(#boxGrad1)"/>
-  <text x="190" y="395" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white">工具</text>
-  
-  <!-- 箭头 -->
-  <path d="M280 390 L310 390" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
-  <polygon points="308,384 318,390 308,396" fill="#409EFF"/>
-  
-  <!-- 第二阶：知识 -->
-  <rect x="320" y="365" width="160" height="50" rx="8" fill="url(#boxGrad2)"/>
-  <text x="400" y="395" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white">知识</text>
-  
-  <!-- 箭头 -->
-  <path d="M490 390 L520 390" stroke="#409EFF" stroke-width="2"/>
-  <polygon points="518,384 528,390 518,396" fill="#409EFF"/>
-  
-  <!-- 第三阶：工人 -->
-  <rect x="530" y="365" width="160" height="50" rx="8" fill="url(#boxGrad3)"/>
-  <text x="610" y="395" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white">工人</text>
-  
-  <!-- 底部说明文字 -->
-  <text x="400" y="445" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" opacity="0.8">演变：从被动工具 → 静态知识 → 主动工作者</text>
-  
-  <!-- 阶段标注 -->
-  <text x="190" y="435" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF">传送带机器</text>
-  <text x="400" y="435" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#5aabff">大脑图书馆</text>
-  <text x="610" y="435" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">机器人厨师</text>
+    <!-- 齿轮 -->
+    <circle cx="55" cy="130" r="18" fill="none" stroke="#409EFF" stroke-width="2.5"/>
+    <circle cx="55" cy="130" r="6" fill="#409EFF"/>
+    <line x1="45" y1="120" x2="65" y2="140" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="65" y1="120" x2="45" y2="140" stroke="#409EFF" stroke-width="1.5"/>
 
-  <!-- 连接线从三个面板到桥梁 -->
-  <line x1="150" y1="310" x2="190" y2="365" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
-  <line x1="400" y1="310" x2="400" y2="365" stroke="#5aabff" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
-  <line x1="650" y1="310" x2="610" y2="365" stroke="#1a1a2e" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+    <circle cx="110" cy="130" r="18" fill="none" stroke="#409EFF" stroke-width="2.5"/>
+    <circle cx="110" cy="130" r="6" fill="#409EFF"/>
+    <line x1="100" y1="120" x2="120" y2="140" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="120" y1="120" x2="100" y2="140" stroke="#409EFF" stroke-width="1.5"/>
+
+    <circle cx="165" cy="130" r="18" fill="none" stroke="#409EFF" stroke-width="2.5"/>
+    <circle cx="165" cy="130" r="6" fill="#409EFF"/>
+    <line x1="155" y1="120" x2="175" y2="140" stroke="#409EFF" stroke-width="1.5"/>
+    <line x1="175" y1="120" x2="155" y2="140" stroke="#409EFF" stroke-width="1.5"/>
+
+    <!-- 固定路径箭头 -->
+    <path d="M30 170 L190 170" stroke="#409EFF" stroke-width="2" stroke-dasharray="6,4"/>
+    <polygon points="190,165 198,170 190,175" fill="#409EFF"/>
+
+    <!-- 标注 -->
+    <rect x="25" y="195" width="170" height="32" rx="6" fill="#e8f2fb" stroke="#409EFF" stroke-width="1"/>
+    <text x="110" y="215" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="13" fill="#1a1a2e">固定规则 / 无弹性</text>
+
+    <!-- 底部小标签 -->
+    <rect x="25" y="240" width="170" height="28" rx="14" fill="#409EFF" opacity="0.15"/>
+    <text x="110" y="258" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="12" fill="#409EFF">工具</text>
+  </g>
+
+  <!-- ===== 中间面板：LLM ===== -->
+  <g transform="translate(290, 65)">
+    <!-- 面板背景 -->
+    <rect x="0" y="0" width="220" height="280" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5" opacity="0.95"/>
+    <rect x="0" y="0" width="220" height="280" rx="12" fill="#f5f9ff" opacity="0.5"/>
+
+    <!-- 标题 -->
+    <rect x="10" y="10" width="200" height="36" rx="18" fill="url(#brainGrad)"/>
+    <text x="110" y="33" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="15" fill="white" font-weight="bold">大语言模型</text>
+
+    <!-- 大脑形状的图书馆 -->
+    <!-- 大脑轮廓 -->
+    <path d="M110 55 C80 55, 55 70, 50 95 C45 115, 50 130, 60 140 C55 150, 55 165, 65 175 C75 185, 90 185, 100 180 C105 190, 115 195, 125 190 C135 195, 145 190, 150 180 C160 185, 175 185, 185 175 C195 165, 195 150, 190 140 C200 130, 205 115, 200 95 C195 70, 170 55, 140 55 Z" fill="none" stroke="#409EFF" stroke-width="2"/>
+
+    <!-- 书架线条 -->
+    <line x1="72" y1="95" x2="148" y2="95" stroke="#409EFF" stroke-width="1.2" opacity="0.6"/>
+    <line x1="68" y1="115" x2="152" y2="115" stroke="#409EFF" stroke-width="1.2" opacity="0.6"/>
+    <line x1="70" y1="135" x2="150" y2="135" stroke="#409EFF" stroke-width="1.2" opacity="0.6"/>
+    <line x1="75" y1="155" x2="145" y2="155" stroke="#409EFF" stroke-width="1.2" opacity="0.6"/>
+
+    <!-- 书籍 -->
+    <rect x="78" y="75" width="8" height="18" rx="1" fill="#409EFF" opacity="0.7"/>
+    <rect x="89" y="72" width="7" height="21" rx="1" fill="#2d7fd3" opacity="0.7"/>
+    <rect x="100" y="76" width="9" height="17" rx="1" fill="#409EFF" opacity="0.5"/>
+    <rect x="115" y="73" width="6" height="20" rx="1" fill="#2d7fd3" opacity="0.6"/>
+    <rect x="126" y="77" width="8" height="16" rx="1" fill="#409EFF" opacity="0.7"/>
+    <rect x="138" y="74" width="7" height="19" rx="1" fill="#2d7fd3" opacity="0.5"/>
+
+    <rect x="80" y="97" width="7" height="16" rx="1" fill="#2d7fd3" opacity="0.6"/>
+    <rect x="92" y="99" width="9" height="14" rx="1" fill="#409EFF" opacity="0.5"/>
+    <rect x="108" y="96" width="6" height="17" rx="1" fill="#409EFF" opacity="0.7"/>
+    <rect x="120" y="100" width="8" height="13" rx="1" fill="#2d7fd3" opacity="0.6"/>
+    <rect x="133" y="97" width="7" height="16" rx="1" fill="#409EFF" opacity="0.5"/>
+
+    <rect x="82" y="117" width="8" height="16" rx="1" fill="#409EFF" opacity="0.6"/>
+    <rect x="95" y="119" width="7" height="14" rx="1" fill="#2d7fd3" opacity="0.5"/>
+    <rect x="110" y="116" width="9" height="17" rx="1" fill="#409EFF" opacity="0.7"/>
+    <rect x="125" y="120" width="6" height="13" rx="1" fill="#2d7fd3" opacity="0.6"/>
+
+    <rect x="84" y="137" width="7" height="16" rx="1" fill="#2d7fd3" opacity="0.5"/>
+    <rect x="98" y="139" width="8" height="14" rx="1" fill="#409EFF" opacity="0.6"/>
+    <rect x="113" y="136" width="7" height="17" rx="1" fill="#2d7fd3" opacity="0.7"/>
+    <rect x="127" y="140" width="9" height="13" rx="1" fill="#409EFF" opacity="0.5"/>
+
+    <!-- 知识光芒 -->
+    <line x1="160" y1="80" x2="175" y2="70" stroke="#409EFF" stroke-width="1.5" opacity="0.4"/>
+    <line x1="165" y1="100" x2="182" y2="95" stroke="#409EFF" stroke-width="1.5" opacity="0.4"/>
+    <line x1="162" y1="120" x2="178" y2="118" stroke="#409EFF" stroke-width="1.5" opacity="0.4"/>
+    <line x1="160" y1="140" x2="176" y2="142" stroke="#409EFF" stroke-width="1.5" opacity="0.4"/>
+
+    <!-- 标注 -->
+    <rect x="25" y="210" width="170" height="32" rx="6" fill="#e8f2fb" stroke="#409EFF" stroke-width="1"/>
+    <text x="110" y="230" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="13" fill="#1a1a2e">海量知识 / 无行动力</text>
+
+    <!-- 底部小标签 -->
+    <rect x="25" y="255" width="170" height="28" rx="14" fill="#409EFF" opacity="0.15"/>
+    <text x="110" y="273" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="12" fill="#409EFF">知识</text>
+  </g>
+
+  <!-- ===== 右侧面板：AI Agent ===== -->
+  <g transform="translate(540, 65)">
+    <!-- 面板背景 -->
+    <rect x="0" y="0" width="220" height="280" rx="12" fill="white" stroke="#409EFF" stroke-width="1.5" opacity="0.95"/>
+    <rect x="0" y="0" width="220" height="280" rx="12" fill="#f5f9ff" opacity="0.5"/>
+
+    <!-- 标题 -->
+    <rect x="10" y="10" width="200" height="36" rx="18" fill="#1a1a2e"/>
+    <text x="110" y="33" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="15" fill="white" font-weight="bold">AI 智能体</text>
+
+    <!-- 机器人厨师 -->
+    <!-- 身体 -->
+    <rect x="85" y="100" width="50" height="45" rx="8" fill="#e0eaf5" stroke="#409EFF" stroke-width="1.5"/>
+
+    <!-- 头 -->
+    <rect x="90" y="68" width="40" height="32" rx="10" fill="#409EFF"/>
+    <!-- 眼睛 -->
+    <circle cx="103" cy="82" r="4" fill="white"/>
+    <circle cx="117" cy="82" r="4" fill="white"/>
+    <!-- 天线 -->
+    <line x1="110" y1="68" x2="110" y2="55" stroke="#409EFF" stroke-width="1.5"/>
+    <circle cx="110" cy="52" r="3" fill="#409EFF"/>
+
+    <!-- 围裙 -->
+    <path d="M90 130 L85 145 L135 145 L130 130" fill="white" stroke="#409EFF" stroke-width="1"/>
+
+    <!-- 左手臂 - 拿锅铲 -->
+    <line x1="85" y1="110" x2="60" y2="125" stroke="#409EFF" stroke-width="2.5"/>
+    <rect x="52" y="122" width="14" height="6" rx="2" fill="#2d7fd3" transform="rotate(-15,59,125)"/>
+
+    <!-- 右手臂 - 拿勺子 -->
+    <line x1="135" y1="110" x2="155" y2="120" stroke="#409EFF" stroke-width="2.5"/>
+    <circle cx="160" cy="123" r="6" fill="#2d7fd3"/>
+
+    <!-- 炉灶 -->
+    <rect x="65" y="148" width="90" height="20" rx="4" fill="#d0dae8" stroke="#409EFF" stroke-width="1"/>
+    <circle cx="80" cy="158" r="4" fill="#409EFF" opacity="0.6"/>
+    <circle cx="100" cy="158" r="4" fill="#409EFF" opacity="0.6"/>
+    <circle cx="120" cy="158" r="4" fill="#409EFF" opacity="0.6"/>
+    <circle cx="140" cy="158" r="4" fill="#409EFF" opacity="0.6"/>
+
+    <!-- 火焰 -->
+    <path d="M95 148 Q98 140, 100 148 Q102 140, 105 148" fill="#ff6b35" opacity="0.7"/>
+    <path d="M115 148 Q118 138, 120 148 Q122 138, 125 148" fill="#ff6b35" opacity="0.7"/>
+
+    <!-- 锅 -->
+    <rect x="92" y="140" width="36" height="10" rx="3" fill="#b0c4de" stroke="#409EFF" stroke-width="1"/>
+
+    <!-- 食材 -->
+    <circle cx="62" cy="145" r="5" fill="#409EFF" opacity="0.5"/>
+    <rect x="148" y="142" width="8" height="8" rx="2" fill="#2d7fd3" opacity="0.5"/>
+    <circle cx="70" cy="152" r="4" fill="#409EFF" opacity="0.4"/>
+
+    <!-- 菜谱 -->
+    <rect x="155" y="88" width="18" height="24" rx="2" fill="white" stroke="#409EFF" stroke-width="1"/>
+    <line x1="158" y1="94" x2="170" y2="94" stroke="#409EFF" stroke-width="0.8"/>
+    <line x1="158" y1="98" x2="170" y2="98" stroke="#409EFF" stroke-width="0.8"/>
+    <line x1="158" y1="102" x2="168" y2="102" stroke="#409EFF" stroke-width="0.8"/>
+
+    <!-- 标注 -->
+    <rect x="25" y="210" width="170" height="32" rx="6" fill="#e8f2fb" stroke="#409EFF" stroke-width="1"/>
+    <text x="110" y="230" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="13" fill="#1a1a2e">主动执行 / 使用工具</text>
+
+    <!-- 底部小标签 -->
+    <rect x="25" y="255" width="170" height="28" rx="14" fill="#409EFF" opacity="0.15"/>
+    <text x="110" y="273" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="12" fill="#409EFF">智能体</text>
+  </g>
+
+  <!-- ===== 底部桥接隐喻 ===== -->
+  <g transform="translate(0, 370)">
+    <!-- 桥接线 -->
+    <line x1="150" y1="20" x2="260" y2="20" stroke="#409EFF" stroke-width="2" stroke-dasharray="6,3"/>
+    <line x1="370" y1="20" x2="480" y2="20" stroke="#409EFF" stroke-width="2" stroke-dasharray="6,3"/>
+
+    <!-- 箭头 -->
+    <polygon points="260,15 270,20 260,25" fill="#409EFF"/>
+    <polygon points="480,15 490,20 480,25" fill="#409EFF"/>
+
+    <!-- 三个桥墩 -->
+    <rect x="120" y="30" width="60" height="35" rx="8" fill="#1a1a2e"/>
+    <text x="150" y="52" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="14" fill="white" font-weight="bold">工具</text>
+
+    <rect x="340" y="30" width="60" height="35" rx="8" fill="#1a1a2e"/>
+    <text x="370" y="52" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="14" fill="white" font-weight="bold">知识</text>
+
+    <rect x="560" y="30" width="60" height="35" rx="8" fill="#1a1a2e"/>
+    <text x="590" y="52" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="14" fill="white" font-weight="bold">工作者</text>
+
+    <!-- 桥面文字 -->
+    <text x="150" y="90" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="12" fill="#409EFF" opacity="0.7">被动执行</text>
+    <text x="370" y="90" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="12" fill="#409EFF" opacity="0.7">静态知识</text>
+    <text x="590" y="90" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="12" fill="#409EFF" opacity="0.7">主动行动</text>
+
+    <!-- 桥面 -->
+    <path d="M80 75 Q200 65, 300 75 Q400 85, 500 75 Q600 65, 720 75" fill="none" stroke="#409EFF" stroke-width="2.5" opacity="0.4"/>
+  </g>
 </svg>

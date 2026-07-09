@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e8f2fb"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2b7ed4"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-color="#409EFF" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">共识构建算法 —— 三种经典方法</text>
+
+  <!-- ============ 面板 1：逐步收敛 ============ -->
+  <g>
+    <!-- 面板背景 -->
+    <rect x="20" y="60" width="240" height="200" rx="10" fill="white" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <!-- 面板标题 -->
+    <rect x="20" y="60" width="240" height="36" rx="10" fill="url(#blueGrad)"/>
+    <rect x="20" y="86" width="240" height="10" fill="url(#blueGrad)"/>
+    <text x="140" y="84" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="white">方法一：逐步收敛</text>
+
+    <!-- 第1轮 -->
+    <text x="40" y="118" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">第1轮</text>
+    <circle cx="70" cy="130" r="6" fill="#409EFF" opacity="0.5"/>
+    <circle cx="90" cy="125" r="6" fill="#409EFF" opacity="0.5"/>
+    <circle cx="110" cy="135" r="6" fill="#409EFF" opacity="0.5"/>
+    <circle cx="130" cy="122" r="6" fill="#409EFF" opacity="0.5"/>
+    <circle cx="150" cy="138" r="6" fill="#409EFF" opacity="0.5"/>
+    <circle cx="170" cy="128" r="6" fill="#409EFF" opacity="0.5"/>
+    <circle cx="190" cy="132" r="6" fill="#409EFF" opacity="0.5"/>
+    <circle cx="210" cy="126" r="6" fill="#409EFF" opacity="0.5"/>
+    <circle cx="230" cy="134" r="6" fill="#409EFF" opacity="0.5"/>
+
+    <!-- 箭头 1→2 -->
+    <text x="140" y="158" text-anchor="middle" font-size="16" fill="#409EFF">↓</text>
+
+    <!-- 第2轮 -->
+    <text x="40" y="178" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">第2轮</text>
+    <circle cx="80" cy="190" r="6" fill="#409EFF" opacity="0.6"/>
+    <circle cx="100" cy="186" r="6" fill="#409EFF" opacity="0.6"/>
+    <circle cx="120" cy="194" r="6" fill="#409EFF" opacity="0.6"/>
+    <circle cx="140" cy="188" r="6" fill="#409EFF" opacity="0.6"/>
+    <circle cx="160" cy="192" r="6" fill="#409EFF" opacity="0.6"/>
+    <circle cx="180" cy="185" r="6" fill="#409EFF" opacity="0.6"/>
+    <circle cx="200" cy="190" r="6" fill="#409EFF" opacity="0.6"/>
+
+    <!-- 箭头 2→3 -->
+    <text x="140" y="212" text-anchor="middle" font-size="16" fill="#409EFF">↓</text>
+
+    <!-- 第3轮 -->
+    <text x="40" y="232" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">第3轮</text>
+    <circle cx="100" cy="244" r="6" fill="#409EFF" opacity="0.85"/>
+    <circle cx="120" cy="240" r="6" fill="#409EFF" opacity="0.85"/>
+    <circle cx="140" cy="246" r="6" fill="#409EFF" opacity="0.85"/>
+    <circle cx="160" cy="242" r="6" fill="#409EFF" opacity="0.85"/>
+    <circle cx="180" cy="244" r="6" fill="#409EFF" opacity="0.85"/>
+
+    <!-- 共识标记 -->
+    <text x="140" y="268" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">→ 达成共识</text>
+  </g>
+
+  <!-- ============ 面板 2：德尔菲法 ============ -->
+  <g>
+    <rect x="280" y="60" width="240" height="200" rx="10" fill="white" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="280" y="60" width="240" height="36" rx="10" fill="url(#blueGrad)"/>
+    <rect x="280" y="86" width="240" height="10" fill="url(#blueGrad)"/>
+    <text x="400" y="84" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="white">方法二：德尔菲法</text>
+
+    <!-- 参与者（屏幕后） -->
+    <!-- 参与者 1 -->
+    <rect x="295" y="108" width="70" height="50" rx="6" fill="#e8f2fb" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="330" y="126" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">匿名屏</text>
+    <text x="330" y="144" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" font-weight="bold">A</text>
+
+    <!-- 参与者 2 -->
+    <rect x="375" y="108" width="70" height="50" rx="6" fill="#e8f2fb" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="410" y="126" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">匿名屏</text>
+    <text x="410" y="144" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" font-weight="bold">B</text>
+
+    <!-- 参与者 3 -->
+    <rect x="455" y="108" width="50" height="50" rx="6" fill="#e8f2fb" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="480" y="126" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">屏</text>
+    <text x="480" y="144" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" font-weight="bold">C</text>
+
+    <!-- 意见卡片交换 -->
+    <text x="400" y="172" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">意见卡片交换</text>
+
+    <!-- 卡片 -->
+    <rect x="310" y="180" width="50" height="28" rx="4" fill="#409EFF" opacity="0.2" stroke="#409EFF" stroke-width="1"/>
+    <text x="335" y="198" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e">意见1</text>
+
+    <rect x="375" y="180" width="50" height="28" rx="4" fill="#409EFF" opacity="0.2" stroke="#409EFF" stroke-width="1"/>
+    <text x="400" y="198" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e">意见2</text>
+
+    <rect x="440" y="180" width="50" height="28" rx="4" fill="#409EFF" opacity="0.2" stroke="#409EFF" stroke-width="1"/>
+    <text x="465" y="198" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a1a2e">意见3</text>
+
+    <!-- 循环箭头 -->
+    <path d="M310 215 C310 230, 350 230, 350 215" stroke="#409EFF" stroke-width="1.2" fill="none" marker-end="url(#arrowSmall)"/>
+    <path d="M375 215 C375 230, 415 230, 415 215" stroke="#409EFF" stroke-width="1.2" fill="none"/>
+    <path d="M440 215 C440 230, 480 230, 480 215" stroke="#409EFF" stroke-width="1.2" fill="none"/>
+
+    <text x="400" y="248" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">多轮匿名反馈 → 收敛</text>
+  </g>
+
+  <!-- ============ 面板 3：共识度量 ============ -->
+  <g>
+    <rect x="540" y="60" width="240" height="200" rx="10" fill="white" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="540" y="60" width="240" height="36" rx="10" fill="url(#blueGrad)"/>
+    <rect x="540" y="86" width="240" height="10" fill="url(#blueGrad)"/>
+    <text x="660" y="84" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="white">方法三：共识度量</text>
+
+    <!-- 仪表盘 -->
+    <!-- 表盘背景 -->
+    <rect x="570" y="110" width="180" height="18" rx="9" fill="#e8f2fb" stroke="#409EFF" stroke-width="1"/>
+
+    <!-- 低共识区 <0.5 -->
+    <rect x="570" y="110" width="90" height="18" rx="9" fill="#ff6b6b" opacity="0.35"/>
+    <rect x="570" y="110" width="90" height="18" rx="9" fill="none" stroke="#ff6b6b" stroke-width="1"/>
+
+    <!-- 中共识区 0.5-0.75 -->
+    <rect x="660" y="110" width="45" height="18" fill="#ffd93d" opacity="0.35"/>
+    <rect x="660" y="110" width="45" height="18" fill="none" stroke="#ffd93d" stroke-width="1"/>
+
+    <!-- 高共识区 >0.75 -->
+    <rect x="705" y="110" width="45" height="18" rx="0" fill="#67c23a" opacity="0.35"/>
+    <rect x="705" y="110" width="45" height="18" rx="0" fill="none" stroke="#67c23a" stroke-width="1"/>
+    <rect x="705" y="110" width="45" height="18" rx="9" fill="none" stroke="#67c23a" stroke-width="1"/>
+
+    <!-- 刻度标记 -->
+    <text x="570" y="143" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">0</text>
+    <text x="615" y="143" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">0.25</text>
+    <text x="660" y="143" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">0.5</text>
+    <text x="705" y="143" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">0.75</text>
+    <text x="750" y="143" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">1.0</text>
+
+    <!-- 指针 -->
+    <polygon points="660,128 655,110 665,110" fill="#1a1a2e"/>
+
+    <!-- 图例 -->
+    <rect x="575" y="155" width="10" height="10" rx="2" fill="#ff6b6b" opacity="0.5"/>
+    <text x="590" y="164" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">低 (&lt;0.5) → 人工升级</text>
+
+    <rect x="575" y="172" width="10" height="10" rx="2" fill="#ffd93d" opacity="0.5"/>
+    <text x="590" y="181" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">中 (0.5-0.75) → 仲裁者</text>
+
+    <rect x="575" y="189" width="10" height="10" rx="2" fill="#67c23a" opacity="0.5"/>
+    <text x="590" y="198" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">高 (&gt;0.75) → 多数投票</text>
+  </g>
+
+  <!-- ============ 底部说明 ============ -->
+  <g>
+    <rect x="20" y="280" width="760" height="60" rx="8" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.9"/>
+    <text x="400" y="302" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a1a2e">三种共识构建算法对比</text>
+    <text x="400" y="322" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e">逐步收敛：多轮交互使观点自然趋同 ｜ 德尔菲法：匿名反馈消除权威影响 ｜ 共识度量：量化共识程度并选择处理方式</text>
+  </g>
+
+  <!-- ============ 应用场景实例 ============ -->
+  <g>
+    <rect x="20" y="360" width="240" height="120" rx="8" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.85" filter="url(#shadow)"/>
+    <text x="140" y="385" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#409EFF">应用场景</text>
+    <text x="140" y="405" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">团队决策</text>
+    <text x="140" y="422" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">多方协商</text>
+    <text x="140" y="439" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">区块链共识</text>
+    <text x="140" y="456" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">分布式系统</text>
+  </g>
+
+  <g>
+    <rect x="280" y="360" width="240" height="120" rx="8" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.85" filter="url(#shadow)"/>
+    <text x="400" y="385" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#409EFF">核心优势</text>
+    <text x="400" y="405" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">消除群体思维</text>
+    <text x="400" y="422" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">量化决策质量</text>
+    <text x="400" y="439" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">提升决策效率</text>
+    <text x="400" y="456" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">保证公平透明</text>
+  </g>
+
+  <g>
+    <rect x="540" y="360" width="240" height="120" rx="8" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.85" filter="url(#shadow)"/>
+    <text x="660" y="385" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#409EFF">选择建议</text>
+    <text x="660" y="405" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">小团队 → 逐步收敛</text>
+    <text x="660" y="422" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">敏感议题 → 德尔菲法</text>
+    <text x="660" y="439" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">需量化 → 共识度量</text>
+    <text x="660" y="456" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">混合使用效果更佳</text>
+  </g>
+
+</svg>

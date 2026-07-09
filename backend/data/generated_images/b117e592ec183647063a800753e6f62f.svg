@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e8f2fb"/>
+    </linearGradient>
+    <linearGradient id="boxGrad1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f5faff"/>
+    </linearGradient>
+    <linearGradient id="boxGrad2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f0f8ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="48" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">三种智能体设计哲学</text>
+
+  <!-- ========== 左侧：反应式智能体 ========== -->
+  <g transform="translate(60, 80)">
+    <!-- 卡片背景 -->
+    <rect x="0" y="0" width="200" height="340" rx="16" fill="url(#boxGrad1)" stroke="#409EFF" stroke-width="1.5" filter="drop-shadow(0 2px 6px rgba(64,158,255,0.12))"/>
+
+    <!-- 图标区域 -->
+    <circle cx="100" cy="70" r="40" fill="#e8f4ff" stroke="#409EFF" stroke-width="1.5"/>
+    <!-- 闪电头 -->
+    <polygon points="100,42 88,72 98,72 90,98 112,66 102,66 108,42" fill="#409EFF"/>
+    <!-- 眼睛传感器 -->
+    <circle cx="94" cy="60" r="4" fill="#1a1a2e"/>
+    <!-- 手部执行器 -->
+    <rect x="88" y="90" width="12" height="8" rx="3" fill="#1a1a2e"/>
+    <!-- 刺激-反应箭头 -->
+    <line x1="98" y1="64" x2="94" y2="88" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+    <polygon points="94,88 90,82 98,82" fill="#1a1a2e"/>
+
+    <!-- 标签 -->
+    <text x="100" y="140" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">反应式智能体</text>
+
+    <!-- 说明框 -->
+    <rect x="20" y="160" width="160" height="36" rx="8" fill="#f0f7ff" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="100" y="183" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#409EFF">刺激 → 响应</text>
+
+    <rect x="20" y="210" width="160" height="36" rx="8" fill="#f0f7ff" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="100" y="233" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#409EFF">无内部状态</text>
+
+    <rect x="20" y="260" width="160" height="36" rx="8" fill="#f0f7ff" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="100" y="283" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#409EFF">快速响应</text>
+  </g>
+
+  <!-- ========== 中间：慎思式智能体 ========== -->
+  <g transform="translate(300, 80)">
+    <rect x="0" y="0" width="200" height="340" rx="16" fill="url(#boxGrad2)" stroke="#409EFF" stroke-width="1.5" filter="drop-shadow(0 2px 6px rgba(64,158,255,0.12))"/>
+
+    <!-- 图标区域 -->
+    <circle cx="100" cy="70" r="40" fill="#e8f4ff" stroke="#409EFF" stroke-width="1.5"/>
+    <!-- 大脑头 -->
+    <ellipse cx="100" cy="65" rx="22" ry="18" fill="#409EFF"/>
+    <path d="M85,60 Q88,50 95,55 Q100,48 105,55 Q112,50 115,60" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+    <path d="M90,70 Q95,62 100,68 Q105,62 110,70" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+    <path d="M88,78 Q95,72 100,76 Q105,72 112,78" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+
+    <!-- 世界模型球体 -->
+    <circle cx="130" cy="85" r="12" fill="none" stroke="#1a1a2e" stroke-width="1.2"/>
+    <ellipse cx="130" cy="85" rx="6" ry="12" fill="none" stroke="#1a1a2e" stroke-width="0.6"/>
+    <line x1="118" y1="85" x2="142" y2="85" stroke="#1a1a2e" stroke-width="0.6"/>
+
+    <!-- 规划路径 -->
+    <path d="M70,90 Q60,100 65,110 Q75,120 70,130" fill="none" stroke="#1a1a2e" stroke-width="1.2" stroke-dasharray="3,2"/>
+    <circle cx="70" cy="130" r="3" fill="#1a1a2e"/>
+
+    <text x="100" y="140" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">慎思式智能体</text>
+
+    <rect x="20" y="160" width="160" height="36" rx="8" fill="#f0f7ff" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="100" y="183" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#409EFF">世界模型</text>
+
+    <rect x="20" y="210" width="160" height="36" rx="8" fill="#f0f7ff" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="100" y="233" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#409EFF">规划与推理</text>
+
+    <rect x="20" y="260" width="160" height="36" rx="8" fill="#f0f7ff" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="100" y="283" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#409EFF">目标导向</text>
+  </g>
+
+  <!-- ========== 右侧：混合式智能体 ========== -->
+  <g transform="translate(540, 80)">
+    <rect x="0" y="0" width="200" height="340" rx="16" fill="url(#boxGrad1)" stroke="#409EFF" stroke-width="1.5" filter="drop-shadow(0 2px 6px rgba(64,158,255,0.12))"/>
+
+    <!-- 图标区域 -->
+    <circle cx="100" cy="70" r="40" fill="#e8f4ff" stroke="#409EFF" stroke-width="1.5"/>
+    <!-- 分层躯干 -->
+    <rect x="82" y="48" width="36" height="12" rx="4" fill="#409EFF" opacity="0.9"/>
+    <text x="100" y="57" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="7" fill="#ffffff">深度思考</text>
+    <rect x="82" y="64" width="36" height="12" rx="4" fill="#409EFF" opacity="0.7"/>
+    <text x="100" y="73" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="7" fill="#ffffff">协调</text>
+    <rect x="82" y="80" width="36" height="12" rx="4" fill="#409EFF" opacity="0.5"/>
+    <text x="100" y="89" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="7" fill="#ffffff">反射</text>
+
+    <text x="100" y="140" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">混合式智能体</text>
+
+    <rect x="20" y="160" width="160" height="36" rx="8" fill="#f0f7ff" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="100" y="183" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#409EFF">反射层（快速）</text>
+
+    <rect x="20" y="210" width="160" height="36" rx="8" fill="#f0f7ff" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="100" y="233" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#409EFF">协调层</text>
+
+    <rect x="20" y="260" width="160" height="36" rx="8" fill="#f0f7ff" stroke="#409EFF" stroke-width="0.8"/>
+    <text x="100" y="283" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="13" fill="#409EFF">深思层（慢速）</text>
+  </g>
+
+  <!-- 底部副标题 -->
+  <text x="400" y="470" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="14" fill="#888899">三种智能体设计哲学</text>
+
+</svg>

@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f7ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e8f2fb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="boxGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f5faff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">CrewAI 三种角色设计模式</text>
+
+  <!-- ============================================================ -->
+  <!-- 模式1：专家团队 -->
+  <!-- ============================================================ -->
+
+  <!-- 模式1标题 -->
+  <text x="200" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">模式1：专家团队</text>
+
+  <!-- 分析师 -->
+  <rect x="40" y="85" width="120" height="52" rx="6" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="1.8"/>
+  <text x="100" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">市场分析师</text>
+  <text x="100" y="128" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#409EFF">📊 市场数据</text>
+
+  <!-- 会计师 -->
+  <rect x="195" y="85" width="120" height="52" rx="6" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="1.8"/>
+  <text x="255" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">会计师</text>
+  <text x="255" y="128" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#409EFF">💰 财务核算</text>
+
+  <!-- 风险经理 -->
+  <rect x="350" y="85" width="120" height="52" rx="6" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="1.8"/>
+  <text x="410" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">风险经理</text>
+  <text x="410" y="128" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#409EFF">⚠️ 风险评估</text>
+
+  <!-- 综合员 -->
+  <rect x="505" y="85" width="120" height="52" rx="6" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="1.8"/>
+  <text x="565" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">综合员</text>
+  <text x="565" y="128" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#409EFF">🧩 汇总分析</text>
+
+  <!-- 专家团队模式标签 -->
+  <rect x="650" y="85" width="100" height="52" rx="6" fill="#409EFF" opacity="0.12"/>
+  <text x="700" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#409EFF" font-weight="bold">五角色协作</text>
+  <text x="700" y="126" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a1a2e">团队结构</text>
+
+  <!-- 连接线：分析师→会计师 -->
+  <line x1="160" y1="111" x2="195" y2="111" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <!-- 连接线：会计师→风险经理 -->
+  <line x1="315" y1="111" x2="350" y2="111" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <!-- 连接线：风险经理→综合员 -->
+  <line x1="470" y1="111" x2="505" y2="111" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+
+  <!-- ============================================================ -->
+  <!-- 分隔线 -->
+  <!-- ============================================================ -->
+  <line x1="30" y1="158" x2="770" y2="158" stroke="#409EFF" stroke-width="0.8" opacity="0.3"/>
+
+  <!-- ============================================================ -->
+  <!-- 模式2：生成-批评 -->
+  <!-- ============================================================ -->
+
+  <text x="200" y="188" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">模式2：生成-批评循环</text>
+
+  <!-- 写手 -->
+  <rect x="120" y="205" width="150" height="60" rx="8" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="2"/>
+  <text x="195" y="232" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#1a1a2e" font-weight="bold">✏️ 写手</text>
+  <text x="195" y="252" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF">生成内容</text>
+
+  <!-- 批评者 -->
+  <rect x="450" y="205" width="150" height="60" rx="8" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="2"/>
+  <text x="525" y="232" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#1a1a2e" font-weight="bold">🔍 批评者</text>
+  <text x="525" y="252" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF">审阅反馈</text>
+
+  <!-- 箭头：写手 → 批评者 -->
+  <line x1="270" y1="235" x2="440" y2="235" stroke="#409EFF" stroke-width="1.8"/>
+  <polygon points="440,230 452,235 440,240" fill="#409EFF"/>
+
+  <!-- 反馈回路箭头：批评者 → 写手（下方弧形） -->
+  <path d="M 525 265 Q 360 310 195 265" fill="none" stroke="#E6A23C" stroke-width="1.8" stroke-dasharray="6,3"/>
+  <polygon points="200,262 188,267 200,272" fill="#E6A23C"/>
+  <text x="360" y="300" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#E6A23C">反馈循环</text>
+
+  <!-- ============================================================ -->
+  <!-- 分隔线 -->
+  <!-- ============================================================ -->
+  <line x1="30" y1="330" x2="770" y2="330" stroke="#409EFF" stroke-width="0.8" opacity="0.3"/>
+
+  <!-- ============================================================ -->
+  <!-- 模式3：导师-学徒 -->
+  <!-- ============================================================ -->
+
+  <text x="200" y="358" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">模式3：导师-学徒</text>
+
+  <!-- 高级开发者（大） -->
+  <rect x="80" y="378" width="180" height="70" rx="8" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="2.5"/>
+  <text x="170" y="408" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1a1a2e" font-weight="bold">👨‍💻 高级开发者</text>
+  <text x="170" y="430" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF">导师 · 指导</text>
+
+  <!-- 初级开发者（小） -->
+  <rect x="480" y="393" width="140" height="55" rx="8" fill="url(#boxGrad)" stroke="#409EFF" stroke-width="1.8"/>
+  <text x="550" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">🧑‍💻 初级开发者</text>
+  <text x="550" y="438" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#409EFF">学徒</text>
+
+  <!-- 指导箭头 -->
+  <line x1="260" y1="400" x2="470" y2="408" stroke="#409EFF" stroke-width="1.8"/>
+  <polygon points="470,403 482,408 470,413" fill="#409EFF"/>
+
+  <!-- 代码传递标签 -->
+  <rect x="310" y="415" width="110" height="28" rx="14" fill="#409EFF" opacity="0.12"/>
+  <text x="365" y="434" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#409EFF">📄 代码传递</text>
+
+  <!-- 额外指导箭头（上方） -->
+  <path d="M 260 388 Q 365 370 470 395" fill="none" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="5,3"/>
+  <polygon points="468,390 478,397 470,400" fill="#409EFF"/>
+  <text x="365" y="380" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#409EFF">指令</text>
+
+</svg>

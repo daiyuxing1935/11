@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#D0ECFA"/>
+    </linearGradient>
+    <linearGradient id="boardGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2C3E50"/>
+      <stop offset="100%" stop-color="#1a1a2e"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="#00000025"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
+
+  <!-- 标题 -->
+  <text x="400" y="32" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">黑板架构（Blackboard Architecture）</text>
+
+  <!-- 主黑板 -->
+  <rect x="230" y="52" width="340" height="260" rx="6" fill="url(#boardGrad)" filter="url(#shadow)"/>
+  <rect x="230" y="52" width="340" height="260" rx="6" fill="none" stroke="#409EFF" stroke-width="2"/>
+
+  <!-- 黑板内部三个分区 -->
+  <line x1="230" y1="138" x2="570" y2="138" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+  <line x1="230" y1="215" x2="570" y2="215" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+  <line x1="400" y1="138" x2="400" y2="312" stroke="#409EFF" stroke-width="1" opacity="0.3"/>
+
+  <!-- 分区1：知识项 -->
+  <text x="315" y="120" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#409EFF" font-weight="bold">知识项</text>
+  <!-- 文档图标1 -->
+  <rect x="260" y="148" width="22" height="28" rx="2" fill="#409EFF" opacity="0.8"/>
+  <line x1="266" y1="155" x2="276" y2="155" stroke="white" stroke-width="1.5"/>
+  <line x1="266" y1="160" x2="276" y2="160" stroke="white" stroke-width="1.5"/>
+  <line x1="266" y1="165" x2="272" y2="165" stroke="white" stroke-width="1.5"/>
+  <!-- 文档图标2 -->
+  <rect x="295" y="148" width="22" height="28" rx="2" fill="#409EFF" opacity="0.6"/>
+  <line x1="301" y1="155" x2="311" y2="155" stroke="white" stroke-width="1.5"/>
+  <line x1="301" y1="160" x2="311" y2="160" stroke="white" stroke-width="1.5"/>
+  <!-- 文档图标3 -->
+  <rect x="330" y="148" width="22" height="28" rx="2" fill="#409EFF" opacity="0.4"/>
+  <line x1="336" y1="155" x2="346" y2="155" stroke="white" stroke-width="1.5"/>
+
+  <!-- 分区2：任务 -->
+  <text x="315" y="200" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#409EFF" font-weight="bold">任务</text>
+  <!-- 剪贴板 -->
+  <rect x="268" y="222" width="24" height="30" rx="3" fill="#409EFF" opacity="0.7"/>
+  <rect x="272" y="218" width="16" height="6" rx="2" fill="#409EFF" opacity="0.9"/>
+  <line x1="274" y1="230" x2="286" y2="230" stroke="white" stroke-width="1.2"/>
+  <line x1="274" y1="235" x2="286" y2="235" stroke="white" stroke-width="1.2"/>
+  <line x1="274" y1="240" x2="282" y2="240" stroke="white" stroke-width="1.2"/>
+
+  <!-- 分区3：部分结果 -->
+  <text x="485" y="120" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#409EFF" font-weight="bold">部分结果</text>
+  <!-- 拼图块 -->
+  <rect x="440" y="142" width="24" height="24" rx="3" fill="#409EFF" opacity="0.5"/>
+  <rect x="468" y="142" width="24" height="24" rx="3" fill="#409EFF" opacity="0.7"/>
+  <rect x="440" y="170" width="24" height="24" rx="3" fill="#409EFF" opacity="0.3"/>
+  <rect x="468" y="170" width="24" height="24" rx="3" fill="none" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- 调度器 -->
+  <rect x="230" y="320" width="340" height="44" rx="5" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="400" y="338" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">调度器</text>
+  <text x="290" y="354" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">任务匹配</text>
+  <text x="400" y="354" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">优先级管理</text>
+  <text x="510" y="354" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">触发检测</text>
+
+  <!-- Agent A - 左侧 -->
+  <rect x="30" y="120" width="130" height="100" rx="8" fill="white" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
+  <text x="95" y="148" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#1a1a2e" font-weight="bold">Agent A</text>
+  <!-- 搜索图标 -->
+  <circle cx="80" cy="175" r="10" fill="none" stroke="#409EFF" stroke-width="2"/>
+  <line x1="87" y1="182" x2="94" y2="189" stroke="#409EFF" stroke-width="2.5"/>
+  <text x="95" y="198" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">搜索</text>
+  <!-- 读写箭头 -->
+  <line x1="160" y1="150" x2="225" y2="150" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <line x1="225" y1="190" x2="160" y2="190" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowBlue)"/>
+  <text x="192" y="143" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#409EFF">写</text>
+  <text x="192" y="205" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#409EFF">读</text>
+
+  <!-- Agent B - 下方 -->
+  <rect x="240" y="380" width="130" height="100" rx="8" fill="white" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
+  <text x="305" y="408" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#1a1a2e" font-weight="bold">Agent B</text>
+  <!-- 分析图标 -->
+  <circle cx="290" cy="435" r="10" fill="none" stroke="#409EFF" stroke-width="2"/>
+  <line x1="296" y1="429" x2="302" y2="435" stroke="#409EFF" stroke-width="2"/>
+  <line x1="290" y1="441" x2="296" y2="447" stroke="#409EFF" stroke-width="2"/>
+  <text x="305" y="458" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">分析</text>
+  <!-- 读写箭头 -->
+  <line x1="305" y1="380" x2="305" y2="320" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <line x1="330" y1="320" x2="330" y2="380" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowBlue)"/>
+  <text x="348" y="348" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#409EFF">读</text>
+  <text x="348" y="370" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#409EFF">写</text>
+
+  <!-- Agent C - 右侧 -->
+  <rect x="640" y="120" width="130" height="100" rx="8" fill="white" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
+  <text x="705" y="148" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#1a1a2e" font-weight="bold">Agent C</text>
+  <!-- 写作图标 -->
+  <line x1="680" y1="170" x2="700" y2="170" stroke="#409EFF" stroke-width="2"/>
+  <line x1="680" y1="178" x2="700" y2="178" stroke="#409EFF" stroke-width="2"/>
+  <line x1="680" y1="186" x2="695" y2="186" stroke="#409EFF" stroke-width="2"/>
+  <rect x="710" y="168" width="16" height="20" rx="2" fill="#409EFF" opacity="0.5"/>
+  <text x="705" y="198" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">写作</text>
+  <!-- 读写箭头 -->
+  <line x1="640" y1="150" x2="575" y2="150" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <line x1="575" y1="190" x2="640" y2="190" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowBlue)"/>
+  <text x="608" y="143" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#409EFF">写</text>
+  <text x="608" y="205" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#409EFF">读</text>
+
+  <!-- 箭头标记 -->
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#409EFF"/>
+    </marker>
+  </defs>
+
+  <!-- 对比区域 -->
+  <rect x="30" y="380" width="180" height="100" rx="6" fill="white" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="120" y="400" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e" font-weight="bold">对比</text>
+  <line x1="45" y1="408" x2="195" y2="408" stroke="#409EFF" stroke-width="0.8" opacity="0.5"/>
+  <text x="120" y="422" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#409EFF">消息传递：Agent→Agent</text>
+  <text x="120" y="438" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#1a1a2e">vs</text>
+  <text x="120" y="454" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#409EFF">黑板：Agent→Board→Agent</text>
+
+  <!-- 标注 -->
+  <rect x="580" y="270" width="70" height="22" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="615" y="285" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e">共享数据</text>
+
+  <rect x="580" y="300" width="70" height="22" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="615" y="315" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e">协作求解</text>
+
+  <rect x="30" y="52" width="70" height="22" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="65" y="67" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e">独立模块</text>
+
+  <rect x="700" y="52" width="70" height="22" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="735" y="67" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e">解耦通信</text>
+
+  <rect x="580" y="240" width="70" height="22" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="615" y="255" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e">知识共享</text>
+
+  <rect x="30" y="240" width="70" height="22" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="65" y="255" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1a1a2e">异步协作</text>
+</svg>

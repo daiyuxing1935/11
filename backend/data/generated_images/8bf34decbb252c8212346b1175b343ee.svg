@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e8f2fb"/>
+    </linearGradient>
+    <linearGradient id="reflexGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#409EFF" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="tacticalGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#409EFF" stop-opacity="0.10"/>
+    </linearGradient>
+    <linearGradient id="strategicGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#409EFF" stop-opacity="0.05"/>
+    </linearGradient>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#409EFF" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">反应层级与调节模型</text>
+
+  <!-- 最外层圆 - 战略层（分钟） -->
+  <circle cx="400" cy="230" r="175" fill="url(#strategicGrad)" stroke="#409EFF" stroke-opacity="0.30" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="400" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">战略层（分钟）</text>
+
+  <!-- 中层圆 - 战术层（秒） -->
+  <circle cx="400" cy="230" r="125" fill="url(#tacticalGrad)" stroke="#409EFF" stroke-opacity="0.40" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="400" y="118" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">战术层（秒）</text>
+
+  <!-- 内层圆 - 反射层（毫秒） -->
+  <circle cx="400" cy="230" r="75" fill="url(#reflexGrad)" stroke="#409EFF" stroke-opacity="0.55" stroke-width="1.5"/>
+  <text x="400" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1a1a2e" font-weight="bold">反射层（毫秒）</text>
+
+  <!-- 内层图标：闪电 + 紧急制动 + 断路器 -->
+  <g transform="translate(400,230)">
+    <!-- 闪电图标 -->
+    <polygon points="-8,-28 2,-28 -4,-8 8,-8 -6,22 0,-2 -10,-2" fill="#409EFF" opacity="0.8"/>
+    <!-- 断路器符号 -->
+    <rect x="-20" y="8" width="40" height="6" rx="1" fill="#1a1a2e" opacity="0.6"/>
+    <rect x="-10" y="14" width="20" height="4" rx="1" fill="#1a1a2e" opacity="0.4"/>
+    <!-- 紧急制动符号 -->
+    <circle cx="0" cy="-12" r="4" fill="none" stroke="#1a1a2e" stroke-width="1.2" opacity="0.5"/>
+  </g>
+
+  <!-- 中层图标：齿轮 + 调节旋钮 -->
+  <g transform="translate(400,230)">
+    <!-- 齿轮 -->
+    <circle cx="0" cy="0" r="22" fill="none" stroke="#409EFF" stroke-width="1.8" opacity="0.5" stroke-dasharray="6,4"/>
+    <circle cx="0" cy="0" r="14" fill="none" stroke="#409EFF" stroke-width="1.2" opacity="0.4"/>
+    <circle cx="0" cy="0" r="5" fill="#409EFF" opacity="0.3"/>
+    <!-- 调节旋钮 -->
+    <line x1="0" y1="-22" x2="0" y2="-30" stroke="#1a1a2e" stroke-width="1.5" opacity="0.5"/>
+    <line x1="22" y1="0" x2="30" y2="0" stroke="#1a1a2e" stroke-width="1.5" opacity="0.5"/>
+    <line x1="-22" y1="0" x2="-30" y2="0" stroke="#1a1a2e" stroke-width="1.5" opacity="0.5"/>
+  </g>
+
+  <!-- 外层图标：指南针 + 趋势图 -->
+  <g transform="translate(400,230)">
+    <!-- 指南针 -->
+    <circle cx="0" cy="0" r="38" fill="none" stroke="#409EFF" stroke-width="1.2" opacity="0.25"/>
+    <polygon points="0,-45 5,-10 0,0 -5,-10" fill="#409EFF" opacity="0.35"/>
+    <polygon points="0,45 -5,10 0,0 5,10" fill="#1a1a2e" opacity="0.25"/>
+    <!-- 趋势图 -->
+    <polyline points="-35,30 -20,20 -5,25 10,10 25,15 35,5" fill="none" stroke="#1a1a2e" stroke-width="1.2" opacity="0.3"/>
+    <circle cx="35" cy="5" r="2" fill="#1a1a2e" opacity="0.4"/>
+  </g>
+
+  <!-- 标签框 - 战略层 -->
+  <rect x="585" y="55" width="130" height="36" rx="6" fill="white" stroke="#409EFF" stroke-opacity="0.35" stroke-width="1" filter="url(#shadow)"/>
+  <text x="650" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">市场趋势变化</text>
+
+  <rect x="585" y="100" width="130" height="36" rx="6" fill="white" stroke="#409EFF" stroke-opacity="0.35" stroke-width="1" filter="url(#shadow)"/>
+  <text x="650" y="123" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">政策更新</text>
+
+  <!-- 标签框 - 战术层 -->
+  <rect x="60" y="130" width="130" height="36" rx="6" fill="white" stroke="#409EFF" stroke-opacity="0.35" stroke-width="1" filter="url(#shadow)"/>
+  <text x="125" y="153" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">工具调整</text>
+
+  <rect x="60" y="175" width="130" height="36" rx="6" fill="white" stroke="#409EFF" stroke-opacity="0.35" stroke-width="1" filter="url(#shadow)"/>
+  <text x="125" y="198" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">用户需求变化</text>
+
+  <!-- 标签框 - 反射层 -->
+  <rect x="60" y="290" width="130" height="36" rx="6" fill="white" stroke="#409EFF" stroke-opacity="0.35" stroke-width="1" filter="url(#shadow)"/>
+  <text x="125" y="313" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">紧急制动</text>
+
+  <rect x="60" y="335" width="130" height="36" rx="6" fill="white" stroke="#409EFF" stroke-opacity="0.35" stroke-width="1" filter="url(#shadow)"/>
+  <text x="125" y="358" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e">电路保护</text>
+
+  <!-- 底部天平 -->
+  <g transform="translate(400,410)">
+    <!-- 天平底座 -->
+    <line x1="-60" y1="25" x2="60" y2="25" stroke="#1a1a2e" stroke-width="1.5" opacity="0.5"/>
+    <line x1="0" y1="25" x2="0" y2="5" stroke="#1a1a2e" stroke-width="1.5" opacity="0.5"/>
+    <polygon points="0,5 -8,0 8,0" fill="#1a1a2e" opacity="0.4"/>
+    <!-- 天平横梁 -->
+    <line x1="-55" y1="0" x2="55" y2="0" stroke="#1a1a2e" stroke-width="1.5" opacity="0.5"/>
+    <!-- 左盘 - 过度反应 -->
+    <path d="M-55,0 Q-65,15 -75,20" stroke="#1a1a2e" stroke-width="1" fill="none" opacity="0.4"/>
+    <path d="M-75,18 Q-80,22 -78,28 Q-72,22 -75,18" fill="#1a1a2e" opacity="0.3"/>
+    <!-- 右盘 - 反应不足 -->
+    <path d="M55,0 Q65,15 75,20" stroke="#1a1a2e" stroke-width="1" fill="none" opacity="0.4"/>
+    <line x1="70" y1="20" x2="80" y2="20" stroke="#1a1a2e" stroke-width="1" opacity="0.3"/>
+    <!-- 中间 - 理想曲线 -->
+    <path d="M-10,18 Q-5,10 0,15 Q5,8 10,18" stroke="#409EFF" stroke-width="1.8" fill="none" opacity="0.7"/>
+  </g>
+
+  <!-- 底部标签 -->
+  <text x="310" y="455" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e" opacity="0.6">过度反应</text>
+  <text x="400" y="455" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" opacity="0.8">理想</text>
+  <text x="490" y="455" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a1a2e" opacity="0.6">反应不足</text>
+
+  <!-- 波形标注 -->
+  <g transform="translate(310,440)">
+    <path d="M-15,0 Q-10,-8 -5,0 Q0,8 5,0 Q10,-8 15,0" stroke="#1a1a2e" stroke-width="1" fill="none" opacity="0.3"/>
+  </g>
+  <g transform="translate(490,440)">
+    <line x1="-15" y1="0" x2="15" y2="0" stroke="#1a1a2e" stroke-width="1" opacity="0.3"/>
+  </g>
+
+</svg>

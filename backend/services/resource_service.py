@@ -272,8 +272,42 @@ def get_local_material(knowledge: str) -> dict:
     return _fallback_material(knowledge)
 
 
+def _inject_cached_images(content: str) -> str:
+    """在 markdown 内容中自动注入已缓存的 SVG 配图"""
+    import hashlib
+    import re as _re
+    from database import get_db as _get_db
+
+    def _replace_prompt(match):
+        body = match.group(2).strip()
+        if not body or len(body) < 10:
+            return match.group(0)
+        prompt_hash = hashlib.md5(body.encode()).hexdigest()
+        conn = _get_db()
+        row = conn.execute(
+            "SELECT svg_content FROM generated_images WHERE prompt_hash = ? AND svg_content IS NOT NULL LIMIT 1",
+            (prompt_hash,)
+        ).fetchone()
+        conn.close()
+        if row and row["svg_content"]:
+            svg = row["svg_content"]
+            if 'viewBox=' not in svg[:200]:
+                svg = svg.replace('<svg', '<svg viewBox="0 0 800 500"')
+            img_tag = '<div style="margin:20px 0;text-align:center;overflow:hidden;max-height:800px;border-radius:8px;background:#fafbfc;padding:8px"><img src="data:image/svg+xml;base64,' + __import__('base64').b64encode(svg.encode()).decode() + '" style="max-width:100%;height:auto" /></div>'
+            return img_tag + '\n\n> 📝 配图提示词：' + body[:80] + '...\n'
+        return match.group(0)
+
+    content = _re.sub(
+        r'(?:\*\*)?Image-Prompt\([^)]+\):(?:\*\*)?\s*(.+?)(?=\n\n(?:#|\*\*Image-Prompt|Image-Prompt)|\n(?:#|\*\*Image-Prompt|Image-Prompt)|$)',
+        _replace_prompt,
+        content,
+        flags=_re.DOTALL
+    )
+    return content
+
+
 def _read_material_file(rel_path: str, tag: str) -> dict:
-    """读取Markdown文件内容"""
+    """读取Markdown文件内容，自动注入已缓存的配图"""
     full_path = _os.path.join(MATERIALS_BASE_DIR, rel_path)
     if _os.path.exists(full_path):
         try:

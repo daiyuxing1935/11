@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FF"/>
+      <stop offset="100%" stop-color="#D0ECFF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F5FAFF"/>
+    </linearGradient>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#409EFF" flood-opacity="0.15"/>
+    </filter>
+    <filter id="shadowLight" x="-2%" y="-2%" width="104%" height="106%">
+      <feDropShadow dx="0" dy="1" stdDeviation="3" flood-color="#409EFF" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">智能体角色定义要素</text>
+  <line x1="300" y1="48" x2="500" y2="48" stroke="#409EFF" stroke-width="2" opacity="0.5"/>
+
+  <!-- ===== 左侧：角色卡片模板 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="62" width="340" height="420" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="30" y="62" width="340" height="36" rx="12" fill="#409EFF"/>
+    <rect x="30" y="82" width="340" height="16" fill="#409EFF"/>
+    <text x="200" y="86" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF">📋 角色卡片模板</text>
+  </g>
+
+  <!-- 要素1：角色名称 -->
+  <g>
+    <rect x="50" y="112" width="300" height="40" rx="6" fill="#F0F7FF" stroke="#409EFF" stroke-width="1"/>
+    <rect x="50" y="112" width="80" height="40" rx="6" fill="#409EFF"/>
+    <text x="90" y="137" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#FFFFFF" font-weight="bold">角色名称</text>
+    <text x="145" y="137" font-family="sans-serif" font-size="13" fill="#1a1a2e" font-weight="bold">数据分析师</text>
+    <text x="145" y="137" font-family="sans-serif" font-size="13" fill="#409EFF" opacity="0.4">|</text>
+    <text x="155" y="137" font-family="sans-serif" font-size="11" fill="#666" font-style="italic">Data Analyst</text>
+  </g>
+
+  <!-- 要素2：核心目标 -->
+  <g>
+    <rect x="50" y="162" width="300" height="40" rx="6" fill="#F0F7FF" stroke="#409EFF" stroke-width="1"/>
+    <rect x="50" y="162" width="80" height="40" rx="6" fill="#409EFF"/>
+    <text x="90" y="187" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#FFFFFF" font-weight="bold">核心目标</text>
+    <!-- 靶心图标 -->
+    <circle cx="155" cy="182" r="10" fill="none" stroke="#1a1a2e" stroke-width="1.5"/>
+    <circle cx="155" cy="182" r="4" fill="#409EFF"/>
+    <line x1="145" y1="182" x2="165" y2="182" stroke="#1a1a2e" stroke-width="1"/>
+    <line x1="155" y1="172" x2="155" y2="192" stroke="#1a1a2e" stroke-width="1"/>
+    <text x="178" y="187" font-family="sans-serif" font-size="12" fill="#1a1a2e">从数据中提取可执行的洞察</text>
+  </g>
+
+  <!-- 要素3：专业领域 -->
+  <g>
+    <rect x="50" y="212" width="300" height="40" rx="6" fill="#F0F7FF" stroke="#409EFF" stroke-width="1"/>
+    <rect x="50" y="212" width="80" height="40" rx="6" fill="#409EFF"/>
+    <text x="90" y="237" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#FFFFFF" font-weight="bold">专业领域</text>
+    <!-- 雷达图图标 -->
+    <polygon points="155,225 163,235 159,245 151,245 147,235" fill="none" stroke="#1a1a2e" stroke-width="1.2"/>
+    <polygon points="155,229 160,235 158,241 152,241 150,235" fill="#409EFF" opacity="0.3"/>
+    <text x="178" y="237" font-family="sans-serif" font-size="12" fill="#1a1a2e">统计学 · SQL · 数据可视化</text>
+  </g>
+
+  <!-- 要素4：背景故事 -->
+  <g>
+    <rect x="50" y="262" width="300" height="55" rx="6" fill="#F0F7FF" stroke="#409EFF" stroke-width="1"/>
+    <rect x="50" y="262" width="80" height="55" rx="6" fill="#409EFF"/>
+    <text x="90" y="287" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#FFFFFF" font-weight="bold">背景故事</text>
+    <text x="142" y="282" font-family="sans-serif" font-size="10" fill="#1a1a2e">5年电商数据分析经验，擅长</text>
+    <text x="142" y="297" font-family="sans-serif" font-size="10" fill="#1a1a2e">用户行为分析与销售预测模型</text>
+    <text x="142" y="312" font-family="sans-serif" font-size="10" fill="#1a1a2e">构建，注重数据准确性与可解释性</text>
+  </g>
+
+  <!-- 要素5：能力边界 -->
+  <g>
+    <rect x="50" y="327" width="300" height="55" rx="6" fill="#F0F7FF" stroke="#409EFF" stroke-width="1" stroke-dasharray="4,3"/>
+    <rect x="50" y="327" width="80" height="55" rx="6" fill="#409EFF"/>
+    <text x="90" y="352" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#FFFFFF" font-weight="bold">能力边界</text>
+    <text x="142" y="347" font-family="sans-serif" font-size="10" fill="#1a1a2e">✅ 结构化数据分析 · 报表生成</text>
+    <text x="142" y="362" font-family="sans-serif" font-size="10" fill="#1a1a2e">✅ 趋势预测 · 异常检测</text>
+    <text x="142" y="377" font-family="sans-serif" font-size="10" fill="#E53935">❌ 非结构化文本 · 实时数据采集</text>
+  </g>
+
+  <!-- 要素6：输出格式 -->
+  <g>
+    <rect x="50" y="392" width="300" height="40" rx="6" fill="#F0F7FF" stroke="#409EFF" stroke-width="1"/>
+    <rect x="50" y="392" width="80" height="40" rx="6" fill="#409EFF"/>
+    <text x="90" y="417" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#FFFFFF" font-weight="bold">输出格式</text>
+    <!-- 文档图标 -->
+    <rect x="142" y="400" width="14" height="18" rx="2" fill="none" stroke="#1a1a2e" stroke-width="1.2"/>
+    <line x1="146" y1="405" x2="152" y2="405" stroke="#1a1a2e" stroke-width="0.8"/>
+    <line x1="146" y1="409" x2="152" y2="409" stroke="#1a1a2e" stroke-width="0.8"/>
+    <line x1="146" y1="413" x2="150" y2="413" stroke="#1a1a2e" stroke-width="0.8"/>
+    <text x="165" y="417" font-family="sans-serif" font-size="12" fill="#1a1a2e">PDF报告 · 数据仪表板 · JSON</text>
+  </g>
+
+  <!-- ===== 右侧：对比 ===== -->
+  <text x="560" y="80" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">对比：好定义 vs 差定义</text>
+
+  <!-- 好的角色定义 -->
+  <g filter="url(#shadowLight)">
+    <rect x="410" y="95" width="160" height="185" rx="10" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="410" y="95" width="160" height="28" rx="10" fill="#409EFF"/>
+    <rect x="410" y="113" width="160" height="10" fill="#409EFF"/>
+    <text x="490" y="115" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">✅ 好的定义</text>
+
+    <text x="420" y="140" font-family="sans-serif" font-size="10" font-weight="bold" fill="#1a1a2e">角色：数据分析师</text>
+    <text x="420" y="156" font-family="sans-serif" font-size="9" fill="#555">目标：提升销售转化率</text>
+    <text x="420" y="172" font-family="sans-serif" font-size="9" fill="#555">领域：电商用户行为</text>
+    <text x="420" y="188" font-family="sans-serif" font-size="9" fill="#555">背景：5年电商经验</text>
+    <text x="420" y="204" font-family="sans-serif" font-size="9" fill="#555">能力：SQL · Python · Tableau</text>
+    <text x="420" y="220" font-family="sans-serif" font-size="9" fill="#555">边界：结构化数据</text>
+    <text x="420" y="236" font-family="sans-serif" font-size="9" fill="#555">输出：PDF报告 · 仪表板</text>
+
+    <rect x="420" y="246" width="140" height="22" rx="4" fill="#E8F5E9"/>
+    <text x="490" y="261" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2E7D32">行为明确 · 边界清晰</text>
+  </g>
+
+  <!-- 差的角色定义 -->
+  <g filter="url(#shadowLight)">
+    <rect x="590" y="95" width="160" height="185" rx="10" fill="#FFFFFF" stroke="#E53935" stroke-width="1.5" opacity="0.7"/>
+    <rect x="590" y="95" width="160" height="28" rx="10" fill="#E53935" opacity="0.7"/>
+    <rect x="590" y="113" width="160" height="10" fill="#E53935" opacity="0.7"/>
+    <text x="670" y="115" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">❌ 差的定义</text>
+
+    <text x="600" y="140" font-family="sans-serif" font-size="10" font-weight="bold" fill="#1a1a2e">角色：通用助手</text>
+    <text x="600" y="156" font-family="sans-serif" font-size="9" fill="#999">目标：帮助用户</text>
+    <text x="600" y="172" font-family="sans-serif" font-size="9" fill="#999">领域：所有领域</text>
+    <text x="600" y="188" font-family="sans-serif" font-size="9" fill="#999">背景：无特定经验</text>
+    <text x="600" y="204" font-family="sans-serif" font-size="9" fill="#999">能力：回答问题</text>
+    <text x="600" y="220" font-family="sans-serif" font-size="9" fill="#999">边界：无明确限制</text>
+    <text x="600" y="236" font-family="sans-serif" font-size="9" fill="#999">输出：文本回答</text>
+
+    <rect x="600" y="246" width="140" height="22" rx="4" fill="#FFEBEE"/>
+    <text x="670" y="261" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#C62828">行为模糊 · 边界缺失</text>
+  </g>
+
+  <!-- 对比箭头 -->
+  <text x="540" y="195" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#409EFF" opacity="0.6">⟷</text>
+
+  <!-- 底部提示 -->
+  <rect x="410" y="295" width="340" height="36" rx="8" fill="#FFFFFF" opacity="0.8" stroke="#409EFF" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <text x="580" y="310" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#409EFF">💡 好的角色定义 = 具体角色 + 明确目标 + 清晰边界</text>
+  <text x="580" y="324" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#666">6个要素缺一不可，避免“万能助手”式模糊定义</text>
+
+  <!-- 左侧标注 -->
+  <g>
+    <circle cx="365" cy="132" r="10" fill="#409EFF"/>
+    <text x="365" y="136" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#FFFFFF" font-weight="bold">1</text>
+    <line x1="355" y1="132" x2="350" y2="132" stroke="#409EFF" stroke-width="1" stroke-dasharray="2,1"/>
+  </g>
+  <g>
+    <circle cx="365" cy="182" r="10" fill="#409EFF"/>
+    <text x="365" y="186" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#FFFFFF" font-weight="bold">2</text>
+    <line x1="355" y1="182" x2="350" y2="182" stroke="#409EFF" stroke-width="1" stroke-dasharray="2,1"/>
+  </g>
+  <g>
+    <circle cx="365" cy="232" r="10" fill="#409EFF"/>
+    <text x="365" y="236" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#FFFFFF" font-weight="bold">3</text>
+    <line x1="355" y1="232" x2="350" y2="232" stroke="#409EFF" stroke-width="1" stroke-dasharray="2,1"/>
+  </g>
+  <g>
+    <circle cx="365" cy="290" r="10" fill="#409EFF"/>
+    <text x="365" y="294" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#FFFFFF" font-weight="bold">4</text>
+    <line x1="355" y1="290" x2="350" y2="290" stroke="#409EFF" stroke-width="1" stroke-dasharray="2,1"/>
+  </g>
+  <g>
+    <circle cx="365" cy="355" r="10" fill="#409EFF"/>
+    <text x="365" y="359" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#FFFFFF" font-weight="bold">5</text>
+    <line x1="355" y1="355" x2="350" y2="355" stroke="#409EFF" stroke-width="1" stroke-dasharray="2,1"/>
+  </g>
+  <g>
+    <circle cx="365" cy="412" r="10" fill="#409EFF"/>
+    <text x="365" y="416" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#FFFFFF" font-weight="bold">6</text>
+    <line x1="355" y1="412" x2="350" y2="412" stroke="#409EFF" stroke-width="1" stroke-dasharray="2,1"/>
+  </g>
+
+</svg>

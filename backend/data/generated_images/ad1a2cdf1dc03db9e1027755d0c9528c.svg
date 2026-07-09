@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <rect width="800" height="500" fill="#FFFFFF"/>
+  
+  <!-- 标题 -->
+  <text x="400" y="32" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#2C3E50">结构化辩论框架</text>
+  
+  <!-- 法官角色 - 顶部 -->
+  <rect x="340" y="50" width="120" height="50" rx="25" fill="#409EFF" opacity="0.9"/>
+  <text x="400" y="80" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#FFFFFF">法官</text>
+  <text x="400" y="98" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#E0F0FF">观察并记录</text>
+  
+  <!-- 法官的笔记本 -->
+  <rect x="465" y="55" width="30" height="22" rx="2" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="470" y1="62" x2="490" y2="62" stroke="#409EFF" stroke-width="1"/>
+  <line x1="470" y1="67" x2="490" y2="67" stroke="#409EFF" stroke-width="1"/>
+  <line x1="470" y1="72" x2="485" y2="72" stroke="#409EFF" stroke-width="1"/>
+  
+  <!-- 从法官向下的箭头 -->
+  <line x1="400" y1="100" x2="400" y2="130" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#409EFF"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#E74C3C"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#27AE60"/>
+    </marker>
+    <marker id="arrowUp" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,8 L4,0 L8,8 Z" fill="#409EFF"/>
+    </marker>
+  </defs>
+  
+  <!-- 专家 A - 左侧 -->
+  <rect x="100" y="140" width="110" height="60" rx="12" fill="#409EFF" opacity="0.85"/>
+  <text x="155" y="168" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF">专家 A</text>
+  <text x="155" y="186" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#E0F0FF">正方</text>
+  
+  <!-- 专家 B - 右侧 -->
+  <rect x="590" y="140" width="110" height="60" rx="12" fill="#409EFF" opacity="0.85"/>
+  <text x="645" y="168" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF">专家 B</text>
+  <text x="645" y="186" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#E0F0FF">反方</text>
+  
+  <!-- 第1轮：开场陈述 -->
+  <text x="400" y="135" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#409EFF">第1轮：开场陈述</text>
+  
+  <!-- 专家 A 的发言气泡 -->
+  <path d="M220,155 Q260,155 260,140 Q260,125 230,125 L180,125 Q150,125 150,140 Q150,155 180,155 L200,155 L210,170 L215,155 Z" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="205" y="143" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#2C3E50">提出论点</text>
+  
+  <!-- 专家 B 的发言气泡 -->
+  <path d="M580,155 Q540,155 540,140 Q540,125 570,125 L620,125 Q650,125 650,140 Q650,155 620,155 L600,155 L590,170 L585,155 Z" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="595" y="143" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#2C3E50">提出论点</text>
+  
+  <!-- 第2轮：同行批评 -->
+  <text x="400" y="210" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#E74C3C">第2轮：同行批评</text>
+  
+  <!-- 批评箭头 -->
+  <line x1="260" y1="225" x2="540" y2="225" stroke="#E74C3C" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowRed)"/>
+  <line x1="540" y1="240" x2="260" y2="240" stroke="#E74C3C" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowRed)"/>
+  
+  <text x="400" y="222" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#E74C3C">批判</text>
+  <text x="400" y="252" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#E74C3C">反驳</text>
+  
+  <!-- 第3轮：反驳 -->
+  <text x="400" y="285" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#27AE60">第3轮：反驳</text>
+  
+  <!-- 防御盾牌 -->
+  <path d="M200,300 L220,290 L240,300 L240,320 Q220,335 200,320 Z" fill="#27AE60" opacity="0.7" stroke="#27AE60" stroke-width="1.5"/>
+  <text x="220" y="312" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#FFFFFF">防御</text>
+  
+  <path d="M600,300 L580,290 L560,300 L560,320 Q580,335 600,320 Z" fill="#27AE60" opacity="0.7" stroke="#27AE60" stroke-width="1.5"/>
+  <text x="580" y="312" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#FFFFFF">防御</text>
+  
+  <!-- 反驳箭头 -->
+  <line x1="240" y1="305" x2="560" y2="305" stroke="#27AE60" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  <line x1="560" y1="320" x2="240" y2="320" stroke="#27AE60" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  
+  <!-- 第4轮：总结陈述 -->
+  <text x="400" y="360" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#409EFF">最终轮：总结陈述</text>
+  
+  <!-- 总结文档 -->
+  <rect x="130" y="375" width="80" height="50" rx="3" fill="#FFF" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="140" y1="388" x2="200" y2="388" stroke="#409EFF" stroke-width="1"/>
+  <line x1="140" y1="395" x2="195" y2="395" stroke="#409EFF" stroke-width="1"/>
+  <line x1="140" y1="402" x2="190" y2="402" stroke="#409EFF" stroke-width="1"/>
+  <line x1="140" y1="409" x2="185" y2="409" stroke="#409EFF" stroke-width="1"/>
+  <text x="170" y="420" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#409EFF">总结</text>
+  
+  <rect x="590" y="375" width="80" height="50" rx="3" fill="#FFF" stroke="#409EFF" stroke-width="1.5"/>
+  <line x1="600" y1="388" x2="660" y2="388" stroke="#409EFF" stroke-width="1"/>
+  <line x1="600" y1="395" x2="655" y2="395" stroke="#409EFF" stroke-width="1"/>
+  <line x1="600" y1="402" x2="650" y2="402" stroke="#409EFF" stroke-width="1"/>
+  <line x1="600" y1="409" x2="645" y2="409" stroke="#409EFF" stroke-width="1"/>
+  <text x="630" y="420" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#409EFF">总结</text>
+  
+  <!-- 右侧：质量改进指标 -->
+  <rect x="720" y="100" width="75" height="200" rx="8" fill="#F0F7FF" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="757" y="120" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#409EFF">改进</text>
+  
+  <!-- 减少幻觉 -->
+  <text x="727" y="145" font-family="sans-serif" font-size="10" fill="#2C3E50">减少幻觉</text>
+  <line x1="727" y1="150" x2="790" y2="150" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowUp)"/>
+  
+  <!-- 发现盲点 -->
+  <text x="727" y="172" font-family="sans-serif" font-size="10" fill="#2C3E50">发现盲点</text>
+  <line x1="727" y1="177" x2="790" y2="177" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowUp)"/>
+  
+  <!-- 更深推理 -->
+  <text x="727" y="199" font-family="sans-serif" font-size="10" fill="#2C3E50">更深推理</text>
+  <line x1="727" y1="204" x2="790" y2="204" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowUp)"/>
+  
+  <!-- 减少偏见 -->
+  <text x="727" y="226" font-family="sans-serif" font-size="10" fill="#2C3E50">减少偏见</text>
+  <line x1="727" y1="231" x2="790" y2="231" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowUp)"/>
+  
+  <!-- 轮次指示器 -->
+  <rect x="370" y="440" width="60" height="20" rx="10" fill="#409EFF" opacity="0.8"/>
+  <text x="400" y="454" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#FFFFFF">4轮辩论</text>
+  
+  <!-- 底部装饰线 -->
+  <line x1="50" y1="480" x2="750" y2="480" stroke="#E0E0E0" stroke-width="1"/>
+</svg>

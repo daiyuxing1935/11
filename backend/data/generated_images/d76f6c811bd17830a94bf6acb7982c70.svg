@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f7ff"/>
+      <stop offset="100%" stop-color="#e8f2fb"/>
+    </linearGradient>
+    <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#d0d0d0"/>
+      <stop offset="40%" stop-color="#a0c4e8"/>
+      <stop offset="70%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#1a5a9e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">自动驾驶自主等级（L0–L5）</text>
+
+  <!-- 卡片行：L0 到 L5 -->
+  <!-- L0 -->
+  <rect x="30" y="60" width="110" height="130" rx="12" fill="#e0e0e0" stroke="#c0c0c0" stroke-width="1.5"/>
+  <text x="85" y="90" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">L0</text>
+  <text x="85" y="112" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">无自主</text>
+  <!-- 人偶提线示意 -->
+  <line x1="55" y1="130" x2="55" y2="165" stroke="#1a1a2e" stroke-width="1.2"/>
+  <line x1="75" y1="130" x2="75" y2="165" stroke="#1a1a2e" stroke-width="1.2"/>
+  <line x1="95" y1="130" x2="95" y2="165" stroke="#1a1a2e" stroke-width="1.2"/>
+  <circle cx="55" cy="128" r="3" fill="#1a1a2e"/>
+  <circle cx="75" cy="128" r="3" fill="#1a1a2e"/>
+  <circle cx="95" cy="128" r="3" fill="#1a1a2e"/>
+  <rect x="45" y="168" width="60" height="18" rx="4" fill="#1a1a2e" opacity="0.15"/>
+
+  <!-- L1 -->
+  <rect x="160" y="60" width="110" height="130" rx="12" fill="#c8d8e8" stroke="#a8b8c8" stroke-width="1.5"/>
+  <text x="215" y="90" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">L1</text>
+  <text x="215" y="112" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">辅助驾驶</text>
+  <!-- 人指 + 机器人看 -->
+  <circle cx="195" cy="140" r="10" fill="#1a1a2e" opacity="0.2"/>
+  <circle cx="235" cy="140" r="10" fill="#409EFF" opacity="0.3"/>
+  <line x1="205" y1="140" x2="225" y2="140" stroke="#1a1a2e" stroke-width="1" stroke-dasharray="3,2"/>
+
+  <!-- L2 -->
+  <rect x="290" y="60" width="110" height="130" rx="12" fill="#b0cce8" stroke="#90accc" stroke-width="1.5"/>
+  <text x="345" y="90" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">L2</text>
+  <text x="345" y="112" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">部分自主</text>
+  <!-- 机器人做事 + 人检查 -->
+  <rect x="310" y="130" width="20" height="20" rx="3" fill="#409EFF" opacity="0.4"/>
+  <rect x="355" y="132" width="22" height="16" rx="2" fill="#1a1a2e" opacity="0.15"/>
+
+  <!-- L3 -->
+  <rect x="420" y="60" width="110" height="130" rx="12" fill="#90b8e0" stroke="#7098c0" stroke-width="1.5"/>
+  <text x="475" y="90" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">L3</text>
+  <text x="475" y="112" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">条件自主</text>
+  <!-- 围栏区域 -->
+  <rect x="440" y="128" width="60" height="30" rx="2" fill="none" stroke="#1a1a2e" stroke-width="1" opacity="0.4"/>
+  <line x1="440" y1="130" x2="500" y2="130" stroke="#1a1a2e" stroke-width="1.2" opacity="0.3"/>
+  <line x1="440" y1="158" x2="500" y2="158" stroke="#1a1a2e" stroke-width="1.2" opacity="0.3"/>
+
+  <!-- L4 -->
+  <rect x="550" y="60" width="110" height="130" rx="12" fill="#68a8e0" stroke="#4888c0" stroke-width="1.5"/>
+  <text x="605" y="90" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">L4</text>
+  <text x="605" y="112" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">高度自主</text>
+  <!-- 高速公路 + 人阅读 -->
+  <line x1="565" y1="145" x2="645" y2="145" stroke="#1a1a2e" stroke-width="2" opacity="0.3"/>
+  <rect x="580" y="132" width="18" height="12" rx="2" fill="#409EFF" opacity="0.5"/>
+  <rect x="620" y="133" width="14" height="10" rx="1" fill="#1a1a2e" opacity="0.1"/>
+
+  <!-- L5 -->
+  <rect x="680" y="60" width="110" height="130" rx="12" fill="#409EFF" stroke="#2a7ad0" stroke-width="2"/>
+  <text x="735" y="90" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">L5</text>
+  <text x="735" y="112" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#ffffff">完全自主</text>
+  <!-- 星星发光 -->
+  <text x="735" y="150" text-anchor="middle" font-size="22" fill="#ffe066">★</text>
+  <circle cx="735" cy="150" r="14" fill="#ffe066" opacity="0.2"/>
+
+  <!-- 水平箭头连接 -->
+  <line x1="140" y1="125" x2="158" y2="125" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arrowSmall)"/>
+  <line x1="270" y1="125" x2="288" y2="125" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="400" y1="125" x2="418" y2="125" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="530" y1="125" x2="548" y2="125" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="660" y1="125" x2="678" y2="125" stroke="#1a1a2e" stroke-width="1.5"/>
+
+  <!-- 置信度阈值量表 -->
+  <text x="400" y="240" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">自主置信度阈值</text>
+
+  <!-- 量表背景 -->
+  <rect x="80" y="258" width="640" height="20" rx="10" fill="#d8d8d8" stroke="#b0b0b0" stroke-width="1"/>
+  <!-- 量表渐变色 -->
+  <rect x="80" y="258" width="640" height="20" rx="10" fill="url(#gaugeGrad)" opacity="0.7"/>
+
+  <!-- 刻度标记 -->
+  <line x1="80" y1="278" x2="80" y2="288" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="208" y1="278" x2="208" y2="288" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="336" y1="278" x2="336" y2="288" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="464" y1="278" x2="464" y2="288" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="592" y1="278" x2="592" y2="288" stroke="#1a1a2e" stroke-width="1.5"/>
+  <line x1="720" y1="278" x2="720" y2="288" stroke="#1a1a2e" stroke-width="1.5"/>
+
+  <!-- 刻度标签 -->
+  <text x="80" y="302" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">0%</text>
+  <text x="208" y="302" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">20%</text>
+  <text x="336" y="302" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">40%</text>
+  <text x="464" y="302" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">60%</text>
+  <text x="592" y="302" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">80%</text>
+  <text x="720" y="302" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e">100%</text>
+
+  <!-- 阈值指示器箭头 -->
+  <polygon points="464,248 454,258 474,258" fill="#409EFF"/>
+  <text x="464" y="246" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF" font-weight="bold">阈值</text>
+
+  <!-- 底部说明 -->
+  <text x="400" y="340" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1a1a2e" opacity="0.7">← 低自主 ································· 高自主 →</text>
+
+  <!-- 图例 -->
+  <rect x="180" y="365" width="440" height="50" rx="8" fill="#ffffff" stroke="#d0d0d0" stroke-width="1" opacity="0.7"/>
+  <rect x="200" y="380" width="16" height="16" rx="3" fill="#e0e0e0" stroke="#c0c0c0" stroke-width="1"/>
+  <text x="222" y="394" font-family="sans-serif" font-size="12" fill="#1a1a2e">无自主</text>
+  <rect x="290" y="380" width="16" height="16" rx="3" fill="#90b8e0" stroke="#7098c0" stroke-width="1"/>
+  <text x="312" y="394" font-family="sans-serif" font-size="12" fill="#1a1a2e">部分自主</text>
+  <rect x="390" y="380" width="16" height="16" rx="3" fill="#409EFF" stroke="#2a7ad0" stroke-width="1"/>
+  <text x="412" y="394" font-family="sans-serif" font-size="12" fill="#1a1a2e">高度自主</text>
+  <rect x="500" y="380" width="16" height="16" rx="3" fill="#1a5a9e" stroke="#0a3a7e" stroke-width="1"/>
+  <text x="522" y="394" font-family="sans-serif" font-size="12" fill="#1a1a2e">完全自主</text>
+
+  <!-- 装饰线 -->
+  <line x1="30" y1="440" x2="770" y2="440" stroke="#c0d8e8" stroke-width="1" opacity="0.4"/>
+
+  <!-- 底部标语 -->
+  <text x="400" y="470" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1a1a2e" opacity="0.5">自动驾驶技术发展路线图 · SAE J3016 标准</text>
+
+</svg>

@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="Microsoft YaHei, PingFang SC, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="bookGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2B7FD6"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.12" flood-color="#1a1a2e"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">JADE 目录促进者（DF）概念图</text>
+  <line x1="240" y1="48" x2="560" y2="48" stroke="#409EFF" stroke-width="2" opacity="0.5"/>
+
+  <!-- ===== 左侧：DF 黄页图标 ===== -->
+  <!-- 书本形状 -->
+  <rect x="60" y="80" width="100" height="120" rx="6" fill="url(#bookGrad)" filter="url(#shadow)"/>
+  <!-- 书脊 -->
+  <line x1="110" y1="80" x2="110" y2="200" stroke="#2B7FD6" stroke-width="2"/>
+  <!-- 书页 -->
+  <rect x="70" y="90" width="80" height="8" rx="2" fill="#B3D8FF"/>
+  <rect x="70" y="108" width="80" height="8" rx="2" fill="#B3D8FF"/>
+  <rect x="70" y="126" width="80" height="8" rx="2" fill="#B3D8FF"/>
+  <rect x="70" y="144" width="80" height="8" rx="2" fill="#B3D8FF"/>
+  <rect x="70" y="162" width="80" height="8" rx="2" fill="#B3D8FF"/>
+  <!-- DF 标签 -->
+  <rect x="75" y="178" width="70" height="18" rx="4" fill="#FFD700"/>
+  <text x="110" y="191" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a1a2e">DF</text>
+  <!-- 说明 -->
+  <text x="110" y="220" text-anchor="middle" font-size="13" fill="#1a1a2e" font-weight="bold">服务注册中心</text>
+  <text x="110" y="238" text-anchor="middle" font-size="11" fill="#666">Directory Facilitator</text>
+
+  <!-- ===== 右侧：Agent 注册 ===== -->
+  <!-- Agent A -->
+  <rect x="300" y="75" width="160" height="52" rx="8" fill="#fff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+  <circle cx="316" cy="101" r="10" fill="#409EFF" opacity="0.15"/>
+  <text x="316" y="105" text-anchor="middle" font-size="11" fill="#409EFF" font-weight="bold">A</text>
+  <text x="332" y="96" font-size="12" fill="#1a1a2e" font-weight="bold">数据代理</text>
+  <text x="332" y="112" font-size="11" fill="#666">service_type: data-analysis</text>
+  <text x="332" y="124" font-size="11" fill="#666">service_name: DataAnalyzer</text>
+
+  <!-- Agent B -->
+  <rect x="300" y="145" width="160" height="52" rx="8" fill="#fff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+  <circle cx="316" cy="171" r="10" fill="#409EFF" opacity="0.15"/>
+  <text x="316" y="175" text-anchor="middle" font-size="11" fill="#409EFF" font-weight="bold">B</text>
+  <text x="332" y="166" font-size="12" fill="#1a1a2e" font-weight="bold">搜索代理</text>
+  <text x="332" y="182" font-size="11" fill="#666">service_type: web-search</text>
+  <text x="332" y="194" font-size="11" fill="#666">service_name: WebSearcher</text>
+
+  <!-- Agent C -->
+  <rect x="300" y="215" width="160" height="52" rx="8" fill="#fff" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+  <circle cx="316" cy="241" r="10" fill="#409EFF" opacity="0.15"/>
+  <text x="316" y="245" text-anchor="middle" font-size="11" fill="#409EFF" font-weight="bold">C</text>
+  <text x="332" y="236" font-size="12" fill="#1a1a2e" font-weight="bold">翻译代理</text>
+  <text x="332" y="252" font-size="11" fill="#666">service_type: translation</text>
+  <text x="332" y="264" font-size="11" fill="#666">service_name: Translator</text>
+
+  <!-- ===== 注册箭头（从 Agent 到 DF） ===== -->
+  <!-- A → DF -->
+  <line x1="260" y1="101" x2="300" y2="101" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="295,96 305,101 295,106" fill="#409EFF"/>
+  <text x="280" y="93" text-anchor="middle" font-size="11" fill="#409EFF">注册</text>
+
+  <!-- B → DF -->
+  <line x1="260" y1="171" x2="300" y2="171" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="295,166 305,171 295,176" fill="#409EFF"/>
+  <text x="280" y="163" text-anchor="middle" font-size="11" fill="#409EFF">注册</text>
+
+  <!-- C → DF -->
+  <line x1="260" y1="241" x2="300" y2="241" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="295,236 305,241 295,246" fill="#409EFF"/>
+  <text x="280" y="233" text-anchor="middle" font-size="11" fill="#409EFF">注册</text>
+
+  <!-- ===== 查询箭头 ===== -->
+  <!-- 查询 Agent 在右侧 -->
+  <rect x="540" y="130" width="140" height="44" rx="8" fill="#fff" stroke="#FFD700" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="610" y="150" text-anchor="middle" font-size="12" fill="#1a1a2e" font-weight="bold">查询 Agent</text>
+  <text x="610" y="166" text-anchor="middle" font-size="10" fill="#666">查找 data-analysis 服务</text>
+
+  <!-- 查询箭头：查询 Agent → DF -->
+  <path d="M540,152 L500,152 L500,130 L460,130" stroke="#FFD700" stroke-width="1.5" fill="none" marker-end="url(#arrowGold)"/>
+  <defs>
+    <marker id="arrowGold" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#FFD700"/>
+    </marker>
+  </defs>
+  <text x="500" y="144" text-anchor="middle" font-size="10" fill="#D4A800">查询</text>
+
+  <!-- DF 返回匹配列表 -->
+  <rect x="540" y="200" width="140" height="44" rx="8" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="610" y="220" text-anchor="middle" font-size="12" fill="#1a1a2e" font-weight="bold">匹配结果</text>
+  <text x="610" y="236" text-anchor="middle" font-size="10" fill="#409EFF">→ DataAnalyzer</text>
+
+  <!-- 返回箭头：DF → 查询 Agent -->
+  <path d="M610,200 L610,178" stroke="#409EFF" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)"/>
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#409EFF"/>
+    </marker>
+  </defs>
+  <text x="618" y="192" font-size="10" fill="#409EFF">返回</text>
+
+  <!-- ===== 注销箭头 ===== -->
+  <path d="M160,241 L200,241 L200,280 L300,280" stroke="#E74C3C" stroke-width="1.2" stroke-dasharray="4,3" fill="none" opacity="0.6"/>
+  <text x="230" y="275" text-anchor="middle" font-size="11" fill="#E74C3C">注销</text>
+
+  <!-- ===== 底部：行为模型生命周期 ===== -->
+  <rect x="60" y="310" width="680" height="160" rx="10" fill="#fff" stroke="#409EFF" stroke-width="1.2" opacity="0.9"/>
+  <text x="400" y="338" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">Agent 行为模型生命周期</text>
+
+  <!-- Setup -->
+  <rect x="100" y="360" width="110" height="40" rx="20" fill="#409EFF" filter="url(#shadow)"/>
+  <text x="155" y="385" text-anchor="middle" font-size="13" fill="#fff" font-weight="bold">Setup</text>
+
+  <!-- 箭头 -->
+  <line x1="210" y1="380" x2="260" y2="380" stroke="#1a1a2e" stroke-width="1.5"/>
+  <polygon points="255,375 265,380 255,385" fill="#1a1a2e"/>
+
+  <!-- Add Behaviours -->
+  <rect x="270" y="360" width="180" height="40" rx="20" fill="#E8F4FD" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="360" y="378" text-anchor="middle" font-size="11" fill="#1a1a2e" font-weight="bold">Add Behaviours</text>
+  <text x="360" y="394" text-anchor="middle" font-size="10" fill="#409EFF">TaskSeeking, TaskProcessing</text>
+
+  <!-- 箭头 -->
+  <line x1="450" y1="380" x2="500" y2="380" stroke="#1a1a2e" stroke-width="1.5"/>
+  <polygon points="495,375 505,380 495,385" fill="#1a1a2e"/>
+
+  <!-- Execute Loop -->
+  <rect x="510" y="360" width="120" height="40" rx="20" fill="#409EFF" filter="url(#shadow)"/>
+  <text x="570" y="385" text-anchor="middle" font-size="13" fill="#fff" font-weight="bold">Execute Loop</text>
+
+  <!-- 循环箭头 -->
+  <path d="M630,380 Q660,380 660,340 Q660,320 630,320 L510,320" stroke="#1a1a2e" stroke-width="1.2" fill="none" stroke-dasharray="5,3"/>
+  <polygon points="515,315 505,320 515,325" fill="#1a1a2e"/>
+  <text x="585" y="313" text-anchor="middle" font-size="10" fill="#1a1a2e">循环</text>
+
+  <!-- ===== 标注 ===== -->
+  <!-- 标注 1：注册 -->
+  <rect x="180" y="82" width="60" height="22" rx="4" fill="#409EFF" opacity="0.9"/>
+  <text x="210" y="97" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">注册</text>
+
+  <!-- 标注 2：查询 -->
+  <rect x="460" y="118" width="60" height="22" rx="4" fill="#FFD700" opacity="0.9"/>
+  <text x="490" y="133" text-anchor="middle" font-size="12" fill="#1a1a2e" font-weight="bold">查询</text>
+
+  <!-- 标注 3：返回 -->
+  <rect x="460" y="210" width="60" height="22" rx="4" fill="#409EFF" opacity="0.9"/>
+  <text x="490" y="225" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">返回</text>
+
+  <!-- 标注 4：注销 -->
+  <rect x="180" y="260" width="60" height="22" rx="4" fill="#E74C3C" opacity="0.8"/>
+  <text x="210" y="275" text-anchor="middle" font-size="12" fill="#fff" font-weight="bold">注销</text>
+
+  <!-- 标注 5：服务注册 -->
+  <rect x="300" y="290" width="80" height="22" rx="4" fill="#409EFF" opacity="0.7"/>
+  <text x="340" y="305" text-anchor="middle" font-size="11" fill="#fff">服务注册中心</text>
+
+  <!-- 标注 6：生命周期 -->
+  <rect x="520" y="290" width="80" height="22" rx="4" fill="#1a1a2e" opacity="0.8"/>
+  <text x="560" y="305" text-anchor="middle" font-size="11" fill="#fff">行为模型</text>
+
+</svg>

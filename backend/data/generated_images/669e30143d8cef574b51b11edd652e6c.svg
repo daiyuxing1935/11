@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="'Microsoft YaHei', 'PingFang SC', sans-serif">
+  <defs>
+    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#66B1FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ECF5FF"/>
+      <stop offset="100%" stop-color="#D9ECFF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0F9FF"/>
+      <stop offset="100%" stop-color="#E0F0FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5F0FF"/>
+      <stop offset="100%" stop-color="#EBE0FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFF7E6"/>
+      <stop offset="100%" stop-color="#FFEECC"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.12" flood-color="#409EFF"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="#FFFFFF" rx="8"/>
+
+  <!-- 顶部标题栏 -->
+  <rect x="0" y="0" width="800" height="52" fill="url(#headerGrad)" rx="8"/>
+  <rect x="0" y="30" width="800" height="22" fill="url(#headerGrad)"/>
+  <text x="400" y="33" text-anchor="middle" fill="#FFFFFF" font-size="18" font-weight="bold">客服智能体团队架构 · 服务流程</text>
+
+  <!-- ===== 路由智能体（一线） ===== -->
+  <rect x="300" y="70" width="200" height="90" rx="14" fill="url(#cardGrad1)" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
+  <text x="400" y="98" text-anchor="middle" fill="#409EFF" font-size="16" font-weight="bold">路由智能体</text>
+  <text x="400" y="118" text-anchor="middle" fill="#606266" font-size="13">一线分流 · 意图分类</text>
+  <text x="400" y="138" text-anchor="middle" fill="#909399" font-size="12">GPT-4 · 路由客户查询</text>
+
+  <!-- 分支箭头 -->
+  <line x1="400" y1="160" x2="400" y2="185" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <line x1="400" y1="185" x2="140" y2="185" stroke="#409EFF" stroke-width="2"/>
+  <line x1="400" y1="185" x2="660" y2="185" stroke="#409EFF" stroke-width="2"/>
+  <line x1="140" y1="185" x2="140" y2="205" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <line x1="660" y1="185" x2="660" y2="205" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <line x1="400" y1="185" x2="400" y2="205" stroke="#409EFF" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#409EFF"/>
+    </marker>
+  </defs>
+
+  <!-- ===== 订单专家智能体 ===== -->
+  <rect x="40" y="210" width="200" height="110" rx="14" fill="url(#cardGrad2)" stroke="#409EFF" stroke-width="1.8" filter="url(#shadow)"/>
+  <rect x="40" y="210" width="200" height="6" rx="3" fill="#409EFF"/>
+  <text x="140" y="240" text-anchor="middle" fill="#303133" font-size="15" font-weight="bold">订单专家智能体</text>
+  <text x="140" y="260" text-anchor="middle" fill="#606266" font-size="13">订单 / 物流 / 退货</text>
+  <text x="140" y="280" text-anchor="middle" fill="#909399" font-size="12">GPT-3.5 · 工具调用</text>
+  <text x="140" y="300" text-anchor="middle" fill="#409EFF" font-size="11">订单查询 · 物流跟踪</text>
+
+  <!-- ===== 技术支持智能体 ===== -->
+  <rect x="300" y="210" width="200" height="110" rx="14" fill="url(#cardGrad3)" stroke="#409EFF" stroke-width="1.8" filter="url(#shadow)"/>
+  <rect x="300" y="210" width="200" height="6" rx="3" fill="#409EFF"/>
+  <text x="400" y="240" text-anchor="middle" fill="#303133" font-size="15" font-weight="bold">技术支持智能体</text>
+  <text x="400" y="260" text-anchor="middle" fill="#606266" font-size="13">知识库 + 诊断工具</text>
+  <text x="400" y="280" text-anchor="middle" fill="#909399" font-size="12">GPT-4 · 技术故障排查</text>
+  <text x="400" y="300" text-anchor="middle" fill="#409EFF" font-size="11">知识检索 · 诊断分析</text>
+
+  <!-- ===== 满意度监测智能体 ===== -->
+  <rect x="560" y="210" width="200" height="110" rx="14" fill="url(#cardGrad4)" stroke="#409EFF" stroke-width="1.8" filter="url(#shadow)"/>
+  <rect x="560" y="210" width="200" height="6" rx="3" fill="#409EFF"/>
+  <text x="660" y="240" text-anchor="middle" fill="#303133" font-size="15" font-weight="bold">满意度监测智能体</text>
+  <text x="660" y="260" text-anchor="middle" fill="#606266" font-size="13">情绪检测 · 升级处理</text>
+  <text x="660" y="280" text-anchor="middle" fill="#909399" font-size="12">GPT-3.5 · 情感分析</text>
+  <text x="660" y="300" text-anchor="middle" fill="#409EFF" font-size="11">满意度评估 · 预警升级</text>
+
+  <!-- ===== 底部标注区域 ===== -->
+  <!-- 标注 1 -->
+  <rect x="30" y="350" width="14" height="14" rx="3" fill="#409EFF"/>
+  <text x="50" y="362" fill="#303133" font-size="14">模型选择：复杂任务 GPT-4，标准任务 GPT-3.5</text>
+
+  <!-- 标注 2 -->
+  <rect x="30" y="380" width="14" height="14" rx="3" fill="#409EFF"/>
+  <text x="50" y="392" fill="#303133" font-size="14">职责边界清晰：路由 → 专家 → 监测，单向流转</text>
+
+  <!-- 标注 3 -->
+  <rect x="30" y="410" width="14" height="14" rx="3" fill="#409EFF"/>
+  <text x="50" y="422" fill="#303133" font-size="14">委派控制：路由智能体根据意图分配至对应专家</text>
+
+  <!-- 标注 4 -->
+  <rect x="420" y="350" width="14" height="14" rx="3" fill="#409EFF"/>
+  <text x="440" y="362" fill="#303133" font-size="14">满意度监测横向贯穿，实时评估服务质量</text>
+
+  <!-- 标注 5 -->
+  <rect x="420" y="380" width="14" height="14" rx="3" fill="#409EFF"/>
+  <text x="440" y="392" fill="#303133" font-size="14">知识库 + 诊断工具提升技术问题解决效率</text>
+
+  <!-- 标注 6 -->
+  <rect x="420" y="410" width="14" height="14" rx="3" fill="#409EFF"/>
+  <text x="440" y="422" fill="#303133" font-size="14">情绪检测触发升级流程，保障客户体验</text>
+
+  <!-- 底部装饰线 -->
+  <line x1="30" y1="445" x2="770" y2="445" stroke="#E4E7ED" stroke-width="1"/>
+  <text x="400" y="468" text-anchor="middle" fill="#C0C4CC" font-size="11">客服智能体团队 · 扁平化设计</text>
+
+  <!-- 团队架构连线（横向贯穿） -->
+  <line x1="140" y1="320" x2="140" y2="340" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="400" y1="320" x2="400" y2="340" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="660" y1="320" x2="660" y2="340" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="140" y1="340" x2="660" y2="340" stroke="#409EFF" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <text x="400" y="338" text-anchor="middle" fill="#409EFF" font-size="10">协同工作</text>
+</svg>

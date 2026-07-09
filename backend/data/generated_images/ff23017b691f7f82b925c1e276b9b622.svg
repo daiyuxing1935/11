@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FBFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
+
+  <!-- 标题 -->
+  <text x="400" y="32" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">三种投票机制对比</text>
+
+  <!-- ========== 区块1：多数投票（顶部） ========== -->
+  <rect x="30" y="52" width="740" height="120" rx="10" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="30" y="52" width="740" height="30" rx="10" fill="#409EFF" opacity="0.12"/>
+  <text x="50" y="72" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">① 多数投票</text>
+
+  <!-- 三张选票 -->
+  <!-- 选票A（标记A） -->
+  <rect x="80" y="95" width="70" height="50" rx="4" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="115" y="118" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#409EFF">A</text>
+  <text x="115" y="137" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#666">✓ 标记</text>
+
+  <!-- 选票B（标记A） -->
+  <rect x="180" y="95" width="70" height="50" rx="4" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="215" y="118" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#409EFF">A</text>
+  <text x="215" y="137" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#666">✓ 标记</text>
+
+  <!-- 选票C（标记B） -->
+  <rect x="280" y="95" width="70" height="50" rx="4" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1.5"/>
+  <text x="315" y="118" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#999">B</text>
+  <text x="315" y="137" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#999">标记</text>
+
+  <!-- 箭头指向结果 -->
+  <line x1="370" y1="120" x2="410" y2="120" stroke="#409EFF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#409EFF"/>
+    </marker>
+  </defs>
+
+  <!-- 结果框 -->
+  <rect x="420" y="95" width="100" height="50" rx="6" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="470" y="118" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#409EFF">A 获胜</text>
+  <text x="470" y="137" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#666">2票 vs 1票</text>
+
+  <!-- 优缺点标注 -->
+  <text x="560" y="108" font-family="sans-serif" font-size="13" fill="#1a1a2e">✅ 简单快速</text>
+  <text x="560" y="135" font-family="sans-serif" font-size="13" fill="#1a1a2e">❌ 忽略少数</text>
+
+  <!-- ========== 区块2：加权投票（中部） ========== -->
+  <rect x="30" y="190" width="740" height="120" rx="10" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="30" y="190" width="740" height="30" rx="10" fill="#409EFF" opacity="0.12"/>
+  <text x="50" y="210" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">② 加权投票</text>
+
+  <!-- 三个投票者（不同大小表示权重） -->
+  <!-- 高级分析师 权重2.0 -->
+  <circle cx="130" cy="260" r="22" fill="#409EFF" opacity="0.25" stroke="#409EFF" stroke-width="2"/>
+  <text x="130" y="256" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">高级</text>
+  <text x="130" y="270" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#409EFF" font-weight="bold">×2.0</text>
+
+  <!-- 初级分析师 权重1.0 -->
+  <circle cx="220" cy="260" r="16" fill="#409EFF" opacity="0.2" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="220" y="257" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#1a1a2e">初级</text>
+  <text x="220" y="270" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#409EFF" font-weight="bold">×1.0</text>
+
+  <!-- 实习生 权重0.5 -->
+  <circle cx="290" cy="260" r="11" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1"/>
+  <text x="290" y="258" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#1a1a2e">实习</text>
+  <text x="290" y="270" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#409EFF" font-weight="bold">×0.5</text>
+
+  <!-- 天平图标 -->
+  <line x1="330" y1="240" x2="330" y2="280" stroke="#409EFF" stroke-width="2"/>
+  <line x1="310" y1="260" x2="350" y2="260" stroke="#409EFF" stroke-width="2"/>
+  <polygon points="330,280 325,290 335,290" fill="#409EFF"/>
+  <circle cx="310" cy="260" r="6" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+  <circle cx="350" cy="260" r="6" fill="none" stroke="#409EFF" stroke-width="1.5"/>
+
+  <!-- 加权合计 -->
+  <rect x="420" y="235" width="120" height="50" rx="6" fill="#409EFF" opacity="0.15" stroke="#409EFF" stroke-width="1.5"/>
+  <text x="480" y="258" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#409EFF">加权合计</text>
+  <text x="480" y="278" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">2.0 + 1.0 + 0.5</text>
+
+  <!-- 优缺点标注 -->
+  <text x="580" y="248" font-family="sans-serif" font-size="13" fill="#1a1a2e">✅ 体现专业度</text>
+  <text x="580" y="275" font-family="sans-serif" font-size="13" fill="#1a1a2e">❌ 权重难界定</text>
+
+  <!-- ========== 区块3：排序投票（底部） ========== -->
+  <rect x="30" y="328" width="740" height="150" rx="10" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5"/>
+  <rect x="30" y="328" width="740" height="30" rx="10" fill="#409EFF" opacity="0.12"/>
+  <text x="50" y="348" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">③ 排序投票</text>
+
+  <!-- 排序表格 -->
+  <!-- 表头 -->
+  <rect x="60" y="370" width="120" height="24" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="120" y="387" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a2e">选项</text>
+
+  <rect x="190" y="370" width="80" height="24" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="230" y="387" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a2e">投票者1</text>
+
+  <rect x="280" y="370" width="80" height="24" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="320" y="387" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a2e">投票者2</text>
+
+  <rect x="370" y="370" width="80" height="24" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="410" y="387" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a2e">投票者3</text>
+
+  <rect x="460" y="370" width="80" height="24" rx="4" fill="#409EFF" opacity="0.2"/>
+  <text x="500" y="387" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a1a2e">总分</text>
+
+  <!-- 数据行1：选项A -->
+  <rect x="60" y="400" width="120" height="28" rx="4" fill="#F0F8FF"/>
+  <text x="120" y="419" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">选项 A</text>
+
+  <rect x="190" y="400" width="80" height="28" rx="4" fill="#F0F8FF"/>
+  <text x="230" y="419" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#409EFF">第1</text>
+
+  <rect x="280" y="400" width="80" height="28" rx="4" fill="#F0F8FF"/>
+  <text x="320" y="419" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#409EFF">第2</text>
+
+  <rect x="370" y="400" width="80" height="28" rx="4" fill="#F0F8FF"/>
+  <text x="410" y="419" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#409EFF">第1</text>
+
+  <rect x="460" y="400" width="80" height="28" rx="4" fill="#409EFF" opacity="0.25"/>
+  <text x="500" y="419" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#409EFF">8分</text>
+
+  <!-- 数据行2：选项B -->
+  <rect x="60" y="434" width="120" height="28" rx="4" fill="#FFFFFF"/>
+  <text x="120" y="453" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">选项 B</text>
+
+  <rect x="190" y="434" width="80" height="28" rx="4" fill="#FFFFFF"/>
+  <text x="230" y="453" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#999">第2</text>
+
+  <rect x="280" y="434" width="80" height="28" rx="4" fill="#FFFFFF"/>
+  <text x="320" y="453" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#999">第1</text>
+
+  <rect x="370" y="434" width="80" height="28" rx="4" fill="#FFFFFF"/>
+  <text x="410" y="453" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#999">第2</text>
+
+  <rect x="460" y="434" width="80" height="28" rx="4" fill="#FFFFFF"/>
+  <text x="500" y="453" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#666">6分</text>
+
+  <!-- 获胜高亮 -->
+  <rect x="555" y="370" width="140" height="92" rx="8" fill="#409EFF" opacity="0.12" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="625" y="400" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#409EFF">🏆 最高总分</text>
+  <text x="625" y="425" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#1a1a2e">选项 A 获胜</text>
+  <text x="625" y="448" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#666">综合排序最优</text>
+
+  <!-- 优缺点标注 -->
+  <text x="580" y="348" font-family="sans-serif" font-size="13" fill="#1a1a2e">✅ 反映综合偏好</text>
+  <text x="700" y="348" font-family="sans-serif" font-size="13" fill="#1a1a2e">❌ 计票较复杂</text>
+
+</svg>

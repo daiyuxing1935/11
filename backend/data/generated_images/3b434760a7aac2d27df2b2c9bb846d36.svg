@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F5FAFF"/>
+    </linearGradient>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#409EFF" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">仲裁者/调解者模式 — 教育配图</text>
+  <line x1="280" y1="48" x2="520" y2="48" stroke="#409EFF" stroke-width="2" stroke-opacity="0.5"/>
+
+  <!-- ===== 左侧 代理A ===== -->
+  <g transform="translate(60, 130)">
+    <!-- 人物圆 -->
+    <circle cx="40" cy="30" r="22" fill="#409EFF" opacity="0.15"/>
+    <circle cx="40" cy="30" r="18" fill="#409EFF" opacity="0.3"/>
+    <text x="40" y="36" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a2e">A</text>
+    <!-- 身体 -->
+    <rect x="25" y="54" width="30" height="36" rx="8" fill="#409EFF" opacity="0.2"/>
+    <!-- 标签 -->
+    <text x="40" y="108" text-anchor="middle" font-size="14" fill="#1a1a2e">代理 A</text>
+    <text x="40" y="126" text-anchor="middle" font-size="12" fill="#606266">“我方主张…”</text>
+
+    <!-- 信心分数 -->
+    <rect x="8" y="140" width="64" height="20" rx="10" fill="#E6F0FF" stroke="#409EFF" stroke-width="1"/>
+    <text x="40" y="154" text-anchor="middle" font-size="11" fill="#409EFF" font-weight="bold">信心: 85%</text>
+
+    <!-- 观点气泡 -->
+    <path d="M10,170 Q10,160 20,160 L60,160 Q70,160 70,170 L70,200 Q70,210 60,210 L30,210 L20,222 L22,210 L20,210 Q10,210 10,200 Z" fill="#FFFFFF" stroke="#409EFF" stroke-width="1.5" stroke-opacity="0.5" filter="url(#shadow)"/>
+    <text x="40" y="184" text-anchor="middle" font-size="11" fill="#1a1a2e">方案 X 更优</text>
+    <text x="40" y="200" text-anchor="middle" font-size="11" fill="#1a1a2e">因为成本低</text>
+  </g>
+
+  <!-- ===== 右侧 代理B ===== -->
+  <g transform="translate(660, 130)">
+    <circle cx="40" cy="30" r="22" fill="#E6A23C" opacity="0.15"/>
+    <circle cx="40" cy="30" r="18" fill="#E6A23C" opacity="0.3"/>
+    <text x="40" y="36" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a2e">B</text>
+    <rect x="25" y="54" width="30" height="36" rx="8" fill="#E6A23C" opacity="0.2"/>
+    <text x="40" y="108" text-anchor="middle" font-size="14" fill="#1a1a2e">代理 B</text>
+    <text x="40" y="126" text-anchor="middle" font-size="12" fill="#606266">“我方反对…”</text>
+
+    <rect x="8" y="140" width="64" height="20" rx="10" fill="#FDF5E6" stroke="#E6A23C" stroke-width="1"/>
+    <text x="40" y="154" text-anchor="middle" font-size="11" fill="#E6A23C" font-weight="bold">信心: 72%</text>
+
+    <path d="M10,170 Q10,160 20,160 L60,160 Q70,160 70,170 L70,200 Q70,210 60,210 L30,210 L20,222 L22,210 L20,210 Q10,210 10,200 Z" fill="#FFFFFF" stroke="#E6A23C" stroke-width="1.5" stroke-opacity="0.5" filter="url(#shadow)"/>
+    <text x="40" y="184" text-anchor="middle" font-size="11" fill="#1a1a2e">方案 Y 更好</text>
+    <text x="40" y="200" text-anchor="middle" font-size="11" fill="#1a1a2e">因为质量高</text>
+  </g>
+
+  <!-- ===== 中央 仲裁者 ===== -->
+  <g transform="translate(340, 100)">
+    <!-- 仲裁者主体卡片 -->
+    <rect x="0" y="0" width="120" height="160" rx="16" fill="#FFFFFF" stroke="#409EFF" stroke-width="2" filter="url(#shadow)"/>
+    <!-- 头像区域 -->
+    <circle cx="60" cy="32" r="20" fill="#409EFF" opacity="0.15"/>
+    <circle cx="60" cy="32" r="16" fill="#409EFF" opacity="0.25"/>
+    <!-- 法槌图标 -->
+    <rect x="52" y="24" width="16" height="6" rx="2" fill="#409EFF"/>
+    <rect x="56" y="30" width="8" height="10" rx="1" fill="#409EFF"/>
+    <text x="60" y="38" text-anchor="middle" font-size="9" fill="#FFFFFF" font-weight="bold">⚖</text>
+    <!-- 标签 -->
+    <text x="60" y="66" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a2e">仲裁者</text>
+    <text x="60" y="82" text-anchor="middle" font-size="10" fill="#909399">调解者</text>
+
+    <!-- 职责列表 -->
+    <g transform="translate(10, 92)">
+      <rect x="0" y="0" width="100" height="18" rx="4" fill="#E8F4FD"/>
+      <text x="8" y="13" font-size="10" fill="#1a1a2e">👂 听取双方</text>
+
+      <rect x="0" y="22" width="100" height="18" rx="4" fill="#E8F4FD"/>
+      <text x="8" y="35" font-size="10" fill="#1a1a2e">🔍 识别分歧</text>
+
+      <rect x="0" y="44" width="100" height="18" rx="4" fill="#E8F4FD"/>
+      <text x="8" y="57" font-size="10" fill="#1a1a2e">📊 评估论点</text>
+
+      <rect x="0" y="66" width="100" height="18" rx="4" fill="#E8F4FD"/>
+      <text x="8" y="79" font-size="10" fill="#1a1a2e">⚖ 做出裁决</text>
+
+      <rect x="0" y="88" width="100" height="18" rx="4" fill="#E8F4FD"/>
+      <text x="8" y="101" font-size="10" fill="#1a1a2e">📝 记录决定</text>
+    </g>
+  </g>
+
+  <!-- ===== 连接线 ===== -->
+  <!-- A 到仲裁者 -->
+  <line x1="190" y1="210" x2="335" y2="180" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.5"/>
+  <line x1="190" y1="230" x2="335" y2="200" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.5"/>
+
+  <!-- B 到仲裁者 -->
+  <line x1="610" y1="210" x2="465" y2="180" stroke="#E6A23C" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.5"/>
+  <line x1="610" y1="230" x2="465" y2="200" stroke="#E6A23C" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.5"/>
+
+  <!-- ===== 提示设计模板卡片 ===== -->
+  <g transform="translate(180, 330)">
+    <rect x="0" y="0" width="440" height="140" rx="12" fill="url(#cardGrad)" stroke="#409EFF" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="440" height="32" rx="12" fill="#409EFF" opacity="0.1"/>
+    <rect x="0" y="20" width="440" height="12" fill="#409EFF" opacity="0.1"/>
+    <text x="20" y="22" font-size="14" font-weight="bold" fill="#1a1a2e">📋 仲裁提示模板</text>
+
+    <text x="20" y="52" font-size="12" fill="#606266">系统：你是一位公正的仲裁者。请按以下步骤处理争议：</text>
+    <text x="20" y="72" font-size="12" fill="#606266">1. 听取代理 A 和代理 B 的完整陈述</text>
+    <text x="20" y="90" font-size="12" fill="#606266">2. 识别双方的核心分歧点</text>
+    <text x="20" y="108" font-size="12" fill="#606266">3. 评估论据质量与逻辑一致性</text>
+    <text x="20" y="126" font-size="12" fill="#606266">4. 做出裁决并记录决定依据</text>
+
+    <!-- 模板标签 -->
+    <rect x="340" y="40" width="80" height="20" rx="4" fill="#409EFF" opacity="0.15"/>
+    <text x="380" y="54" text-anchor="middle" font-size="10" fill="#409EFF" font-weight="bold">结构化提示</text>
+  </g>
+
+  <!-- ===== 标注 ===== -->
+  <!-- 标注1 -->
+  <g transform="translate(130, 95)">
+    <rect x="0" y="0" width="72" height="22" rx="6" fill="#409EFF" opacity="0.12"/>
+    <text x="36" y="15" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="bold">陈述观点</text>
+  </g>
+
+  <!-- 标注2 -->
+  <g transform="translate(600, 95)">
+    <rect x="0" y="0" width="72" height="22" rx="6" fill="#E6A23C" opacity="0.12"/>
+    <text x="36" y="15" text-anchor="middle" font-size="12" fill="#E6A23C" font-weight="bold">反驳意见</text>
+  </g>
+
+  <!-- 标注3 -->
+  <g transform="translate(370, 78)">
+    <rect x="0" y="0" width="72" height="22" rx="6" fill="#409EFF" opacity="0.12"/>
+    <text x="36" y="15" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="bold">居中仲裁</text>
+  </g>
+
+  <!-- 标注4 -->
+  <g transform="translate(370, 290)">
+    <rect x="0" y="0" width="72" height="22" rx="6" fill="#409EFF" opacity="0.12"/>
+    <text x="36" y="15" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="bold">提示设计</text>
+  </g>
+
+  <!-- 标注5 -->
+  <g transform="translate(50, 310)">
+    <rect x="0" y="0" width="72" height="22" rx="6" fill="#409EFF" opacity="0.12"/>
+    <text x="36" y="15" text-anchor="middle" font-size="12" fill="#409EFF" font-weight="bold">信心评分</text>
+  </g>
+
+  <!-- 标注6 -->
+  <g transform="translate(680, 310)">
+    <rect x="0" y="0" width="72" height="22" rx="6" fill="#E6A23C" opacity="0.12"/>
+    <text x="36" y="15" text-anchor="middle" font-size="12" fill="#E6A23C" font-weight="bold">信心评分</text>
+  </g>
+
+  <!-- 底部说明 -->
+  <text x="400" y="490" text-anchor="middle" font-size="12" fill="#909399">仲裁者模式：中立第三方听取双方意见后做出公正裁决</text>
+</svg>

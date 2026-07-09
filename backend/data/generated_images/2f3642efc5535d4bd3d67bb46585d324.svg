@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F4FF"/>
+      <stop offset="100%" stop-color="#D0ECFF"/>
+    </linearGradient>
+    <linearGradient id="centerGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2B7BE5"/>
+    </linearGradient>
+    <linearGradient id="nodeGrad1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
+    </linearGradient>
+    <linearGradient id="nodeGrad2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F5FAFF"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#409EFF" flood-opacity="0.15"/>
+    </filter>
+    <filter id="shadowLight" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="1" stdDeviation="3" flood-color="#409EFF" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="0"/>
+
+  <!-- 标题 -->
+  <text x="400" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">智能体分歧的五大根源</text>
+  <line x1="280" y1="48" x2="520" y2="48" stroke="#409EFF" stroke-width="2" stroke-opacity="0.5"/>
+
+  <!-- 中心节点 -->
+  <circle cx="400" cy="250" r="52" fill="url(#centerGrad)" filter="url(#shadow)"/>
+  <circle cx="400" cy="250" r="52" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-opacity="0.3"/>
+  <text x="400" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">智能体</text>
+  <text x="400" y="258" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">分歧</text>
+
+  <!-- 中心图标：分裂/冲突 -->
+  <line x1="385" y1="215" x2="415" y2="215" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="385" y1="285" x2="415" y2="285" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="365" y1="235" x2="365" y2="265" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="435" y1="235" x2="435" y2="265" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="400" cy="250" r="8" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+
+  <!-- ===== 节点1：视角差异（右上） ===== -->
+  <g filter="url(#shadowLight)">
+    <rect x="555" y="95" width="175" height="120" rx="14" fill="url(#nodeGrad1)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="555" y="95" width="175" height="32" rx="14" fill="#409EFF" fill-opacity="0.1"/>
+    <text x="642" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#409EFF">视角差异</text>
+    <!-- 金融分析师 -->
+    <rect x="565" y="137" width="38" height="28" rx="4" fill="#E8F4FF" stroke="#409EFF" stroke-width="1"/>
+    <text x="584" y="155" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#1a1a2e">💰</text>
+    <text x="584" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#666">金融</text>
+    <!-- 技术分析师 -->
+    <rect x="680" y="137" width="38" height="28" rx="4" fill="#E8F4FF" stroke="#409EFF" stroke-width="1"/>
+    <text x="699" y="155" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#1a1a2e">💻</text>
+    <text x="699" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#666">技术</text>
+    <!-- 同一物体 -->
+    <rect x="620" y="137" width="48" height="28" rx="4" fill="#FFF3E0" stroke="#FFB74D" stroke-width="1"/>
+    <text x="644" y="155" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#1a1a2e">📊</text>
+    <text x="644" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#666">同一数据</text>
+    <!-- 标注 -->
+    <text x="642" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#666">不同角度解读</text>
+  </g>
+
+  <!-- ===== 节点2：信息不对称（右下） ===== -->
+  <g filter="url(#shadowLight)">
+    <rect x="555" y="285" width="175" height="120" rx="14" fill="url(#nodeGrad2)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="555" y="285" width="175" height="32" rx="14" fill="#409EFF" fill-opacity="0.1"/>
+    <text x="642" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#409EFF">信息不对称</text>
+    <!-- 完整数据库 -->
+    <rect x="568" y="325" width="42" height="32" rx="4" fill="#E8F4FF" stroke="#409EFF" stroke-width="1"/>
+    <rect x="571" y="328" width="36" height="6" rx="1" fill="#409EFF" fill-opacity="0.3"/>
+    <rect x="571" y="337" width="36" height="6" rx="1" fill="#409EFF" fill-opacity="0.5"/>
+    <rect x="571" y="346" width="36" height="6" rx="1" fill="#409EFF" fill-opacity="0.7"/>
+    <text x="589" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#666">完整</text>
+    <!-- 部分数据库 -->
+    <rect x="678" y="325" width="42" height="32" rx="4" fill="#FFF0F0" stroke="#FF6B6B" stroke-width="1"/>
+    <rect x="681" y="328" width="36" height="6" rx="1" fill="#FF6B6B" fill-opacity="0.3"/>
+    <rect x="681" y="337" width="20" height="6" rx="1" fill="#FF6B6B" fill-opacity="0.5"/>
+    <rect x="681" y="346" width="10" height="6" rx="1" fill="#FF6B6B" fill-opacity="0.4"/>
+    <text x="699" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#666">部分</text>
+    <!-- 标注 -->
+    <text x="642" y="393" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#666">信息量不同</text>
+  </g>
+
+  <!-- ===== 节点3：模型能力差距（左下） ===== -->
+  <g filter="url(#shadowLight)">
+    <rect x="70" y="285" width="175" height="120" rx="14" fill="url(#nodeGrad1)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="70" y="285" width="175" height="32" rx="14" fill="#409EFF" fill-opacity="0.1"/>
+    <text x="157" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#409EFF">模型能力差距</text>
+    <!-- GPT-4 大脑 -->
+    <circle cx="125" cy="348" r="18" fill="#E8F4FF" stroke="#409EFF" stroke-width="1.5"/>
+    <text x="125" y="345" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#1a1a2e">🧠</text>
+    <text x="125" y="358" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#409EFF">GPT-4</text>
+    <!-- VS -->
+    <text x="157" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#FF6B6B">⚡</text>
+    <!-- GPT-3.5 小脑 -->
+    <circle cx="192" cy="348" r="13" fill="#FFF0F0" stroke="#FF6B6B" stroke-width="1.5"/>
+    <text x="192" y="345" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#1a1a2e">🧠</text>
+    <text x="192" y="356" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="#FF6B6B">GPT-3.5</text>
+    <!-- 标注 -->
+    <text x="157" y="393" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#666">能力差异</text>
+  </g>
+
+  <!-- ===== 节点4：任务理解偏差（左上） ===== -->
+  <g filter="url(#shadowLight)">
+    <rect x="70" y="95" width="175" height="120" rx="14" fill="url(#nodeGrad2)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="70" y="95" width="175" height="32" rx="14" fill="#409EFF" fill-opacity="0.1"/>
+    <text x="157" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#409EFF">任务理解偏差</text>
+    <!-- 相同任务描述 -->
+    <rect x="80" y="135" width="155" height="22" rx="4" fill="#FFF3E0" stroke="#FFB74D" stroke-width="1"/>
+    <text x="157" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#1a1a2e">📋 相同的任务描述</text>
+    <!-- 两个智能体 -->
+    <rect x="88" y="165" width="60" height="24" rx="4" fill="#E8F4FF" stroke="#409EFF" stroke-width="1"/>
+    <text x="118" y="181" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#1a1a2e">🤖 理解A</text>
+    <rect x="168" y="165" width="60" height="24" rx="4" fill="#F0E8FF" stroke="#7C5CFC" stroke-width="1"/>
+    <text x="198" y="181" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#1a1a2e">🤖 理解B</text>
+    <!-- 标注 -->
+    <text x="157" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#666">解读不同</text>
+  </g>
+
+  <!-- ===== 节点5：随机性（最下方） ===== -->
+  <g filter="url(#shadowLight)">
+    <rect x="312" y="370" width="175" height="90" rx="14" fill="url(#nodeGrad1)" stroke="#409EFF" stroke-width="1.5"/>
+    <rect x="312" y="370" width="175" height="32" rx="14" fill="#409EFF" fill-opacity="0.1"/>
+    <text x="399" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#409EFF">随机性</text>
+    <!-- 骰子图标 -->
+    <rect x="365" y="410" width="28" height="28" rx="4" fill="#E8F4FF" stroke="#409EFF" stroke-width="1.5"/>
+    <circle cx="372" cy="417" r="2" fill="#409EFF"/>
+    <circle cx="386" cy="417" r="2" fill="#409EFF"/>
+    <circle cx="372" cy="431" r="2" fill="#409EFF"/>
+    <circle cx="386" cy="431" r="2" fill="#409EFF"/>
+    <circle cx="379" cy="424" r="2" fill="#409EFF"/>
+    <text x="399" y="435" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#666">LLM内在可变性</text>
+  </g>
+
+  <!-- ===== 连接线（中心到各节点） ===== -->
+  <!-- 中心到右上（视角差异） -->
+  <line x1="450" y1="215" x2="555" y2="155" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="6,4" stroke-opacity="0.4"/>
+  <!-- 中心到右下（信息不对称） -->
+  <line x1="450" y1="285" x2="555" y2="345" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="6,4" stroke-opacity="0.4"/>
+  <!-- 中心到左下（模型能力差距） -->
+  <line x1="350" y1="285" x2="245" y2="345" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="6,4" stroke-opacity="0.4"/>
+  <!-- 中心到左上（任务理解偏差） -->
+  <line x1="350" y1="215" x2="245" y2="155" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="6,4" stroke-opacity="0.4"/>
+  <!-- 中心到下方（随机性） -->
+  <line x1="400" y1="300" x2="400" y2="370" stroke="#409EFF" stroke-width="1.5" stroke-dasharray="6,4" stroke-opacity="0.4"/>
+
+  <!-- ===== 中心节点标注 ===== -->
+  <text x="400" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#409EFF" font-weight="bold">五大根源</text>
+
+  <!-- 底部说明 -->
+  <text x="400" y="485" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#999">教育配图 · 智能体分歧根源分析 · 扁平化设计</text>
+
+</svg>
