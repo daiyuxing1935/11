@@ -206,11 +206,22 @@ MATERIALS_BASE_DIR = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.di
 
 
 def _load_materials_index() -> dict:
-    """加载学习资料索引"""
+    """加载学习资料索引（兼容新旧两种格式）"""
     if not _os.path.exists(MATERIALS_INDEX_PATH):
         return {}
     with open(MATERIALS_INDEX_PATH, 'r', encoding='utf-8') as f:
         data = json.load(f)
+
+    # 新格式：modules -> {模块名: {知识点: 路径, ...}}
+    if "modules" in data:
+        flat = {}
+        for module_name, module_items in data["modules"].items():
+            if isinstance(module_items, dict):
+                for knowledge_name, rel_path in module_items.items():
+                    flat[knowledge_name] = rel_path
+        return flat
+
+    # 旧格式：materials -> {知识点: 路径}
     return data.get("materials", {})
 
 
