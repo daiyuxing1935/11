@@ -327,7 +327,7 @@ A flat-design minimalist 2D vector illustration explaining residual connection a
 
 **阶段2：解码器前向传播**
 
-1. 输入起始符"<s>"和已生成的部分翻译
+1. 输入起始符"`<s>`"和已生成的部分翻译
 2. 经过掩码自注意力（看不到未来的词）
 3. 经过交叉注意力，Q来自解码器，K和V来自编码器输出
 4. 经过前馈神经网络
