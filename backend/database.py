@@ -218,7 +218,60 @@ def init_db():
 
     conn.commit()
     conn.close()
+
+    # 自动导入 generated_images 目录中的 SVG 文件到数据库
+    _import_svgs_to_db()
+
     print("[OK] Database initialized successfully")
+
+
+def _import_svgs_to_db():
+    """将 generated_images 目录中的 SVG 文件自动导入 SQLite，确保首次运行即有所需配图"""
+    import os as _os
+    images_dir = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "data", "generated_images")
+    if not _os.path.isdir(images_dir):
+        return
+
+    conn = get_db()
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS generated_images ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, "
+        "prompt_hash TEXT NOT NULL, prompt_text TEXT NOT NULL, "
+        "svg_content TEXT, file_path TEXT, provider TEXT DEFAULT 'llm-svg', "
+        "created_at TEXT)"
+    )
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_img_h ON generated_images(prompt_hash)")
+
+    imported = 0
+    for fn in _os.listdir(images_dir):
+        if not fn.endswith('.svg'):
+            continue
+        h = fn.replace('.svg', '')
+        # 跳过已存在的
+        existing = conn.execute(
+            "SELECT 1 FROM generated_images WHERE prompt_hash = ? AND svg_content IS NOT NULL",
+            (h,)
+        ).fetchone()
+        if existing:
+            continue
+        fpath = _os.path.join(images_dir, fn)
+        try:
+            with open(fpath, 'r', encoding='utf-8') as f:
+                svg = f.read()
+            conn.execute(
+                "INSERT OR REPLACE INTO generated_images "
+                "(user_id, prompt_hash, prompt_text, svg_content, file_path, provider, created_at) "
+                "VALUES (1, ?, ?, ?, ?, 'bundled', datetime('now'))",
+                (h, f"bundled {h[:16]}", svg, fpath)
+            )
+            imported += 1
+        except Exception:
+            pass
+
+    if imported > 0:
+        print(f"[OK] 已导入 {imported} 张 SVG 配图到数据库")
+    conn.commit()
+    conn.close()
 
 if __name__ == "__main__":
     init_db()
