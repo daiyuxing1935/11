@@ -116,9 +116,12 @@ def _template_ooda_agent(topic: str, knowledge: str, v: int = 0) -> dict:
         "starter_code": _OODA_STARTER.format(topic=topic, knowledge=knowledge, agent_name=s['agent_name'], role=s['role'], msg_ok=s['msg_ok'], msg_alert=s['msg_alert']),
         "answer_code": _OODA_ANSWER,
         "hints": [
-            ("💡 方向提示", "observe 方法需要遍历关键词列表来判断消息类型，orient 只需返回 self.state"),
-            ("🔑 关键代码", "使用 any(k in msg for k in ['警报','紧急','故障']) 来检测紧急消息"),
-            ("📖 完整答案", "查看 answer_code 获取完整参考实现"),
+            ("💡 第1步：实现 observe()",
+             "1. self.observations.append(msg)\n2. 用 any(k in msg for k in ['警报','紧急','故障']) 判断消息类型\n3. 根据判断结果设置 self.state = '紧急' / '正常' / '未知'\n4. return f'Agent {self.name} 观察到: {msg}'"),
+            ("🔑 第2步：实现 decide()",
+             "if self.state == '紧急': return '立即响应'\nelif self.state == '正常': return '按计划执行'\nelse: return '请求更多信息'"),
+            ("📖 第3步：检查 run()",
+             "run() 已串联好 observe→orient→decide→act，无需修改。act() 中需 print 日志并 return decision。"),
         ],
     }
 
@@ -283,9 +286,12 @@ def _template_llm_request(topic: str, knowledge: str, v: int = 0) -> dict:
         "starter_code": _LLM_STARTER.format(topic=topic, knowledge=knowledge, role=r[0], task=r[1], temp=r[2]),
         "answer_code": _LLM_ANSWER,
         "hints": [
-            ("💡 方向提示", "每个方法只需一行 f-string 格式化字符串即可完成"),
-            ("🔑 关键代码", "build_messages 返回 [{'role':'system','content':self.build_system_prompt()}, ...]"),
-            ("📖 完整答案", "查看 answer_code 获取完整参考实现"),
+            ("💡 第1步：完成 __init__()",
+             "self.role = role\nself.task = task\nself.temperature = temperature\n这三个属性是所有方法的输入基础。"),
+            ("🔑 第2步：实现 build 系列方法",
+             "build_system_prompt():\n  return f'你是一位专业的{self.role}，擅长{self.task}'\n\nbuild_user_prompt(context, question):\n  return f'背景信息：{context}\\n\\n问题：{question}'\n\nbuild_messages(context, question):\n  return [\n    {'role':'system','content':self.build_system_prompt()},\n    {'role':'user','content':self.build_user_prompt(context,question)}\n  ]"),
+            ("📖 第3步：实现 describe()",
+             "return f'角色:{self.role} 任务:{self.task} 温度:{self.temperature}'\n运行代码，观察完整的 LLM API 请求结构。"),
         ],
     }
 
@@ -411,9 +417,12 @@ def _template_cot_engine(topic: str, knowledge: str, v: int = 0) -> dict:
         "starter_code": _COT_STARTER.format(topic=topic, knowledge=knowledge, question=q[0], fmt=q[1]),
         "answer_code": _COT_ANSWER,
         "hints": [
-            ("💡 方向提示", "所有方法核心都是 f-string 字符串拼接"),
-            ("🔑 关键代码", "few_shot: prefix += f'- 示例：{ex}' 遍历拼接示例"),
-            ("📖 完整答案", "查看 answer_code 获取完整参考实现"),
+            ("💡 第1步：实现 zero_shot_cot()",
+             "return f'{question}\\n\\n让我们逐步分析这个问题：\\n第一步：'\n只需在问题后拼接引导语，触发模型的分步推理。"),
+            ("🔑 第2步：实现 few_shot_cot()",
+             "prefix = '以下是一些问答示例：\\n'\nfor ex in examples:\n    prefix += f'- 示例：{ex}\\n'\nreturn prefix + f'\\n现在请回答：{question}\\n请仿照示例逐步推理'"),
+            ("📖 第3步：实现 compare()",
+             "return {\n  'zero_shot': self.zero_shot_cot(question),\n  'few_shot': self.few_shot_cot(question, []),\n  'structured': self.structured_prompt(question, 'markdown')\n}\n运行观察三种策略生成的不同 prompt。"),
         ],
     }
 
@@ -542,9 +551,12 @@ def _template_tool_agent(topic: str, knowledge: str, v: int = 0) -> dict:
         "starter_code": _TOOL_STARTER.format(topic=topic, knowledge=knowledge),
         "answer_code": _TOOL_ANSWER,
         "hints": [
-            ("💡 方向提示", "在 _match_tool 中遍历 self.tools.values()，检查每个工具的描述关键词"),
-            ("🔑 关键代码", "execute: self.history.append(user_input); tool = self._match_tool(user_input)"),
-            ("📖 完整答案", "查看 answer_code 获取完整参考实现"),
+            ("💡 第1步：实现 register_tool() 和 list_tools()",
+             "register_tool: self.tools[tool.name] = tool\nlist_tools: return [(t.name, t.description) for t in self.tools.values()]"),
+            ("🔑 第2步：实现 _match_tool()",
+             "for tool in self.tools.values():\n    keywords = tool.description.split() + [tool.name]\n    for kw in keywords:\n        if len(kw) >= 2 and kw in user_input:\n            return tool\nreturn None"),
+            ("📖 第3步：实现 execute()",
+             "self.history.append(user_input)\ntool = self._match_tool(user_input)\nif tool:\n    return f'[{tool.name}] ' + tool.func(user_input)\nreturn '抱歉，没有找到可以处理该请求的工具'"),
         ],
     }
 
@@ -724,9 +736,12 @@ def _template_rag_system(topic: str, knowledge: str, v: int = 0) -> dict:
         "starter_code": _RAG_STARTER.format(topic=topic, knowledge=knowledge),
         "answer_code": _RAG_ANSWER,
         "hints": [
-            ("💡 方向提示", "chunk_text: 用 replace 把换行变句号，再 split('。') 分句"),
-            ("🔑 关键代码", "search: 用 chunk.lower().count(query.lower()) 计算相关性分数"),
-            ("📖 完整答案", "查看 answer_code 获取完整参考实现"),
+            ("💡 第1步：实现 add_document() 和 chunk_text()",
+             "add_document:\n  self.documents.append(text)\n  chunks = self.chunk_text(text)\n  self.chunks.extend(chunks)\n\nchunk_text:\n  text = text.replace('\\n', '。')\n  sentences = text.split('。')\n  return [s.strip() for s in sentences if s.strip()]"),
+            ("🔑 第2步：实现 search()",
+             "scored = []\nfor chunk in self.chunks:\n    count = chunk.lower().count(query.lower())\n    if count > 0:\n        scored.append((count, chunk))\nscored.sort(key=lambda x: -x[0])\nreturn [chunk for _, chunk in scored[:top_k]]"),
+            ("📖 第3步：实现 ask()",
+             "results = self.search(query)\nif results:\n    return f'根据知识库中的{len(results)}条相关信息：{';'.join(results)}'\nreturn f'未在知识库中找到与{query}相关的信息'"),
         ],
     }
 
@@ -876,9 +891,12 @@ def _template_multi_agent(topic: str, knowledge: str, v: int = 0) -> dict:
         "starter_code": _MULTI_STARTER.format(topic=topic, knowledge=knowledge),
         "answer_code": _MULTI_ANSWER,
         "hints": [
-            ("💡 方向提示", "MessageBus.send 的核心: if to_name in self.agents: self.agents[to_name].receive(...)"),
-            ("🔑 关键代码", "Agent.receive: 用 msg.startswith('CODE:') 判断是否为代码提交"),
-            ("📖 完整答案", "查看 answer_code 获取完整参考实现"),
+            ("💡 第1步：实现 MessageBus",
+             "register: self.agents[name] = agent\nsend:\n  self.log.append(f'{from_name} -> {to_name}: {msg[:50]}')\n  if to_name in self.agents:\n      self.agents[to_name].receive(from_name, msg)"),
+            ("🔑 第2步：实现 Agent.receive()",
+             "self.inbox.append(f'[来自{from_name}] {msg}')\nif msg.startswith('CODE:'):\n    code = msg[5:].strip()\n    review = '审查通过' if len(code) > 10 else '建议改进: 代码太短'\n    self.bus.send(self.name, from_name, review)"),
+            ("📖 第3步：验证协作流程",
+             "Coder 发送 CODE 消息 → Reviewer 收到并审查 → 回复审查结果 → Coder 收到回复。\n检查 inbox 和 log 输出验证消息流转。"),
         ],
     }
 
