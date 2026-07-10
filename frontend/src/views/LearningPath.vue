@@ -258,7 +258,9 @@ async function loadPath() {
   }
 }
 
-function openGenerateDialog() {
+async function openGenerateDialog() {
+  // 重新加载最新路径数据，避免使用过期缓存
+  await loadPath()
   genForm.selectedModules = pathData.value?.modules_selected ? [...pathData.value.modules_selected] : []
   showDialog.value = true
 }
@@ -272,13 +274,15 @@ async function generateModulePath() {
     ElMessage.warning('请至少选择一个学习模块')
     return
   }
+  // 防御：深拷贝选中模块，防止意外修改
+  const selected = [...genForm.selectedModules]
   loading.value = true
   try {
-    await store.createPath('', '', '标准', null, genForm.selectedModules)
+    await store.createPath('', '', '标准', null, selected)
     await loadPath()
     activeWeek.value = 1
     closeDialog()
-    ElMessage.success(`学习路径已生成！共 ${genForm.selectedModules.length} 个模块，${pathData.value?.estimated_total_days || 0} 天学习任务`)
+    ElMessage.success(`学习路径已生成！共 ${selected.length} 个模块，${pathData.value?.estimated_total_days || 0} 天学习任务`)
   } catch(e) {
     const msg = e?.response?.data?.detail || e?.message || '生成失败'
     ElMessage.error(msg)

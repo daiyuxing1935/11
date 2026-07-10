@@ -122,7 +122,7 @@ def get_user_knowledge_profile(user_id: int) -> dict:
 async def generate_quiz(user_id: int, stage: str = "入门", count: int = 10,
                         focus_knowledge: list = None, question_type: str = None,
                         use_timer: bool = False, timer_minutes: int = 30,
-                        knowledge_filter: str = "") -> dict:
+                        knowledge_filter: str = "", exclude_ids: set = None) -> dict:
     """
     生成个性化测评题目 - 从题库中抽题
 
@@ -160,7 +160,8 @@ async def generate_quiz(user_id: int, stage: str = "入门", count: int = 10,
         stage=stage,
         focus_knowledge=target_knowledge,
         avoid_topics=avoid_knowledge,
-        knowledge_filter=knowledge_filter
+        knowledge_filter=knowledge_filter,
+        exclude_ids=exclude_ids
     )
 
     # 如果题库选题不够，回退说明

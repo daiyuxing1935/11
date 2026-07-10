@@ -70,8 +70,16 @@ KNOWLEDGE_CATEGORY_MAP = {
     "多智能体应用": "多智能体应用",
     "智能体算法逻辑": "智能体算法逻辑",
     # 部分关键词匹配
+    "Transformer": "大模型基座原理",
     "多智能体": "多智能体应用",
     "LLM": "大模型基座原理",
+    "语言模型": "大模型基座原理",
+    "预训练": "大模型基座原理",
+    "微调": "大模型基座原理",
+    "LoRA": "大模型基座原理",
+    "上下文": "大模型基座原理",
+    "参数": "大模型基座原理",
+    "量化": "大模型基座原理",
     "提示": "提示词工程",
     "Prompt": "提示词工程",
     "Agent": "智能体基础概念",
@@ -104,6 +112,11 @@ KNOWLEDGE_CATEGORY_MAP = {
     "调用": "智能体框架开发",
     "扣子": "智能体框架开发",
     "Coze": "智能体框架开发",
+    "思维树": "提示词工程",
+    "ReAct": "智能体算法逻辑",
+    "反思": "智能体算法逻辑",
+    "嵌入": "智能体算法逻辑",
+    "Embedding": "智能体算法逻辑",
 }
 
 _question_bank_cache: Optional[list] = None
@@ -395,7 +408,8 @@ def select_questions(
     stage: str = "入门",
     focus_knowledge: Optional[list] = None,
     avoid_topics: Optional[list] = None,
-    knowledge_filter: str = ""
+    knowledge_filter: str = "",
+    exclude_ids: set = None
 ) -> list:
     """
     从题库中选题
@@ -406,6 +420,7 @@ def select_questions(
         focus_knowledge: 重点关注的知识分类
         avoid_topics: 需要规避的section主题
         knowledge_filter: 知识点的关键词，用于在模块/分类过滤后再精确匹配题目
+        exclude_ids: 需要排除的question_id集合（避免不同任务间题目重复）
 
     Returns:
         格式化后的题目列表
@@ -465,6 +480,17 @@ def select_questions(
             # 如果匹配结果足够（>=count/2），使用精确结果；否则保留模块级过滤兜底
             if len(matched) >= max(2, count // 2):
                 bank = matched
+
+    if not bank:
+        return []  # 过滤后无题可出
+
+    # === 排除已出过的题目（跨任务不重复）===
+    if exclude_ids:
+        pre_bank = bank
+        bank = [q for q in bank if q.get("question", "") not in exclude_ids]
+        # 如果排除后题目不足，回退到未排除的bank
+        if len(bank) < count:
+            bank = pre_bank
 
     if not bank:
         return []  # 过滤后无题可出

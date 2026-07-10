@@ -1168,7 +1168,22 @@ async def generate_task_quiz(user_id: int, task_day: int, count: int = 10) -> di
     depth_stage_map = {"基础": "入门", "标准": "进阶", "深入": "高阶"}
     stage = depth_stage_map.get(depth, "进阶")
 
-    # 5. 调用诊断服务生成题目（传入knowledge_filter精确匹配）
+    # 5. 加载已出过的题目（跨任务去重）
+    used_questions = set()
+    conn0 = get_db()
+    row0 = conn0.execute(
+        "SELECT progress_json FROM learning_paths WHERE user_id = ? AND status = 'active' ORDER BY updated_at DESC LIMIT 1",
+        (user_id,)
+    ).fetchone()
+    if row0 and row0["progress_json"]:
+        try:
+            prog = json.loads(row0["progress_json"])
+            used_questions = set(prog.get("used_question_texts", []))
+        except:
+            pass
+    conn0.close()
+
+    # 6. 调用诊断服务生成题目（传入knowledge_filter + exclude_ids）
     from services.diagnosis_service import generate_quiz
     result = await generate_quiz(
         user_id=user_id,
@@ -1176,11 +1191,19 @@ async def generate_task_quiz(user_id: int, task_day: int, count: int = 10) -> di
         count=count,
         focus_knowledge=combined_focus,
         knowledge_filter=knowledge_text,
+        exclude_ids=used_questions,
         use_timer=False,
         timer_minutes=0
     )
 
-    # 6. 保存 task_quiz_map: session_id → task_key, 用于后续自动记录
+    # 7. 将新出的题目加入已用集合
+    new_texts = [q.get("question", "") for q in result.get("questions", [])]
+    used_questions.update(new_texts)
+    # 限制集合大小（保留最近500道）
+    if len(used_questions) > 500:
+        used_questions = set(list(used_questions)[-500:])
+
+    # 8. 保存 task_quiz_map + used_question_texts, 用于后续自动记录
     #    直接存 task_key（"{day}-{topic}"），避免 submit 时再到 path_data 里查找匹配
     session_id = result.get("session_id")
     if session_id:
@@ -1196,6 +1219,7 @@ async def generate_task_quiz(user_id: int, task_day: int, count: int = 10) -> di
             if "task_quiz_map" not in progress:
                 progress["task_quiz_map"] = {}
             progress["task_quiz_map"][str(session_id)] = task_key
+            progress["used_question_texts"] = list(used_questions)
             conn.execute(
                 "UPDATE learning_paths SET progress_json = ? WHERE id = ?",
                 (json.dumps(progress, ensure_ascii=False), row["id"])
@@ -1213,323 +1237,12 @@ async def generate_task_quiz(user_id: int, task_day: int, count: int = 10) -> di
     return result
 
 
-def _build_code_task_from_template(topic: str, knowledge: str, action: str, depth: str = "标准") -> dict:
-    """根据任务主题生成详细的编程任务（模板方式，作为LLM不可用时的回退）"""
-    # 根据深度确定复杂度
-    depth_hint = {"基础": "实现基本功能即可", "标准": "需要完整的错误处理和测试", "深入": "需要优化性能和边界情况处理"}
+def _build_code_task_from_template(topic: str, knowledge: str, action: str, depth: str = "标准", index: int = 0) -> dict:
+    """根据知识点分类匹配对应的编程任务模板"""
+    from services.code_lab_templates import build_code_task
+    return build_code_task(topic, knowledge, action, depth, index)
 
-    # 根据知识类型生成具体需求
-    if "智能体" in knowledge or "Agent" in topic.lower():
-        description = f"实现一个简单的AI智能体类，该智能体能够：\n1. 接收用户输入并进行处理\n2. 维护一个内部记忆列表\n3. 根据输入做出适当的响应\n\n具体要求：\n- 实现 __init__ 方法初始化智能体名称和记忆\n- 实现 perceive(input_text) 方法处理输入并存储到记忆\n- 实现 respond() 方法返回当前记忆中的最新响应\n- 实现 get_memory() 方法返回所有记忆记录\n- {depth_hint.get(depth, '')}"
-        requirements = [
-            "创建 SimpleAgent 类，包含 __init__、perceive、respond、get_memory 方法",
-            "perceive 方法：接收字符串输入，存储到 memory 列表，返回处理确认信息",
-            "respond 方法：返回 memory 列表中最后一条记录",
-            "get_memory 方法：返回完整的 memory 列表",
-            "编写 if __name__ == '__main__' 块测试所有方法"
-        ]
-        test_cases = [
-            {"name": "测试1: Agent创建", "description": "验证Agent实例化正确",
-             "test_input": "", "setup_code": "agent = SimpleAgent('TestBot')",
-             "expected_output": "Agent TestBot 初始化成功", "check_type": "output_contains"},
-            {"name": "测试2: 感知功能", "description": "验证perceive方法正确处理输入",
-             "test_input": "", "setup_code": "agent = SimpleAgent('Bot')\nresult = agent.perceive('Hello')",
-             "expected_output": "已处理输入: Hello", "check_type": "output_contains"},
-            {"name": "测试3: 记忆功能", "description": "验证记忆存储和检索",
-             "test_input": "", "setup_code": "agent = SimpleAgent('Bot')\nagent.perceive('msg1')\nagent.perceive('msg2')\nmem = agent.get_memory()",
-             "expected_output": "记忆数量: 2", "check_type": "output_contains"},
-        ]
-        starter_code = '''# -*- coding: utf-8 -*-
-"""
-编程练习: {topic}
-知识点: {knowledge}
-
-=== 说明 ===
-下方标记了 "START" 和 "END" 之间的区域需要你来编写。
-其他部分（类定义、方法签名、测试代码）已为你准备好，请不要修改。
-"""
-
-
-class SimpleAgent:
-    """AI智能体类"""
-
-    def __init__(self, name: str):
-        """初始化智能体
-        Args:
-            name: 智能体名称
-        """
-        # ========== START ==========
-        # 在这里初始化 name 和 memory (list)
-        pass
-        # ========== END ==========
-
-    def perceive(self, input_text: str) -> str:
-        """感知输入并存储到记忆
-        Args:
-            input_text: 用户输入文本
-        Returns:
-            处理确认信息
-        """
-        # ========== START ==========
-        # 将 input_text 存储到 memory 列表
-        # 返回确认信息，格式: "已处理输入: <input_text>"
-        pass
-        # ========== END ==========
-
-    def respond(self) -> str:
-        """返回最新响应
-        Returns:
-            memory中的最后一条记录
-        """
-        # ========== START ==========
-        # 返回 memory 列表中的最后一条记录
-        # 如果 memory 为空，返回空字符串
-        pass
-        # ========== END ==========
-
-    def get_memory(self) -> list:
-        """获取所有记忆
-        Returns:
-            完整的记忆列表
-        """
-        # ========== START ==========
-        # 返回 memory 列表（同时打印记忆数量）
-        pass
-        # ========== END ==========
-
-
-# ===== 以下为测试代码，请勿修改 =====
-if __name__ == "__main__":
-    agent = SimpleAgent("TestBot")
-    print("Agent TestBot 初始化成功")
-    print("已处理输入:", agent.perceive("Hello")[5:] if "已处理输入:" in agent.perceive("Hello") else agent.perceive("Hello"))
-    agent.perceive("第二条消息")
-    print("记忆数量:", len(agent.get_memory()))
-'''.format(topic=topic, knowledge=knowledge)
-
-    elif "框架" in knowledge or "LangChain" in topic.lower() or "开发" in knowledge:
-        description = f"实现一个简单的任务处理框架，演示链式调用模式。\n\n具体要求：\n- 实现 Step 类表示单个处理步骤\n- 实现 Pipeline 类组合多个步骤\n- Pipeline 能够按顺序执行所有步骤\n- 每个步骤可以有自己的处理逻辑\n- {depth_hint.get(depth, '')}"
-        requirements = [
-            "创建 Step 类，接受 name 和 func 两个参数",
-            "创建 Pipeline 类，管理 Step 列表",
-            "实现 add_step(name, func) 方法添加步骤",
-            "实现 run(data) 方法依次执行所有步骤并返回最终结果",
-            "测试：创建一个至少包含3个步骤的数据处理流水线"
-        ]
-        test_cases = [
-            {"name": "测试1: Step创建", "description": "验证Step实例化",
-             "test_input": "", "setup_code": "s = Step('test', lambda x: x.upper())",
-             "expected_output": "Step test 创建成功", "check_type": "output_contains"},
-            {"name": "测试2: Pipeline链式处理", "description": "验证多步骤顺序执行",
-             "test_input": "", "setup_code": "p = Pipeline()\np.add_step('upper', lambda x: x.upper())\np.add_step('reverse', lambda x: x[::-1])\nresult = p.run('hello')",
-             "expected_output": "Pipeline结果: OLLEH", "check_type": "output_contains"},
-            {"name": "测试3: 空Pipeline", "description": "验证空流水线边界情况",
-             "test_input": "", "setup_code": "p = Pipeline()\nresult = p.run('test')",
-             "expected_output": "Pipeline结果: test", "check_type": "output_contains"},
-        ]
-        starter_code = '''# -*- coding: utf-8 -*-
-"""
-编程练习: {topic}
-知识点: {knowledge}
-
-=== 说明 ===
-下方标记了 "START" 和 "END" 之间的区域需要你来编写。
-其他部分（类定义、方法签名、测试代码）已为你准备好，请不要修改。
-"""
-
-
-class Step:
-    """处理步骤"""
-
-    def __init__(self, name: str, func):
-        # ========== START ==========
-        # 保存 name 和 func 到实例属性
-        # 打印 "Step <name> 创建成功"
-        pass
-        # ========== END ==========
-
-    def execute(self, data):
-        """执行步骤处理，调用 func 处理 data 并返回结果"""
-        # ========== START ==========
-        pass
-        # ========== END ==========
-
-
-class Pipeline:
-    """处理流水线"""
-
-    def __init__(self):
-        # ========== START ==========
-        # 初始化一个空列表用于存储步骤
-        pass
-        # ========== END ==========
-
-    def add_step(self, name: str, func) -> None:
-        """添加处理步骤"""
-        # ========== START ==========
-        # 创建 Step 对象并添加到步骤列表
-        pass
-        # ========== END ==========
-
-    def run(self, data):
-        """依次执行所有步骤
-        Args:
-            data: 初始输入数据
-        Returns:
-            经过所有步骤处理后的结果
-        """
-        # ========== START ==========
-        # 遍历所有步骤，将上一个步骤的输出作为下一个步骤的输入
-        # 返回最终结果
-        pass
-        # ========== END ==========
-
-
-# ===== 以下为测试代码，请勿修改 =====
-if __name__ == "__main__":
-    s = Step("test", lambda x: x.upper())
-    print("Step test 创建成功")
-    p = Pipeline()
-    p.add_step("upper", lambda x: x.upper())
-    p.add_step("reverse", lambda x: x[::-1])
-    print("Pipeline结果:", p.run("hello"))
-'''.format(topic=topic, knowledge=knowledge)
-
-    elif "模型" in knowledge or "LLM" in topic.lower() or "大模型" in knowledge:
-        description = f"实现一个模拟的大语言模型调用客户端。\n\n具体要求：\n- 实现 LLMClient 类，包含模型名称和温度参数\n- 实现 generate(prompt) 方法模拟生成回复\n- 实现 chat(messages) 方法模拟多轮对话\n- 生成结果应基于输入做有意义的变换（如关键词提取、摘要等）\n- {depth_hint.get(depth, '')}"
-        requirements = [
-            "创建 LLMClient 类，接受 model_name 和 temperature 参数",
-            "实现 generate(prompt) 方法：根据prompt内容生成模拟回复",
-            "实现 chat(messages) 方法：处理消息列表，返回模拟回复",
-            "生成的回复需与输入相关（不能返回固定字符串）",
-            "编写测试代码验证功能"
-        ]
-        test_cases = [
-            {"name": "测试1: 模型初始化", "description": "验证LLMClient创建",
-             "test_input": "", "setup_code": "client = LLMClient('GPT-4', 0.7)",
-             "expected_output": "模型 GPT-4 初始化成功", "check_type": "output_contains"},
-            {"name": "测试2: 生成回复", "description": "验证generate方法生成有意义回复",
-             "test_input": "", "setup_code": "client = LLMClient('GPT-4', 0.7)\nreply = client.generate('什么是AI智能体？')",
-             "expected_output": "模型回复:", "check_type": "output_contains"},
-            {"name": "测试3: 多轮对话", "description": "验证chat方法处理消息列表",
-             "test_input": "", "setup_code": "client = LLMClient('GPT-4', 0.7)\nmsgs = [{'role':'user','content':'Hello'},{'role':'assistant','content':'Hi'},{'role':'user','content':'How are you?'}]\nreply = client.chat(msgs)",
-             "expected_output": "对话回复:", "check_type": "output_contains"},
-        ]
-        starter_code = '''# -*- coding: utf-8 -*-
-"""
-编程练习: {topic}
-知识点: {knowledge}
-
-=== 说明 ===
-下方标记了 "START" 和 "END" 之间的区域需要你来编写。
-其他部分（类定义、方法签名、测试代码）已为你准备好，请不要修改。
-"""
-
-
-class LLMClient:
-    """大语言模型客户端"""
-
-    def __init__(self, model_name: str, temperature: float = 0.7):
-        # ========== START ==========
-        # 保存 model_name 和 temperature 到实例属性
-        # 打印 "模型 <model_name> 初始化成功"
-        pass
-        # ========== END ==========
-
-    def generate(self, prompt: str) -> str:
-        """根据提示词生成回复
-        Args:
-            prompt: 用户输入的提示词
-        Returns:
-            模型生成的回复文本
-        """
-        # ========== START ==========
-        # 基于 prompt 内容生成有意义的回复
-        # 不能返回固定字符串，回复需与输入相关
-        # 示例策略：提取 prompt 关键词，围绕关键词生成回复
-        pass
-        # ========== END ==========
-
-    def chat(self, messages: list) -> str:
-        """处理多轮对话消息
-        Args:
-            messages: 消息列表 [{{"role":"...", "content":"..."}}]
-        Returns:
-            模型回复
-        """
-        # ========== START ==========
-        # 1. 从 messages 中找到最后一条 role="user" 的消息
-        # 2. 调用 self.generate() 生成回复并返回
-        pass
-        # ========== END ==========
-
-
-# ===== 以下为测试代码，请勿修改 =====
-if __name__ == "__main__":
-    client = LLMClient("GPT-4", 0.7)
-    print("模型 GPT-4 初始化成功")
-    reply = client.generate("什么是AI智能体？")
-    print("模型回复:", reply)
-    msgs = [
-        {{"role": "user", "content": "Hello"}},
-        {{"role": "assistant", "content": "Hi"}},
-        {{"role": "user", "content": "How are you?"}}
-    ]
-    print("对话回复:", client.chat(msgs))
-'''.format(topic=topic, knowledge=knowledge)
-
-    else:
-        description = f"根据「{topic}」知识点，编写一个Python程序解决以下问题：\n\n要求：\n- 程序需要接收输入并产生有意义的输出\n- 代码结构清晰，有适当的函数和类设计\n- 包含 if __name__ == '__main__' 入口\n- {depth_hint.get(depth, '')}"
-        requirements = [
-            f"理解「{knowledge}」的核心概念",
-            "设计合适的数据结构和算法",
-            "实现核心功能函数",
-            "编写测试代码验证正确性"
-        ]
-        test_cases = [
-            {"name": "测试1: 基本功能", "description": "验证基本功能正确",
-             "test_input": "", "setup_code": "",
-             "expected_output": "", "check_type": "output_exists"},
-            {"name": "测试2: 代码运行", "description": "验证代码能正常执行",
-             "test_input": "", "setup_code": "",
-             "expected_output": "", "check_type": "output_exists"},
-        ]
-        starter_code = '''# -*- coding: utf-8 -*-
-"""
-编程练习: {topic}
-知识点: {knowledge}
-
-=== 说明 ===
-下方标记了 "START" 和 "END" 之间的区域需要你来编写。
-其他部分（函数签名、测试入口）已为你准备好，请不要修改。
-"""
-
-
-def main():
-    """主函数 - 实现核心逻辑"""
-    # ========== START ==========
-    # 根据任务描述实现核心逻辑
-    # 提示：{action}
-    pass
-    # ========== END ==========
-
-
-# ===== 以下为测试代码，请勿修改 =====
-if __name__ == "__main__":
-    main()
-    print("任务完成！")
-'''.format(topic=topic, knowledge=knowledge, action=action)
-
-    return {
-        "title": f"编程练习: {topic}",
-        "knowledge": knowledge,
-        "description": description,
-        "requirements": requirements,
-        "test_cases": test_cases,
-        "starter_code": starter_code,
-    }
-
-
+# ===== Legacy code removed — now using code_lab_templates.py =====
 async def get_code_task(user_id: int, task_day: int) -> dict:
     """获取指定天数的编程任务"""
     path = await get_learning_path(user_id)
@@ -1555,8 +1268,8 @@ async def get_code_task(user_id: int, task_day: int) -> dict:
     action = target_task.get("action", "")
     depth = path_data.get("learning_depth", "标准")
 
-    # 使用模板生成详细编程任务
-    code_task = _build_code_task_from_template(topic, knowledge, action, depth)
+    # 使用模板生成详细编程任务（task_day作为序号轮换不同练习类型）
+    code_task = _build_code_task_from_template(topic, knowledge, action, depth, index=task_day)
     code_task["task_context"] = {"day": task_day, "topic": topic, "knowledge": knowledge, "action": action}
     return code_task
 
