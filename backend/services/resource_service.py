@@ -203,6 +203,18 @@ def find_resource_by_knowledge(knowledge: str) -> dict:
 import os as _os
 MATERIALS_INDEX_PATH = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))), "learning_materials", "index.json")
 MATERIALS_BASE_DIR = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))), "learning_materials")
+RESOURCE_IMAGE_CONFIG_PATH = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "data", "resource_image_config.json")
+
+def _load_resource_image_config() -> dict:
+    """加载资源配置：resource_id -> [allowed_prompt_hashes]"""
+    cfg_path = _os.path.normpath(RESOURCE_IMAGE_CONFIG_PATH)
+    if not _os.path.exists(cfg_path):
+        return {}
+    try:
+        with open(cfg_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return {}
 
 
 def _load_materials_index() -> dict:
@@ -225,11 +237,12 @@ def _load_materials_index() -> dict:
     return data.get("materials", {})
 
 
-def get_local_material(knowledge: str) -> dict:
+def get_local_material(knowledge: str, allowed_hashes: set = None) -> dict:
     """根据知识点名称获取本地学习资料内容（Markdown格式）
 
     Args:
         knowledge: 知识点文本
+        allowed_hashes: 允许显示的图片hash集合（用于控制每个资源最多5张图）
 
     Returns:
         {"found": True/False,
@@ -249,13 +262,13 @@ def get_local_material(knowledge: str) -> dict:
     # 1. 精确匹配标签名
     for tag, rel_path in materials_index.items():
         if tag.lower() == knowledge_lower:
-            return _read_material_file(rel_path, tag)
+            return _read_material_file(rel_path, tag, allowed_hashes=allowed_hashes)
 
     # 2. 包含匹配
     for tag, rel_path in materials_index.items():
         tag_lower = tag.lower()
         if tag_lower in knowledge_lower or knowledge_lower in tag_lower:
-            return _read_material_file(rel_path, tag)
+            return _read_material_file(rel_path, tag, allowed_hashes=allowed_hashes)
 
     # 3. 关键词匹配
     import re
@@ -266,14 +279,19 @@ def get_local_material(knowledge: str) -> dict:
         tag_lower = tag.lower()
         for kw in keywords:
             if kw in tag_lower:
-                return _read_material_file(rel_path, tag)
+                return _read_material_file(rel_path, tag, allowed_hashes=allowed_hashes)
 
     # 4. 无匹配，返回默认材料
     return _fallback_material(knowledge)
 
 
-def _inject_cached_images(content: str) -> str:
-    """注入已缓存 SVG 为 base64 图片"""
+def _inject_cached_images(content: str, allowed_hashes: set = None) -> str:
+    """注入已缓存 SVG 为 base64 图片。
+
+    Args:
+        content: markdown 文本
+        allowed_hashes: 如果提供，只注入列表中存在的hash；不在列表中的Image-Prompt块会被隐藏。
+                       如果为None（默认），保留所有Image-Prompt块（兼容旧行为）。"""
     import hashlib, re as _re, base64
     from database import get_db as _gdb
 
@@ -281,8 +299,6 @@ def _inject_cached_images(content: str) -> str:
     rows = conn.execute("SELECT prompt_hash, svg_content FROM generated_images WHERE svg_content IS NOT NULL").fetchall()
     conn.close()
     cache = {r["prompt_hash"]: r["svg_content"] for r in rows if r["svg_content"]}
-    if not cache:
-        return content
 
     def _repl(m):
         body = m.group(1).strip()
@@ -291,8 +307,22 @@ def _inject_cached_images(content: str) -> str:
         if body.endswith('```'): body = body[:-3]
         body = body.strip()
         if len(body) < 10:
-            return m.group(0)
+            return m.group(0) if allowed_hashes is None else ''
         h = hashlib.sha256(body.encode()).hexdigest()
+
+        # With allowed_hashes: only show if hash is in the list
+        if allowed_hashes is not None:
+            if h not in allowed_hashes:
+                return ''  # Hide this Image-Prompt block entirely
+            # Allow — inject cached image if available
+            svg = cache.get(h)
+            if svg:
+                b64 = base64.b64encode(svg.encode()).decode()
+                return f'<div style="margin:20px 0;text-align:center"><img src="data:image/svg+xml;base64,{b64}" style="max-width:100%;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08)" /></div>'
+            # Even if cached image missing, still hide the prompt text (keep image placeholder area)
+            return f'<div style="margin:20px 0;text-align:center;padding:40px;background:#f5f7fa;border-radius:8px;color:#999;font-size:13px">�� 配图生成中，请稍后刷新页面...</div>'
+
+        # Legacy mode: inject cached, keep raw prompt if not cached
         svg = cache.get(h)
         if svg:
             b64 = base64.b64encode(svg.encode()).decode()
@@ -303,14 +333,14 @@ def _inject_cached_images(content: str) -> str:
     return _re.sub(pattern, _repl, content, flags=_re.DOTALL)
 
 
-def _read_material_file(rel_path: str, tag: str) -> dict:
+def _read_material_file(rel_path: str, tag: str, allowed_hashes: set = None) -> dict:
     """读取Markdown文件内容，自动注入已缓存的配图"""
     full_path = _os.path.join(MATERIALS_BASE_DIR, rel_path)
     if _os.path.exists(full_path):
         try:
             with open(full_path, 'r', encoding='utf-8') as f:
                 content = f.read()
-            content = _inject_cached_images(content)
+            content = _inject_cached_images(content, allowed_hashes=allowed_hashes)
             return {
                 "found": True,
                 "content": content,
@@ -549,6 +579,10 @@ def get_resource_material(resource_id: str, user_id: int = 1) -> dict:
     tags = resource.get("tags", [])
     title = resource.get("title", "")
 
+    # 加载图片配置（每个资源最多5张均匀分布）
+    img_config = _load_resource_image_config()
+    allowed_hashes = set(img_config.get(resource_id, [])) if img_config else None
+
     # 1. 尝试从本地 learning_materials 匹配所有 tag
     matched_contents = []
     matched_tags = []
@@ -558,7 +592,7 @@ def get_resource_material(resource_id: str, user_id: int = 1) -> dict:
         if tag in seen_tags:
             continue
         seen_tags.add(tag)
-        local = get_local_material(tag)
+        local = get_local_material(tag, allowed_hashes=allowed_hashes)
         if local.get("found") and local.get("content"):
             # 避免重复添加相同内容
             content_preview = local["content"][:100]
@@ -628,3 +662,4 @@ def get_collected_resources(user_id: int) -> list:
     all_resources = load_resources()
     collected_ids = set(r["resource_id"] for r in rows)
     return [r for r in all_resources if r.get("id") in collected_ids]
+ 

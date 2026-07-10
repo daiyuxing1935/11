@@ -1,121 +1,170 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
   <defs>
     <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#e8f4ff"/>
-      <stop offset="100%" stop-color="#f0f8ff"/>
+      <stop offset="0%" stop-color="#E8F4FD"/>
+      <stop offset="100%" stop-color="#F0F8FF"/>
     </linearGradient>
-    <linearGradient id="robotGrad" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="robotGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#409EFF"/>
-      <stop offset="100%" stop-color="#2b7ed4"/>
+      <stop offset="100%" stop-color="#2B7BD4"/>
     </linearGradient>
-    <linearGradient id="blockGrad" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="blockGrad1" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#409EFF"/>
-      <stop offset="100%" stop-color="#3588e0"/>
+      <stop offset="100%" stop-color="#3588D9"/>
+    </linearGradient>
+    <linearGradient id="blockGrad2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5AA8FF"/>
+      <stop offset="100%" stop-color="#409EFF"/>
+    </linearGradient>
+    <linearGradient id="blockGrad3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#2B7BD4"/>
+    </linearGradient>
+    <linearGradient id="blockGrad4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5AA8FF"/>
+      <stop offset="100%" stop-color="#409EFF"/>
+    </linearGradient>
+    <linearGradient id="blockGrad5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3588D9"/>
+    </linearGradient>
+    <linearGradient id="blockGrad6" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5AA8FF"/>
+      <stop offset="100%" stop-color="#409EFF"/>
     </linearGradient>
   </defs>
 
   <!-- 背景 -->
-  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
-
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="12"/>
+  
   <!-- 标题 -->
-  <text x="400" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">AI Agent 公式：智能体 = 大模型 + 工具 + 记忆 + 规划 + 执行 + 容错</text>
+  <text x="400" y="42" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#1a1a2e">AI Agent 智能体公式</text>
+  
+  <!-- 等号 = -->
+  <text x="340" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="#1a1a2e">=</text>
 
-  <!-- 等号 -->
-  <text x="340" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="#1a1a2e">=</text>
+  <!-- 左侧：机器人图标 -->
+  <g transform="translate(100, 80)">
+    <!-- 机器人头 -->
+    <rect x="35" y="0" width="80" height="65" rx="12" fill="url(#robotGrad)" stroke="#1a1a2e" stroke-width="1.5"/>
+    <!-- 天线 -->
+    <line x1="75" y1="0" x2="75" y2="-18" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="75" cy="-22" r="5" fill="#409EFF" stroke="#1a1a2e" stroke-width="1.5"/>
+    <!-- 眼睛 -->
+    <circle cx="55" cy="28" r="8" fill="white"/>
+    <circle cx="55" cy="28" r="4" fill="#1a1a2e"/>
+    <circle cx="95" cy="28" r="8" fill="white"/>
+    <circle cx="95" cy="28" r="4" fill="#1a1a2e"/>
+    <!-- 嘴巴 -->
+    <rect x="55" y="45" width="40" height="6" rx="3" fill="white"/>
+    
+    <!-- 身体 -->
+    <rect x="25" y="75" width="100" height="90" rx="10" fill="url(#robotGrad)" stroke="#1a1a2e" stroke-width="1.5"/>
+    
+    <!-- 身体细节 - 按钮 -->
+    <circle cx="75" cy="110" r="12" fill="white" opacity="0.3"/>
+    <circle cx="75" cy="110" r="6" fill="white"/>
+    
+    <!-- 手臂 - 左 -->
+    <rect x="-5" y="85" width="22" height="50" rx="8" fill="url(#robotGrad)" stroke="#1a1a2e" stroke-width="1.5"/>
+    <!-- 手臂 - 右 -->
+    <rect x="133" y="85" width="22" height="50" rx="8" fill="url(#robotGrad)" stroke="#1a1a2e" stroke-width="1.5"/>
+    
+    <!-- 腿 - 左 -->
+    <rect x="40" y="173" width="28" height="40" rx="6" fill="url(#robotGrad)" stroke="#1a1a2e" stroke-width="1.5"/>
+    <!-- 腿 - 右 -->
+    <rect x="82" y="173" width="28" height="40" rx="6" fill="url(#robotGrad)" stroke="#1a1a2e" stroke-width="1.5"/>
+    
+    <!-- 机器人标签 -->
+    <text x="75" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">AI Agent</text>
+  </g>
 
-  <!-- ===== 左侧：机器人图标 ===== -->
-  <!-- 机器人身体 -->
-  <rect x="130" y="140" width="120" height="140" rx="18" fill="url(#robotGrad)" stroke="#1a1a2e" stroke-width="1.5"/>
+  <!-- 右侧：六个组件块 -->
+  <g transform="translate(420, 55)">
+    
+    <!-- 1. LLM 大脑 -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="280" height="55" rx="10" fill="url(#blockGrad1)" stroke="#1a1a2e" stroke-width="1.5"/>
+      <!-- 大脑图标 -->
+      <g transform="translate(20, 12)">
+        <ellipse cx="15" cy="15" rx="12" ry="10" fill="white" opacity="0.9"/>
+        <path d="M8,10 Q15,5 22,10 Q25,15 22,20 Q15,25 8,20 Q5,15 8,10Z" fill="none" stroke="#1a1a2e" stroke-width="1.5"/>
+        <path d="M10,12 Q15,8 20,12" fill="none" stroke="#1a1a2e" stroke-width="1.2"/>
+        <path d="M10,18 Q15,22 20,18" fill="none" stroke="#1a1a2e" stroke-width="1.2"/>
+      </g>
+      <text x="55" y="33" font-family="Arial, sans-serif" font-size="17" font-weight="bold" fill="white">LLM 大语言模型</text>
+    </g>
 
-  <!-- 机器人头部 -->
-  <rect x="145" y="105" width="90" height="50" rx="14" fill="url(#robotGrad)" stroke="#1a1a2e" stroke-width="1.5"/>
+    <!-- 2. Tools 工具 -->
+    <g transform="translate(0, 70)">
+      <rect x="0" y="0" width="280" height="55" rx="10" fill="url(#blockGrad2)" stroke="#1a1a2e" stroke-width="1.5"/>
+      <!-- 工具箱图标 -->
+      <g transform="translate(18, 12)">
+        <rect x="2" y="8" width="26" height="18" rx="3" fill="white" opacity="0.9"/>
+        <rect x="8" y="4" width="14" height="6" rx="2" fill="none" stroke="white" stroke-width="1.8"/>
+        <line x1="15" y1="4" x2="15" y2="2" stroke="white" stroke-width="1.5"/>
+      </g>
+      <text x="55" y="33" font-family="Arial, sans-serif" font-size="17" font-weight="bold" fill="white">Tools 工具调用</text>
+    </g>
 
-  <!-- 天线 -->
-  <line x1="190" y1="105" x2="190" y2="80" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round"/>
-  <circle cx="190" cy="76" r="6" fill="#409EFF" stroke="#1a1a2e" stroke-width="1.5"/>
+    <!-- 3. Memory 记忆 -->
+    <g transform="translate(0, 140)">
+      <rect x="0" y="0" width="280" height="55" rx="10" fill="url(#blockGrad3)" stroke="#1a1a2e" stroke-width="1.5"/>
+      <!-- 记忆芯片图标 -->
+      <g transform="translate(18, 12)">
+        <rect x="2" y="4" width="28" height="22" rx="3" fill="white" opacity="0.9"/>
+        <rect x="6" y="8" width="8" height="6" rx="1" fill="#409EFF"/>
+        <rect x="18" y="8" width="8" height="6" rx="1" fill="#409EFF"/>
+        <rect x="6" y="17" width="8" height="6" rx="1" fill="#409EFF"/>
+        <rect x="18" y="17" width="8" height="6" rx="1" fill="#409EFF"/>
+      </g>
+      <text x="55" y="33" font-family="Arial, sans-serif" font-size="17" font-weight="bold" fill="white">Memory 记忆系统</text>
+    </g>
 
-  <!-- 眼睛 -->
-  <circle cx="168" cy="128" r="7" fill="#ffffff"/>
-  <circle cx="212" cy="128" r="7" fill="#ffffff"/>
-  <circle cx="168" cy="128" r="3.5" fill="#1a1a2e"/>
-  <circle cx="212" cy="128" r="3.5" fill="#1a1a2e"/>
+    <!-- 4. Planning 规划 -->
+    <g transform="translate(0, 210)">
+      <rect x="0" y="0" width="280" height="55" rx="10" fill="url(#blockGrad4)" stroke="#1a1a2e" stroke-width="1.5"/>
+      <!-- 路线图树图标 -->
+      <g transform="translate(18, 8)">
+        <line x1="15" y1="2" x2="15" y2="35" stroke="white" stroke-width="2"/>
+        <line x1="15" y1="12" x2="5" y2="20" stroke="white" stroke-width="1.8"/>
+        <line x1="15" y1="20" x2="25" y2="28" stroke="white" stroke-width="1.8"/>
+        <circle cx="15" cy="2" r="4" fill="white"/>
+        <circle cx="5" cy="20" r="3" fill="white"/>
+        <circle cx="25" cy="28" r="3" fill="white"/>
+        <circle cx="15" cy="35" r="3" fill="white"/>
+      </g>
+      <text x="55" y="33" font-family="Arial, sans-serif" font-size="17" font-weight="bold" fill="white">Planning 任务规划</text>
+    </g>
 
-  <!-- 嘴巴 -->
-  <rect x="175" y="142" width="30" height="5" rx="2.5" fill="#ffffff" opacity="0.8"/>
+    <!-- 5. Execution Loop 执行循环 -->
+    <g transform="translate(0, 280)">
+      <rect x="0" y="0" width="280" height="55" rx="10" fill="url(#blockGrad5)" stroke="#1a1a2e" stroke-width="1.5"/>
+      <!-- 循环箭头图标 -->
+      <g transform="translate(18, 10)">
+        <path d="M22,5 A12,12 0 1,1 8,17" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="8,17 5,10 11,13" fill="white"/>
+        <path d="M8,25 A12,12 0 1,1 22,13" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="22,13 19,20 25,17" fill="white"/>
+      </g>
+      <text x="55" y="33" font-family="Arial, sans-serif" font-size="17" font-weight="bold" fill="white">Execution 执行循环</text>
+    </g>
 
-  <!-- 手臂 -->
-  <rect x="105" y="165" width="28" height="12" rx="6" fill="#409EFF" stroke="#1a1a2e" stroke-width="1.2"/>
-  <rect x="247" y="165" width="28" height="12" rx="6" fill="#409EFF" stroke="#1a1a2e" stroke-width="1.2"/>
+    <!-- 6. Error Recovery 错误恢复 -->
+    <g transform="translate(0, 350)">
+      <rect x="0" y="0" width="280" height="55" rx="10" fill="url(#blockGrad6)" stroke="#1a1a2e" stroke-width="1.5"/>
+      <!-- 盾牌+反弹图标 -->
+      <g transform="translate(18, 10)">
+        <path d="M15,2 L28,8 L28,18 Q28,28 15,35 Q2,28 2,18 L2,8Z" fill="white" opacity="0.9"/>
+        <path d="M15,8 L15,28" stroke="#409EFF" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M10,18 Q15,12 20,18" fill="none" stroke="#409EFF" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <text x="55" y="33" font-family="Arial, sans-serif" font-size="17" font-weight="bold" fill="white">Error 错误恢复</text>
+    </g>
 
-  <!-- 腿 -->
-  <rect x="155" y="280" width="22" height="30" rx="6" fill="#409EFF" stroke="#1a1a2e" stroke-width="1.2"/>
-  <rect x="203" y="280" width="22" height="30" rx="6" fill="#409EFF" stroke="#1a1a2e" stroke-width="1.2"/>
-
-  <!-- 机器人标签 -->
-  <text x="190" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#1a1a2e">AI Agent</text>
-  <text x="190" y="358" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" opacity="0.7">智能体</text>
-
-  <!-- ===== 右侧：六个组件（两列三行） ===== -->
-
-  <!-- 第1行：LLM 大脑 -->
-  <rect x="420" y="100" width="300" height="52" rx="12" fill="url(#blockGrad)" stroke="#1a1a2e" stroke-width="1.2"/>
-  <!-- 大脑图标 -->
-  <circle cx="450" cy="126" r="14" fill="#ffffff" opacity="0.25"/>
-  <path d="M443 120 Q450 113 457 120 Q462 126 457 132 Q450 138 443 132 Q438 126 443 120Z" fill="#ffffff" opacity="0.7"/>
-  <path d="M446 118 Q450 115 454 118" stroke="#ffffff" stroke-width="1.5" fill="none" opacity="0.5"/>
-  <text x="480" y="131" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">大模型 (LLM)</text>
-
-  <!-- 第2行左：Tools 工具 -->
-  <rect x="420" y="172" width="140" height="52" rx="12" fill="url(#blockGrad)" stroke="#1a1a2e" stroke-width="1.2"/>
-  <!-- 工具箱图标 -->
-  <rect x="440" y="186" width="14" height="12" rx="2" fill="#ffffff" opacity="0.6"/>
-  <rect x="443" y="183" width="8" height="5" rx="1" fill="#ffffff" opacity="0.4"/>
-  <text x="465" y="203" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">工具 (Tools)</text>
-
-  <!-- 第2行右：Memory 记忆 -->
-  <rect x="580" y="172" width="140" height="52" rx="12" fill="url(#blockGrad)" stroke="#1a1a2e" stroke-width="1.2"/>
-  <!-- 记忆芯片图标 -->
-  <rect x="598" y="186" width="16" height="16" rx="2" fill="#ffffff" opacity="0.5"/>
-  <line x1="602" y1="190" x2="610" y2="190" stroke="#ffffff" stroke-width="1.5" opacity="0.7"/>
-  <line x1="602" y1="194" x2="610" y2="194" stroke="#ffffff" stroke-width="1.5" opacity="0.7"/>
-  <line x1="602" y1="198" x2="608" y2="198" stroke="#ffffff" stroke-width="1.5" opacity="0.7"/>
-  <text x="625" y="203" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">记忆 (Memory)</text>
-
-  <!-- 第3行左：Planning 规划 -->
-  <rect x="420" y="244" width="140" height="52" rx="12" fill="url(#blockGrad)" stroke="#1a1a2e" stroke-width="1.2"/>
-  <!-- 路线图树图标 -->
-  <line x1="448" y1="258" x2="448" y2="280" stroke="#ffffff" stroke-width="1.5" opacity="0.6"/>
-  <line x1="448" y1="262" x2="438" y2="270" stroke="#ffffff" stroke-width="1.5" opacity="0.6"/>
-  <line x1="448" y1="262" x2="458" y2="270" stroke="#ffffff" stroke-width="1.5" opacity="0.6"/>
-  <circle cx="448" cy="256" r="4" fill="#ffffff" opacity="0.8"/>
-  <circle cx="438" cy="272" r="3" fill="#ffffff" opacity="0.6"/>
-  <circle cx="458" cy="272" r="3" fill="#ffffff" opacity="0.6"/>
-  <text x="470" y="275" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">规划 (Planning)</text>
-
-  <!-- 第3行右：Execution Loop 执行循环 -->
-  <rect x="580" y="244" width="140" height="52" rx="12" fill="url(#blockGrad)" stroke="#1a1a2e" stroke-width="1.2"/>
-  <!-- 循环箭头图标 -->
-  <path d="M598 270 A12 12 0 1 1 610 258" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.7"/>
-  <polygon points="610,255 613,261 607,261" fill="#ffffff" opacity="0.7"/>
-  <text x="625" y="275" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">执行循环 (Loop)</text>
-
-  <!-- 第4行：Error Recovery 容错 -->
-  <rect x="420" y="316" width="300" height="52" rx="12" fill="url(#blockGrad)" stroke="#1a1a2e" stroke-width="1.2"/>
-  <!-- 盾牌图标 -->
-  <path d="M445 330 L445 342 Q445 350 455 354 Q465 350 465 342 L465 330 Z" fill="#ffffff" opacity="0.5"/>
-  <line x1="450" y1="338" x2="455" y2="345" stroke="#ffffff" stroke-width="1.8" opacity="0.8"/>
-  <line x1="455" y1="345" x2="460" y2="335" stroke="#ffffff" stroke-width="1.8" opacity="0.8"/>
-  <text x="480" y="347" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">容错 (Error Recovery)</text>
-
-  <!-- 连接线：机器人到等号 -->
-  <line x1="250" y1="210" x2="290" y2="260" stroke="#1a1a2e" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.3"/>
+  </g>
 
   <!-- 底部说明 -->
-  <text x="400" y="410" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#1a1a2e" opacity="0.6">六大组件协同工作，构成完整的 AI Agent 智能体系统</text>
+  <text x="400" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#666" font-style="italic">AI Agent = LLM + Tools + Memory + Planning + Execution + Error Recovery</text>
 
-  <!-- 装饰性小点 -->
-  <circle cx="80" cy="80" r="3" fill="#409EFF" opacity="0.2"/>
-  <circle cx="720" cy="80" r="3" fill="#409EFF" opacity="0.2"/>
-  <circle cx="80" cy="430" r="3" fill="#409EFF" opacity="0.2"/>
-  <circle cx="720" cy="430" r="3" fill="#409EFF" opacity="0.2"/>
 </svg>

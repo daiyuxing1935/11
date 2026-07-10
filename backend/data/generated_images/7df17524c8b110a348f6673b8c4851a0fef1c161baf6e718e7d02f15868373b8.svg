@@ -4,157 +4,153 @@
       <stop offset="0%" stop-color="#E8F4FD"/>
       <stop offset="100%" stop-color="#F0F8FF"/>
     </linearGradient>
-    <linearGradient id="layerGrad" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="layerGrad1" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#409EFF"/>
-      <stop offset="100%" stop-color="#3A8EE6"/>
+      <stop offset="100%" stop-color="#3A8FE0"/>
     </linearGradient>
     <linearGradient id="layerGrad2" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#58A9FF"/>
-      <stop offset="100%" stop-color="#409EFF"/>
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3A8FE0"/>
     </linearGradient>
+    <linearGradient id="layerGrad3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3A8FE0"/>
+    </linearGradient>
+    <linearGradient id="layerGrad4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#409EFF"/>
+      <stop offset="100%" stop-color="#3A8FE0"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#1a1a2e" flood-opacity="0.12"/>
+    </filter>
   </defs>
 
   <!-- 背景 -->
-  <rect x="0" y="0" width="800" height="500" fill="url(#bgGrad)" rx="8"/>
+  <rect width="800" height="500" fill="url(#bgGrad)" rx="8"/>
 
   <!-- 标题 -->
-  <text x="400" y="38" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e">AI 智能体系统架构</text>
+  <text x="400" y="32" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e">AI 智能体系统分层架构</text>
 
-  <!-- ==================== 第一层：感知 ==================== -->
-  <rect x="100" y="58" width="600" height="70" rx="12" fill="url(#layerGrad)" opacity="0.95"/>
-  <text x="400" y="80" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">感知层</text>
+  <!-- ==================== 第1层：感知层 ==================== -->
+  <rect x="180" y="55" width="440" height="80" rx="12" fill="url(#layerGrad1)" filter="url(#shadow)"/>
+  <text x="400" y="78" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF">感知层（Perception）</text>
 
-  <!-- 感知图标 -->
-  <!-- 文本 -->
-  <rect x="140" y="95" width="50" height="22" rx="4" fill="#ffffff" opacity="0.9"/>
-  <text x="165" y="111" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">文本</text>
-  <!-- 图像 -->
-  <rect x="220" y="95" width="50" height="22" rx="4" fill="#ffffff" opacity="0.9"/>
-  <text x="245" y="111" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">图像</text>
-  <!-- 语音 -->
-  <rect x="300" y="95" width="50" height="22" rx="4" fill="#ffffff" opacity="0.9"/>
-  <text x="325" y="111" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">语音</text>
-  <!-- API -->
-  <rect x="380" y="95" width="50" height="22" rx="4" fill="#ffffff" opacity="0.9"/>
-  <text x="405" y="111" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#409EFF">API</text>
+  <!-- 感知图标：文本 -->
+  <rect x="210" y="90" width="50" height="30" rx="6" fill="rgba(255,255,255,0.25)"/>
+  <text x="235" y="110" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="13" fill="#FFFFFF">文本</text>
+
+  <!-- 感知图标：图像 -->
+  <rect x="290" y="90" width="50" height="30" rx="6" fill="rgba(255,255,255,0.25)"/>
+  <text x="315" y="110" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="13" fill="#FFFFFF">图像</text>
+
+  <!-- 感知图标：语音 -->
+  <rect x="370" y="90" width="50" height="30" rx="6" fill="rgba(255,255,255,0.25)"/>
+  <text x="395" y="110" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="13" fill="#FFFFFF">语音</text>
+
+  <!-- 感知图标：API -->
+  <rect x="450" y="90" width="50" height="30" rx="6" fill="rgba(255,255,255,0.25)"/>
+  <text x="475" y="110" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="13" fill="#FFFFFF">API</text>
 
   <!-- 输入箭头 -->
-  <polygon points="470,106 500,100 500,112" fill="#ffffff" opacity="0.8"/>
-  <line x1="500" y1="106" x2="540" y2="106" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
-  <polygon points="540,100 550,106 540,112" fill="#ffffff" opacity="0.8"/>
+  <polygon points="530,105 555,95 555,115" fill="rgba(255,255,255,0.5)"/>
+  <line x1="555" y1="105" x2="580" y2="105" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
 
   <!-- 层间连接箭头 -->
-  <line x1="400" y1="128" x2="400" y2="150" stroke="#409EFF" stroke-width="2.5" opacity="0.6"/>
-  <polygon points="395,148 400,158 405,148" fill="#409EFF" opacity="0.6"/>
+  <polygon points="400,140 390,155 410,155" fill="#409EFF" opacity="0.6"/>
+  <line x1="400" y1="135" x2="400" y2="155" stroke="#409EFF" stroke-width="2" opacity="0.6"/>
 
-  <!-- ==================== 第二层：推理 ==================== -->
-  <rect x="100" y="158" width="600" height="70" rx="12" fill="url(#layerGrad)" opacity="0.95"/>
-  <text x="400" y="180" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">推理层</text>
+  <!-- ==================== 第2层：推理层 ==================== -->
+  <rect x="180" y="160" width="440" height="80" rx="12" fill="url(#layerGrad2)" filter="url(#shadow)"/>
+  <text x="400" y="183" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF">推理层（Reasoning）</text>
 
   <!-- LLM 大脑图标 -->
-  <ellipse cx="400" cy="210" rx="28" ry="18" fill="#ffffff" opacity="0.9"/>
-  <ellipse cx="400" cy="205" rx="20" ry="14" fill="#409EFF" opacity="0.6"/>
-  <text x="400" y="215" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#ffffff" font-weight="bold">LLM</text>
-  <!-- 脑电波 -->
-  <path d="M360,208 Q370,200 380,208 Q390,216 400,208 Q410,200 420,208 Q430,216 440,208" stroke="#ffffff" stroke-width="1.5" fill="none" opacity="0.7"/>
+  <ellipse cx="400" cy="215" rx="35" ry="22" fill="rgba(255,255,255,0.2)"/>
+  <text x="400" y="220" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="14" fill="#FFFFFF">LLM</text>
+  <!-- 大脑波纹 -->
+  <path d="M375,210 Q380,200 385,210" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+  <path d="M390,205 Q395,195 400,205" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+  <path d="M405,210 Q410,200 415,210" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
 
   <!-- 层间连接箭头 -->
-  <line x1="400" y1="228" x2="400" y2="250" stroke="#409EFF" stroke-width="2.5" opacity="0.6"/>
-  <polygon points="395,248 400,258 405,248" fill="#409EFF" opacity="0.6"/>
+  <polygon points="400,245 390,260 410,260" fill="#409EFF" opacity="0.6"/>
+  <line x1="400" y1="240" x2="400" y2="260" stroke="#409EFF" stroke-width="2" opacity="0.6"/>
 
-  <!-- ==================== 第三层：规划 / 记忆 / 工具 ==================== -->
-  <rect x="60" y="258" width="680" height="90" rx="12" fill="#ffffff" stroke="#409EFF" stroke-width="2" opacity="0.95"/>
+  <!-- ==================== 第3层：中间层（规划/记忆/工具） ==================== -->
+  <rect x="100" y="268" width="600" height="95" rx="12" fill="url(#layerGrad3)" filter="url(#shadow)"/>
+  <text x="400" y="291" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF">中间层（Middleware）</text>
 
   <!-- 规划模块 -->
-  <rect x="90" y="270" width="190" height="66" rx="8" fill="url(#layerGrad2)" opacity="0.9"/>
-  <text x="185" y="292" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff">规划</text>
-  <!-- 路线图树 -->
-  <circle cx="145" cy="318" r="6" fill="#ffffff" opacity="0.8"/>
-  <circle cx="170" cy="318" r="6" fill="#ffffff" opacity="0.8"/>
-  <circle cx="195" cy="318" r="6" fill="#ffffff" opacity="0.8"/>
-  <circle cx="220" cy="318" r="6" fill="#ffffff" opacity="0.8"/>
-  <line x1="151" y1="318" x2="164" y2="318" stroke="#ffffff" stroke-width="1.5" opacity="0.6"/>
-  <line x1="176" y1="318" x2="189" y2="318" stroke="#ffffff" stroke-width="1.5" opacity="0.6"/>
-  <line x1="201" y1="318" x2="214" y2="318" stroke="#ffffff" stroke-width="1.5" opacity="0.6"/>
+  <rect x="125" y="305" width="170" height="45" rx="8" fill="rgba(255,255,255,0.2)"/>
+  <text x="210" y="325" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">规划（Planning）</text>
+  <!-- 路线图树图标 -->
+  <circle cx="145" cy="327" r="3" fill="rgba(255,255,255,0.6)"/>
+  <circle cx="158" cy="327" r="3" fill="rgba(255,255,255,0.6)"/>
+  <circle cx="171" cy="327" r="3" fill="rgba(255,255,255,0.6)"/>
+  <line x1="148" y1="327" x2="155" y2="327" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+  <line x1="161" y1="327" x2="168" y2="327" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
 
   <!-- 记忆模块 -->
-  <rect x="305" y="270" width="190" height="66" rx="8" fill="url(#layerGrad2)" opacity="0.9"/>
-  <text x="400" y="292" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff">记忆</text>
-  <!-- 数据库芯片 -->
-  <rect x="355" y="305" width="14" height="10" rx="2" fill="#ffffff" opacity="0.8"/>
-  <rect x="375" y="302" width="14" height="13" rx="2" fill="#ffffff" opacity="0.9"/>
-  <rect x="395" y="305" width="14" height="10" rx="2" fill="#ffffff" opacity="0.8"/>
-  <line x1="355" y1="315" x2="369" y2="315" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
-  <line x1="375" y1="315" x2="389" y2="315" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
-  <line x1="395" y1="315" x2="409" y2="315" stroke="#409EFF" stroke-width="1" opacity="0.5"/>
+  <rect x="315" y="305" width="170" height="45" rx="8" fill="rgba(255,255,255,0.2)"/>
+  <text x="400" y="325" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">记忆（Memory）</text>
+  <!-- 数据库芯片图标 -->
+  <rect x="335" y="315" width="10" height="8" rx="1" fill="rgba(255,255,255,0.5)"/>
+  <rect x="335" y="326" width="10" height="8" rx="1" fill="rgba(255,255,255,0.5)"/>
+  <rect x="335" y="337" width="10" height="8" rx="1" fill="rgba(255,255,255,0.5)"/>
 
   <!-- 工具模块 -->
-  <rect x="520" y="270" width="190" height="66" rx="8" fill="url(#layerGrad2)" opacity="0.9"/>
-  <text x="615" y="292" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff">工具</text>
+  <rect x="505" y="305" width="170" height="45" rx="8" fill="rgba(255,255,255,0.2)"/>
+  <text x="590" y="325" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">工具（Tools）</text>
   <!-- 扳手图标 -->
-  <circle cx="590" cy="315" r="8" fill="#ffffff" opacity="0.8"/>
-  <line x1="595" y1="310" x2="602" y2="317" stroke="#409EFF" stroke-width="2" opacity="0.7"/>
-  <!-- API 齿轮 -->
-  <circle cx="630" cy="315" r="8" fill="#ffffff" opacity="0.8"/>
-  <circle cx="630" cy="315" r="4" fill="#409EFF" opacity="0.5"/>
-  <text x="615" y="320" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#409EFF" opacity="0.6">⚙</text>
+  <circle cx="530" cy="327" r="6" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+  <line x1="534" y1="323" x2="540" y2="317" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
 
   <!-- 层间连接箭头 -->
-  <line x1="400" y1="348" x2="400" y2="370" stroke="#409EFF" stroke-width="2.5" opacity="0.6"/>
-  <polygon points="395,368 400,378 405,368" fill="#409EFF" opacity="0.6"/>
+  <polygon points="400,368 390,383 410,383" fill="#409EFF" opacity="0.6"/>
+  <line x1="400" y1="363" x2="400" y2="383" stroke="#409EFF" stroke-width="2" opacity="0.6"/>
 
-  <!-- ==================== 第四层：行动 ==================== -->
-  <rect x="100" y="378" width="600" height="55" rx="12" fill="url(#layerGrad)" opacity="0.95"/>
-  <text x="400" y="400" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">行动层</text>
+  <!-- ==================== 第4层：行动层 ==================== -->
+  <rect x="180" y="390" width="440" height="75" rx="12" fill="url(#layerGrad4)" filter="url(#shadow)"/>
+  <text x="400" y="413" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF">行动层（Action）</text>
 
   <!-- 输出箭头 -->
-  <polygon points="300,415 270,409 270,421" fill="#ffffff" opacity="0.8"/>
-  <line x1="270" y1="415" x2="230" y2="415" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
-  <polygon points="230,409 220,415 230,421" fill="#ffffff" opacity="0.8"/>
+  <text x="400" y="445" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="13" fill="rgba(255,255,255,0.9)">执行 → 反馈环境</text>
+  <polygon points="530,440 555,430 555,450" fill="rgba(255,255,255,0.5)"/>
 
-  <polygon points="500,415 530,409 530,421" fill="#ffffff" opacity="0.8"/>
-  <line x1="530" y1="415" x2="570" y2="415" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
-  <polygon points="570,409 580,415 570,421" fill="#ffffff" opacity="0.8"/>
-
-  <!-- 环境标签 -->
-  <text x="140" y="450" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e" opacity="0.7">环境</text>
-  <text x="660" y="450" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1a1a2e" opacity="0.7">环境</text>
-
-  <!-- ==================== 反馈循环 ==================== -->
-  <!-- 从底部左侧向上弯曲的箭头 -->
-  <path d="M120,430 Q60,430 55,390 Q50,350 80,310 Q100,280 120,260 Q140,240 150,220 Q160,200 155,180 Q150,160 160,140 Q170,120 180,110 Q190,100 200,95" stroke="#409EFF" stroke-width="2.5" fill="none" opacity="0.5" stroke-dasharray="6,4"/>
-  <polygon points="200,88 208,98 195,100" fill="#409EFF" opacity="0.5"/>
-
-  <!-- 反馈标签 -->
-  <text x="50" y="280" font-family="sans-serif" font-size="12" fill="#409EFF" opacity="0.7" transform="rotate(-90,50,280)">反馈循环</text>
+  <!-- ==================== 反馈循环箭头 ==================== -->
+  <!-- 从底部回到顶部的曲线箭头 -->
+  <path d="M620,427 Q700,427 700,250 Q700,95 620,95" stroke="#1a1a2e" stroke-width="2.5" fill="none" stroke-dasharray="8,4" opacity="0.5"/>
+  <polygon points="620,90 615,105 625,105" fill="#1a1a2e" opacity="0.5"/>
+  <text x="718" y="250" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="13" fill="#1a1a2e" opacity="0.6" transform="rotate(90,718,250)">反馈循环</text>
 
   <!-- ==================== 标注 ==================== -->
-  <!-- 标注1：感知输入 -->
-  <line x1="560" y1="93" x2="620" y2="75" stroke="#1a1a2e" stroke-width="1" opacity="0.5"/>
-  <text x="625" y="70" font-family="sans-serif" font-size="12" fill="#1a1a2e">多模态输入</text>
+  <!-- 标注1 -->
+  <line x1="150" y1="95" x2="115" y2="70" stroke="#1a1a2e" stroke-width="1" opacity="0.4"/>
+  <rect x="60" y="58" width="55" height="22" rx="4" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.9"/>
+  <text x="87" y="73" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="11" fill="#1a1a2e">多模态输入</text>
 
-  <!-- 标注2：推理核心 -->
-  <line x1="440" y1="210" x2="520" y2="195" stroke="#1a1a2e" stroke-width="1" opacity="0.5"/>
-  <text x="525" y="190" font-family="sans-serif" font-size="12" fill="#1a1a2e">大语言模型</text>
+  <!-- 标注2 -->
+  <line x1="150" y1="200" x2="115" y2="185" stroke="#1a1a2e" stroke-width="1" opacity="0.4"/>
+  <rect x="60" y="173" width="55" height="22" rx="4" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.9"/>
+  <text x="87" y="188" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="11" fill="#1a1a2e">大语言模型</text>
 
-  <!-- 标注3：规划 -->
-  <line x1="190" y1="336" x2="130" y2="360" stroke="#1a1a2e" stroke-width="1" opacity="0.5"/>
-  <text x="80" y="370" font-family="sans-serif" font-size="12" fill="#1a1a2e">任务分解</text>
+  <!-- 标注3 -->
+  <line x1="100" y1="330" x2="70" y2="320" stroke="#1a1a2e" stroke-width="1" opacity="0.4"/>
+  <rect x="15" y="308" width="55" height="22" rx="4" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.9"/>
+  <text x="42" y="323" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="11" fill="#1a1a2e">任务分解</text>
 
-  <!-- 标注4：记忆 -->
-  <line x1="400" y1="336" x2="400" y2="360" stroke="#1a1a2e" stroke-width="1" opacity="0.5"/>
-  <text x="410" y="370" font-family="sans-serif" font-size="12" fill="#1a1a2e">知识存储</text>
+  <!-- 标注4 -->
+  <line x1="700" y1="330" x2="730" y2="320" stroke="#1a1a2e" stroke-width="1" opacity="0.4"/>
+  <rect x="730" y="308" width="55" height="22" rx="4" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.9"/>
+  <text x="757" y="323" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="11" fill="#1a1a2e">外部集成</text>
 
-  <!-- 标注5：工具 -->
-  <line x1="620" y1="336" x2="680" y2="360" stroke="#1a1a2e" stroke-width="1" opacity="0.5"/>
-  <text x="660" y="370" font-family="sans-serif" font-size="12" fill="#1a1a2e">外部接口</text>
+  <!-- 标注5 -->
+  <line x1="650" y1="427" x2="700" y2="440" stroke="#1a1a2e" stroke-width="1" opacity="0.4"/>
+  <rect x="698" y="428" width="55" height="22" rx="4" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.9"/>
+  <text x="725" y="443" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="11" fill="#1a1a2e">环境交互</text>
 
-  <!-- 标注6：行动输出 -->
-  <line x1="400" y1="433" x2="400" y2="460" stroke="#1a1a2e" stroke-width="1" opacity="0.5"/>
-  <text x="410" y="465" font-family="sans-serif" font-size="12" fill="#1a1a2e">环境交互</text>
-
-  <!-- 标注7：反馈 -->
-  <line x1="55" y1="310" x2="30" y2="340" stroke="#1a1a2e" stroke-width="1" opacity="0.5"/>
-  <text x="10" y="355" font-family="sans-serif" font-size="12" fill="#1a1a2e">持续学习</text>
+  <!-- 标注6 -->
+  <line x1="680" y1="250" x2="740" y2="240" stroke="#1a1a2e" stroke-width="1" opacity="0.4"/>
+  <rect x="738" y="228" width="55" height="22" rx="4" fill="white" stroke="#409EFF" stroke-width="1" opacity="0.9"/>
+  <text x="765" y="243" text-anchor="middle" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="11" fill="#1a1a2e">持续学习</text>
 
 </svg>

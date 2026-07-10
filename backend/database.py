@@ -10,13 +10,23 @@ def get_db():
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
 
+def _run_migration(conn, table, column_sql, label):
+    """安全执行数据库迁移（列已存在则跳过）"""
+    try:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {column_sql}")
+        conn.commit()
+        print(f"[OK] {label}")
+    except Exception:
+        pass  # 列已存在，忽略
+
 def init_db():
     """初始化数据库，创建所有表"""
     os.makedirs(os.path.dirname(DATABASE_PATH), exist_ok=True)
     conn = get_db()
-    cursor = conn.cursor()
 
-    cursor.executescript("""
+    # 使用 connection.executescript 而非 cursor.executescript，
+    # 避免 cursor 状态异常导致后续 migration 静默失败
+    conn.executescript("""
         -- 用户表
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,9 +80,6 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
         );
-
-        -- 为已有数据库添加 session_id 列（忽略已存在的情况）
-        -- SQLite 不支持 IF NOT EXISTS for ALTER TABLE，用 try/except 处理
 
         -- 问答历史
         CREATE TABLE IF NOT EXISTS qa_history (
@@ -142,6 +149,7 @@ def init_db():
             model_name TEXT DEFAULT 'gpt-4o',
             temperature REAL DEFAULT 0.7,
             max_tokens INTEGER DEFAULT 4096,
+            image_api_key TEXT DEFAULT '',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
@@ -187,19 +195,10 @@ def init_db():
         );
     """)
 
-    # 数据库迁移：为已有 error_questions 表添加 session_id 列
-    try:
-        cursor.execute("ALTER TABLE error_questions ADD COLUMN session_id INTEGER")
-        print("[OK] 错题表迁移: 添加 session_id 列")
-    except Exception:
-        pass  # 列已存在，忽略
-
-    # 数据库迁移：为已有 learning_stats 表添加 mastery_detail_json 列
-    try:
-        cursor.execute("ALTER TABLE learning_stats ADD COLUMN mastery_detail_json TEXT DEFAULT '{}'")
-        print("[OK] 学习统计表迁移: 添加 mastery_detail_json 列")
-    except Exception:
-        pass
+    # 数据库迁移（使用 conn.execute 而非 cursor.execute，避免 executescript 后 cursor 状态异常）
+    _run_migration(conn, "error_questions", "session_id INTEGER", "错题表迁移: 添加 session_id 列")
+    _run_migration(conn, "user_llm_config", "image_api_key TEXT DEFAULT ''", "LLM配置表迁移: 添加 image_api_key 列")
+    _run_migration(conn, "learning_stats", "mastery_detail_json TEXT DEFAULT '{}'", "学习统计表迁移: 添加 mastery_detail_json 列")
 
     # Seed demo user
     try:
