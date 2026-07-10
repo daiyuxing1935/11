@@ -6,11 +6,111 @@ from services.diagnosis_service import get_user_knowledge_profile, get_all_tags_
 from services.question_bank_service import KNOWLEDGE_CATEGORY_MAP
 from database import get_db
 
-async def generate_learning_path(user_id: int, goal: str = "", timeline: str = "", learning_depth: str = "标准", diagnostic_session_id: int = None) -> dict:
+async def generate_learning_path(user_id: int, goal: str = "", timeline: str = "", learning_depth: str = "标准", diagnostic_session_id: int = None, modules: list = None) -> dict:
     """生成个性化学习路径
     Args:
-        diagnostic_session_id: 可选，诊断测试的 session ID。如果提供，会根据测试结果确定掌握等级。
+        diagnostic_session_id: 可选，诊断测试的 session ID。
+        modules: 可选，用户选中的模块名列表（如 ["智能体基础通识", "大模型与提示词工程"]）。
+                 当提供时，从对应模块知识中直接构建路径，不调用LLM。
     """
+    # ===== 模块选择模式：直接从知识结构构建学习路径 =====
+    if modules and len(modules) > 0:
+        import os as _os
+        # 模块名 → 分类名映射
+        MODULE_CATEGORY_MAP = {
+            "智能体基础通识": "智能体基础概念",
+            "大模型与提示词工程": ["大模型基座原理", "提示词工程"],
+            "智能体四大核心能力模块": ["智能体框架开发", "智能体算法逻辑"],
+            "开发框架与工程实践": "智能体框架开发",
+            "多智能体系统": "多智能体应用",
+            "评估安全与前沿拓展": "智能体算法逻辑",
+        }
+
+        from config import KNOWLEDGE_TAGS_PATH
+        with open(KNOWLEDGE_TAGS_PATH, 'r', encoding='utf-8') as f:
+            all_categories = json.load(f)
+
+        # 收集选中模块对应的分类名
+        target_categories = set()
+        for mod in modules:
+            cats = MODULE_CATEGORY_MAP.get(mod, [])
+            if isinstance(cats, str):
+                cats = [cats]
+            target_categories.update(cats)
+
+        # 从 knowledge_tags.json 中提取对应分类的知识点
+        # 预加载学习资料索引，过滤掉无资料的标签
+        materials_flat = {}
+        materials_index_path = _os.path.join(
+            _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))),
+            "learning_materials", "index.json"
+        )
+        if _os.path.exists(materials_index_path):
+            with open(materials_index_path, 'r', encoding='utf-8') as f:
+                materials_index = json.load(f)
+            for mod_name, items in materials_index.get("modules", {}).items():
+                for tag_name, rel_path in items.items():
+                    full = _os.path.join(
+                        _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))),
+                        "learning_materials", rel_path
+                    )
+                    if _os.path.exists(full):
+                        materials_flat[tag_name] = rel_path
+
+        phases = []
+        day = 1
+        for cat_data in all_categories:
+            cat_name = cat_data["category"]
+            if cat_name not in target_categories:
+                continue
+            tags = cat_data.get("tags", [])
+            tasks = []
+            for tag in tags[:12]:  # 每个分类最多12个任务
+                knowledge = tag["name"]
+                # 跳过没有对应学习资料的标签
+                if knowledge not in materials_flat:
+                    continue
+                difficulty = tag.get("difficulty", "Lv2中等")
+                # 根据难度推荐资源类型
+                resource = "学习资源页面" if difficulty == "Lv1入门" else "动手实践" if difficulty == "Lv3高阶" else "理论+习题"
+                tasks.append({
+                    "day": day,
+                    "topic": knowledge,
+                    "knowledge": knowledge,
+                    "action": f"学习「{knowledge}」核心概念与原理，完成相关练习",
+                    "resource": resource,
+                    "check": "理解核心定义并能用自己的话复述" if "入门" in difficulty else
+                            "能独立解决相关练习题，准确率>70%" if "中等" in difficulty else
+                            "能完成综合实践项目，解释底层原理"
+                })
+                day += 1
+
+            if tasks:
+                phases.append({
+                    "name": cat_name,
+                    "description": f"学习{cat_name}相关的核心知识点",
+                    "tasks": tasks
+                })
+
+        # 构建完整路径数据
+        path_data = {
+            "phases": phases,
+            "estimated_total_days": day - 1,
+            "learning_depth": learning_depth,
+            "weekly_goals": [
+                "每天投入 45-60 分钟专注学习",
+                "学完每个知识点后做 2-3 道练习巩固",
+                "每周末花 30 分钟复习本周所学"
+            ],
+            "key_milestones": [p["name"] for p in phases],
+            "tips": "按顺序学习效果最佳。遇到难理解的概念可使用「智能答疑」寻求帮助。",
+            "modules_selected": modules
+        }
+
+        # 保存学习路径
+        return await _save_learning_path(user_id, path_data)
+
+    # ===== LLM生成模式（保留兼容，无模块选择时使用）=====
     profile = get_user_knowledge_profile(user_id)
     all_tags = get_all_tags_flat()
 
@@ -111,15 +211,19 @@ async def generate_learning_path(user_id: int, goal: str = "", timeline: str = "
     path_data["estimated_total_days"] = day_counter
 
     # 保存学习路径
+    return await _save_learning_path(user_id, path_data)
+
+
+async def _save_learning_path(user_id: int, path_data: dict) -> dict:
+    """保存学习路径到数据库（公共方法，模块模式和LLM模式共用）"""
     conn = get_db()
-    # 检查已有路径
     existing = conn.execute(
         "SELECT id FROM learning_paths WHERE user_id = ? AND status = 'active'",
         (user_id,)
     ).fetchone()
 
     path_json = json.dumps(path_data, ensure_ascii=False)
-    progress_json = json.dumps({"completed_tasks": [], "overall_progress": 0, "current_day": 1}, ensure_ascii=False)
+    progress_json = json.dumps({"completed_tasks": {}, "overall_progress": 0, "current_day": 1}, ensure_ascii=False)
 
     if existing:
         conn.execute(
@@ -134,7 +238,6 @@ async def generate_learning_path(user_id: int, goal: str = "", timeline: str = "
 
     conn.commit()
     conn.close()
-
     return path_data
 
 
@@ -1014,22 +1117,65 @@ async def generate_task_quiz(user_id: int, task_day: int, count: int = 10) -> di
     if not target_task:
         return {"error": f"未找到第{task_day}天的任务"}
 
-    # 3. 任务知识点 → 题库分类
+    # 3. 任务知识点 → 题库分类 + 所属模块
+    import os as _os
     knowledge_text = target_task.get("knowledge", "")
-    focus_categories = map_task_knowledge_to_categories(knowledge_text)
+
+    # 先通过 knowledge_tags.json 精确查找知识点所属的分类
+    from config import KNOWLEDGE_TAGS_PATH as _KT_PATH
+    CATEGORY_TO_MODULE = {
+        "智能体基础概念": "智能体基础通识",
+        "大模型基座原理": "大模型与提示词工程",
+        "提示词工程": "大模型与提示词工程",
+        "智能体框架开发": "智能体四大核心能力模块",
+        "智能体算法逻辑": "智能体四大核心能力模块",
+        "多智能体应用": "多智能体系统",
+    }
+
+    exact_category = None
+    if _os.path.exists(_KT_PATH):
+        with open(_KT_PATH, 'r', encoding='utf-8') as f:
+            kt_data = json.load(f)
+        for cat_data in kt_data:
+            for tag in cat_data.get("tags", []):
+                if tag["name"] == knowledge_text:
+                    exact_category = cat_data["category"]
+                    break
+            if exact_category:
+                break
+
+    # 精确匹配到分类就用精确分类，否则回退到关键词匹配
+    if exact_category:
+        focus_categories = [exact_category]
+        task_module = CATEGORY_TO_MODULE.get(exact_category)
+    else:
+        focus_categories = map_task_knowledge_to_categories(knowledge_text)
+        task_module = None
+        for cat in focus_categories:
+            mod = CATEGORY_TO_MODULE.get(cat)
+            if mod:
+                task_module = mod
+                break
+
+    # focus_knowledge: 模块名（触发模块级过滤）+ 分类名（触发知识点级过滤）
+    combined_focus = []
+    if task_module:
+        combined_focus.append(task_module)
+    combined_focus.extend(focus_categories)
 
     # 4. 根据学习深度确定出题难度阶段
     depth = path_data.get("learning_depth", "标准")
     depth_stage_map = {"基础": "入门", "标准": "进阶", "深入": "高阶"}
     stage = depth_stage_map.get(depth, "进阶")
 
-    # 5. 调用诊断服务生成题目
+    # 5. 调用诊断服务生成题目（传入knowledge_filter精确匹配）
     from services.diagnosis_service import generate_quiz
     result = await generate_quiz(
         user_id=user_id,
         stage=stage,
         count=count,
-        focus_knowledge=focus_categories,
+        focus_knowledge=combined_focus,
+        knowledge_filter=knowledge_text,
         use_timer=False,
         timer_minutes=0
     )

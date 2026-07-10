@@ -178,7 +178,8 @@ async function startDiagnosis() {
       form.stage,
       form.count,
       form.useTimer,
-      form.timerMinutes
+      form.timerMinutes,
+      form.selectedCategories  // 传递用户选中的测评维度
     )
     // Reset answers
     Object.keys(answers).forEach(k => delete answers[k])

@@ -1,7 +1,7 @@
-"""题库服务 — 从新版综合题库(question_bank_diverse.json)加载题目并提供抽题功能
+"""题库服务 — 从6个分模块题库文件中加载题目并提供抽题功能
 
-新版题库已包含所有题型（单选/填空/简答等）并经过质量过滤，
-无需再分别加载过滤版和完整版数据集。"""
+题库来源：module_01 ~ module_06，每个模块80题，共480题。
+包含所有题型（单选/填空/简答等）并经过质量过滤。"""
 import json
 import os
 import random
@@ -14,8 +14,26 @@ DATASET_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
     "dataset", "dataset"
 )
-QUESTION_BANK_PATH = os.path.join(DATASET_DIR, "question_bank_diverse.json")
-FILTERED_BANK_PATH = os.path.join(DATASET_DIR, "question_bank_diverse_filtered.json")
+
+# 6个分模块题库文件
+MODULE_FILES = [
+    "module_01_智能体基础通识.json",
+    "module_02_大模型与提示词工程.json",
+    "module_03_智能体四大核心能力模块.json",
+    "module_04_开发框架与工程实践.json",
+    "module_05_多智能体系统.json",
+    "module_06_评估安全与前沿拓展.json",
+]
+
+# 测评维度（短名称）→ 题库模块关键词（用于模糊匹配 q.module 字段）
+MODULE_KEYWORDS = {
+    "智能体基础通识": "模块一",
+    "大模型与提示词工程": "模块二",
+    "智能体四大核心能力模块": "模块三",
+    "开发框架与工程实践": "模块四",
+    "多智能体系统": "模块五",
+    "评估安全与前沿拓展": "模块六",
+}
 
 # 数据集难度 → 测评难度映射
 DIFFICULTY_MAP = {
@@ -125,66 +143,47 @@ def _is_bad_answer(answer: str, question: str = "") -> bool:
 
 
 def load_question_bank() -> list:
-    """加载题库（带缓存和质量过滤，新版综合题库已包含所有题型并经过质量过滤）"""
+    """加载题库（带缓存和质量过滤，从6个分模块题库文件加载）"""
     global _question_bank_cache, _distractor_pool_cache
     if _question_bank_cache is not None:
         return _question_bank_cache
 
-    seen_questions = {}  # key -> q
+    seen_questions = {}  # question -> qa_pair
     total_raw = 0
-    import random as _random
 
-    # 1. 加载新版综合题库（已质量过滤，包含所有题型：单选/填空/简答等）
-    if os.path.exists(QUESTION_BANK_PATH):
-        with open(QUESTION_BANK_PATH, 'r', encoding='utf-8') as f:
-            diverse_data = json.load(f)
-        all_pairs = diverse_data.get("qa_pairs", [])
-        for q in all_pairs:
+    # 遍历6个模块文件，合并所有题目
+    for mod_file in MODULE_FILES:
+        mod_path = os.path.join(DATASET_DIR, mod_file)
+        if not os.path.exists(mod_path):
+            print(f"[WARN] 题库文件不存在: {mod_file}")
+            continue
+
+        with open(mod_path, 'r', encoding='utf-8') as f:
+            mod_data = json.load(f)
+
+        pairs = mod_data.get("qa_pairs", [])
+        module_name = mod_data.get("meta", {}).get("module_name", mod_file)
+        total_raw += len(pairs)
+
+        for q in pairs:
             answer = q.get("answer", "")
             question = q.get("question", "")
             if _is_bad_answer(answer, question):
                 continue
             key = question.strip()
             if key not in seen_questions:
+                # 补充 module / knowledge_point 信息
+                if "module" not in q:
+                    q["module"] = module_name
                 seen_questions[key] = q
-            else:
-                # 同一题目被标注为多种类型（如同时为fill_in_blank和multiple_choice）
-                # 随机选择保留哪个类型，保证题型分布均衡
-                existing = seen_questions[key]
-                existing_type = existing.get("type", "")
-                new_type = q.get("type", "")
-                if existing_type != new_type and {existing_type, new_type}.issubset({"fill_in_blank", "multiple_choice"}):
-                    if _random.random() < 0.5:
-                        seen_questions[key] = q
-        total_raw += len(all_pairs)
-        print(f"[OK] 综合题库加载: {len(all_pairs)} 题 (所有题型，已质量过滤)")
 
-    # 2. 补充加载过滤版题库（仅补充综合题库中不存在的题目）
-    if os.path.exists(FILTERED_BANK_PATH):
-        with open(FILTERED_BANK_PATH, 'r', encoding='utf-8') as f:
-            filtered_data = json.load(f)
-        filtered_pairs = filtered_data.get("qa_pairs", [])
-        total_raw += len(filtered_pairs)
-        supplement_count = 0
-        for q in filtered_pairs:
-            answer = q.get("answer", "")
-            question = q.get("question", "")
-            if _is_bad_answer(answer, question):
-                continue
-            key = question.strip()
-            if key not in seen_questions:
-                seen_questions[key] = q
-                supplement_count += 1
-        if supplement_count > 0:
-            print(f"[OK] 过滤版题库补充: {supplement_count} 题")
-        else:
-            print(f"[OK] 过滤版题库无需补充 (所有题目已在综合题库中)")
+        print(f"[OK] {mod_file}: {len(pairs)} raw -> 有效加载")
 
     merged = list(seen_questions.values())
 
     bad_filtered = total_raw - len(merged)
     if bad_filtered > 0:
-        print(f"[OK] 题库去重过滤: {total_raw} → {len(merged)} (移除 {bad_filtered} 条重复/低质量题目)")
+        print(f"[OK] 去重过滤: {total_raw} -> {len(merged)} (移除 {bad_filtered} 条重复/低质量)")
 
     _question_bank_cache = merged
 
@@ -395,7 +394,8 @@ def select_questions(
     count: int = 10,
     stage: str = "入门",
     focus_knowledge: Optional[list] = None,
-    avoid_topics: Optional[list] = None
+    avoid_topics: Optional[list] = None,
+    knowledge_filter: str = ""
 ) -> list:
     """
     从题库中选题
@@ -405,6 +405,7 @@ def select_questions(
         stage: 学习阶段（入门/进阶/高阶），影响难度配比
         focus_knowledge: 重点关注的知识分类
         avoid_topics: 需要规避的section主题
+        knowledge_filter: 知识点的关键词，用于在模块/分类过滤后再精确匹配题目
 
     Returns:
         格式化后的题目列表
@@ -413,14 +414,57 @@ def select_questions(
     if not bank:
         return []
 
-    # === 第一步：知识点过滤（直接在 bank 层面过滤，确保后续所有操作都在过滤集上进行）===
-    if focus_knowledge:
-        bank = [q for q in bank if _infer_knowledge_category(q.get("section", "")) in focus_knowledge]
-
-    # 规避主题
+    # === 第一步：规避主题（先排除不想要的，以免后续focus为空）===
     if avoid_topics:
         bank = [q for q in bank
                 if not any(t.lower() in q.get("section", "").lower() for t in avoid_topics)]
+
+    # === 第二步：模块维度过滤（根据用户选中的测评维度精确匹配题库模块）===
+    # 如果 focus_knowledge 中包含模块名称，优先按模块筛选（精确到文件）
+    module_keywords = []
+    if focus_knowledge:
+        for k in focus_knowledge:
+            kw = MODULE_KEYWORDS.get(k)
+            if kw:
+                module_keywords.append(kw)
+
+    if module_keywords:
+        # 按模块关键词精确过滤（q.module 字段如 "模块一：智能体基础通识"）
+        filtered = [q for q in bank if any(
+            kw in q.get("module", "") for kw in module_keywords
+        )]
+        if filtered:
+            bank = filtered
+
+    # === 第三步：知识点过滤（按章节分类补充筛选）===
+    if focus_knowledge:
+        # 将focus_knowledge中的非模块名映射为分类名过滤
+        non_module_keys = [k for k in focus_knowledge if k not in MODULE_KEYWORDS]
+        if non_module_keys:
+            focus_categories = set(_infer_knowledge_category(k) for k in non_module_keys)
+            # 在模块过滤后的bank上再做分类过滤（精准定位到知识点）
+            cat_filtered = [q for q in bank if _infer_knowledge_category(q.get("section", "")) in focus_categories]
+            if cat_filtered:
+                bank = cat_filtered
+            # 如果分类过滤后为空，保留模块过滤结果（至少模块级别的题目）
+
+    # === 第四步：知识点关键词精准匹配（任务做题时传入 knowledge_filter）===
+    if knowledge_filter and bank:
+        # 提取关键词：分词后取长度>=2的词
+        import re as _re
+        kw_tokens = [t for t in _re.split(r'[，,、\s\-—:：()（）]+', knowledge_filter) if len(t) >= 2]
+        if kw_tokens:
+            matched = []
+            for q in bank:
+                q_kp = q.get("knowledge_point", "")
+                q_q = q.get("question", "")
+                q_text = f"{q_kp} {q_q}"
+                # 任一关键词命中即匹配
+                if any(t in q_text for t in kw_tokens):
+                    matched.append(q)
+            # 如果匹配结果足够（>=count/2），使用精确结果；否则保留模块级过滤兜底
+            if len(matched) >= max(2, count // 2):
+                bank = matched
 
     if not bank:
         return []  # 过滤后无题可出
@@ -512,13 +556,19 @@ def select_questions(
             "options": final_options,
             "question_type": question_type,
             "answer": answer.strip(),
-            "analysis": _generate_analysis(
-                q.get("question", ""), answer, knowledge_category, difficulty_label, question_type
+            "analysis": (
+                q.get("analysis", "").strip()  # 优先使用题库中预生成的AI解析
+                if q.get("analysis", "").strip() and len(q.get("analysis", "").strip()) > 60
+                else _generate_analysis(
+                    q.get("question", ""), answer, knowledge_category, difficulty_label, question_type
+                )
             ),
             "option_analysis": option_analysis,
             "knowledge_tag": knowledge_category,
             "knowledge_category": knowledge_category,
             "difficulty": difficulty_label,
+            "module": q.get("module", ""),
+            "knowledge_point": q.get("knowledge_point", ""),
             "original_type": original_type
         }
         formatted.append(item)

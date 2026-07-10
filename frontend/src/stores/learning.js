@@ -15,12 +15,13 @@ export const useLearningStore = defineStore('learning', () => {
   const sessionErrors = ref({ items: [], total: 0 })
   const loading = ref(false)
 
-  async function createPath(goal = '', timeline = '', learning_depth = '标准', diagnosticSessionId = null) {
+  async function createPath(goal = '', timeline = '', learning_depth = '标准', diagnosticSessionId = null, modules = null) {
     loading.value = true
     try {
       currentPath.value = await generateLearningPath({
         goal, timeline, learning_depth,
-        diagnostic_session_id: diagnosticSessionId
+        diagnostic_session_id: diagnosticSessionId,
+        modules: modules
       })
       return currentPath.value
     } finally {

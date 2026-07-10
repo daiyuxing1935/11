@@ -307,7 +307,7 @@ def _inject_cached_images(content: str, allowed_hashes: set = None) -> str:
         if body.endswith('```'): body = body[:-3]
         body = body.strip()
         if len(body) < 10:
-            return m.group(0) if allowed_hashes is None else ''
+            return ''  # 提示词过短或为空，直接隐藏
         h = hashlib.sha256(body.encode()).hexdigest()
 
         # With allowed_hashes: only show if hash is in the list
@@ -322,12 +322,12 @@ def _inject_cached_images(content: str, allowed_hashes: set = None) -> str:
             # Even if cached image missing, still hide the prompt text (keep image placeholder area)
             return f'<div style="margin:20px 0;text-align:center;padding:40px;background:#f5f7fa;border-radius:8px;color:#999;font-size:13px">�� 配图生成中，请稍后刷新页面...</div>'
 
-        # Legacy mode: inject cached, keep raw prompt if not cached
+        # Legacy mode (no allowed_hashes filter): inject cached images, hide uncached prompts
         svg = cache.get(h)
         if svg:
             b64 = base64.b64encode(svg.encode()).decode()
             return f'<div style="margin:20px 0;text-align:center"><img src="data:image/svg+xml;base64,{b64}" style="max-width:100%;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08)" /></div>'
-        return m.group(0)
+        return ''  # 隐藏未缓存的Image-Prompt块，不显示原始提示词
 
     pattern = r'(?:\*\*)?Image-Prompt\([^)]+\):(?:\*\*)?\s*(.+?)(?=\n\n(?:#|\*\*Image-Prompt|Image-Prompt)|\n(?:#|\*\*Image-Prompt|Image-Prompt)|$)'
     return _re.sub(pattern, _repl, content, flags=_re.DOTALL)

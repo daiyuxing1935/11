@@ -130,99 +130,38 @@
       </el-col>
     </el-row>
 
-    <!-- 生成/更新路径 Dialog -->
-    <el-dialog v-model="showDialog" :title="dialogTitle" width="600px" :close-on-click-modal="false">
-      <!-- Step 1: 输入目标 -->
-      <div v-if="dialogStep === 1">
-        <el-alert type="info" :closable="false" style="margin-bottom:16px"
-          title="输入学习目标后，系统将先生成一套诊断测试卷评估您的当前水平，再据此生成个性化学习路径。" />
-        <el-form :model="genForm">
-          <el-form-item label="学习目标">
-            <el-input v-model="genForm.goal" placeholder="如：两周内掌握RAG技术、学会用LangGraph开发Agent" />
-          </el-form-item>
-          <el-form-item label="时间规划">
-            <el-input v-model="genForm.timeline" placeholder="如：2周" />
-          </el-form-item>
-          <el-form-item label="学习深度">
-            <el-radio-group v-model="genForm.learningDepth" size="large">
-              <el-radio-button value="基础">
-                <div style="text-align:center;line-height:1.4">
-                  <div style="font-weight:bold">基础</div>
-                  <div style="font-size:11px;color:#909399">概念理解为主</div>
-                </div>
-              </el-radio-button>
-              <el-radio-button value="标准">
-                <div style="text-align:center;line-height:1.4">
-                  <div style="font-weight:bold">标准</div>
-                  <div style="font-size:11px;color:#909399">理论+实践并重</div>
-                </div>
-              </el-radio-button>
-              <el-radio-button value="深入">
-                <div style="text-align:center;line-height:1.4">
-                  <div style="font-weight:bold">深入</div>
-                  <div style="font-size:11px;color:#909399">源码级深度分析</div>
-                </div>
-              </el-radio-button>
-            </el-radio-group>
-          </el-form-item>
-        </el-form>
-      </div>
+    <!-- 生成/更新路径 Dialog — 模块选择模式 -->
+    <el-dialog v-model="showDialog" title="选择学习模块" width="560px" :close-on-click-modal="false">
+      <el-alert type="info" :closable="false" style="margin-bottom:20px"
+        title="勾选要学习的模块，系统将从对应模块知识中自动构建学习路径。" />
 
-      <!-- Step 2: 诊断测试 -->
-      <div v-else-if="dialogStep === 2">
-        <el-alert :title="'正在诊断: ' + genForm.goal" type="info" :closable="false" style="margin-bottom:16px" />
-        <div v-if="diagLoading" style="text-align:center;padding:40px">
-          <el-icon class="is-loading" :size="32"><Loading /></el-icon>
-          <p style="margin-top:12px;color:#909399">正在生成诊断测试题...</p>
-        </div>
-        <div v-else-if="diagQuestions.length > 0" class="diag-quiz">
-          <div v-for="(q, qi) in diagQuestions" :key="qi" class="diag-question-item">
-            <div class="diag-q-num">第{{ qi + 1 }}题 <el-tag size="small" :type="q.question_type === '单选' ? 'primary' : q.question_type === '填空' ? 'success' : 'info'">{{ q.question_type }}</el-tag></div>
-            <div class="diag-q-text">{{ q.question }}</div>
-            <!-- 单选题 -->
-            <el-radio-group v-if="q.question_type === '单选'" v-model="diagAnswers[qi]" class="diag-options">
-              <el-radio v-for="(opt, oi) in q.options" :key="oi" :value="opt" style="display:block;margin:6px 0">{{ opt }}</el-radio>
-            </el-radio-group>
-            <!-- 填空题 -->
-            <el-input v-else-if="q.question_type === '填空'" v-model="diagAnswers[qi]" placeholder="请输入答案" />
-            <!-- 简答题 -->
-            <el-input v-else v-model="diagAnswers[qi]" type="textarea" :rows="3" placeholder="请输入你的回答" />
-          </div>
-        </div>
-      </div>
+      <el-checkbox-group v-model="genForm.selectedModules" class="module-checkbox-group">
+        <el-checkbox
+          v-for="m in availableModules"
+          :key="m"
+          :label="m"
+          border
+          size="large"
+          class="module-checkbox"
+        >
+          <div class="module-label">{{ m }}</div>
+          <div class="module-desc">{{ getModuleDesc(m) }}</div>
+        </el-checkbox>
+      </el-checkbox-group>
 
-      <!-- Step 3: 诊断结果 -->
-      <div v-else-if="dialogStep === 3">
-        <el-result :icon="diagResultLevel === '较为熟练' ? 'success' : diagResultLevel === '有一定基础' ? 'warning' : 'info'"
-          :title="'诊断测评完成'"
-          :sub-title="'掌握等级: ' + diagResultLevel">
-          <template #extra>
-            <el-descriptions :column="2" border size="small">
-              <el-descriptions-item label="正确率">{{ diagResultRate }}</el-descriptions-item>
-              <el-descriptions-item label="答对">{{ diagCorrectCount }} / {{ diagTotalCount }}</el-descriptions-item>
-              <el-descriptions-item label="掌握等级">
-                <el-tag :type="diagResultLevel === '较为熟练' ? 'success' : diagResultLevel === '有一定基础' ? 'warning' : 'info'">{{ diagResultLevel }}</el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item label="检测知识点">{{ diagCategories.join('、') }}</el-descriptions-item>
-            </el-descriptions>
-            <div style="margin-top:12px;color:#606266;font-size:13px">{{ diagResultNote }}</div>
-          </template>
-        </el-result>
+      <div v-if="genForm.selectedModules.length > 0" style="margin-top:16px;color:#409EFF;font-size:13px">
+        已选 {{ genForm.selectedModules.length }} 个模块，预计生成约 {{ genForm.selectedModules.length * 8 }}~{{ genForm.selectedModules.length * 15 }} 天的学习任务
       </div>
 
       <template #footer>
         <el-button @click="closeDialog">取消</el-button>
-        <!-- Step 1: 开始诊断 -->
-        <el-button v-if="dialogStep === 1" type="warning" @click="startDiagnostic" :loading="diagLoading">
-          开始诊断测评
-        </el-button>
-        <!-- Step 2: 提交诊断 -->
-        <el-button v-if="dialogStep === 2" type="primary" @click="submitDiagnostic" :loading="diagSubmitting" :disabled="diagLoading">
-          提交诊断
-        </el-button>
-        <!-- Step 3: 生成路径 -->
-        <el-button v-if="dialogStep === 3" type="primary" @click="generatePath" :loading="loading">
-          生成个性化学习路径
+        <el-button
+          type="primary"
+          @click="generateModulePath"
+          :loading="loading"
+          :disabled="genForm.selectedModules.length === 0"
+        >
+          生成学习路径
         </el-button>
       </template>
     </el-dialog>
@@ -248,7 +187,6 @@ import { useRouter } from 'vue-router'
 import { useLearningStore } from '../stores/learning'
 import { useDiagnosisStore } from '../stores/diagnosis'
 import { generateTaskQuiz, getLearningResource } from '../api/learning'
-import { submitQuiz } from '../api/diagnosis'
 import { ElMessage } from 'element-plus'
 import { marked } from 'marked'
 
@@ -258,11 +196,8 @@ const diagnosisStore = useDiagnosisStore()
 const pathData = ref(null)
 const progressData = ref({})
 const showDialog = ref(false)
-const dialogStep = ref(1)
 const loading = ref(false)
-const diagLoading = ref(false)
-const diagSubmitting = ref(false)
-const genForm = reactive({ goal: '', timeline: '', learningDepth: '标准' })
+const genForm = reactive({ selectedModules: [] })
 const doneTasks = ref([])
 const activeWeek = ref(1)
 const quizLoading = reactive({})
@@ -272,24 +207,30 @@ const learnDialogVisible = ref(false)
 const learnDialogTitle = ref('')
 const learnDialogContent = ref('')
 const learnDialogLoading = ref(false)
-const currentLearnTask = ref(null)  // 当前正在学习的任务
+const currentLearnTask = ref(null)
 
-// 诊断相关状态
-const diagSessionId = ref(null)
-const diagQuestions = ref([])
-const diagAnswers = ref([])
-const diagResultLevel = ref('')
-const diagResultRate = ref('')
-const diagCorrectCount = ref(0)
-const diagTotalCount = ref(0)
-const diagResultNote = ref('')
-const diagCategories = ref([])
+// 六大模块
+const availableModules = [
+  '智能体基础通识',
+  '大模型与提示词工程',
+  '智能体四大核心能力模块',
+  '开发框架与工程实践',
+  '多智能体系统',
+  '评估安全与前沿拓展',
+]
 
-const dialogTitle = computed(() => {
-  if (dialogStep.value === 1) return 'Step 1: 设定学习目标'
-  if (dialogStep.value === 2) return 'Step 2: 诊断测评'
-  return 'Step 3: 诊断结果'
-})
+const moduleDescs = {
+  '智能体基础通识': 'AI智能体定义、分类、核心特征、架构设计、运行闭环',
+  '大模型与提示词工程': 'Transformer架构、LoRA微调、提示词技术、思维链',
+  '智能体四大核心能力模块': '感知、记忆、规划、行动模块 + 算法逻辑',
+  '开发框架与工程实践': 'LangChain、LlamaIndex、CrewAI、RAG技术',
+  '多智能体系统': '多Agent协作、架构模式、通信机制、博弈论',
+  '评估安全与前沿拓展': 'Agent评估基准、安全治理、MCP协议、具身智能',
+}
+
+function getModuleDesc(name) {
+  return moduleDescs[name] || ''
+}
 
 onMounted(async () => {
   await loadPath()
@@ -318,18 +259,32 @@ async function loadPath() {
 }
 
 function openGenerateDialog() {
-  dialogStep.value = 1
-  diagLoading.value = false
-  diagSubmitting.value = false
-  diagQuestions.value = []
-  diagAnswers.value = []
-  diagSessionId.value = null
+  genForm.selectedModules = pathData.value?.modules_selected ? [...pathData.value.modules_selected] : []
   showDialog.value = true
 }
 
 function closeDialog() {
   showDialog.value = false
-  dialogStep.value = 1
+}
+
+async function generateModulePath() {
+  if (genForm.selectedModules.length === 0) {
+    ElMessage.warning('请至少选择一个学习模块')
+    return
+  }
+  loading.value = true
+  try {
+    await store.createPath('', '', '标准', null, genForm.selectedModules)
+    await loadPath()
+    activeWeek.value = 1
+    closeDialog()
+    ElMessage.success(`学习路径已生成！共 ${genForm.selectedModules.length} 个模块，${pathData.value?.estimated_total_days || 0} 天学习任务`)
+  } catch(e) {
+    const msg = e?.response?.data?.detail || e?.message || '生成失败'
+    ElMessage.error(msg)
+  } finally {
+    loading.value = false
+  }
 }
 
 async function deletePath() {
@@ -476,105 +431,6 @@ function goToCodeLab(task) {
   router.push(`/code-lab/${task.day}`)
 }
 
-// ===== 诊断测试三步流程 =====
-
-async function startDiagnostic() {
-  if (!genForm.goal.trim()) {
-    ElMessage.warning('请输入学习目标')
-    return
-  }
-  diagLoading.value = true
-  diagQuestions.value = []
-  diagAnswers.value = []
-  try {
-    const result = await store.createDiagnosticTest(genForm.goal, 10)
-    diagSessionId.value = result.session_id
-    diagQuestions.value = result.questions || []
-    diagAnswers.value = new Array(diagQuestions.value.length).fill('')
-    diagCategories.value = result.diagnostic_categories || []
-    dialogStep.value = 2
-    ElMessage.success(`已生成${diagQuestions.value.length}道诊断题`)
-  } catch(e) {
-    const msg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '生成诊断测试失败'
-    ElMessage.error(msg)
-  } finally {
-    diagLoading.value = false
-  }
-}
-
-async function submitDiagnostic() {
-  // 检查是否所有题目都已作答
-  const unanswered = diagAnswers.value.findIndex(a => !a || (typeof a === 'string' && !a.trim()))
-  if (unanswered >= 0) {
-    ElMessage.warning(`第${unanswered + 1}题尚未作答，请完成所有题目后再提交`)
-    return
-  }
-
-  diagSubmitting.value = true
-  try {
-    // 构建答案列表
-    const answers = diagQuestions.value.map((q, i) => ({
-      question_id: q.question_id,
-      user_answer: diagAnswers.value[i]
-    }))
-
-    // 提交诊断
-    const submitData = await submitQuiz({ session_id: diagSessionId.value, answers })
-    const report = submitData?.report || submitData || {}
-
-    // 计算诊断结果
-    const totalQuestions = diagQuestions.value.length
-    let correctCount = 0
-    if (report.details) {
-      correctCount = report.details.filter(d => d.is_correct).length
-    } else if (report.correct_count !== undefined) {
-      correctCount = report.correct_count
-    } else {
-      // 从 questions 中计算
-      if (report.questions) {
-        correctCount = report.questions.filter(q => q.is_correct || q.user_answer === q.answer).length
-      }
-    }
-
-    const rate = totalQuestions > 0 ? correctCount / totalQuestions : 0
-    diagCorrectCount.value = correctCount
-    diagTotalCount.value = totalQuestions
-    diagResultRate.value = Math.round(rate * 100) + '%'
-
-    if (rate < 0.4) {
-      diagResultLevel.value = '基础薄弱'
-      diagResultNote.value = '诊断测试正确率较低，说明您对目标知识领域的基础概念掌握不够扎实，系统将为您生成侧重基础概念和入门实践的学习路径。'
-    } else if (rate <= 0.7) {
-      diagResultLevel.value = '有一定基础'
-      diagResultNote.value = '诊断测试正确率中等，说明您对目标知识领域有一定了解但仍存在知识盲区，系统将为您生成理论+实践并重的系统学习路径。'
-    } else {
-      diagResultLevel.value = '较为熟练'
-      diagResultNote.value = '诊断测试正确率较高，说明您对目标知识领域已有较好掌握，系统将为您生成侧重进阶内容、源码分析和实战项目的学习路径。'
-    }
-
-    dialogStep.value = 3
-  } catch(e) {
-    ElMessage.error(e.message || '提交诊断失败，请重试')
-  } finally {
-    diagSubmitting.value = false
-  }
-}
-
-async function generatePath() {
-  loading.value = true
-  try {
-    await store.createPath(genForm.goal, genForm.timeline, genForm.learningDepth, diagSessionId.value)
-    await loadPath()
-    activeWeek.value = 1
-    closeDialog()
-    ElMessage.success('个性化学习路径生成成功！已根据您的诊断测评结果量身定制。')
-  } catch(e) {
-    const msg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '生成失败，请确保已在个人中心配置AI大模型API Key'
-    ElMessage.warning({ message: msg, duration: 6000, showClose: true })
-  } finally {
-    loading.value = false
-  }
-}
 </script>
 
 <style scoped>
@@ -624,12 +480,11 @@ async function generatePath() {
 .weekly-goals h4, .milestones h4 { margin-bottom: 8px; font-size: 14px; }
 .goal-item { font-size: 13px; padding: 4px 0; display: flex; align-items: center; gap: 6px; }
 
-/* 诊断测试样式 */
-.diag-quiz { max-height: 50vh; overflow-y: auto; padding-right: 8px; }
-.diag-question-item { padding: 16px; margin-bottom: 12px; background: #f5f7fa; border-radius: 8px; border-left: 3px solid #409EFF; }
-.diag-q-num { font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-.diag-q-text { font-size: 14px; color: #303133; margin-bottom: 10px; line-height: 1.6; }
-.diag-options { width: 100%; }
+/* 模块选择 */
+.module-checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+.module-checkbox { width: 100%; margin-right: 0 !important; padding: 14px 16px; border-radius: 8px; }
+.module-label { font-size: 15px; font-weight: 600; color: #303133; margin-bottom: 4px; }
+.module-desc { font-size: 12px; color: #909399; }
 
 /* 学习资料 Markdown 渲染样式 */
 .learn-material-content {

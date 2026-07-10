@@ -16,7 +16,8 @@ async def generate_path(req: LearningPathGenerateRequest, current_user: dict = D
             goal=req.goal,
             timeline=req.timeline,
             learning_depth=req.learning_depth,
-            diagnostic_session_id=req.diagnostic_session_id
+            diagnostic_session_id=req.diagnostic_session_id,
+            modules=req.modules
         )
         return APIResponse(data=result)
     except ValueError as e:

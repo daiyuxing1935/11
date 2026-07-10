@@ -109,6 +109,7 @@ class LearningPathGenerateRequest(BaseModel):
     timeline: str = ""
     learning_depth: str = Field(default="标准")  # 基础/标准/深入
     diagnostic_session_id: Optional[int] = None
+    modules: Optional[List[str]] = None  # 选中的模块名列表，如 ["智能体基础通识", "大模型与提示词工程"]
 
 class DiagnosticTestRequest(BaseModel):
     goal: str = ""

@@ -121,7 +121,8 @@ def get_user_knowledge_profile(user_id: int) -> dict:
 
 async def generate_quiz(user_id: int, stage: str = "入门", count: int = 10,
                         focus_knowledge: list = None, question_type: str = None,
-                        use_timer: bool = False, timer_minutes: int = 30) -> dict:
+                        use_timer: bool = False, timer_minutes: int = 30,
+                        knowledge_filter: str = "") -> dict:
     """
     生成个性化测评题目 - 从题库中抽题
 
@@ -149,12 +150,17 @@ async def generate_quiz(user_id: int, stage: str = "入门", count: int = 10,
 
     avoid_knowledge = profile["strong_points"][:3] if profile["strong_points"] else []
 
+    # 当外部显式指定了focus_knowledge时（如任务做题），跳过avoid避免误排除
+    if focus_knowledge:
+        avoid_knowledge = []
+
     # 从题库中选题
     all_questions = select_questions(
         count=count,
         stage=stage,
         focus_knowledge=target_knowledge,
-        avoid_topics=avoid_knowledge
+        avoid_topics=avoid_knowledge,
+        knowledge_filter=knowledge_filter
     )
 
     # 如果题库选题不够，回退说明
@@ -253,6 +259,34 @@ async def submit_quiz(session_id: int, user_id: int, answers: list) -> dict:
             "knowledge_tag": question.get("knowledge_tag", ""),
             "difficulty": question.get("difficulty", "")
         })
+
+    # 将未作答的题目也加入错题本
+    answered_qids = {a.get("question_id", "") for a in answers}
+    for question in questions:
+        qid = question.get("question_id", "")
+        if qid not in answered_qids:
+            error_questions.append({
+                "question_id": qid,
+                "question": question.get("question", ""),
+                "question_type": question.get("question_type", ""),
+                "options": question.get("options", []),
+                "user_answer": "(未作答)",
+                "correct_answer": question.get("answer", "").strip(),
+                "error_type": "未作答",
+                "knowledge_tag": question.get("knowledge_tag", ""),
+                "analysis": question.get("analysis", ""),
+                "difficulty": question.get("difficulty", ""),
+                "option_analysis": question.get("option_analysis", {})
+            })
+            answer_details.append({
+                "question_id": qid,
+                "user_answer": "(未作答)",
+                "correct_answer": question.get("answer", "").strip(),
+                "is_correct": False,
+                "question_type": question.get("question_type", ""),
+                "knowledge_tag": question.get("knowledge_tag", ""),
+                "difficulty": question.get("difficulty", "")
+            })
 
     score = correct_count
     total = len(questions)

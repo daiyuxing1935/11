@@ -109,7 +109,6 @@
                 <span class="opt-label">{{ String.fromCharCode(65 + oi) }}</span>
                 <div class="opt-body">
                   <span class="opt-text">{{ opt }}</span>
-                  <span v-if="getOptionReason(error, oi)" class="opt-reason">{{ getOptionReason(error, oi) }}</span>
                 </div>
                 <div class="opt-tags">
                   <el-tag v-if="isCorrectOption(opt, error.correct_answer)" size="small" type="success" effect="dark">✓ 正确</el-tag>
@@ -134,12 +133,6 @@
               <div class="answer-text">{{ error.correct_answer }}</div>
             </div>
           </div>
-        </div>
-
-        <!-- 错误分析 -->
-        <div class="error-why-wrong">
-          <div class="section-title">💡 错误分析</div>
-          <div class="why-wrong-text">{{ getWhyWrong(error) }}</div>
         </div>
 
         <!-- 题目解析 -->
@@ -375,195 +368,9 @@ function isUserPick(opt, userAnswer) {
   return opt === userAnswer || userAnswer.includes(opt)
 }
 
-function getOptionReason(error, optionIndex) {
-  // 优先使用后端生成的逐选项解析
-  const qd = getQuestionData(error)
-  const optionAnalysis = qd.option_analysis || {}
-  const letter = String.fromCharCode(65 + optionIndex)
-  if (optionAnalysis[letter]) return optionAnalysis[letter]
-
-  // 兜底：基础判断
-  const options = getOptions(error)
-  const opt = options[optionIndex]
-  if (!opt) return ''
-  const correctAnswer = (error.correct_answer || '').trim()
-  const knowledgeTag = error.knowledge_tag || '该知识点'
-  if (isCorrectOption(opt, correctAnswer)) {
-    return `[正确选项] 该选项准确描述了「${knowledgeTag}」的核心概念，是本题的正确答案。`
-  }
-  return `[错误选项] 该选项不符合题意，可能混淆了「${knowledgeTag}」中的相似概念。请查看下方错误分析中的逐选项讲解。`
-}
-
 function getAnalysisText(error) {
   const qd = getQuestionData(error)
   return qd.analysis || '暂无解析'
-}
-
-function getWhyWrong(error) {
-  const userAnswer = (error.user_answer || '').trim()
-  const correctAnswer = (error.correct_answer || '').trim()
-  const errorType = error.error_type || ''
-  const questionType = getQuestionType(error)
-  const knowledgeTag = error.knowledge_tag || '该知识点'
-  const questionText = getQuestionText(error)
-
-  // 未作答
-  if (!userAnswer) {
-    return [
-      '▸ 未作答',
-      '',
-      '可能原因：',
-      `  • 对「${knowledgeTag}」的基础概念不了解，无从下手`,
-      '  • 答题时间不够，来不及写',
-      '  • 没看懂题目在问什么',
-      '',
-      '建议：',
-      `  1. 先搞懂「${knowledgeTag}」的核心定义`,
-      '  2. 下次遇到不熟悉的题，先写你知道的部分',
-      '  3. 控制每题答题时间，不要卡在一题上',
-    ].join('\n')
-  }
-
-  const overlap = _calcOverlap(userAnswer, correctAnswer)
-
-  // 选择/判断题
-  if (questionType === '单选' || questionType === '判断') {
-    return _analyzeChoiceError(error, userAnswer, correctAnswer, overlap, knowledgeTag)
-  }
-
-  // 填空题
-  if (questionType === '填空') {
-    return _analyzeFillBlankError(userAnswer, correctAnswer, overlap, knowledgeTag)
-  }
-
-  // 简答题（默认）
-  return _analyzeShortAnswerError(userAnswer, correctAnswer, overlap, knowledgeTag)
-}
-
-function _analyzeChoiceError(error, userAnswer, correctAnswer, overlap, knowledgeTag) {
-  const out = []
-  const options = getOptions(error)
-  const labels = ['A', 'B', 'C', 'D', 'E', 'F']
-
-  out.push('▸ 选项分析')
-  out.push('')
-
-  // 逐选项讲解
-  if (options.length > 0) {
-    for (let i = 0; i < options.length; i++) {
-      const opt = options[i]
-      const label = labels[i] || String(i)
-      const isCorrect = isCorrectOption(opt, correctAnswer)
-      const isUser = isUserPick(opt, userAnswer)
-
-      out.push(`${label}. ${opt}`)
-      if (isCorrect) {
-        out.push(`   ✅ 正确选项。这是「${knowledgeTag}」知识点的准确描述。`)
-      } else if (isUser) {
-        out.push(`   ❌ 你的选择。该选项不正确，你可能混淆了「${knowledgeTag}」中的相关概念。`)
-      } else {
-        out.push(`   — 错误选项，与正确答案不符。`)
-      }
-      out.push('')
-    }
-  }
-
-  // 总评
-  out.push('▸ 诊断')
-  out.push('')
-  if (overlap < 0.1) {
-    out.push(`你选的答案与正确答案基本无关，说明对「${knowledgeTag}」的核心概念理解有误。`)
-  } else if (overlap < 0.4) {
-    out.push(`你的选择沾边但不准确，对「${knowledgeTag}」有浅层认知但关键细节没掌握。`)
-  } else {
-    out.push(`大方向对的，但在关键细节上出现了偏差。`)
-  }
-
-  out.push('')
-  out.push('建议：')
-  out.push(`  1. 把每个选项当作一道判断题来做，逐个排除`)
-  out.push(`  2. 重点关注「${knowledgeTag}」中容易混淆的相似概念的区别`)
-  out.push('  3. 做2-3道同类选择题，直到能准确说出每个选项为什么对/错')
-
-  return out.join('\n')
-}
-
-function _analyzeFillBlankError(userAnswer, correctAnswer, overlap, knowledgeTag) {
-  const out = []
-
-  if (overlap < 0.1) {
-    out.push('▸ 完全未掌握')
-    out.push('')
-    out.push(`你对「${correctAnswer}」这个关键概念没有印象，可能是还没学到或遗忘了。`)
-    out.push('')
-    out.push('建议：')
-    out.push(`  1. 搜索「${correctAnswer}」，阅读定义和相关内容`)
-    out.push('  2. 制作记忆卡片，正面写概念名，背面写定义和示例')
-    out.push('  3. 用「' + correctAnswer + '」造个句子加深印象')
-  } else if (overlap < 0.5) {
-    out.push('▸ 记忆模糊')
-    out.push('')
-    out.push(`你记得有这个知识点但表述不准确，「${userAnswer}」和「${correctAnswer}」有差距。`)
-    out.push('')
-    out.push('建议：')
-    out.push(`  1. 整理「${knowledgeTag}」的术语表，每天过一遍`)
-    out.push('  2. 用默写代替浏览——盖住答案自己写，然后对照纠错')
-  } else {
-    out.push('▸ 接近正确')
-    out.push('')
-    out.push('大方向对，但表述不够精准，差一点就对了。填空对精确性要求很高。')
-    out.push('')
-    out.push('建议：')
-    out.push('  1. 对比差异点——往往就是关键得分点')
-    out.push('  2. 养成精准表达的习惯，差一个字可能就是错的')
-  }
-
-  return out.join('\n')
-}
-
-function _analyzeShortAnswerError(userAnswer, correctAnswer, overlap, knowledgeTag) {
-  const out = []
-
-  if (overlap < 0.1) {
-    out.push('▸ 方向完全错误')
-    out.push('')
-    out.push(`你的回答与参考答案几乎没有共同关键词，可能：`)
-    out.push(`  • 把「${knowledgeTag}」和其他概念搞混了`)
-    out.push('  • 没审清题，答偏了方向')
-    out.push('')
-    out.push('行动：')
-    out.push(`  1. 重新阅读「${knowledgeTag}」章节，搞清楚核心定义`)
-    out.push('  2. 合上书写下3个要点，再和答案对比')
-  } else if (overlap < 0.4) {
-    out.push('▸ 部分相关，偏差较大')
-    out.push('')
-    out.push('你的回答涉及了相关知识，但整体方向有偏差，理解不够系统。')
-    out.push('')
-    out.push('行动：')
-    out.push(`  1. 对比你和答案的关键词差异，找出认知盲区`)
-    out.push(`  2. 梳理「${knowledgeTag}」的知识结构，理清各要素之间的关系`)
-  } else {
-    out.push('▸ 接近正确，细节不足')
-    out.push('')
-    out.push('大方向对了，但关键细节不够精准，或遗漏了部分要点。')
-    out.push('')
-    out.push('行动：')
-    out.push('  1. 逐句对比你和参考答案的差异点')
-    out.push('  2. 把遗漏和错误的部分标注出来，重点复习')
-    out.push('  3. 一周后重新作答，检验掌握程度')
-  }
-
-  return out.join('\n')
-}
-
-/** 计算两段文本的词汇重叠度 (0~1) */
-function _calcOverlap(text1, text2) {
-  if (!text1 || !text2) return 0
-  const words1 = new Set(text1.toLowerCase().replace(/[，,。.、\s]+/g, ' ').split(' ').filter(w => w.length >= 2))
-  const words2 = new Set(text2.toLowerCase().replace(/[，,。.、\s]+/g, ' ').split(' ').filter(w => w.length >= 2))
-  if (words2.size === 0) return 0
-  const common = [...words2].filter(w => words1.has(w)).length
-  return common / words2.size
 }
 
 function getErrorTypeColor(type) {
@@ -616,7 +423,6 @@ function getErrorTypeColor(type) {
 .opt-label { font-weight: 700; font-size: 14px; color: #409EFF; min-width: 20px; padding-top: 1px; }
 .opt-body { flex: 1; min-width: 0; }
 .opt-text { font-size: 14px; line-height: 1.6; }
-.opt-reason { display: block; margin-top: 4px; font-size: 12px; color: #909399; line-height: 1.5; }
 .opt-tags { flex-shrink: 0; display: flex; gap: 4px; }
 
 /* 答案对比 */
@@ -630,10 +436,6 @@ function getErrorTypeColor(type) {
 .correct-box .answer-label { color: #67C23A; }
 .answer-text { font-size: 14px; color: #303133; line-height: 1.6; white-space: pre-wrap; }
 .answer-arrow { font-size: 20px; color: #c0c4cc; font-weight: bold; }
-
-/* 错误分析 */
-.error-why-wrong { margin-bottom: 16px; background: #fff7e6; padding: 12px 14px; border-radius: 8px; border-left: 4px solid #e6a23c; }
-.why-wrong-text { font-size: 14px; color: #303133; line-height: 1.7; }
 
 /* 详细解析 */
 .error-analysis { background: #f0f5ff; padding: 12px 14px; border-radius: 8px; border-left: 4px solid #409EFF; }

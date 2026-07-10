@@ -9,10 +9,16 @@ export const useDiagnosisStore = defineStore('diagnosis', () => {
   const knowledgeProfile = ref(null)
   const loading = ref(false)
 
-  async function startQuiz(stage = '入门', count = 10, useTimer = false, timerMinutes = 30) {
+  async function startQuiz(stage = '入门', count = 10, useTimer = false, timerMinutes = 30, focusKnowledge = []) {
     loading.value = true
     try {
-      currentQuiz.value = await generateQuiz({ stage, count, use_timer: useTimer, timer_minutes: timerMinutes })
+      currentQuiz.value = await generateQuiz({
+        stage,
+        count,
+        use_timer: useTimer,
+        timer_minutes: timerMinutes,
+        focus_knowledge: focusKnowledge.length > 0 ? focusKnowledge : null
+      })
       currentReport.value = null
       return currentQuiz.value
     } finally {
