@@ -4,7 +4,8 @@ import {
   generateLearningPath, getLearningPath, deleteLearningPath, generateDiagnosticTest,
   getDailyTasks, completeTask,
   getErrorBook, updatePathProgress, getErrorSessions, getErrorsBySession,
-  getOrphanErrors, deleteSessionErrors, deleteOrphanErrors, batchDeleteErrors
+  getOrphanErrors, deleteSessionErrors, deleteOrphanErrors, batchDeleteErrors,
+  reviewSessionErrors
 } from '../api/learning'
 
 export const useLearningStore = defineStore('learning', () => {
@@ -103,6 +104,11 @@ export const useLearningStore = defineStore('learning', () => {
     return await fetchErrorSessions()
   }
 
+  async function reviewSession(sessionId) {
+    const result = await reviewSessionErrors(sessionId)
+    return result
+  }
+
   async function deleteErrors(ids) {
     await batchDeleteErrors(ids)
     return await fetchErrorBook()
@@ -112,6 +118,6 @@ export const useLearningStore = defineStore('learning', () => {
     currentPath, dailyTasks, errorBook, errorSessions, sessionErrors, loading,
     createPath, removePath, createDiagnosticTest,
     fetchPath, updateProgress, fetchTasks, finishTask,
-    fetchErrorBook, fetchErrorSessions, fetchSessionErrors, removeSession, deleteErrors
+    fetchErrorBook, fetchErrorSessions, fetchSessionErrors, removeSession, reviewSession, deleteErrors
   }
 })

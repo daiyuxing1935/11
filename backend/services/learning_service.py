@@ -471,11 +471,14 @@ async def get_learning_path(user_id: int) -> dict:
                     remedial_modified = True
         if remedial_modified:
             progress["remedial_tasks"] = remedial
-            # 持久化：避免下次调用时重复注入
+            # 持久化：同时保存修改后的 path_data（含已注入的复习任务）和 progress，
+            # 避免刷新页面后复习任务消失
             conn3 = get_db()
             conn3.execute(
-                "UPDATE learning_paths SET progress_json = ? WHERE id = ?",
-                (json.dumps(progress, ensure_ascii=False), row["id"])
+                "UPDATE learning_paths SET path_data_json = ?, progress_json = ? WHERE id = ?",
+                (json.dumps(path_data, ensure_ascii=False),
+                 json.dumps(progress, ensure_ascii=False),
+                 row["id"])
             )
             conn3.commit()
             conn3.close()
@@ -643,26 +646,33 @@ async def record_quiz_result(user_id: int, task_day: int, correct_rate: float,
 
     # 正确率<60% → 生成复习任务，插入到 day+1
     if correct_rate < 0.6 and error_knowledge_tags:
+        # 找到原始任务的知识点（学习资料索引中保证存在）
+        original_knowledge = ""
+        for phase in path_data.get("phases", []):
+            for t in phase.get("tasks", []):
+                if t.get("day") == task_day and not t.get("remedial"):
+                    original_knowledge = t.get("knowledge", "")
+                    break
+            if original_knowledge:
+                break
+        review_knowledge = original_knowledge or error_knowledge_tags[0]
+
         next_day = task_day + 1
         remedial = progress.get("remedial_tasks", {})
         next_key = str(next_day)
         if next_key not in remedial:
             remedial[next_key] = []
-
-        # 取前3个薄弱知识点生成复习任务
-        weak_tags = error_knowledge_tags[:3]
-        for tag in weak_tags:
-            remedial[next_key].append({
-                "day": next_day,
-                "topic": f"复习：{tag}",
-                "knowledge": tag,
-                "action": f"针对性复习「{tag}」相关知识点，重做错题并理解错误原因",
-                "resource": "错题本 + 学习资料",
-                "check": "能独立正确解答该知识点的题目",
-                "remedial": True,
-                "source_day": task_day,
-                "correct_rate": round(correct_rate * 100)
-            })
+        remedial[next_key].append({
+            "day": next_day,
+            "topic": f"复习：{review_knowledge}",
+            "knowledge": review_knowledge,
+            "action": f"针对性复习「{review_knowledge}」相关知识点，重做错题并理解错误原因",
+            "resource": "错题本 + 学习资料",
+            "check": "能独立正确解答该知识点的题目",
+            "remedial": True,
+            "source_day": task_day,
+            "correct_rate": round(correct_rate * 100)
+        })
 
         progress["remedial_tasks"] = remedial
 
@@ -948,6 +958,7 @@ async def get_error_sessions(user_id: int) -> list:
     # 有 session_id 的按 session 分组
     rows = conn.execute("""
         SELECT e.session_id, COUNT(*) as error_count,
+               SUM(CASE WHEN e.reviewed = 1 THEN 1 ELSE 0 END) as reviewed_count,
                qs.stage, qs.score, qs.total,
                COALESCE(qs.completed_at, qs.created_at) as quiz_time
         FROM error_questions e
@@ -969,6 +980,7 @@ async def get_error_sessions(user_id: int) -> list:
             "session_id": r["session_id"],
             "label": f"{stage}测评 ({score}/{total}分)" if quiz_time else "历史错题",
             "error_count": r["error_count"],
+            "reviewed_count": r["reviewed_count"] or 0,
             "quiz_time": display_time,
             "stage": stage,
             "score": score,
@@ -1220,6 +1232,7 @@ async def generate_task_quiz(user_id: int, task_day: int, count: int = 10) -> di
                 progress["task_quiz_map"] = {}
             progress["task_quiz_map"][str(session_id)] = task_key
             progress["used_question_texts"] = list(used_questions)
+            print(f"[generate_task_quiz] Saving task_quiz_map[{session_id}] = {task_key}")
             conn.execute(
                 "UPDATE learning_paths SET progress_json = ? WHERE id = ?",
                 (json.dumps(progress, ensure_ascii=False), row["id"])
@@ -1588,6 +1601,35 @@ async def review_error(user_id: int, error_id: int) -> dict:
     conn.close()
 
     return {"message": "已标记为已复习"}
+
+
+async def review_session_errors(user_id: int, session_id: int) -> dict:
+    """将该会话下所有未复习的错题批量标记为已复习"""
+    conn = get_db()
+    cur = conn.execute(
+        "UPDATE error_questions SET reviewed = 1 WHERE user_id = ? AND session_id = ? AND reviewed = 0",
+        (user_id, session_id)
+    )
+    updated = cur.rowcount
+    conn.commit()
+    conn.close()
+
+    # 为每道题记录学习活动
+    if updated > 0:
+        conn = get_db()
+        errors = conn.execute(
+            "SELECT id, knowledge_tag FROM error_questions WHERE session_id = ? AND user_id = ?",
+            (session_id, user_id)
+        ).fetchall()
+        for e in errors:
+            conn.execute(
+                "INSERT INTO learning_records (user_id, knowledge_tag, action_type, result_json) VALUES (?, ?, 'review_error', ?)",
+                (user_id, e["knowledge_tag"], json.dumps({"error_id": e["id"], "batch": True}, ensure_ascii=False))
+            )
+        conn.commit()
+        conn.close()
+
+    return {"reviewed_count": updated, "session_id": session_id}
 
 
 # ===== AI 手把手编程教学 =====

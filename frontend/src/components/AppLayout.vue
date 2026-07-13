@@ -13,6 +13,7 @@
         <el-menu-item index="/error-book"><el-icon><EditPen /></el-icon><span>错题本</span></el-menu-item>
         <el-menu-item index="/analytics"><el-icon><TrendCharts /></el-icon><span>学情复盘</span></el-menu-item>
         <el-menu-item index="/resources"><el-icon><Collection /></el-icon><span>学习资源</span></el-menu-item>
+        <el-menu-item index="/code-lab"><el-icon><Monitor /></el-icon><span>写代码</span></el-menu-item>
         <el-menu-item index="/profile"><el-icon><User /></el-icon><span>个人中心</span></el-menu-item>
       </el-menu>
     </el-aside>

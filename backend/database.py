@@ -200,6 +200,22 @@ def init_db():
     _run_migration(conn, "user_llm_config", "image_api_key TEXT DEFAULT ''", "LLM配置表迁移: 添加 image_api_key 列")
     _run_migration(conn, "learning_stats", "mastery_detail_json TEXT DEFAULT '{}'", "学习统计表迁移: 添加 mastery_detail_json 列")
 
+    # 电子书表
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS pdf_books (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            filename TEXT NOT NULL,
+            original_name TEXT NOT NULL,
+            file_size INTEGER DEFAULT 0,
+            cover TEXT DEFAULT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+    """)
+    conn.commit()
+    _run_migration(conn, "pdf_books", "cover TEXT DEFAULT NULL", "电子书表迁移: 添加封面字段")
+
     # Seed demo user
     try:
         from auth import hash_password

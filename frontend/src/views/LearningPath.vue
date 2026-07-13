@@ -66,7 +66,7 @@
               <div class="task-header">
                 <div class="task-day">第{{ task.day }}天</div>
                 <el-tag v-if="getTaskStatus(task).allDone" type="success" size="small" effect="dark">✅ 已完成</el-tag>
-                <el-tag v-else-if="getTaskStatus(task).done > 0" type="warning" size="small" effect="dark">⏳ {{ getTaskStatus(task).done }}/3</el-tag>
+                <el-tag v-else-if="getTaskStatus(task).done > 0" type="warning" size="small" effect="dark">⏳ {{ getTaskStatus(task).done }}/2</el-tag>
               </div>
 
               <div class="task-topic">{{ task.topic }}</div>
@@ -90,12 +90,6 @@
                   <el-icon v-if="!getTaskStatus(task).quiz"><EditPen /></el-icon>
                   <el-icon v-else><CircleCheck /></el-icon>
                   {{ getTaskStatus(task).quiz ? '已做题' : '去做题' }}
-                </el-button>
-                <el-button type="success" size="small" @click="goToCodeLab(task)"
-                  :class="{ 'btn-done': getTaskStatus(task).code }">
-                  <el-icon v-if="!getTaskStatus(task).code"><Monitor /></el-icon>
-                  <el-icon v-else><CircleCheck /></el-icon>
-                  {{ getTaskStatus(task).code ? '已写代码' : '去写代码' }}
                 </el-button>
               </div>
             </div>
@@ -186,7 +180,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLearningStore } from '../stores/learning'
 import { useDiagnosisStore } from '../stores/diagnosis'
-import { generateTaskQuiz, getLearningResource } from '../api/learning'
+import { generateTaskQuiz, getLearningResource, recordStudyVisit } from '../api/learning'
 import { ElMessage } from 'element-plus'
 import { marked } from 'marked'
 
@@ -233,6 +227,7 @@ function getModuleDesc(name) {
 }
 
 onMounted(async () => {
+  recordStudyVisit()
   await loadPath()
 })
 
@@ -340,14 +335,13 @@ function getTaskStatus(task) {
   // 兼容旧格式（数组）
   if (Array.isArray(ct)) {
     const done = ct.includes(key)
-    return { learn: done, quiz: done, code: done, done: done ? 3 : 0, allDone: done }
+    return { learn: done, quiz: done, code: false, done: done ? 2 : 0, allDone: done }
   }
   const status = ct[key] || { learn: false, quiz: false, code: false }
   const learn = status.learn || false
   const quiz = status.quiz || false
-  const code = status.code || false
-  const done = (learn ? 1 : 0) + (quiz ? 1 : 0) + (code ? 1 : 0)
-  return { learn, quiz, code, done, allDone: done === 3 }
+  const done = (learn ? 1 : 0) + (quiz ? 1 : 0)
+  return { learn, quiz, code: false, done, allDone: done === 2 }
 }
 
 function isTaskDone(task) {
@@ -419,20 +413,6 @@ async function onLearnDialogClosed() {
   currentLearnTask.value = null
   // 刷新学习路径数据
   await loadPath()
-}
-
-function goToCodeLab(task) {
-  // 必须先完成"去学习"
-  if (!getTaskStatus(task).learn) {
-    ElMessage.warning('请先完成"去学习"再写代码')
-    return
-  }
-  // 必须先完成"去做题"
-  if (!getTaskStatus(task).quiz) {
-    ElMessage.warning('请先完成"去做题"再写代码')
-    return
-  }
-  router.push(`/code-lab/${task.day}`)
 }
 
 </script>

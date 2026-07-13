@@ -7,6 +7,23 @@ from services import learning_service, resource_service
 
 router = APIRouter()
 
+
+@router.post("/visit", response_model=APIResponse)
+async def record_visit(current_user: dict = Depends(get_current_user)):
+    """记录学习访问（用于统计学习天数）"""
+    from database import get_db
+    from datetime import datetime
+    conn = get_db()
+    today = datetime.now().strftime("%Y-%m-%d")
+    conn.execute(
+        "INSERT INTO learning_records (user_id, knowledge_tag, action_type, result_json) VALUES (?, '综合', 'page_visit', ?)",
+        (current_user["id"], f'{{"date":"{today}"}}')
+    )
+    conn.commit()
+    conn.close()
+    return APIResponse(data={"recorded": today})
+
+
 @router.post("/path/generate", response_model=APIResponse)
 async def generate_path(req: LearningPathGenerateRequest, current_user: dict = Depends(get_current_user)):
     """生成个性化学习路径（可选携带诊断测试结果）"""
@@ -133,6 +150,115 @@ async def execute_code(req: CodeExecuteRequest, current_user: dict = Depends(get
     except Exception as e:
         return APIResponse(code=500, message=f"代码执行失败: {str(e)}", data=None)
 
+class CodeRunRequest(BaseModel):
+    code: str
+    language: str = "python"  # python, cpp, java
+
+@router.post("/code-run", response_model=APIResponse)
+async def run_code(req: CodeRunRequest, current_user: dict = Depends(get_current_user)):
+    """在线运行代码（沙箱执行 + AI 错误解析）"""
+    try:
+        import subprocess, tempfile, os as _os, shutil
+        code = req.code
+        language = req.language.lower()
+        output = ""
+        error = ""
+        ai_analysis = ""
+
+        # 检查编译器/解释器
+        runners = {
+            "python": ["python", "-c", code],
+            "cpp": None,  # 需要编译后运行
+            "java": None,
+        }
+        exe_name = {"python": "python", "cpp": "g++", "java": "javac"}
+
+        executable = shutil.which(exe_name.get(language, "python"))
+        if not executable:
+            return APIResponse(data={"output": "", "error": f"未找到 {exe_name.get(language, language)} 运行环境，请先安装", "ai_analysis": ""})
+
+        if language == "python":
+            proc = subprocess.run(
+                ["python", "-c", code],
+                capture_output=True, text=True, timeout=30,
+                cwd=_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+            )
+            output = proc.stdout
+            error = proc.stderr
+        elif language == "cpp":
+            with tempfile.TemporaryDirectory() as tmp:
+                src = _os.path.join(tmp, "main.cpp")
+                exe = _os.path.join(tmp, "main.exe")
+                with open(src, "w", encoding="utf-8") as f:
+                    f.write(code)
+                compile_proc = subprocess.run(
+                    ["g++", src, "-o", exe, "-std=c++17", "-Wall"],
+                    capture_output=True, text=True, timeout=20
+                )
+                if compile_proc.returncode != 0:
+                    error = compile_proc.stderr
+                else:
+                    run_proc = subprocess.run(
+                        [exe], capture_output=True, text=True, timeout=10,
+                        input="\n"
+                    )
+                    output = run_proc.stdout
+                    error = run_proc.stderr
+        elif language == "java":
+            with tempfile.TemporaryDirectory() as tmp:
+                src = _os.path.join(tmp, "Main.java")
+                with open(src, "w", encoding="utf-8") as f:
+                    f.write(code)
+                compile_proc = subprocess.run(
+                    ["javac", src], capture_output=True, text=True, timeout=20
+                )
+                if compile_proc.returncode != 0:
+                    error = compile_proc.stderr
+                else:
+                    run_proc = subprocess.run(
+                        ["java", "-cp", tmp, "Main"],
+                        capture_output=True, text=True, timeout=10,
+                        input="\n"
+                    )
+                    output = run_proc.stdout
+                    error = run_proc.stderr
+        else:
+            return APIResponse(data={"output": "", "error": f"不支持的语言: {language}", "ai_analysis": ""})
+
+        # AI 错误解析
+        if error:
+            try:
+                from services.ai_service import call_llm
+                analysis_prompt = f"""你是一位编程导师。学生提交了以下 {language.upper()} 代码，运行时出现了错误。
+请用中文分析错误原因，并用通俗易懂的语言给出修复建议。控制在200字以内。
+
+【代码】
+{code[:2000]}
+
+【错误信息】
+{error[:1500]}
+
+请直接给出分析和建议，不要啰嗦开头。"""
+                ai_resp = await call_llm(
+                    user_id,
+                    [{"role": "user", "content": analysis_prompt}],
+                    temperature=0.3, max_tokens=512
+                )
+                ai_analysis = ai_resp if not ai_resp.startswith("LLM调用异常") else ""
+            except Exception:
+                pass
+
+        return APIResponse(data={
+            "output": output,
+            "error": error,
+            "ai_analysis": ai_analysis
+        })
+    except subprocess.TimeoutExpired:
+        return APIResponse(data={"output": "", "error": "代码执行超时（30秒）", "ai_analysis": ""})
+    except Exception as e:
+        return APIResponse(data={"output": "", "error": f"执行异常: {str(e)}", "ai_analysis": ""})
+
+
 @router.get("/code-answer/{task_day}", response_model=APIResponse)
 async def get_code_answer(task_day: int, current_user: dict = Depends(get_current_user)):
     """获取编程任务参考答案及逐行解释"""
@@ -185,6 +311,12 @@ async def get_error_book(page: int = 1, page_size: int = 20, current_user: dict 
 async def review_error(error_id: int, current_user: dict = Depends(get_current_user)):
     """标记错题已复习"""
     result = await learning_service.review_error(current_user["id"], error_id)
+    return APIResponse(data=result)
+
+@router.put("/error-book/session/{session_id}/review-all", response_model=APIResponse)
+async def review_session_errors(session_id: int, current_user: dict = Depends(get_current_user)):
+    """将该组错题全部标记为已复习"""
+    result = await learning_service.review_session_errors(current_user["id"], session_id)
     return APIResponse(data=result)
 
 class BatchDeleteRequest(BaseModel):

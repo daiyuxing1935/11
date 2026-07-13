@@ -83,10 +83,12 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useDiagnosisStore } from '../stores/diagnosis'
+import { useStatStore } from '../stores/statStore'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const store = useDiagnosisStore()
+const statStore = useStatStore()
 const { currentQuiz, currentReport } = storeToRefs(store)
 
 const answers = reactive({})
@@ -120,8 +122,21 @@ async function submitAnswers() {
 
   submitting.value = true
   try {
-    await store.submitAnswers(currentQuiz.value.session_id, answerList)
+    console.log('[TaskQuiz] 开始提交答案...')
+    const result = await store.submitAnswers(currentQuiz.value.session_id, answerList)
+    console.log('[TaskQuiz] 提交结果:', result)
+    if (result) {
+      const score = result.score || 0
+      const total = result.total || answerList.length
+      const knowledge = currentQuiz.value?.task_context?.knowledge || '综合'
+      console.log('[TaskQuiz] 准备刷新统计:', { score, total, knowledge })
+      await statStore.refreshStatData({ score, total, knowledge })
+      console.log('[TaskQuiz] 统计刷新完成')
+    } else {
+      console.log('[TaskQuiz] result 为空，跳过刷新')
+    }
   } catch(e) {
+    console.error('[TaskQuiz] 提交失败:', e)
     ElMessage.error('提交失败')
   } finally {
     submitting.value = false

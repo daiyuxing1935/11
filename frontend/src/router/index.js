@@ -14,7 +14,12 @@ const routes = [
       { path: 'qa', name: 'QA', component: () => import('../views/QA.vue'), meta: { title: '智能答疑' } },
       { path: 'learning-path', name: 'LearningPath', component: () => import('../views/LearningPath.vue'), meta: { title: '学习路径' } },
       { path: 'task-quiz/:sessionId', name: 'TaskQuiz', component: () => import('../views/TaskQuiz.vue'), meta: { title: '专项练习' } },
-      { path: 'code-lab/:taskDay', name: 'CodeLab', component: () => import('../views/CodeLab.vue'), meta: { title: '编程实验室' } },
+      // 编程实验室（三级结构）
+      { path: 'code-lab', name: 'ModuleSelect', component: () => import('../views/ModuleSelect.vue'), meta: { title: '编程实验室' } },
+      { path: 'code-lab/:moduleId', name: 'TaskList', component: () => import('../views/TaskList.vue'), meta: { title: '关卡列表' } },
+      { path: 'code-lab/:moduleId/:taskId', name: 'CodeLab', component: () => import('../views/CodeLab.vue'), meta: { title: '写代码' } },
+      // 保留旧路由兼容
+      { path: 'code-lab-old/:taskDay', name: 'CodeLabTask', component: () => import('../views/CodeLab.vue'), meta: { title: '编程实验室' } },
       { path: 'code-runner', name: 'CodeRunner', component: () => import('../views/CodeRunner.vue'), meta: { title: '代码运行器' } },
       { path: 'error-book', name: 'ErrorBook', component: () => import('../views/ErrorBook.vue'), meta: { title: '错题本' } },
       { path: 'analytics', name: 'Analytics', component: () => import('../views/Analytics.vue'), meta: { title: '学情复盘' } },

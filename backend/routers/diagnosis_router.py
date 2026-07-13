@@ -58,15 +58,18 @@ def _record_task_quiz_result(user_id: int, session_id: int, quiz_result: dict) -
 
         if not row:
             conn.close()
+            print(f"[_record_task_quiz_result] session={session_id} NO_ACTIVE_PATH")
             return
 
         progress = json.loads(row["progress_json"]) if row["progress_json"] else {}
         progress = _normalize_progress(progress)
 
         task_quiz_map = progress.get("task_quiz_map", {})
+        print(f"[_record_task_quiz_result] session={session_id} task_quiz_map={dict(task_quiz_map)}")
         task_map_value = task_quiz_map.get(str(session_id))
         if task_map_value is None:
             conn.close()
+            print(f"[_record_task_quiz_result] session={session_id} NO_TASK_MAP_ENTRY (keys={list(task_quiz_map.keys())})")
             return
 
         # 从 task_quiz_map 的值中提取 day 号（兼容新旧格式）
@@ -117,25 +120,38 @@ def _record_task_quiz_result(user_id: int, session_id: int, quiz_result: dict) -
         error_tags = list(set(
             e.get("knowledge_tag", "") for e in quiz_result.get("error_questions", [])
         ))
+        print(f"[_record_task_quiz_result] session={session_id} task_day={task_day} correct_rate={correct_rate} error_tags_count={len(error_tags)}")
         if correct_rate < 0.6 and error_tags:
+            # 找到原始任务的知识点（学习资料索引中保证存在）
+            original_knowledge = ""
+            for phase in path_data.get("phases", []):
+                for t in phase.get("tasks", []):
+                    if t.get("day") == task_day and not t.get("remedial"):
+                        original_knowledge = t.get("knowledge", "")
+                        break
+                if original_knowledge:
+                    break
+            # 如果没有找到原始知识点，回退到第一个error tag
+            review_knowledge = original_knowledge or error_tags[0]
+
+            print(f"[_record_task_quiz_result] session={session_id} CREATING remedial tasks for day {task_day+1} knowledge={review_knowledge}")
             next_day = task_day + 1
             remedial = progress.get("remedial_tasks", {})
             next_key = str(next_day)
             if next_key not in remedial:
                 remedial[next_key] = []
-            for tag in error_tags[:3]:
-                if tag:
-                    remedial[next_key].append({
-                        "day": next_day,
-                        "topic": f"复习：{tag}",
-                        "knowledge": tag,
-                        "action": f"针对性复习「{tag}」相关知识点，重做错题并理解错误原因",
-                        "resource": "错题本 + 学习资料",
-                        "check": "能独立正确解答该知识点的题目",
-                        "remedial": True,
-                        "source_day": task_day,
-                        "correct_rate": round(correct_rate * 100)
-                    })
+            # 只创建一个复习任务，使用原始任务的知识点（确保学习资料匹配）
+            remedial[next_key].append({
+                "day": next_day,
+                "topic": f"复习：{review_knowledge}",
+                "knowledge": review_knowledge,
+                "action": f"针对性复习「{review_knowledge}」相关知识点，重做错题并理解错误原因",
+                "resource": "错题本 + 学习资料",
+                "check": "能独立正确解答该知识点的题目",
+                "remedial": True,
+                "source_day": task_day,
+                "correct_rate": round(correct_rate * 100)
+            })
             progress["remedial_tasks"] = remedial
 
         # 检查是否当天所有任务全部完成，推进 current_day
@@ -152,8 +168,10 @@ def _record_task_quiz_result(user_id: int, session_id: int, quiz_result: dict) -
         )
         conn.commit()
         conn.close()
-    except Exception:
-        pass  # 记录失败不影响主流程
+    except Exception as e:
+        print(f"[_record_task_quiz_result] ERROR: {e}")
+        import traceback
+        traceback.print_exc()
 
 @router.get("/quiz/history", response_model=APIResponse)
 async def get_history(current_user: dict = Depends(get_current_user)):

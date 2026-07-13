@@ -101,6 +101,7 @@ import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDiagnosisStore } from '../stores/diagnosis'
 import { ElMessage } from 'element-plus'
+import { recordStudyVisit } from '../api/learning'
 
 const store = useDiagnosisStore()
 const { currentQuiz, currentReport } = storeToRefs(store)
@@ -155,6 +156,7 @@ function formatTime(seconds) {
 }
 
 onMounted(async () => {
+  recordStudyVisit()
   try {
     const res = await fetch('/api/knowledge/categories').then(r => r.json())
     if (res.data) categories.value = res.data.map(c => c.name)

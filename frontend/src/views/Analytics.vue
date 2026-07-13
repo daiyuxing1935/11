@@ -4,7 +4,11 @@
       <el-tab-pane label="学习概览" name="overview">
         <el-row :gutter="20">
           <el-col :span="6" v-for="s in overviewCards" :key="s.label">
-            <el-card shadow="hover"><el-statistic :value="s.value" :title="s.label"><template #prefix><el-icon><component :is="s.icon" /></el-icon></template></el-statistic></el-card>
+            <el-card shadow="hover">
+              <el-statistic :value="s.value" :title="s.label" :precision="s.precision ?? 0">
+                <template #prefix><el-icon><component :is="s.icon" /></el-icon></template>
+              </el-statistic>
+            </el-card>
           </el-col>
         </el-row>
         <el-row :gutter="20" style="margin-top:20px">
@@ -17,8 +21,8 @@
           <template #header>周报告 {{ weeklyReport.period }}</template>
           <el-descriptions :column="4" border>
             <el-descriptions-item label="学习天数">{{ weeklyReport.study_days }}天</el-descriptions-item>
-            <el-descriptions-item label="学习天数">{{ weeklyReport.study_days || weeklyReport.total_duration }}天</el-descriptions-item>
-            <el-descriptions-item label="正确率">{{ weeklyReport.avg_correct_rate }}%</el-descriptions-item>
+            <el-descriptions-item label="做题总数">{{ weeklyReport.total_questions || 0 }}题</el-descriptions-item>
+            <el-descriptions-item label="平均正确率">{{ weeklyReport.avg_correct_rate }}%</el-descriptions-item>
             <el-descriptions-item label="趋势">
               <el-tag :type="weeklyReport.trend === '上升' ? 'success' : 'warning'">{{ weeklyReport.trend }}</el-tag>
             </el-descriptions-item>
@@ -33,7 +37,7 @@
         <el-card v-if="monthlyReport" shadow="hover">
           <template #header>月报告 {{ monthlyReport.period }}</template>
           <el-descriptions :column="3" border>
-            <el-descriptions-item label="学习天数">{{ monthlyReport.study_days || monthlyReport.total_duration }}天</el-descriptions-item>
+            <el-descriptions-item label="学习天数">{{ monthlyReport.study_days || 0 }}天</el-descriptions-item>
             <el-descriptions-item label="做题总数">{{ monthlyReport.total_questions }}题</el-descriptions-item>
             <el-descriptions-item label="平均正确率">{{ monthlyReport.avg_correct_rate }}%</el-descriptions-item>
             <el-descriptions-item label="测评次数">{{ monthlyReport.quiz_count }}次</el-descriptions-item>
@@ -57,55 +61,78 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, watch } from 'vue'
-import { getStats, getWeeklyReport, getMonthlyReport, getGrowthData } from '../api/analytics'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
+import { useStatStore } from '../stores/statStore'
 import * as echarts from 'echarts'
+import { recordStudyVisit } from '../api/learning'
 
+const statStore = useStatStore()
 const activeTab = ref('overview')
-const overviewCards = ref([
-  { label: '学习天数', value: 0, icon: 'Timer' },
-  { label: '做题总数', value: 0, icon: 'EditPen' },
-  { label: '平均正确率(%)', value: 0, icon: 'TrendCharts' },
-  { label: '测评次数', value: 0, icon: 'DocumentChecked' },
+
+// 概览卡片（computed 从 Pinia 获取）
+const overviewCards = computed(() => [
+  { label: '学习天数', value: statStore.studyDays, icon: 'Timer', precision: 0 },
+  { label: '做题总数', value: statStore.totalQuestions, icon: 'EditPen', precision: 0 },
+  { label: '平均正确率(%)', value: statStore.avgCorrectRate, icon: 'TrendCharts', precision: 1 },
+  { label: '测评次数', value: statStore.quizCount, icon: 'DocumentChecked', precision: 0 },
 ])
-const weeklyReport = ref(null)
-const monthlyReport = ref(null)
+
+// 报告（computed 从 Pinia 获取）
+const weeklyReport = computed(() => statStore.weeklyReport)
+const monthlyReport = computed(() => statStore.monthlyReport)
+
 const masteryChart = ref(null)
 const weekChart = ref(null)
 const growthChartEl = ref(null)
 
+let masteryChartInst = null
+let weekChartInst = null
+let growthChartInst = null
+
+// ===== 页面挂载：只读 Pinia，为空时 fallback 拉取一次 =====
 onMounted(async () => {
-  try {
-    const stats = await getStats()
-    overviewCards.value[0].value = stats.study_days || stats.total_study_duration || 0
-    overviewCards.value[1].value = stats.total_questions
-    overviewCards.value[2].value = stats.avg_correct_rate
-    overviewCards.value[3].value = stats.quiz_count
+  recordStudyVisit()
+  // 【Analytics 专属】不主动发请求，只读 Pinia 共享数据
+  // 如果 Pinia 为空（用户直接打开此页没经过 Dashboard），才拉取一次
+  if (!statStore.hasMasteryData) {
+    await statStore.refreshStatData()
+  }
+  await nextTick()
+  initMasteryChart()
+  initWeekChart()
 
-    await nextTick()
-    initMasteryChart(stats.knowledge_mastery || {})
-    initWeekChart(stats.weekly_stats || [])
-  } catch(e) {}
-
-  try { weeklyReport.value = await getWeeklyReport() } catch(e) {}
-  try { monthlyReport.value = await getMonthlyReport() } catch(e) {}
+  // 监听 Pinia → 图表自动更新
+  watch(() => statStore.knowledgeMastery, () => { nextTick(() => initMasteryChart()) }, { deep: true })
+  watch(() => statStore.weeklyStats, () => { nextTick(() => initWeekChart()) }, { deep: true })
 })
 
+/** 切换选项卡时加载对应数据 */
 watch(activeTab, async (tab) => {
-  if (tab === 'growth') {
+  if (tab === 'overview') {
     await nextTick()
-    try {
-      const data = await getGrowthData()
-      initGrowthChart(data.growth_points || [])
-    } catch(e) {}
+    initMasteryChart()
+    initWeekChart()
+  } else if (tab === 'weekly') {
+    await statStore.loadWeeklyReport()
+  } else if (tab === 'monthly') {
+    await statStore.loadMonthlyReport()
+  } else if (tab === 'growth') {
+    await statStore.loadGrowthData()
+    await nextTick()
+    initGrowthChart()
   }
 })
 
-function initMasteryChart(mastery) {
+function initMasteryChart() {
   if (!masteryChart.value) return
-  const chart = echarts.init(masteryChart.value)
+  if (!masteryChartInst) {
+    masteryChartInst = echarts.init(masteryChart.value)
+    window.addEventListener('resize', () => masteryChartInst?.resize())
+  }
+  const mastery = statStore.knowledgeMastery
   const names = Object.keys(mastery).slice(0, 8)
-  chart.setOption({
+  if (names.length === 0) return  // 数据未加载，等 watch 触发
+  masteryChartInst.setOption({
     tooltip: {},
     xAxis: { type: 'value', max: 100, name: '掌握度(%)' },
     yAxis: { type: 'category', data: names.map(n => n.length > 8 ? n.slice(0,8)+'..' : n), inverse: true },
@@ -116,24 +143,38 @@ function initMasteryChart(mastery) {
   })
 }
 
-function initWeekChart(weekStats) {
+function initWeekChart() {
   if (!weekChart.value) return
-  const chart = echarts.init(weekChart.value)
-  chart.setOption({
+  if (!weekChartInst) {
+    weekChartInst = echarts.init(weekChart.value)
+    window.addEventListener('resize', () => weekChartInst?.resize())
+  }
+  const data = statStore.weeklyStats
+  if (data.length === 0) return
+  weekChartInst.setOption({
     tooltip: { trigger: 'axis' },
-    xAxis: { type: 'category', data: weekStats.map(w => w.date?.slice(5)) },
-    yAxis: { type: 'value', name: '学习标记', min: 0, max: 1, interval: 1 },
-    series: [
-      { name: '是否学习', type: 'bar', data: weekStats.map(w => (w.duration > 0 || w.questions > 0) ? 1 : 0), itemStyle: { color: '#409EFF', borderRadius: 4 } },
+    xAxis: { type: 'category', data: data.map(w => w.date?.slice(5)) },
+    yAxis: [
+      { type: 'value', name: '做题数' },
+      { type: 'value', name: '正确率(%)', min: 0, max: 100 }
     ],
-    grid: { left: 40, right: 20, top: 20, bottom: 30 }
+    series: [
+      { name: '做题数量', type: 'bar', data: data.map(w => w.questions || 0), itemStyle: { color: '#409EFF', borderRadius: 4 } },
+      { name: '正确率(%)', type: 'line', yAxisIndex: 1, data: data.map(w => w.correct_rate || 0), smooth: true, itemStyle: { color: '#67C23A' } }
+    ],
+    grid: { left: 60, right: 70, top: 30, bottom: 30 }
   })
 }
 
-function initGrowthChart(points) {
+function initGrowthChart() {
   if (!growthChartEl.value) return
-  const chart = echarts.init(growthChartEl.value)
-  chart.setOption({
+  if (!growthChartInst) {
+    growthChartInst = echarts.init(growthChartEl.value)
+    window.addEventListener('resize', () => growthChartInst?.resize())
+  }
+  const points = statStore.growthData?.growth_points || []
+  if (points.length === 0) return
+  growthChartInst.setOption({
     tooltip: { trigger: 'axis' },
     xAxis: { type: 'category', data: points.map(p => p.date) },
     yAxis: { type: 'value', name: '正确率(%)', max: 100 },

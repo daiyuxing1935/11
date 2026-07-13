@@ -4,30 +4,48 @@ from datetime import datetime, timedelta
 from database import get_db
 
 def get_user_stats(user_id: int) -> dict:
-    """获取用户学习统计数据"""
+    """获取用户学习统计数据（从真实数据源查询）"""
     conn = get_db()
 
-    # 学习天数（有学习记录的日期数）
-    study_days = conn.execute(
-        "SELECT COUNT(DISTINCT date) FROM learning_stats WHERE user_id = ?",
+    # 学习天数：从 quiz_sessions、learning_records、qa_history 中统计有过活动的日期
+    study_dates = set()
+    # 测评日期
+    for row in conn.execute(
+        "SELECT DISTINCT COALESCE(completed_at, created_at) as d FROM quiz_sessions WHERE user_id = ? AND status = 'completed'",
         (user_id,)
-    ).fetchone()[0]
+    ).fetchall():
+        if row["d"]:
+            study_dates.add(row["d"][:10])
+    # 学习记录日期
+    for row in conn.execute(
+        "SELECT DISTINCT created_at FROM learning_records WHERE user_id = ?", (user_id,)
+    ).fetchall():
+        if row["created_at"]:
+            study_dates.add(row["created_at"][:10])
+    # 问答日期
+    for row in conn.execute(
+        "SELECT DISTINCT created_at FROM qa_history WHERE user_id = ?", (user_id,)
+    ).fetchall():
+        if row["created_at"]:
+            study_dates.add(row["created_at"][:10])
+    study_days = len(study_dates)
 
-    # 总做题数
+    # 做题总数：所有已完成测评的题目数之和
     total_questions = conn.execute(
-        "SELECT COALESCE(SUM(questions_done), 0) FROM learning_stats WHERE user_id = ?",
+        "SELECT COALESCE(SUM(total), 0) FROM quiz_sessions WHERE user_id = ? AND status = 'completed'",
         (user_id,)
     ).fetchone()[0]
 
-    # 平均正确率
-    avg_rate = conn.execute(
-        "SELECT COALESCE(AVG(correct_rate), 0) FROM learning_stats WHERE user_id = ? AND questions_done > 0",
+    # 平均正确率：所有已完成且非0分的测评
+    avg_rate_row = conn.execute(
+        "SELECT COALESCE(AVG(score * 100.0 / NULLIF(total, 0)), 0) FROM quiz_sessions WHERE user_id = ? AND status = 'completed' AND total > 0",
         (user_id,)
-    ).fetchone()[0]
+    ).fetchone()
+    avg_correct_rate = round(avg_rate_row[0], 1)
 
     # 测评统计
     quiz_stats = conn.execute(
-        "SELECT COUNT(*) as total, COALESCE(AVG(score * 1.0 / CASE WHEN total = 0 THEN 1 ELSE total END), 0) as avg FROM quiz_sessions WHERE user_id = ? AND status = 'completed'",
+        "SELECT COUNT(*) as total, COALESCE(AVG(score * 100.0 / NULLIF(total, 0)), 0) as avg FROM quiz_sessions WHERE user_id = ? AND status = 'completed'",
         (user_id,)
     ).fetchone()
 
@@ -41,19 +59,19 @@ def get_user_stats(user_id: int) -> dict:
         "SELECT COUNT(*) FROM qa_history WHERE user_id = ?", (user_id,)
     ).fetchone()[0]
 
-    # 周统计
+    # 本周统计（最近7天每天的做题数+正确率）
     week_stats = []
     for i in range(6, -1, -1):
         date = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
-        day_stat = conn.execute(
-            "SELECT * FROM learning_stats WHERE user_id = ? AND date = ?",
+        day_row = conn.execute(
+            "SELECT COUNT(*) as exam_set_count, COALESCE(SUM(total), 0) as questions, COALESCE(AVG(score * 100.0 / NULLIF(total, 0)), 0) as rate FROM quiz_sessions WHERE user_id = ? AND status = 'completed' AND date(COALESCE(completed_at, created_at)) = ?",
             (user_id, date)
         ).fetchone()
         week_stats.append({
             "date": date,
-            "duration": day_stat["study_duration"] if day_stat else 0,
-            "questions": day_stat["questions_done"] if day_stat else 0,
-            "correct_rate": day_stat["correct_rate"] if day_stat else 0
+            "exam_set_count": day_row["exam_set_count"],   // 当天完成测评套数
+            "questions": day_row["questions"],              // 当天做题总数量
+            "correct_rate": round(day_row["rate"], 1)       // 当天平均正确率
         })
 
     # 知识点掌握度
@@ -62,49 +80,49 @@ def get_user_stats(user_id: int) -> dict:
     profile = get_user_knowledge_profile(user_id)
     knowledge_mastery = {k: v for k, v in list(profile.get("mastery", {}).items())[:12]}
 
-    # 最近学习记录
-    recent_records = conn.execute(
-        "SELECT * FROM learning_records WHERE user_id = ? ORDER BY created_at DESC LIMIT 20",
-        (user_id,)
-    ).fetchall()
-
     conn.close()
 
     return {
         "study_days": study_days,
-        "total_study_duration": study_days,  # 兼容旧字段名
         "total_questions": total_questions,
-        "avg_correct_rate": round(avg_rate * 100, 1),
+        "avg_correct_rate": avg_correct_rate,
         "quiz_count": quiz_stats["total"],
-        "quiz_avg_score": round(quiz_stats["avg"] * 100, 1) if quiz_stats["avg"] else 0,
+        "quiz_avg_score": round(quiz_stats["avg"], 1) if quiz_stats["avg"] else 0,
         "error_count": error_count,
         "qa_count": qa_count,
         "knowledge_mastery": knowledge_mastery,
         "weekly_stats": week_stats,
-        "recent_records": [dict(r) for r in recent_records]
     }
 
 def get_weekly_report(user_id: int) -> dict:
     """生成周报告"""
     stats = get_user_stats(user_id)
-
-    # 本周学习天数
     week_dates = [(datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(6, -1, -1)]
-    conn = get_db()
-    study_days = 0
-    for d in week_dates:
-        day = conn.execute(
-            "SELECT study_duration FROM learning_stats WHERE user_id = ? AND date = ? AND study_duration > 0",
-            (user_id, d)
-        ).fetchone()
-        if day:
-            study_days += 1
 
-    # 本周新错题
+    conn = get_db()
+    # 本周学习天数：从 quiz_sessions 统计有测评的日期
+    study_days = conn.execute(
+        "SELECT COUNT(DISTINCT date(COALESCE(completed_at, created_at))) FROM quiz_sessions WHERE user_id = ? AND status = 'completed' AND date(COALESCE(completed_at, created_at)) >= ?",
+        (user_id, week_dates[0])
+    ).fetchone()[0]
+
+    # 本周做题数
+    week_questions = conn.execute(
+        "SELECT COALESCE(SUM(total), 0) FROM quiz_sessions WHERE user_id = ? AND status = 'completed' AND date(COALESCE(completed_at, created_at)) >= ?",
+        (user_id, week_dates[0])
+    ).fetchone()[0]
+
+    # 本周错题
     week_errors = conn.execute(
         "SELECT COUNT(*) FROM error_questions WHERE user_id = ? AND created_at >= ?",
         (user_id, week_dates[0])
     ).fetchone()[0]
+
+    # 本周正确率
+    week_rate = conn.execute(
+        "SELECT COALESCE(AVG(score * 100.0 / NULLIF(total, 0)), 0) FROM quiz_sessions WHERE user_id = ? AND status = 'completed' AND date(COALESCE(completed_at, created_at)) >= ? AND total > 0",
+        (user_id, week_dates[0])
+    ).fetchone()
     conn.close()
 
     # 趋势判断
@@ -113,71 +131,65 @@ def get_weekly_report(user_id: int) -> dict:
     if len(weekly_rates) >= 3:
         recent_avg = sum(weekly_rates[-3:]) / 3
         earlier_avg = sum(weekly_rates[:3]) / 3 if len(weekly_rates) > 3 else recent_avg
-        if recent_avg > earlier_avg + 0.05:
+        if recent_avg > earlier_avg + 5:
             trend = "上升"
-        elif recent_avg < earlier_avg - 0.05:
+        elif recent_avg < earlier_avg - 5:
             trend = "下降"
+
+    suggestions = []
+    if week_questions == 0:
+        suggestions.append("本周还没有做题记录，去学习路径做一套练习题吧")
+    else:
+        suggestions.append(f"本周共完成 {week_questions} 道题，{'表现不错，继续加油！' if (week_rate[0] or 0) >= 60 else '建议重点复习错题本中的薄弱知识点'}")
+    suggestions.append("每天安排45-60分钟的专注学习时间效果最佳")
+    suggestions.append("定期复习错题本中的题目能有效提高正确率")
 
     return {
         "period": f"{week_dates[0]} ~ {week_dates[-1]}",
         "study_days": study_days,
-        "total_duration": study_days,
-        "avg_correct_rate": stats["avg_correct_rate"],
+        "total_questions": week_questions,
+        "avg_correct_rate": round(week_rate[0], 1) if week_rate[0] else 0,
         "new_errors": week_errors,
         "trend": trend,
-        "weekly_stats": stats["weekly_stats"],
-        "knowledge_mastery": stats["knowledge_mastery"],
-        "suggestions": [
-            "本周继续保持学习节奏，重点关注薄弱知识点的巩固",
-            "建议每天至少完成1次错题复习",
-            "可以尝试高阶难度的题目挑战自己"
-        ]
+        "suggestions": suggestions
     }
 
 def get_monthly_report(user_id: int) -> dict:
     """生成月报告"""
     conn = get_db()
-
-    # 本月数据
     month_start = datetime.now().replace(day=1).strftime("%Y-%m-%d")
-    month_stats = conn.execute(
-        "SELECT COALESCE(SUM(study_duration), 0) as duration, COALESCE(SUM(questions_done), 0) as questions, COALESCE(AVG(correct_rate), 0) as rate FROM learning_stats WHERE user_id = ? AND date >= ?",
-        (user_id, month_start)
-    ).fetchone()
 
-    # 本月测评
+    # 本月测评统计
     month_quizzes = conn.execute(
-        "SELECT COUNT(*) as cnt, COALESCE(AVG(score * 1.0 / CASE WHEN total = 0 THEN 1 ELSE total END), 0) as avg FROM quiz_sessions WHERE user_id = ? AND status = 'completed' AND completed_at >= ?",
+        "SELECT COUNT(*) as cnt, COALESCE(SUM(total), 0) as questions, COALESCE(AVG(score * 100.0 / NULLIF(total, 0)), 0) as avg_rate FROM quiz_sessions WHERE user_id = ? AND status = 'completed' AND date(COALESCE(completed_at, created_at)) >= ?",
         (user_id, month_start)
-    ).fetchone()
-
-    # 能力成长（对比上月）
-    last_month_start = (datetime.now().replace(day=1) - timedelta(days=1)).replace(day=1).strftime("%Y-%m-%d")
-    last_month_stats = conn.execute(
-        "SELECT COALESCE(AVG(correct_rate), 0) as rate FROM learning_stats WHERE user_id = ? AND date >= ? AND date < ?",
-        (user_id, last_month_start, month_start)
     ).fetchone()
 
     # 本月学习天数
     month_study_days = conn.execute(
-        "SELECT COUNT(DISTINCT date) FROM learning_stats WHERE user_id = ? AND date >= ?",
+        "SELECT COUNT(DISTINCT date(COALESCE(completed_at, created_at))) FROM quiz_sessions WHERE user_id = ? AND status = 'completed' AND date(COALESCE(completed_at, created_at)) >= ?",
         (user_id, month_start)
     ).fetchone()[0]
 
+    # 上月正确率
+    last_month_start = (datetime.now().replace(day=1) - timedelta(days=1)).replace(day=1).strftime("%Y-%m-%d")
+    last_month_rate = conn.execute(
+        "SELECT COALESCE(AVG(score * 100.0 / NULLIF(total, 0)), 0) FROM quiz_sessions WHERE user_id = ? AND status = 'completed' AND date(COALESCE(completed_at, created_at)) >= ? AND date(COALESCE(completed_at, created_at)) < ? AND total > 0",
+        (user_id, last_month_start, month_start)
+    ).fetchone()
     conn.close()
 
-    current_rate = round(month_stats["rate"] * 100, 1)
-    last_rate = round(last_month_stats["rate"] * 100, 1) if last_month_stats["rate"] else 0
+    current_rate = round(month_quizzes["avg_rate"], 1) if month_quizzes["avg_rate"] else 0
+    last_rate = round(last_month_rate[0], 1) if last_month_rate[0] else 0
     growth = round(current_rate - last_rate, 1)
 
     return {
         "period": f"{month_start} ~ {datetime.now().strftime('%Y-%m-%d')}",
         "study_days": month_study_days,
-        "total_duration": month_study_days,
-        "total_questions": month_stats["questions"] or 0,
+        "total_questions": month_quizzes["questions"] or 0,
         "avg_correct_rate": current_rate,
         "quiz_count": month_quizzes["cnt"] or 0,
-        "quiz_avg_score": round(month_quizzes["avg"] * 100, 1) if month_quizzes["avg"] else 0,
+        "quiz_avg_score": current_rate,
         "growth": growth,
         "growth_direction": "up" if growth > 0 else "down" if growth < 0 else "stable"
     }

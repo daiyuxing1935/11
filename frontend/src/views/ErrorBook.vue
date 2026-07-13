@@ -57,7 +57,13 @@
             </div>
           </div>
           <div class="session-right">
-            <el-tag type="danger" size="large">{{ s.error_count }} 道错题</el-tag>
+            <el-tag v-if="s.reviewed_count > 0 && s.reviewed_count >= s.error_count" type="success" size="large">
+              已复习 {{ s.reviewed_count }}/{{ s.error_count }}
+            </el-tag>
+            <el-tag v-else-if="s.reviewed_count > 0" type="warning" size="large">
+              已复习 {{ s.reviewed_count }}/{{ s.error_count }}
+            </el-tag>
+            <el-tag v-else type="danger" size="large">{{ s.error_count }} 道错题</el-tag>
             <el-button type="danger" size="small" plain @click.stop="handleDeleteSession(s)" :loading="deleting === deleteKey(s)">
               <el-icon><Delete /></el-icon>
             </el-button>
@@ -75,9 +81,20 @@
             <span class="page-title">{{ currentSession?.label }}</span>
             <el-tag type="danger">{{ sessionErrors.total }} 道错题</el-tag>
           </div>
-          <el-button type="danger" plain @click="handleDeleteSession(currentSession)" :loading="deleting === deleteKey(currentSession)">
-            <el-icon><Delete /></el-icon> 删除本组全部错题
-          </el-button>
+          <div style="display:flex;align-items:center;gap:10px">
+            <el-button
+              v-if="sessionErrors.items?.some(e => !e.reviewed)"
+              type="success"
+              @click="handleReviewAll"
+              :loading="reviewingAll"
+            >
+              标记整组已复习 ({{ reviewedInSession }}/{{ sessionErrors.total }})
+            </el-button>
+            <el-tag v-else-if="sessionErrors.total > 0" type="success" size="large">全部已复习</el-tag>
+            <el-button type="danger" plain @click="handleDeleteSession(currentSession)" :loading="deleting === deleteKey(currentSession)">
+              <el-icon><Delete /></el-icon> 删除本组全部错题
+            </el-button>
+          </div>
         </div>
       </template>
 
@@ -92,7 +109,6 @@
             <span style="margin-left:8px;font-size:12px;color:#c0c4cc">{{ error.created_at?.slice(0,16) }}</span>
           </div>
           <el-tag v-if="error.reviewed" type="success" size="small">已复习</el-tag>
-          <el-button v-else type="success" size="small" @click="handleReview(error.id)">标记已复习</el-button>
         </div>
 
         <!-- 原题完整复述 -->
@@ -159,7 +175,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useLearningStore } from '../stores/learning'
-import { reviewError, deleteSessionErrors, deleteOrphanErrors } from '../api/learning'
+import { deleteSessionErrors, deleteOrphanErrors, recordStudyVisit } from '../api/learning'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const store = useLearningStore()
@@ -168,6 +184,10 @@ const loadingDetail = ref(false)
 const activeSession = ref(undefined)
 const detailPage = ref(1)
 const deleting = ref(null)
+const reviewingAll = ref(false)
+const reviewedInSession = computed(() =>
+  sessionErrors.value.items?.filter(e => e.reviewed).length || 0
+)
 
 // 会话批量选择
 const selectedSessions = ref(new Set())
@@ -182,6 +202,7 @@ function deleteKey(s) {
 }
 
 onMounted(async () => {
+  recordStudyVisit()
   await loadSessions()
 })
 
@@ -322,12 +343,17 @@ async function handleDetailPageChange(page) {
   await loadSessionErrors()
 }
 
-async function handleReview(id) {
+async function handleReviewAll() {
+  reviewingAll.value = true
   try {
-    await reviewError(id)
-    ElMessage.success('已标记为已复习')
-    await loadSessionErrors()
-  } catch(e) { ElMessage.error('操作失败') }
+    const result = await store.reviewSession(activeSession.value)
+    ElMessage.success(`已将 ${result.reviewed_count} 道错题标记为已复习`)
+    await backToSessions()
+  } catch(e) {
+    ElMessage.error('操作失败')
+  } finally {
+    reviewingAll.value = false
+  }
 }
 
 function getQuestionData(error) {

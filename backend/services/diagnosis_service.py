@@ -30,21 +30,29 @@ def get_all_tags_flat():
     return tags
 
 def get_user_knowledge_profile(user_id: int) -> dict:
-    """获取用户学情画像"""
+    """获取用户学情画像（优化版）
+
+    掌握度计算规则：
+    1. 全部标签默认 0.5
+    2. 优先从 quiz_sessions.report_json.knowledge_analysis 读取 AI 计算的 mastery
+    3. 如果 AI 报告不存在，根据该知识点下历史做题正确率动态计算：
+       掌握度 = 答对题数 / 总题数（至少答过 2 题才生效，不足则保持 0.5）
+    4. 错题惩罚：同一标签每道错题 -0.03，最低下限 0.1
+    5. 分类名→标签名的自动映射
+    """
     conn = get_db()
-    # 统计答题记录
-    records = conn.execute(
-        "SELECT knowledge_tag, action_type, result_json FROM learning_records WHERE user_id = ? ORDER BY created_at DESC LIMIT 200",
-        (user_id,)
-    ).fetchall()
-    # 统计错题
-    errors = conn.execute(
-        "SELECT knowledge_tag, error_type FROM error_questions WHERE user_id = ? ORDER BY created_at DESC LIMIT 100",
-        (user_id,)
-    ).fetchall()
-    # 获取测评历史
+
+    # --- 读取所有已完成测评的题目和答案 ---
     quizzes = conn.execute(
-        "SELECT report_json FROM quiz_sessions WHERE user_id = ? AND status = 'completed' ORDER BY completed_at DESC LIMIT 5",
+        "SELECT id, questions_json, answers_json, score, total, report_json"
+        " FROM quiz_sessions WHERE user_id = ? AND status = 'completed'"
+        " ORDER BY completed_at DESC",
+        (user_id,)
+    ).fetchall()
+
+    # --- 读取错题 ---
+    errors = conn.execute(
+        "SELECT knowledge_tag FROM error_questions WHERE user_id = ?",
         (user_id,)
     ).fetchall()
     conn.close()
@@ -52,7 +60,7 @@ def get_user_knowledge_profile(user_id: int) -> dict:
     all_tags = get_all_tags_flat()
     tag_names = [t["name"] for t in all_tags]
 
-    # 构建 分类→标签名 映射，用于将报告的类别级数据映射到具体标签
+    # 分类名 → [标签名] 映射
     category_to_tags = {}
     for t in all_tags:
         cat = t["category"]
@@ -60,62 +68,110 @@ def get_user_knowledge_profile(user_id: int) -> dict:
             category_to_tags[cat] = []
         category_to_tags[cat].append(t["name"])
 
-    # 初始化掌握度
-    mastery = {name: 0.5 for name in tag_names}  # 默认0.5
+    # 反过来：标签名 → 分类名
+    tag_to_category = {t["name"]: t["category"] for t in all_tags}
 
-    # 从历史报告更新掌握度
+    # 初始化掌握度
+    mastery = {name: 0.5 for name in tag_names}
+
+    # ---- 第1步：从 AI 报告提取 mastery ----
     for q in quizzes:
         report = json.loads(q["report_json"]) if q["report_json"] else {}
         ka = report.get("knowledge_analysis", {})
+        if not ka:
+            continue
         for name, info in ka.items():
             if not isinstance(info, dict):
                 continue
-            score = info.get("mastery", 0.5)
+            score = round(info.get("mastery", 0.5), 2)
             # 直接匹配标签名
             if name in mastery:
                 mastery[name] = score
-            # 如果是分类名（如"智能体基础概念"），映射到该分类下所有标签
+            # 分类名 → 映射到该分类下所有标签
             elif name in category_to_tags:
                 for tag_name in category_to_tags[name]:
                     mastery[tag_name] = score
 
-    # 统计薄弱点（按分类聚合）
-    error_tags = {}
+    # ---- 第2步：从历史做题数据计算正确率 ----
+    # 统计各标签的答对数和总题数
+    tag_correct = {}   # {tag: correct_count}
+    tag_total = {}     # {tag: total_count}
+    for q in quizzes:
+        try:
+            questions = json.loads(q["questions_json"]) if q["questions_json"] else []
+            answers = json.loads(q["answers_json"]) if q["answers_json"] else []
+        except (json.JSONDecodeError, TypeError):
+            continue
+        if not questions or not answers:
+            continue
+        for ans in answers:
+            qid = ans.get("question_id", "")
+            is_correct = ans.get("is_correct", False)
+            # 找到对应题目获取 knowledge_tag
+            for qu in questions:
+                if qu.get("question_id") == qid:
+                    tag = qu.get("knowledge_tag", "")
+                    if tag:
+                        tag_total[tag] = tag_total.get(tag, 0) + 1
+                        if is_correct:
+                            tag_correct[tag] = tag_correct.get(tag, 0) + 1
+                    break
+
+    # 将做题统计映射到标签 → 更新 mastery
+    for tag_name in tag_names:
+        total = tag_total.get(tag_name, 0)
+        correct = tag_correct.get(tag_name, 0)
+        # 分类名也可能作为 knowledge_tag 出现
+        if total == 0 and tag_name in category_to_tags:
+            for sub_tag in category_to_tags[tag_name]:
+                total += tag_total.get(sub_tag, 0)
+                correct += tag_correct.get(sub_tag, 0)
+        if total >= 2:  # 至少 2 题才有统计意义
+            rate = correct / total
+            # 只在 AI 报告未覆盖时用正确率更新（AI 报告优先）
+            if mastery[tag_name] == 0.5:
+                mastery[tag_name] = round(rate, 2)
+            # AI 报告是分类级数据时，也合并正确率
+            elif mastery.get(tag_name, 0.5) < rate:
+                mastery[tag_name] = round(rate, 2)
+
+    # ---- 第3步：错题惩罚 ----
+    error_counts = {}
     for e in errors:
         tag = e["knowledge_tag"]
-        error_tags[tag] = error_tags.get(tag, 0) + 1
+        error_counts[tag] = error_counts.get(tag, 0) + 1
 
-    # 按分类聚合薄弱点
+    for tag_name in tag_names:
+        err_cnt = error_counts.get(tag_name, 0)
+        # 分类名也可能出现在错题中
+        if err_cnt == 0 and tag_name in category_to_tags:
+            for sub_tag in category_to_tags[tag_name]:
+                err_cnt += error_counts.get(sub_tag, 0)
+        if err_cnt > 0:
+            penalty = err_cnt * 0.03
+            mastery[tag_name] = max(0.1, round(mastery[tag_name] - penalty, 2))
+
+    # ---- 薄弱点 / 强项 ----
     weak_points_by_category = {}
-    for tag, count in error_tags.items():
-        # 找到该标签所属的分类
-        found_cat = None
-        for t in all_tags:
-            if t["name"] == tag:
-                found_cat = t["category"]
-                break
-        if not found_cat:
-            # 如果tag本身就是分类名
-            found_cat = tag
-        weak_points_by_category[found_cat] = weak_points_by_category.get(found_cat, 0) + count
+    for tag, count in error_counts.items():
+        cat = tag_to_category.get(tag, tag)
+        weak_points_by_category[cat] = weak_points_by_category.get(cat, 0) + count
+    weak_points = [cat for cat, _ in sorted(weak_points_by_category.items(), key=lambda x: -x[1])[:5]]
 
-    weak_points = [cat for cat, count in sorted(weak_points_by_category.items(), key=lambda x: -x[1])[:5]]
-    # 强项取 mastery 较高的分类
     cat_mastery = {}
     for t in all_tags:
         cat = t["category"]
         if cat not in cat_mastery:
             cat_mastery[cat] = []
         cat_mastery[cat].append(mastery.get(t["name"], 0.5))
-
-    cat_avg_mastery = {cat: sum(scores)/len(scores) for cat, scores in cat_mastery.items()}
-    strong_points = [cat for cat, m in sorted(cat_avg_mastery.items(), key=lambda x: -x[1])[:5]]
+    cat_avg_mastery = {cat: round(sum(s) / len(s), 2) for cat, s in cat_mastery.items()}
+    strong_points = [cat for cat, _ in sorted(cat_avg_mastery.items(), key=lambda x: -x[1])[:5]]
 
     return {
         "mastery": mastery,
         "weak_points": weak_points,
         "strong_points": strong_points,
-        "error_tags": error_tags,
+        "error_tags": error_counts,
         "quiz_count": len(quizzes)
     }
 

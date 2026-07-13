@@ -159,6 +159,7 @@ import { useRouter } from 'vue-router'
 import { askQuestionStream, getQAHistory, deleteQAHistory, clearQAHistory, saveQA, uploadFile, submitFeedback } from '../api/qa'
 import { ElMessage } from 'element-plus'
 import { marked } from 'marked'
+import { recordStudyVisit } from '../api/learning'
 
 const router = useRouter()
 
@@ -192,6 +193,7 @@ const quickQuestions = [
 ]
 
 onMounted(async () => {
+  recordStudyVisit()
   try {
     const res = await getQAHistory()
     history.value = (res && res.items) || []
