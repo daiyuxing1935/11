@@ -225,23 +225,51 @@ A flat-design 2D vector illustration showing a split comparison. Left half: a tr
 
 这是最容易混淆的一对概念。以下是系统性的对比：
 
-```
-┌─────────────────────────────────────────────────────┐
-│                     AI智能体                          │
-│  ┌─────────────────────────────────────────────────┐ │
-│  │               大语言模型（推理引擎）              │ │
-│  │  ┌─────────────────────────────────────────┐    │ │
-│  │  │  · 文本理解   · 知识推理  · 内容生成   │    │ │
-│  │  │  · 意图识别   · 情感分析  · 逻辑判断   │    │ │
-│  │  └─────────────────────────────────────────┘    │ │
-│  └─────────────────────────────────────────────────┘ │
-│                                                       │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐ │
-│  │ 工具系统 │ │ 记忆系统 │ │ 规划系统 │ │ 感知系统 │ │
-│  │ 搜索/代码│ │ 短/长/工 │ │ 任务拆解 │ │ 多模态   │ │
-│  │ API/文件 │ │ 作记忆   │ │ 步骤调度 │ │ 实时数据 │ │
-│  └──────────┘ └──────────┘ └──────────┘ └─────────┘ │
-└─────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+  aiAgent["🤖 AI智能体"]
+  llmCore["🧠 大语言模型<br/>（推理引擎）"]
+
+  subgraph cap ["💡 推理能力"]
+    direction LR
+    textUnderstand["文本理解"]
+    knowledgeReason["知识推理"]
+    contentGenerate["内容生成"]
+    intentRecognize["意图识别"]
+    sentimentAnalyze["情感分析"]
+    logicJudge["逻辑判断"]
+  end
+
+  subgraph toolSystem ["🔧 工具系统"]
+    searchCode["搜索/代码"]
+    apiFile["API/文件"]
+  end
+
+  subgraph memorySystem ["📦 记忆系统"]
+    shortMemory["短期记忆"]
+    longMemory["长期记忆"]
+    workingMemory["工作记忆"]
+  end
+
+  subgraph planningSystem ["📋 规划系统"]
+    taskSplit["任务拆解"]
+    stepSchedule["步骤调度"]
+  end
+
+  subgraph perceptionSystem ["👁️ 感知系统"]
+    multimodal["多模态"]
+    realtimeData["实时数据"]
+  end
+
+  aiAgent --> llmCore
+  llmCore --> cap
+  aiAgent --> toolSystem
+  aiAgent --> memorySystem
+  aiAgent --> planningSystem
+  aiAgent --> perceptionSystem
+
+  classDef boxStyle fill:#e8f4fd,stroke:#409EFF,rx:10
+  class aiAgent,llmCore,textUnderstand,knowledgeReason,contentGenerate,intentRecognize,sentimentAnalyze,logicJudge,searchCode,apiFile,shortMemory,longMemory,workingMemory,taskSplit,stepSchedule,multimodal,realtimeData boxStyle
 ```
 
 **核心差异一句话**：大语言模型是一个"知识容器"，AI智能体是一个"能力系统"。
@@ -267,40 +295,29 @@ A flat-design 2D vector illustration showing LLM as a glowing brain core nested 
 
 一个完整的AI智能体系统通常包含以下组件：
 
-```
-                         用户/环境
-                            │
-                            ▼
-            ┌───────────────────────────┐
-            │       感知层（Perception）  │
-            │  文本 · 图片 · 语音 · API  │
-            └───────────┬───────────────┘
-                        │
-                        ▼
-            ┌───────────────────────────┐
-            │      推理层（Reasoning）    │
-            │   大语言模型（LLM）         │
-            │   作为核心推理引擎          │
-            └───────────┬───────────────┘
-                        │
-          ┌─────────────┼─────────────┐
-          │             │             │
-          ▼             ▼             ▼
-   ┌──────────┐  ┌──────────┐  ┌──────────┐
-   │ 规划模块 │  │ 记忆模块 │  │ 工具模块 │
-   │ Plan &   │  │ Memory   │  │ Tools    │
-   │ ReAct    │  │ 短/长/工 │  │ 搜索/代码│
-   └──────────┘  └──────────┘  │ API/文件 │
-                               └──────────┘
-                        │
-                        ▼
-            ┌───────────────────────────┐
-            │      执行层（Action）       │
-            │  调用工具 · 返回结果       │
-            └───────────┬───────────────┘
-                        │
-                        ▼
-                   环境/用户反馈
+```mermaid
+flowchart TD
+  userEnv["👤 用户 / 环境"]
+  perceptionLayer["👁️ 感知层 Perception<br/>文本 · 图片 · 语音 · API"]
+  reasoningLayer["🧠 推理层 Reasoning<br/>大语言模型 LLM 为核心推理引擎"]
+  planningModule["📋 规划模块<br/>Plan & ReAct"]
+  memoryModule["📦 记忆模块<br/>Memory 短/长/工"]
+  toolModule["🔧 工具模块<br/>Tools 搜索/代码 API/文件"]
+  actionLayer["⚡ 执行层 Action<br/>调用工具 · 返回结果"]
+  feedback["🔄 环境 / 用户反馈"]
+
+  userEnv --> perceptionLayer
+  perceptionLayer --> reasoningLayer
+  reasoningLayer --> planningModule
+  reasoningLayer --> memoryModule
+  reasoningLayer --> toolModule
+  planningModule --> actionLayer
+  memoryModule --> actionLayer
+  toolModule --> actionLayer
+  actionLayer --> feedback
+
+  classDef boxStyle fill:#e8f4fd,stroke:#409EFF,rx:10
+  class userEnv,perceptionLayer,reasoningLayer,planningModule,memoryModule,toolModule,actionLayer,feedback boxStyle
 ```
 
 Image-Prompt(agent-system-architecture-layers):

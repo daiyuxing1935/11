@@ -8,7 +8,7 @@
  */
 
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import {
   fetchStats,              // GET /api/analytics/stats
   fetchKnowledgeMastery,   // GET /api/diagnosis/profile
@@ -46,6 +46,11 @@ export const useStatStore = defineStore('statistics', () => {
 
   // ===== 计算 =====
   const hasMasteryData = computed(() => Object.keys(knowledgeMastery.value).length > 0)
+
+  // ===== 调试：监听 knowledgeMastery 每次变化 =====
+  watch(knowledgeMastery, (newVal, oldVal) => {
+    console.log('[statStore watch] mastery 变化: 旧', Object.keys(oldVal || {}).length, '→ 新', Object.keys(newVal || {}).length)
+  })
 
   // ================================================================
   //  内部加载函数
@@ -128,33 +133,37 @@ export const useStatStore = defineStore('statistics', () => {
     recentActivity.value  = activityResult
   }
 
-  /** 全量刷新（页面首次进入时调用） */
+  /** 全量刷新（Dashboard 进入时调用，不产生假动态） */
   async function refreshAll() {
-    await refreshApi()
-    const [statsResult, masteryResult, activityResult] = await Promise.all([
-      fetchStats(),
-      fetchKnowledgeMastery(),
-      fetchRecentActivity(),
-    ])
-    // 概览
-    const s = statsResult
-    studyDays.value       = s.study_days || 0
-    totalQuestions.value  = s.total_questions || 0
-    avgCorrectRate.value  = s.avg_correct_rate || 0
-    quizCount.value       = s.quiz_count || 0
-    quizAvgScore.value    = s.quiz_avg_score || 0
-    errorCount.value      = s.error_count || 0
-    weeklyStats.value     = s.weekly_stats || []
-    // 掌握度
-    console.log('[statStore.refreshAll] 后端原始 mastery:', JSON.stringify(masteryResult).slice(0, 200))
-    knowledgeMastery.value = masteryResult
-    console.log('[statStore.refreshAll] Pinia mastery 已存入, 标签数:', Object.keys(knowledgeMastery.value).length)
-    // 动态
-    recentActivity.value  = activityResult
-    // 报告（异步，不影响主要数据）
-    loadWeeklyReport()
-    loadMonthlyReport()
-    loadGrowthData()
+    try {
+      await refreshApi()
+      const [statsResult, masteryResult, activityResult] = await Promise.all([
+        fetchStats(),
+        fetchKnowledgeMastery(),
+        fetchRecentActivity(),
+      ])
+      const s = statsResult
+      studyDays.value       = s.study_days || 0
+      totalQuestions.value  = s.total_questions || 0
+      avgCorrectRate.value  = s.avg_correct_rate || 0
+      quizCount.value       = s.quiz_count || 0
+      quizAvgScore.value    = s.quiz_avg_score || 0
+      errorCount.value      = s.error_count || 0
+      weeklyStats.value     = s.weekly_stats || []
+
+      console.log('[statStore.refreshAll] 后端原始 mastery:', JSON.stringify(masteryResult).slice(0, 200))
+      knowledgeMastery.value = masteryResult
+      console.log('[statStore.refreshAll] Pinia mastery 已存入, 标签数:', Object.keys(knowledgeMastery.value).length)
+
+      recentActivity.value = activityResult
+
+      // 报告（异步，失败不影响主要数据）
+      loadWeeklyReport().catch(() => {})
+      loadMonthlyReport().catch(() => {})
+      loadGrowthData().catch(() => {})
+    } catch (e) {
+      console.error('[statStore.refreshAll] 失败:', e)
+    }
   }
 
   return {

@@ -132,10 +132,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { getResourceList, getResourceLearnMaterial, uploadPdf, getPdfList, getPdfUrl, deletePdf, batchDeletePdfs } from '../api/resource'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { recordStudyVisit } from '../api/learning'
+import { renderMermaidIn, asciiToMermaid } from '../composables/useMermaid'
 
 const activeTab = ref('all')
 const allResources = ref({ items: [] })
@@ -294,6 +295,22 @@ async function openResource(resource) {
     if (res && res.content) {
       dialogTitle.value = res.resource_title || resource.title
       var raw = res.content
+      // ===== ASCII‑Art → Mermaid 自动转换 =====
+      raw = raw.replace(/```\s*\n?([\s\S]*?)```/g, function(m, content) {
+        // 检测盒绘图字符
+        var boxCount = (content.match(/[┌─│└├┐┘┴┬┤┼]/g) || []).length
+        if (boxCount >= 8) {
+          var mermaidCode = asciiToMermaid(content)
+          if (mermaidCode) {
+            // asciiToMermaid 已经包含了 ``` 包裹
+            return mermaidCode
+          }
+          // 无法识别 → 隐藏，不显示乱码 ASCII
+          return '\n\n> ⚠️ *此结构图暂未适配 Mermaid，如需显示请联系管理员转换。*\n\n'
+        }
+        return m
+      })
+      // ===== 提取 Image-Prompt 为卡片 =====
       window._prompts = {}
       var counter = 0
       // 提取 Image-Prompt 为卡片
@@ -307,6 +324,12 @@ async function openResource(resource) {
         return ''
       })
       var html = window.marked.parse(raw)
+      // ===== Mermaid 代码块直接转为 <div class="mermaid"> =====
+      html = html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, function(m, code) {
+        // marked.js 会把 < > & 转义，需要解码
+        var decoded = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"')
+        return '<div class="mermaid">' + decoded + '</div>'
+      })
       // 按 h2 分页
       var parts = html.split(/(?=<h2)/i)
       if (parts.length > 1) {
@@ -381,6 +404,8 @@ async function openResource(resource) {
               '<span style="font-size:13px;color:#909399">' + (idx+1) + ' / ' + d.pages.length + '</span>' +
               '<button onclick="window._showPage(' + (idx+1) + ')" style="padding:6px 16px;background:#409EFF;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px" ' + (idx===d.pages.length-1?'disabled':'') + '>下一页 ▶</button>'
             if (be) be.innerHTML = d.pages[idx] || ''
+            // 渲染当前页的 Mermaid 图表
+            if (be) setTimeout(function() { renderMermaidIn(be) }, 50)
           }
           window._showPage(0)
         }
@@ -402,6 +427,8 @@ async function openResource(resource) {
     }
   } catch(e) {}
   dialogLoading.value = false
+  // ===== 渲染 Mermaid 图表（dialogLoading=false 后 DOM 才挂载）=====
+  nextTick(function() { renderMermaidIn(contentRef.value) })
 }
 
 async function loadCached() {

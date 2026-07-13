@@ -89,21 +89,20 @@ let masteryChartInst = null
 let weekChartInst = null
 let growthChartInst = null
 
-// ===== 页面挂载：只读 Pinia，为空时 fallback 拉取一次 =====
+// ===== 页面挂载 =====
 onMounted(async () => {
   recordStudyVisit()
-  // 【Analytics 专属】不主动发请求，只读 Pinia 共享数据
-  // 如果 Pinia 为空（用户直接打开此页没经过 Dashboard），才拉取一次
+  // 注册 watcher（数据后续变化时自动重绘）
+  watch(() => statStore.knowledgeMastery, () => { nextTick(() => initMasteryChart()) }, { deep: true })
+  watch(() => statStore.weeklyStats, () => { nextTick(() => initWeekChart()) }, { deep: true })
+  // Pinia 为空时补拉一次
   if (!statStore.hasMasteryData) {
-    await statStore.refreshStatData()
+    await statStore.refreshAll()
   }
+  // 无论是否拉取，都立即渲染一次（Pinia 可能已有 Dashboard 加载的数据）
   await nextTick()
   initMasteryChart()
   initWeekChart()
-
-  // 监听 Pinia → 图表自动更新
-  watch(() => statStore.knowledgeMastery, () => { nextTick(() => initMasteryChart()) }, { deep: true })
-  watch(() => statStore.weeklyStats, () => { nextTick(() => initWeekChart()) }, { deep: true })
 })
 
 /** 切换选项卡时加载对应数据 */
@@ -124,14 +123,15 @@ watch(activeTab, async (tab) => {
 })
 
 function initMasteryChart() {
-  if (!masteryChart.value) return
+  if (!masteryChart.value) { console.log('[Analytics] 柱图 DOM 未就绪'); return }
   if (!masteryChartInst) {
     masteryChartInst = echarts.init(masteryChart.value)
     window.addEventListener('resize', () => masteryChartInst?.resize())
   }
   const mastery = statStore.knowledgeMastery
   const names = Object.keys(mastery).slice(0, 8)
-  if (names.length === 0) return  // 数据未加载，等 watch 触发
+  console.log('[Analytics] initMasteryChart 渲染时 mastery 标签数:', Object.keys(mastery).length, '前3:', names.slice(0, 3).map(k => `${k}=${mastery[k]}`))
+  if (names.length === 0) { console.log('[Analytics] mastery 为空，跳过柱图渲染'); return }
   masteryChartInst.setOption({
     tooltip: {},
     xAxis: { type: 'value', max: 100, name: '掌握度(%)' },
