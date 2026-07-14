@@ -6,14 +6,27 @@ sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from database import init_db
-import os
+import os, json
+
+class SafeJSONResponse(JSONResponse):
+    """自定义JSON响应：使用 ensure_ascii=True 避免Windows下的surrogate编码问题"""
+    def render(self, content) -> bytes:
+        return json.dumps(
+            content,
+            ensure_ascii=True,
+            allow_nan=False,
+            indent=None,
+            separators=(",", ":"),
+        ).encode("utf-8")
 
 # 创建应用
 app = FastAPI(
     title="AI智能体学科学习平台",
     description="个性化、伴随式、智能化的AI智能体学科学习平台API",
-    version="1.0.0"
+    version="1.0.0",
+    default_response_class=SafeJSONResponse
 )
 
 # CORS中间件

@@ -69,9 +69,9 @@ def get_user_stats(user_id: int) -> dict:
         ).fetchone()
         week_stats.append({
             "date": date,
-            "exam_set_count": day_row["exam_set_count"],   // 当天完成测评套数
-            "questions": day_row["questions"],              // 当天做题总数量
-            "correct_rate": round(day_row["rate"], 1)       // 当天平均正确率
+            "exam_set_count": day_row["exam_set_count"],   # 当天完成测评套数
+            "questions": day_row["questions"],              # 当天做题总数量
+            "correct_rate": round(day_row["rate"], 1)       # 当天平均正确率
         })
 
     # 知识点掌握度

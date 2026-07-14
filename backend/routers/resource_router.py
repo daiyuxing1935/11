@@ -1,5 +1,5 @@
 """资源推送路由"""
-import os
+import os, json
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse, FileResponse
 from auth import get_current_user
@@ -249,6 +249,7 @@ import re as _re
 import glob as _glob
 
 EXERCISES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "exercises")
+EXERCISES_PROCESSED = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "exercises_processed.json")
 
 def _parse_exercise(text):
     lines = text.strip().split("\n")
@@ -288,6 +289,14 @@ def _parse_exercise(text):
 
 
 def _load_all_exercises():
+    # 优先使用预处理后的习题（含骨架代码 + 测试代码 + 标记）
+    if os.path.exists(EXERCISES_PROCESSED):
+        try:
+            with open(EXERCISES_PROCESSED, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    # 降级: 从原始 .txt 文件加载
     exercises = []
     files = sorted(_glob.glob(os.path.join(EXERCISES_DIR, "module_*.txt")))
     for fpath in files:

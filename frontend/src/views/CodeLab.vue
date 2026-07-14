@@ -52,6 +52,24 @@
                 <div class="ai-header"><span>🤖 AI 错误解析</span></div>
                 <div class="ai-content">{{ aiAnalysis }}</div>
               </div>
+
+              <!-- 渐进提示区域 -->
+              <div v-if="aiHint && !aiAnalysis" class="hint-box">
+                <div class="hint-header"><span>💡 提示</span><span class="failure-badge" v-if="consecutiveFailures > 0">第{{ consecutiveFailures }}次尝试</span></div>
+                <div class="hint-content">{{ aiHint }}</div>
+              </div>
+
+              <!-- 连续3次失败：查看答案按钮 -->
+              <div v-if="showViewAnswer" class="view-answer-area">
+                <el-divider />
+                <div class="view-answer-tip">
+                  <el-icon><WarningFilled /></el-icon>
+                  已经尝试 {{ consecutiveFailures }} 次了，需要帮助吗？
+                </div>
+                <el-button type="warning" @click="fetchAnswer" :loading="loadingAnswer">
+                  <el-icon><View /></el-icon> 查看参考答案
+                </el-button>
+              </div>
             </template>
             <el-empty v-else description="加载题目中..." :image-size="60" />
           </div>
@@ -102,13 +120,54 @@
         <div class="editor-wrapper" ref="editorRef"></div>
       </div>
     </div>
+
+    <!-- ===== 参考答案弹窗 ===== -->
+    <el-dialog
+      v-model="showAnswerDialog"
+      title="📝 参考答案"
+      width="750px"
+      :close-on-click-modal="false"
+      destroy-on-close
+    >
+      <div v-if="answerData" class="answer-body">
+        <!-- 解题思路 -->
+        <div class="answer-section" v-if="answerData.approach">
+          <h4>💭 解题思路</h4>
+          <p>{{ answerData.approach }}</p>
+        </div>
+
+        <!-- 参考代码 -->
+        <div class="answer-section" v-if="answerData.answer_code">
+          <h4>📋 参考代码</h4>
+          <div class="answer-code-wrapper">
+            <pre class="answer-code">{{ answerData.answer_code }}</pre>
+            <el-button size="small" class="copy-answer-btn" @click="copyAnswerCode">
+              <el-icon><CopyDocument /></el-icon> 复制
+            </el-button>
+          </div>
+        </div>
+
+        <!-- 代码解释 -->
+        <div class="answer-section" v-if="answerData.explanations?.length">
+          <h4>🔍 关键代码解释</h4>
+          <div v-for="(exp, i) in answerData.explanations" :key="i" class="explanation-item">
+            <code class="exp-code">{{ exp.code }}</code>
+            <p class="exp-text">{{ exp.explanation }}</p>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="loadingAnswer" style="text-align:center;padding:30px">
+        <el-icon class="is-loading" :size="24"><Loading /></el-icon>
+        <p>正在生成参考答案...</p>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import * as monaco from 'monaco-editor'
 import { MODULES } from '../config/exercises'
 import { useStatStore } from '../stores/statStore'
@@ -130,35 +189,9 @@ const currentTask = computed(() => {
 // ===== 编程语言 =====
 const LANGUAGES = [{ label: 'Python', value: 'python' }]
 
-// ===== 代码区域标记 =====
+// ===== 代码区域标记（由后端预处理脚本注入，前端不再自动生成） =====
 const CODE_START = '# ==========你的代码开始=========='
 const CODE_END = '# ==========你的代码结束=========='
-
-/**
- * 给初始代码模板注入标记行
- * 学生在两行标记之间编写代码，后端评测只提取该区间的代码
- */
-function inject_markers(starter) {
-  const lines = starter.split('\n')
-  const out = []
-  let has_func = false
-  for (const line of lines) {
-    out.push(line)
-    // 在第一个函数定义的冒号后面插入标记
-    if (!has_func && (line.trim().startsWith('def ') || line.trim().startsWith('class ')) && line.trim().endsWith(':')) {
-      has_func = true
-      const indent = line.match(/^(\s*)/)[1] + '    '
-      out.push(indent + CODE_START)
-      out.push('')
-      out.push(indent + CODE_END)
-    }
-  }
-  if (!has_func) {
-    out.push(CODE_START)
-    out.push(CODE_END)
-  }
-  return out.join('\n')
-}
 
 // ===== 状态 =====
 const language = ref('python')
@@ -172,6 +205,14 @@ const currentProblem = reactive({
   title: '', knowledge: '', description: '',
   input_output: '', samples: [],
 })
+
+// ===== 连续失败计数 & 提示 & 答案 =====
+const consecutiveFailures = ref(0)
+const aiHint = ref('')
+const showViewAnswer = computed(() => consecutiveFailures.value >= 3)
+const showAnswerDialog = ref(false)
+const answerData = ref(null)
+const loadingAnswer = ref(false)
 
 // ===== DOM 引用 =====
 const editorRef = ref(null)
@@ -207,9 +248,9 @@ function loadCurrentTask() {
         })
       }
       currentProblem.samples = samples
-      // 加载带标记的初始代码
-      const starter = ex.starter_code || t.starter || '# TODO'
-      code.value = inject_markers(starter)
+      // 使用预处理后的骨架代码（已含 CODE_START/CODE_END 标记和测试代码）
+      const starter = ex.skeleton_code || ex.starter_code || t.starter || '# TODO'
+      code.value = starter
       if (editor) editor.setValue(code.value)
     }
   }).catch(e => {
@@ -222,19 +263,7 @@ function loadCurrentTask() {
   })
 }
 
-// ===== 初始化 Monaco 编辑器 =====
-onMounted(() => {
-  initEditor()
-  loadCurrentTask()
-  document.addEventListener('mousemove', onDrag)
-  document.addEventListener('mouseup', stopDrag)
-})
-
-onBeforeUnmount(() => {
-  editor?.dispose()
-  document.removeEventListener('mousemove', onDrag)
-  document.removeEventListener('mouseup', stopDrag)
-})
+// ===== 初始化 Monaco 编辑器（与计时器合并，见下方） =====
 
 function initEditor() {
   if (!editorRef.value) return
@@ -267,66 +296,264 @@ function stopDrag() { isDragging = false }
 // ===== 运行代码 =====
 async function runCode() {
   if (!code.value.trim()) { ElMessage.warning('请先编写代码'); return }
-  running.value = true; aiAnalysis.value = ''
+  running.value = true; aiAnalysis.value = ''; aiHint.value = ''
   terminalContent.value = [{ type: 'info', text: '>>> 正在执行 Python 代码...' }]
   scrollTerminal()
   try {
-    const res = await fetch('/api/learning/code-run', {
+    // 使用与提交相同的评测端点，确保运行和提交结果一致
+    const res = await fetch('/api/learning/code-evaluate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + localStorage.getItem('token'),
       },
-      body: JSON.stringify({ code: code.value, language: language.value }),
+      body: JSON.stringify({
+        exercise_id: currentTaskId.value || '',
+        code: code.value,
+        language: language.value
+      }),
     })
     const data = await res.json()
     const result = data.data || data
-    if (result.output) result.output.split('\n').forEach(l => terminalContent.value.push({ type: 'out', text: l }))
-    if (result.error) result.error.split('\n').forEach(l => terminalContent.value.push({ type: 'err', text: l }))
-    if (result.ai_analysis) aiAnalysis.value = result.ai_analysis
-    if (!result.output && !result.error) terminalContent.value.push({ type: 'info', text: '>>> 执行完毕，无输出。' })
+
+    terminalContent.value = [{ type: 'info', text: '>>> 运行结果 <<<' }]
+
+    // 编译错误
+    if (result.compile_error) {
+      terminalContent.value.push({ type: 'err', text: result.compile_error })
+      consecutiveFailures.value++
+    } else if (result.results && result.results.length > 0) {
+      // 显示测试结果
+      for (const tc of result.results) {
+        const icon = tc.passed ? '[PASS]' : '[FAIL]'
+        terminalContent.value.push({
+          type: tc.passed ? 'out' : 'err',
+          text: `${icon} 用例${tc.case_index}: ${tc.description || ''}`
+        })
+        if (!tc.passed) {
+          if (tc.input_args) terminalContent.value.push({ type: 'err', text: `  输入: ${JSON.stringify(tc.input_args)}` })
+          if (tc.expected !== undefined) terminalContent.value.push({ type: 'err', text: `  期望: ${JSON.stringify(tc.expected)}` })
+          if (tc.actual !== undefined) terminalContent.value.push({ type: 'err', text: `  实际: ${tc.actual || tc.error || '(无返回值)'}` })
+        }
+      }
+      terminalContent.value.push({ type: 'info', text: `通过: ${result.passed_count}/${result.total}` })
+
+      if (result.passed) {
+        consecutiveFailures.value = 0
+      } else {
+        consecutiveFailures.value++
+      }
+    } else {
+      terminalContent.value.push({ type: 'info', text: '代码运行完成。' })
+      if (result.passed) {
+        consecutiveFailures.value = 0
+      }
+    }
   } catch (e) {
+    consecutiveFailures.value++
     terminalContent.value.push({ type: 'err', text: `请求失败: ${e.message}` })
   } finally { running.value = false; scrollTerminal() }
 }
 
-// ===== 提交答案（预留后端判题对接） =====
+// ===== 计时器 =====
+const startTime = ref(Date.now())
+const elapsedSeconds = ref(0)
+let timerInterval = null
+
+onMounted(() => {
+  initEditor()
+  loadCurrentTask()
+  document.addEventListener('mousemove', onDrag)
+  document.addEventListener('mouseup', stopDrag)
+  // 开始计时
+  startTime.value = Date.now()
+  timerInterval = setInterval(() => {
+    elapsedSeconds.value = Math.floor((Date.now() - startTime.value) / 1000)
+  }, 1000)
+})
+
+onBeforeUnmount(() => {
+  editor?.dispose()
+  document.removeEventListener('mousemove', onDrag)
+  document.removeEventListener('mouseup', stopDrag)
+  if (timerInterval) clearInterval(timerInterval)
+})
+
+// ===== 提交答案 — 真实沙箱评测 =====
 async function submitCode() {
   if (!code.value.trim()) { ElMessage.warning('请先编写代码'); return }
   submitting.value = true
+  aiAnalysis.value = ''
+  aiHint.value = ''
+  terminalContent.value = [{ type: 'info', text: '=== 评测提交中... ===' }]
+  scrollTerminal()
+
   try {
-    // TODO: 对接后端判题 POST /api/learning/code-submit { problem_id, code, language }
-    // 响应格式: { passed, total, test_results: [...], ai_feedback }
-    const res = await fetch('/api/learning/code-run', {
+    const submitStart = Date.now()
+    const res = await fetch('/api/learning/code-evaluate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + localStorage.getItem('token'),
       },
-      body: JSON.stringify({ code: code.value, language: language.value }),
+      body: JSON.stringify({
+        exercise_id: currentTaskId.value || '',
+        code: code.value,
+        language: language.value
+      }),
     })
     const data = await res.json()
     const result = data.data || data
-    terminalContent.value = [{ type: 'info', text: '=== 提交结果 ===' }]
-    if (result.output) result.output.split('\n').forEach(l => terminalContent.value.push({ type: 'out', text: l }))
-    if (result.error) { terminalContent.value.push({ type: 'info', text: '=== 运行错误 ===' }); result.error.split('\n').forEach(l => terminalContent.value.push({ type: 'err', text: l })) }
-    if (result.ai_analysis) aiAnalysis.value = result.ai_analysis
 
-    // ===== 提交成功后刷新统计数据 + 学习动态 =====
-    // 模拟评分（后续对接真实判题系统后替换为后端返回的 score/total）
-    const mockScore = Math.floor(Math.random() * 4) + 6 // 6-10 随机
-    const knowledge = currentProblem.knowledge || currentTask.value?.title || '综合'
-    await statStore.refreshStatData({ score: mockScore, total: 10, knowledge })
+    terminalContent.value = [{ type: 'info', text: '=== 评测结果 ===' }]
 
-    ElMessage.success('提交完成！统计数据已更新')
-  } catch (e) { ElMessage.error('提交失败: ' + (e.message || '网络错误')) }
+    // 编译/运行错误
+    if (result.compile_error) {
+      terminalContent.value.push({ type: 'err', text: result.compile_error })
+      consecutiveFailures.value++
+      ElMessage.error('编译/运行出错，未通过评测')
+      submitting.value = false
+      scrollTerminal()
+      return
+    }
+
+    // 测试用例明细
+    const submitElapsed = ((Date.now() - submitStart) / 1000).toFixed(1)
+    terminalContent.value.push({ type: 'info', text: `通过: ${result.passed_count}/${result.total}  评测耗时: ${submitElapsed}s` })
+    terminalContent.value.push({ type: 'info', text: '' })
+
+    for (const tc of (result.results || [])) {
+      const icon = tc.passed ? '[PASS]' : '[FAIL]'
+      terminalContent.value.push({
+        type: tc.passed ? 'out' : 'err',
+        text: `${icon} 用例${tc.case_index}: ${tc.description || ''}`
+      })
+      if (!tc.passed) {
+        terminalContent.value.push({ type: 'err', text: `  输入: ${JSON.stringify(tc.input_args)}` })
+        terminalContent.value.push({ type: 'err', text: `  期望: ${JSON.stringify(tc.expected)}` })
+        terminalContent.value.push({ type: 'err', text: `  实际: ${tc.actual || tc.error || '(无返回值)'}` })
+      }
+    }
+
+    // 判定
+    if (result.passed) {
+      consecutiveFailures.value = 0
+      const totalSeconds = elapsedSeconds.value
+      const timeStr = totalSeconds >= 60
+        ? `${Math.floor(totalSeconds / 60)}分${totalSeconds % 60}秒`
+        : `${totalSeconds}秒`
+
+      terminalContent.value.push({ type: 'info', text: '' })
+      terminalContent.value.push({ type: 'out', text: `*** 全部测试通过！恭喜完成本题！***` })
+      terminalContent.value.push({ type: 'out', text: `用时: ${timeStr}` })
+
+      // 标记完成（保存到 localStorage）
+      try {
+        const completed = JSON.parse(localStorage.getItem('code_completed') || '{}')
+        const key = `${currentModuleId.value}_${currentTaskId.value}`
+        completed[key] = {
+          time: timeStr,
+          seconds: totalSeconds,
+          passedCount: result.passed_count,
+          totalCount: result.total,
+          completedAt: new Date().toISOString()
+        }
+        localStorage.setItem('code_completed', JSON.stringify(completed))
+      } catch (e) { /* ignore */ }
+
+      // 刷新统计（容错：统计接口失败不阻塞主流程）
+      try {
+        const knowledge = currentProblem.knowledge || currentTask.value?.title || '综合'
+        await statStore.refreshStatData({
+          score: Math.round(result.passed_count / Math.max(result.total, 1) * 100),
+          total: 100, knowledge
+        })
+      } catch (e) {
+        console.warn('统计刷新失败（不影响提交结果）:', e)
+      }
+
+      ElMessage.success(`全部测试通过！用时 ${timeStr}`)
+    } else {
+      consecutiveFailures.value++
+      terminalContent.value.push({ type: 'info', text: '' })
+      terminalContent.value.push({ type: 'err', text: `还有 ${result.total - result.passed_count} 个用例未通过，请继续修改代码` })
+      ElMessage.warning(`${result.passed_count}/${result.total} 用例通过，未完成提交`)
+    }
+  } catch (e) {
+    consecutiveFailures.value++
+    terminalContent.value.push({ type: 'err', text: `评测请求失败: ${e.message}` })
+    ElMessage.error('评测请求失败，请检查网络后重试')
+  }
   finally { submitting.value = false; scrollTerminal() }
+}
+
+// ===== 重做本题 =====
+function redoTask() {
+  resetCode()
+  startTime.value = Date.now()
+  elapsedSeconds.value = 0
+  consecutiveFailures.value = 0
+  terminalContent.value = []
+  aiAnalysis.value = ''
+  aiHint.value = ''
+  ElMessage.info('已重置，可以重新开始')
 }
 
 // ===== 重置代码 =====
 function resetCode() {
   loadCurrentTask()
+  consecutiveFailures.value = 0
+  aiAnalysis.value = ''
+  aiHint.value = ''
   ElMessage.info('代码已重置为初始模板')
+}
+
+// ===== 查看答案 =====
+async function fetchAnswer() {
+  loadingAnswer.value = true
+  showAnswerDialog.value = true
+  answerData.value = null
+  try {
+    // 直接使用 exercise_id 让后端加载完整习题数据（含 starter_code + eval_code）
+    const res = await fetch('/api/learning/code-answer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        title: currentProblem.title || '',
+        description: currentProblem.description || '',
+        knowledge: currentProblem.knowledge || '',
+        language: language.value,
+        code: code.value,
+        exercise_id: currentTaskId.value || ''
+      }),
+    })
+    const data = await res.json()
+    if (data.code === 200 && data.data) {
+      answerData.value = data.data
+      // 如果答案经过验证，给出提示
+      if (data.data._validated === false) {
+        ElMessage.warning('参考答案已生成但沙箱验证未通过，请谨慎参考')
+      }
+    } else {
+      answerData.value = { approach: '参考答案生成失败', answer_code: data.message || '请稍后重试', explanations: [] }
+    }
+  } catch (e) {
+    answerData.value = { approach: '网络请求失败', answer_code: e.message || '请检查网络连接', explanations: [] }
+  } finally {
+    loadingAnswer.value = false
+  }
+}
+
+function copyAnswerCode() {
+  if (!answerData.value?.answer_code) return
+  navigator.clipboard.writeText(answerData.value.answer_code).then(() => {
+    ElMessage.success('参考代码已复制到剪贴板')
+  }).catch(() => {
+    ElMessage.warning('复制失败，请手动复制')
+  })
 }
 
 // ===== 终端操作 =====
@@ -375,6 +602,29 @@ function goBack() {
 .ai-analysis-box { margin-top: 16px; background: #fef7e0; border: 1px solid #f5dab1; border-radius: 8px; overflow: hidden; }
 .ai-header { padding: 8px 12px; background: #fdf3d0; font-size: 13px; font-weight: 600; color: #b88230; }
 .ai-content { padding: 10px 14px; font-size: 13px; line-height: 1.7; color: #4a4a4a; white-space: pre-wrap; }
+
+/* 渐进提示 */
+.hint-box { margin-top: 12px; background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 8px; overflow: hidden; }
+.hint-header { padding: 8px 12px; background: #d6efff; font-size: 13px; font-weight: 600; color: #096dd9; display: flex; justify-content: space-between; align-items: center; }
+.hint-content { padding: 10px 14px; font-size: 13px; line-height: 1.7; color: #4a4a4a; white-space: pre-wrap; }
+.failure-badge { font-size: 11px; background: #ffa940; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+
+/* 查看答案区域 */
+.view-answer-area { margin-top: 16px; text-align: center; }
+.view-answer-tip { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; color: #e6a23c; margin-bottom: 10px; }
+
+/* 答案弹窗 */
+.answer-body { max-height: 65vh; overflow-y: auto; }
+.answer-section { margin-bottom: 20px; }
+.answer-section h4 { font-size: 14px; font-weight: 600; color: #303133; margin: 0 0 10px; padding-left: 8px; border-left: 3px solid #409EFF; }
+.answer-section p { font-size: 13px; line-height: 1.8; color: #4a4a4a; }
+.answer-code-wrapper { position: relative; background: #1e1e1e; border-radius: 8px; overflow: hidden; }
+.answer-code { padding: 16px; font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size: 13px; line-height: 1.6; color: #d4d4d4; white-space: pre-wrap; margin: 0; max-height: 350px; overflow-y: auto; }
+.copy-answer-btn { position: absolute; top: 8px; right: 8px; opacity: 0.85; }
+.copy-answer-btn:hover { opacity: 1; }
+.explanation-item { background: #f5f7fa; border-radius: 6px; padding: 10px 14px; margin-bottom: 10px; }
+.exp-code { display: block; font-family: 'Consolas', monospace; font-size: 12px; color: #409EFF; background: #e8eaed; padding: 4px 8px; border-radius: 4px; margin-bottom: 6px; word-break: break-all; }
+.exp-text { font-size: 13px; line-height: 1.7; color: #606266; margin: 0; }
 
 /* 终端 */
 .terminal-panel { height: 200px; flex-shrink: 0; background: #1e1e1e; border-top: 1px solid #333; display: flex; flex-direction: column; }

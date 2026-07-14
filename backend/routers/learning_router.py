@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from auth import get_current_user
 from schemas import APIResponse, LearningPathGenerateRequest, PathProgressUpdateRequest, TaskUpdate, TaskQuizRequest, CodeExecuteRequest, CodeStepGuideRequest, CodeStepCheckRequest, DiagnosticTestRequest
 from services import learning_service, resource_service
+from database import get_db
+import os
 
 router = APIRouter()
 
@@ -153,10 +155,13 @@ async def execute_code(req: CodeExecuteRequest, current_user: dict = Depends(get
 class CodeRunRequest(BaseModel):
     code: str
     language: str = "python"  # python, cpp, java
+    problem_title: str = ""      # 题目标题（用于AI提示分析）
+    problem_description: str = ""  # 题目描述（用于AI提示分析）
+    failure_count: int = 0       # 当前连续失败次数（用于渐进式提示）
 
 @router.post("/code-run", response_model=APIResponse)
 async def run_code(req: CodeRunRequest, current_user: dict = Depends(get_current_user)):
-    """在线运行代码（沙箱执行 + AI 错误解析）"""
+    """在线运行代码（沙箱执行 + AI 错误解析 + 渐进式提示）"""
     try:
         import subprocess, tempfile, os as _os, shutil
         code = req.code
@@ -164,6 +169,7 @@ async def run_code(req: CodeRunRequest, current_user: dict = Depends(get_current
         output = ""
         error = ""
         ai_analysis = ""
+        hint = ""
 
         # 检查编译器/解释器
         runners = {
@@ -175,7 +181,7 @@ async def run_code(req: CodeRunRequest, current_user: dict = Depends(get_current
 
         executable = shutil.which(exe_name.get(language, "python"))
         if not executable:
-            return APIResponse(data={"output": "", "error": f"未找到 {exe_name.get(language, language)} 运行环境，请先安装", "ai_analysis": ""})
+            return APIResponse(data={"output": "", "error": f"未找到 {exe_name.get(language, language)} 运行环境，请先安装", "ai_analysis": "", "hint": ""})
 
         if language == "python":
             proc = subprocess.run(
@@ -223,14 +229,47 @@ async def run_code(req: CodeRunRequest, current_user: dict = Depends(get_current
                     output = run_proc.stdout
                     error = run_proc.stderr
         else:
-            return APIResponse(data={"output": "", "error": f"不支持的语言: {language}", "ai_analysis": ""})
+            return APIResponse(data={"output": "", "error": f"不支持的语言: {language}", "ai_analysis": "", "hint": ""})
 
-        # AI 错误解析
+        # AI 错误解析（有错误时生成提示）
+        has_problem_context = bool(req.problem_title or req.problem_description)
         if error:
             try:
                 from services.ai_service import call_llm
-                analysis_prompt = f"""你是一位编程导师。学生提交了以下 {language.upper()} 代码，运行时出现了错误。
-请用中文分析错误原因，并用通俗易懂的语言给出修复建议。控制在200字以内。
+
+                # 根据失败次数调整提示策略
+                failure_count = max(0, req.failure_count)
+                if failure_count == 0:
+                    hint_strategy = "给出简洁的错误原因和通用修复方向，控制在100字以内。不要直接给出完整答案代码。"
+                elif failure_count == 1:
+                    hint_strategy = "给出更具体的错误定位和修复思路，可以提示关键代码片段，但不要给出完整答案。控制在150字以内。"
+                elif failure_count == 2:
+                    hint_strategy = "给出详细的修复步骤和关键代码示例，接近完整答案但不完全给出。控制在200字以内。"
+                else:
+                    hint_strategy = "给出完整的分析和修复方案，可以包含代码示例。控制在250字以内。"
+
+                if has_problem_context:
+                    analysis_prompt = f"""你是一位编程导师。学生正在做一道编程题，提交的 {language.upper()} 代码运行时出现了错误。
+
+【题目】
+标题：{req.problem_title}
+描述：{req.problem_description[:1000]}
+
+【学生代码】
+{code[:2000]}
+
+【错误信息】
+{error[:1500]}
+
+{hint_strategy}
+
+注意：
+- 用中文回答，语气鼓励、有耐心
+- 先指出学生的思路是否正确，再给出具体的修改方向
+- 不要把"题目要求做X，而你的代码做了Y"当作模板套话——只在确实存在这种偏差时才说
+- 不要输出"方案一/方案二"这种多选项"""
+                else:
+                    analysis_prompt = f"""你是一位编程导师。学生提交了以下 {language.upper()} 代码，运行时出现了错误。
 
 【代码】
 {code[:2000]}
@@ -238,25 +277,673 @@ async def run_code(req: CodeRunRequest, current_user: dict = Depends(get_current
 【错误信息】
 {error[:1500]}
 
-请直接给出分析和建议，不要啰嗦开头。"""
+{hint_strategy}
+
+请直接给出分析和建议，不要啰嗦开头。用中文回答。"""
+
                 ai_resp = await call_llm(
-                    user_id,
+                    current_user["id"],
                     [{"role": "user", "content": analysis_prompt}],
-                    temperature=0.3, max_tokens=512
+                    temperature=0.3, max_tokens=600
                 )
                 ai_analysis = ai_resp if not ai_resp.startswith("LLM调用异常") else ""
+
+                # 生成简短 hint（用于终端区域快速查看）
+                if ai_analysis:
+                    hint = _extract_short_hint(ai_analysis, error)
             except Exception:
                 pass
+        elif not output and not error:
+            # 代码成功运行但没有输出：逻辑缺漏 或 缺少调用入口
+            has_code_body = _has_code_body(code)
+            if has_problem_context and not has_code_body:
+                # 场景A：代码全是 pass 占位，学生还没开始写
+                ai_analysis = "你的代码中大部分函数体还是 pass 占位符，尚未实现实际逻辑。请逐个完成每个方法的功能实现后再运行。"
+                hint = "📝 请将代码中的 pass 替换为实际逻辑"
+            elif has_problem_context:
+                # 场景B：代码有逻辑但没输出（缺少测试代码 或 定义了但未调用）
+                try:
+                    from services.ai_service import call_llm
+                    analysis_prompt = f"""你是一位编程导师。学生的代码成功运行但没有产生任何输出，说明代码没有语法错误。
+
+【题目】
+标题：{req.problem_title}
+描述：{req.problem_description[:1000]}
+
+【学生代码】
+{code[:2000]}
+
+请做两件事：
+1. 判断：学生是已经实现了题目要求的类/函数，只是缺少调用它们的测试代码？还是函数体本身就有逻辑缺陷？
+2. 给出改进建议：
+   - 如果缺少测试代码：告诉学生"你的类/函数定义看起来没问题，但缺少调用代码。请在代码末尾添加 if __name__ == '__main__': 块来创建实例并调用方法，用 print 输出结果来验证功能"
+   - 如果函数体有缺陷：用一句话指出问题所在和修改方向
+
+控制在180字以内。用中文，语气鼓励。不要直接给出完整答案代码。"""
+                    ai_resp = await call_llm(
+                        current_user["id"],
+                        [{"role": "user", "content": analysis_prompt}],
+                        temperature=0.3, max_tokens=500
+                    )
+                    ai_analysis = ai_resp if not ai_resp.startswith("LLM调用异常") else ""
+                    if ai_analysis:
+                        hint = ai_analysis[:120]
+                except Exception:
+                    pass
+            # 场景C：无题目上下文且无输出 — 给通用提示
+            if not ai_analysis:
+                ai_analysis = "代码成功运行但没有任何输出。如果你定义了函数或类，请在代码末尾添加测试代码来调用它们，并用 print() 输出结果。"
+                hint = "💡 添加 print() 或测试代码来验证你的实现"
 
         return APIResponse(data={
             "output": output,
             "error": error,
-            "ai_analysis": ai_analysis
+            "ai_analysis": ai_analysis,
+            "hint": hint
         })
     except subprocess.TimeoutExpired:
-        return APIResponse(data={"output": "", "error": "代码执行超时（30秒）", "ai_analysis": ""})
+        return APIResponse(data={"output": "", "error": "代码执行超时（30秒）", "ai_analysis": "代码执行超时，请检查是否存在死循环或无限递归。尝试添加打印语句来定位卡住的位置。", "hint": "⚠️ 超时：检查循环条件或递归终止条件"})
     except Exception as e:
-        return APIResponse(data={"output": "", "error": f"执行异常: {str(e)}", "ai_analysis": ""})
+        return APIResponse(data={"output": "", "error": f"执行异常: {str(e)}", "ai_analysis": "", "hint": ""})
+
+
+def _extract_short_hint(ai_analysis: str, error: str) -> str:
+    """从AI分析中提取简短的一句话提示（显示在终端区）"""
+    # 尝试取第一句有意义的话
+    import re
+    # 移除常见前缀
+    cleaned = re.sub(r'^(好的[，,]?|同学[，,]?|你的代码|这段代码)', '', ai_analysis.strip())
+    # 取第一句（以句号、分号、换行分隔）
+    first_sentence = re.split(r'[。；\n]', cleaned)[0].strip()
+    if len(first_sentence) > 10:
+        return first_sentence[:120]
+    # fallback: 取前120字符
+    return ai_analysis.strip()[:120]
+
+
+def _has_code_body(code: str) -> bool:
+    """检查代码是否包含实际逻辑（而非全部 pass 占位）"""
+    import re
+    # 去除注释和空行
+    lines = [l for l in code.split('\n') if l.strip() and not l.strip().startswith('#')]
+    if not lines:
+        return False
+    # 检查非 pass 的实质性代码行比例
+    non_pass_lines = [l for l in lines if l.strip() != 'pass' and not re.match(r'^\s*pass\s*$', l)]
+    # 如果超过 30% 的行不是 pass，认为有代码体
+    # 同时排除只有类/函数定义头（以冒号结尾）的情况
+    body_lines = [l for l in non_pass_lines if not re.match(r'^\s*(def |class ).*:\s*$', l)]
+    return len(body_lines) >= max(2, len(lines) * 0.2)
+
+
+def _load_exercise_by_id(exercise_id: str) -> dict | None:
+    """从习题文件中加载指定ID的习题数据"""
+    import os as _os, glob as _glob
+    exercises_dir = _os.path.join(
+        _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+        "data", "exercises"
+    )
+    for fpath in sorted(_glob.glob(_os.path.join(exercises_dir, "module_*.txt"))):
+        content = open(fpath, "r", encoding="utf-8").read()
+        # 解析单个习题块
+        import re as _re
+        parts = _re.split(r'\n(?=关卡 \d+-\d+：)', content)
+        for part in parts:
+            m = _re.match(r'关卡\s*(\d+-\d+)', part.strip())
+            if not m or m.group(1) != exercise_id:
+                continue
+
+            ex = {"id": exercise_id}
+            # 标题
+            tm = _re.search(r'：(.+?)$', part.split('\n')[0])
+            if tm:
+                ex["title"] = tm.group(1).strip()
+            # 模块
+            mm = _re.search(r'所属模块[：:]\s*(.+?)$', part, _re.MULTILINE)
+            if mm:
+                ex["module"] = mm.group(1).strip()
+            # 描述
+            desc_m = _re.search(r'【任务描述】\s*\n(.*?)(?=【[输初评]|$)', part, _re.DOTALL)
+            if desc_m:
+                ex["description"] = desc_m.group(1).strip()
+            # starter code
+            sc_m = _re.search(r'```python\s*\n(.*?)```', part, _re.DOTALL)
+            if sc_m:
+                ex["starter_code"] = sc_m.group(1).strip()
+            # eval code (from the second code block)
+            all_code_blocks = list(_re.finditer(r'```python\s*\n(.*?)```', part, _re.DOTALL))
+            if len(all_code_blocks) >= 2:
+                ex["eval_code"] = all_code_blocks[1].group(1).strip()
+            return ex
+    return None
+
+
+def _extract_eval_hints(eval_code: str) -> str:
+    """从评测代码中提取关键的输入/输出格式提示"""
+    import re as _re
+    hints = []
+    # 提取 assert 语句
+    asserts = _re.findall(r'assert\s+(.+?)(?:\s*,\s*["\'].*?["\'])?\s*$', eval_code, _re.MULTILINE)
+    for a in asserts[:8]:
+        a = a.strip()
+        if len(a) < 120:
+            hints.append(f"  - 评测断言: assert {a}")
+    # 提取返回值检查模式
+    returns = _re.findall(r'(\w+)\[["\'](\w+)["\']\]', eval_code)
+    if returns:
+        for var, key in returns[:5]:
+            hints.append(f"  - 预计返回值包含键: {var}['{key}']")
+    if hints:
+        return "以下是从评测代码中提取的约束，你的代码必须满足：\n" + "\n".join(hints[:8])
+    return ""
+
+
+async def _validate_code_in_sandbox(code: str, language: str = "python") -> tuple[bool, str]:
+    """在沙箱中运行代码，返回 (是否通过, 错误信息)"""
+    import subprocess, tempfile, os as _os
+    try:
+        if language.lower() not in ("python", "py", "python3"):
+            return True, ""  # 非 Python 暂不验证
+
+        with tempfile.TemporaryDirectory() as tmp:
+            src = _os.path.join(tmp, "main.py")
+            with open(src, "w", encoding="utf-8") as f:
+                f.write(code)
+            proc = subprocess.run(
+                ["python", src],
+                capture_output=True, text=True, timeout=15,
+                cwd=tmp
+            )
+            if proc.returncode != 0:
+                return False, f"退出码={proc.returncode}\nstderr:\n{proc.stderr[:600]}\nstdout:\n{proc.stdout[:300]}"
+            # 检查是否有实质性输出（不只是空）
+            stdout = (proc.stdout or "").strip()
+            if not stdout:
+                return False, "代码运行成功但没有产生任何输出（缺少 print 或测试代码未调用）。"
+            return True, ""
+    except subprocess.TimeoutExpired:
+        return False, "代码执行超时（>15秒），可能存在死循环。"
+    except Exception as e:
+        return False, f"沙箱验证异常: {str(e)}"
+
+
+class CodeAnswerByProblemRequest(BaseModel):
+    title: str = ""
+    description: str = ""
+    knowledge: str = ""
+    language: str = "python"
+    code: str = ""          # 学生当前代码，用于上下文
+    exercise_id: str = ""   # 习题ID（如 "5-6"），用于加载starter代码和评测代码
+    starter_code: str = ""  # 题目的初始代码模板（前端可直接传入）
+
+@router.post("/code-answer", response_model=APIResponse)
+async def get_code_answer_by_problem(req: CodeAnswerByProblemRequest, current_user: dict = Depends(get_current_user)):
+    """根据题目描述生成参考答案（含逐行解释 + 沙箱自验）
+
+    工作流程：
+    1. 如果提供了 exercise_id，加载习题的 starter 代码和评测代码作为上下文
+    2. 调用 LLM 生成答案
+    3. 在沙箱中运行答案代码验证
+    4. 如果验证失败，用错误信息修复并重试（最多2次）
+    """
+    import subprocess, tempfile, os as _os, shutil
+
+    try:
+        # ===== 0. 检查参考答案缓存 =====
+        CACHE_PATH = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                                    "data", "exercise_answers_cache.json")
+        if req.exercise_id and _os.path.exists(CACHE_PATH):
+            try:
+                import json as _json
+                with open(CACHE_PATH, "r", encoding="utf-8") as _f:
+                    cache = _json.load(_f)
+                if req.exercise_id in cache and cache[req.exercise_id].get("_validated"):
+                    cached = dict(cache[req.exercise_id])
+                    cached["_from_cache"] = True
+                    return APIResponse(data=cached)
+            except Exception:
+                pass
+
+        # ===== 1. 加载习题信息 =====
+        starter_code = req.starter_code
+        eval_code = ""
+        if req.exercise_id and not starter_code:
+            # 从后端习题文件加载
+            exercise = _load_exercise_by_id(req.exercise_id)
+            if exercise:
+                if not req.title:
+                    req.title = exercise.get("title", "")
+                if not req.description:
+                    req.description = exercise.get("description", "")
+                starter_code = starter_code or exercise.get("starter_code", "")
+                eval_code = exercise.get("eval_code", "")
+                if not req.knowledge:
+                    req.knowledge = exercise.get("module", "")
+
+        # ===== 2. 构建 prompt =====
+        from services.ai_service import call_llm
+
+        # 判断学生代码是否缺少测试入口
+        has_test_code = ('if __name__' in req.code and '__main__' in req.code) if req.code else False
+        test_reminder = ""
+        if not has_test_code and req.code:
+            test_reminder = "\n\n【重要】学生的代码缺少 if __name__ == '__main__': 测试入口，参考答案务必在末尾包含测试代码，让学生复制后直接运行就能看到输出。"
+
+        # starter 代码上下文：告诉 AI 必须遵循的接口
+        starter_context = ""
+        if starter_code:
+            starter_context = f"""
+【初始代码模板 — 必须兼容此接口】
+```python
+{starter_code[:2000]}
+```
+⚠️ 你的答案必须基于此模板实现。类名、方法签名必须与模板一致，不要自己重新设计接口。只需把 pass / TODO 替换为实际逻辑。"""
+
+        # eval 代码上下文：告诉 AI 输出格式
+        eval_context = ""
+        if eval_code:
+            # 从评测代码中提取关键断言来提示 AI
+            eval_hints = _extract_eval_hints(eval_code)
+            if eval_hints:
+                eval_context = f"\n\n【输出格式要求 — 从评测代码推断】\n{eval_hints}"
+
+        max_retries = 2
+        last_error = ""
+        result = None
+
+        for attempt in range(max_retries + 1):
+            retry_context = ""
+            if attempt > 0 and last_error:
+                retry_context = f"""
+【上一版答案的验证错误 — 务必修复】
+{last_error[:800]}
+请根据以上错误修正代码，确保代码能正常运行。"""
+
+            prompt = f"""你是一位编程导师。请为以下编程题生成正确答案。
+
+【题目信息】
+标题：{req.title}
+知识点：{req.knowledge}
+描述：{req.description[:2000]}
+编程语言：{req.language.upper()}
+{starter_context}
+{eval_context}
+【学生当前代码（供参考其进度）】
+{req.code[:1500] if req.code else "（学生尚未编写代码）"}
+{test_reminder}
+{retry_context}
+请完成以下三项任务：
+
+## 任务1：解题思路
+用1-2段话简要说明这道题的解题思路和核心逻辑。
+
+## 任务2：参考答案代码
+给出完整的、可直接运行的参考答案代码。要求：
+- 基于初始代码模板实现，类名和方法签名保持一致
+- 核心逻辑加注释
+- **必须包含 if __name__ == '__main__': 测试入口**，末尾创建实例、调用方法、用 print() 输出结果
+- 代码风格规范、可直接复制运行
+
+## 任务3：关键代码解释
+选择代码中3-5个关键部分，用通俗的语言解释其作用。
+
+请用以下JSON格式返回：
+```json
+{{
+  "approach": "解题思路说明（1-2段话）",
+  "answer_code": "完整参考答案代码（含测试入口）",
+  "explanations": [
+    {{"code": "关键代码片段1", "explanation": "这段代码的作用解释"}},
+    {{"code": "关键代码片段2", "explanation": "这段代码的作用解释"}}
+  ]
+}}
+```
+
+注意：
+- 用中文回答
+- answer_code 中的代码必须完整、可直接运行、包含测试入口
+- answer_code 里不要用转义字符（\\n、\\t 等），就是正常的代码文本
+- 解释要通俗易懂，适合初学者"""
+
+            response = await call_llm(
+                current_user["id"],
+                [{"role": "system", "content": "你是编程教学专家，请严格按JSON格式返回，不要输出其他内容。"},
+                 {"role": "user", "content": prompt}],
+                temperature=0.3, max_tokens=2048
+            )
+
+            from services.ai_service import extract_json_object
+            try:
+                result = extract_json_object(response)
+            except Exception:
+                result = {
+                    "approach": "以下是参考答案：",
+                    "answer_code": response,
+                    "explanations": []
+                }
+
+            # ===== 3. 沙箱验证 =====
+            answer_code = result.get("answer_code", "")
+            if not answer_code:
+                break  # 没有代码可验证
+
+            is_valid, validation_error = await _validate_code_in_sandbox(answer_code, req.language)
+            if is_valid:
+                result["_validated"] = True
+                break
+            else:
+                last_error = validation_error
+                result["_validated"] = False
+                if attempt < max_retries:
+                    continue  # 重试
+                else:
+                    # 最后一次仍失败，标记并返回
+                    result["_validation_error"] = validation_error[:300]
+
+        return APIResponse(data=result)
+    except Exception as e:
+        return APIResponse(code=500, message=f"生成参考答案失败: {str(e)}", data=None)
+
+
+# ── 真实沙箱评测端点 ──────────────────────────────────────────
+class CodeEvaluateRequest(BaseModel):
+    exercise_id: str = ""      # 习题ID (如 "5-6")
+    code: str = ""             # 用户编写的代码
+    language: str = "python"
+
+
+@router.post("/code-evaluate", response_model=APIResponse)
+async def evaluate_code_submission(req: CodeEvaluateRequest, current_user: dict = Depends(get_current_user)):
+    """真实沙箱评测：语法校验 + 动态函数调用 + 多用例判题"""
+    try:
+        from database import get_db
+        from services.code_evaluator import evaluate_code
+
+        # 1. 加载习题评测元数据
+        meta = _load_exercise_test_meta(req.exercise_id)
+        if not meta:
+            # 降级：尝试从 processed exercises 中获取
+            meta = _load_exercise_test_meta_from_processed(req.exercise_id)
+
+        # 2. 执行评测：用户代码含测试驱动则直接运行，否则用元数据评测
+        if 'if __name__' in req.code or '__main__' in req.code:
+            result = _evaluate_with_embedded_tests(req.code)
+        elif meta:
+            result = evaluate_code(req.code, meta)
+        else:
+            return APIResponse(code=400, message=f"未找到习题 {req.exercise_id} 的评测配置", data=None)
+
+        # 3. 保存提交记录
+        try:
+            import json as _json
+            conn = get_db()
+            conn.execute(
+                "INSERT INTO code_submissions (user_id, exercise_id, code, passed, total, score, results_json) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (current_user["id"], req.exercise_id, req.code,
+                 result['passed_count'], result['total'],
+                 round(result['passed_count'] / max(result['total'], 1) * 100),
+                 _json.dumps(result['results'], ensure_ascii=False))
+            )
+            conn.commit()
+            conn.close()
+        except Exception:
+            pass
+
+        return APIResponse(data=result)
+
+    except Exception as e:
+        return APIResponse(code=500, message=f"评测异常: {str(e)}", data=None)
+
+
+def _evaluate_with_embedded_tests(code: str) -> dict:
+    """运行用户代码中已有的 if __name__ == '__main__' 测试驱动，解析结果"""
+    import subprocess, tempfile, os as _os, re, time as _time
+    start = _time.time()
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            src = _os.path.join(tmp, 'main.py')
+            with open(src, 'w', encoding='utf-8') as f:
+                f.write(code)
+            proc = subprocess.run(
+                [_os.environ.get('PYTHON_PATH', 'python'), src],
+                capture_output=True, text=True, timeout=15, cwd=tmp
+            )
+            stdout = proc.stdout or ''
+            stderr = proc.stderr or ''
+
+            if proc.returncode != 0:
+                # Extract meaningful error
+                err_lines = [l for l in stderr.split('\n') if l.strip()]
+                error_msg = '\n'.join(err_lines[-3:]) if err_lines else stderr[:500]
+                return {
+                    'passed': False, 'total': 0, 'passed_count': 0,
+                    'compile_error': error_msg,
+                    'results': [], 'execution_time': round(_time.time() - start, 3)
+                }
+
+            # Parse [PASS] and [FAIL] from output
+            pass_count = stdout.count('[PASS]')
+            fail_count = stdout.count('[FAIL]')
+            total = pass_count + fail_count
+
+            results = []
+            for line in stdout.split('\n'):
+                if '[PASS]' in line or '[FAIL]' in line:
+                    results.append({
+                        'case_index': len(results) + 1,
+                        'description': line.strip()[:100],
+                        'passed': '[PASS]' in line,
+                        'error': None if '[PASS]' in line else line.strip()[:200]
+                    })
+
+            if total == 0:
+                total = 1  # ran without error
+
+            return {
+                'passed': fail_count == 0 and total > 0,
+                'total': total,
+                'passed_count': pass_count,
+                'compile_error': None,
+                'results': results,
+                'execution_time': round(_time.time() - start, 3)
+            }
+    except subprocess.TimeoutExpired:
+        return {
+            'passed': False, 'total': 0, 'passed_count': 0,
+            'compile_error': '执行超时 (>15秒)',
+            'results': [], 'execution_time': round(_time.time() - start, 3)
+        }
+    except Exception as e:
+        return {
+            'passed': False, 'total': 0, 'passed_count': 0,
+            'compile_error': f'评测异常: {str(e)}',
+            'results': [], 'execution_time': round(_time.time() - start, 3)
+        }
+
+
+def _load_exercise_test_meta(exercise_id: str) -> dict | None:
+    """从数据库加载习题评测元数据"""
+    conn = get_db()
+    row = conn.execute(
+        "SELECT * FROM exercise_test_metadata WHERE exercise_id = ?", (exercise_id,)
+    ).fetchone()
+    conn.close()
+    if not row:
+        return None
+    import json as _json
+    return {
+        'exercise_type': row['exercise_type'],
+        'target_function': row['target_function'],
+        'test_cases': _json.loads(row['test_cases_json'] or '[]'),
+        'locked_code': row['locked_code'] or '',
+        'guide_comment': row['guide_comment'] or '# 请在此处实现代码',
+    }
+
+
+def _load_exercise_test_meta_from_processed(exercise_id: str) -> dict | None:
+    """从 exercises_processed.json 中提取评测元数据"""
+    import json as _json
+    processed_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                   "data", "exercises_processed.json")
+    if not os.path.exists(processed_path):
+        return None
+    try:
+        with open(processed_path, 'r', encoding='utf-8') as f:
+            exercises = _json.load(f)
+        for ex in exercises:
+            if ex['id'] == exercise_id:
+                return _build_meta_from_exercise(ex)
+    except Exception:
+        pass
+    return None
+
+
+def _build_meta_from_exercise(ex: dict) -> dict:
+    """从习题数据构建评测元数据"""
+    import re
+    raw_code = ex.get('raw_starter_code', '') or ex.get('skeleton_code', '')
+    eval_code = ex.get('eval_code', '')
+
+    # 提取目标函数名（第一个 def 后面的名字）
+    func_match = re.search(r'def\s+(\w+)\s*\(', raw_code)
+    target = func_match.group(1) if func_match else ''
+
+    # 确定类型: 有 eval_code 且没有 module_dict 则为函数型
+    ex_type = 'function'
+    if 'module_dict' in eval_code:
+        ex_type = 'function'  # 类方法也是 function 型（返回 dict）
+
+    # 从 eval_code 中提取测试用例
+    test_cases = _extract_test_cases_from_eval(eval_code, raw_code)
+
+    # 提取锁定代码（imports, 类声明等）
+    locked_code = _extract_locked_code(raw_code, target)
+
+    return {
+        'exercise_type': ex_type,
+        'target_function': target,
+        'test_cases': test_cases,
+        'locked_code': locked_code,
+        'guide_comment': f'# 请在此处实现 {target}() 函数功能' if target else '# 请在此处编写代码',
+    }
+
+
+def _extract_test_cases_from_eval(eval_code: str, raw_code: str) -> list:
+    """从评测代码中提取测试用例 [{args, expected, description}]"""
+    import re as _re
+    cases = []
+    if not eval_code:
+        return cases
+
+    # 提取 func(args) 调用 + assert
+    calls = _re.findall(r'(\w+)\s*=\s*\w+\((.*?)\)', eval_code)
+    asserts = _re.findall(r'assert\s+(.+?)(?:\s*,\s*["\'](.+?)["\'])?\s*$', eval_code, _re.MULTILINE)
+
+    for i, call_match in enumerate(_re.finditer(r'(\w+)\s*=\s*\w+\((.*?)\)', eval_code)):
+        result_var = call_match.group(1)
+        args_str = call_match.group(2)
+        # 解析参数为 Python 字面量
+        try:
+            args = _parse_args(args_str)
+        except Exception:
+            args = [args_str]
+
+        # 查找对应的 assert
+        expected = None
+        desc = f'用例{i+1}'
+        for assert_cond, assert_msg in asserts:
+            if result_var in assert_cond:
+                desc = assert_msg.strip('\'"') if assert_msg else desc
+                # 尝试从 assert 中提取期望值
+                eq_match = _re.search(r'==\s*(.+?)(?:\s+and|\s*$)', assert_cond)
+                if eq_match:
+                    try:
+                        expected = eval(eq_match.group(1).strip())
+                    except Exception:
+                        expected = eq_match.group(1).strip()
+                break
+
+        if args:
+            cases.append({
+                'args': args,
+                'expected': expected,
+                'description': desc
+            })
+
+    return cases[:10]
+
+
+def _parse_args(args_str: str) -> list:
+    """安全解析参数字符串为 Python 对象列表"""
+    if not args_str.strip():
+        return []
+    # 使用 ast.literal_eval 安全解析
+    import ast
+    try:
+        # 包装为元组
+        result = ast.literal_eval(f'({args_str})')
+        if isinstance(result, tuple):
+            return list(result)
+        return [result]
+    except Exception:
+        # 降级: 当作单个字符串参数
+        return [args_str.strip()]
+
+
+def _extract_locked_code(raw_code: str, target_func: str) -> str:
+    """提取锁定代码: 类声明 + __init__ + 非目标函数的已完成方法"""
+    import re as _re
+    if not raw_code:
+        return ''
+
+    lines = raw_code.split('\n')
+    locked_lines = []
+    in_target = False
+    in_method = False
+    method_indent = 0
+
+    for line in lines:
+        stripped = line.strip()
+
+        # class 声明 → 锁定
+        if stripped.startswith('class ') and stripped.endswith(':'):
+            locked_lines.append(line)
+            continue
+
+        # import 语句 → 锁定
+        if stripped.startswith('import ') or stripped.startswith('from '):
+            locked_lines.append(line)
+            continue
+
+        # def 声明
+        m = _re.match(r'def\s+(\w+)', stripped)
+        if m:
+            func_name = m.group(1)
+            in_target = (func_name == target_func)
+            in_method = True
+            method_indent = len(line) - len(line.lstrip())
+            if not in_target:
+                locked_lines.append(line)
+            continue
+
+        # 方法体
+        if in_method and (not stripped or (len(line) - len(line.lstrip()) > method_indent)):
+            if not in_target:
+                locked_lines.append(line)
+            continue
+
+        # 回到类级别
+        if in_method and stripped and (len(line) - len(line.lstrip()) <= method_indent):
+            in_method = False
+            locked_lines.append(line)
+            continue
+
+        # 顶层代码
+        if not in_method:
+            locked_lines.append(line)
+
+    return '\n'.join(locked_lines)
 
 
 @router.get("/code-answer/{task_day}", response_model=APIResponse)

@@ -40,9 +40,14 @@
       <div class="task-main">
         <div v-if="selectedTask" class="task-preview">
           <h3>关卡 {{ selectedTask.id }}：{{ selectedTask.title }}</h3>
+          <div v-if="getCompletion(selectedTask.id)" class="completion-info">
+            <el-tag type="success" size="large">已完成</el-tag>
+            <p>用时: {{ getCompletion(selectedTask.id).time }}</p>
+            <p>通过: {{ getCompletion(selectedTask.id).passedCount }}/{{ getCompletion(selectedTask.id).totalCount }} 用例</p>
+          </div>
           <p class="preview-hint">点击下方按钮进入代码编辑页面</p>
           <el-button type="primary" @click="enterTask(selectedTask)">
-            开始挑战
+            {{ getCompletion(selectedTask.id) ? '重做本题' : '开始挑战' }}
           </el-button>
         </div>
         <el-empty v-else description="请从左侧选择关卡" :image-size="80" />
@@ -83,12 +88,20 @@ function enterTask(task) {
 }
 
 /**
- * 判断关卡是否已完成
- * TODO: 对接后端 GET /api/progress/tasks/{moduleId}
+ * 读取关卡完成状态（从 localStorage）
  */
+function getCompletion(taskId) {
+  try {
+    const completed = JSON.parse(localStorage.getItem('code_completed') || '{}')
+    const key = `${moduleId.value}_${taskId}`
+    return completed[key] || null
+  } catch {
+    return null
+  }
+}
+
 function isCompleted(taskId) {
-  // TODO: 从后端或本地存储获取真实完成状态
-  return false
+  return !!getCompletion(taskId)
 }
 </script>
 
@@ -226,5 +239,17 @@ function isCompleted(taskId) {
   font-size: 14px;
   color: #909399;
   margin: 0 0 20px;
+}
+.completion-info {
+  background: #f0f9eb;
+  border: 1px solid #c2e7b0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.completion-info p {
+  font-size: 13px;
+  color: #606266;
+  margin: 4px 0;
 }
 </style>

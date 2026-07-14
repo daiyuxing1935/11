@@ -195,10 +195,43 @@ def init_db():
         );
     """)
 
-    # 数据库迁移（使用 conn.execute 而非 cursor.execute，避免 executescript 后 cursor 状态异常）
+    # 数据库迁移
     _run_migration(conn, "error_questions", "session_id INTEGER", "错题表迁移: 添加 session_id 列")
     _run_migration(conn, "user_llm_config", "image_api_key TEXT DEFAULT ''", "LLM配置表迁移: 添加 image_api_key 列")
     _run_migration(conn, "learning_stats", "mastery_detail_json TEXT DEFAULT '{}'", "学习统计表迁移: 添加 mastery_detail_json 列")
+
+    # 习题评测元数据表 — 存储每道题的锁定代码/目标函数/测试用例
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS exercise_test_metadata (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            exercise_id TEXT UNIQUE NOT NULL,
+            exercise_type TEXT DEFAULT 'function',
+            target_function TEXT DEFAULT '',
+            locked_code TEXT DEFAULT '',
+            guide_comment TEXT DEFAULT '# 请在此处实现代码',
+            test_cases_json TEXT DEFAULT '[]',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+    conn.commit()
+
+    # 代码提交评测记录表
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS code_submissions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            exercise_id TEXT NOT NULL,
+            code TEXT NOT NULL,
+            passed INTEGER DEFAULT 0,
+            total INTEGER DEFAULT 0,
+            score REAL DEFAULT 0,
+            results_json TEXT DEFAULT '[]',
+            submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+    """)
+    conn.commit()
 
     # 电子书表
     conn.execute("""
