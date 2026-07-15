@@ -310,8 +310,13 @@ def find_resource_by_knowledge(knowledge: str) -> dict:
 
 # 本地学习资料
 import os as _os
-MATERIALS_INDEX_PATH = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))), "learning_materials", "index.json")
-MATERIALS_BASE_DIR = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))), "learning_materials")
+# 支持通过环境变量 LEARNING_MATERIALS_DIR 覆盖（Docker 部署时自动挂载到 /learning_materials）
+_MATERIALS_ROOT = _os.getenv(
+    "LEARNING_MATERIALS_DIR",
+    _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))), "learning_materials")
+)
+MATERIALS_INDEX_PATH = _os.path.join(_MATERIALS_ROOT, "index.json")
+MATERIALS_BASE_DIR = _MATERIALS_ROOT
 RESOURCE_IMAGE_CONFIG_PATH = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "data", "resource_image_config.json")
 
 def _load_resource_image_config() -> dict:

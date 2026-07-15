@@ -265,6 +265,66 @@ def init_db():
     except Exception as e:
         print(f"[WARN] Demo seed failed: {e}")
 
+    # Seed knowledge_tags from JSON (only if table is empty to avoid duplicates)
+    try:
+        _tags_path = os.path.join(os.path.dirname(__file__), "data", "knowledge_tags.json")
+        _tag_exist = conn.execute("SELECT COUNT(*) FROM knowledge_tags").fetchone()[0]
+        if _tag_exist == 0 and os.path.exists(_tags_path):
+            import json as _json
+            with open(_tags_path, "r", encoding="utf-8") as _f:
+                _tag_data = _json.load(_f)
+            _tag_count = 0
+            for _cat in _tag_data:
+                _cat_name = _cat.get("category", "")
+                for _tag in _cat.get("tags", []):
+                    _tag_name = _tag.get("name", "")
+                    if not _tag_name:
+                        continue
+                    conn.execute(
+                        "INSERT INTO knowledge_tags (name, category, description) VALUES (?, ?, ?)",
+                        (_tag_name, _cat_name, _tag.get("description", ""))
+                    )
+                    _tag_count += 1
+            conn.commit()
+            print(f"[OK] 已导入 {_tag_count} 条知识标签到数据库")
+    except Exception as e:
+        print(f"[WARN] 知识标签导入失败: {e}")
+
+    # Seed exercise_test_metadata from exercises_processed.json (only if empty)
+    try:
+        _exist = conn.execute("SELECT COUNT(*) FROM exercise_test_metadata").fetchone()[0]
+        if _exist == 0:
+            _ex_path = os.path.join(os.path.dirname(__file__), "data", "exercises_processed.json")
+            if os.path.exists(_ex_path):
+                import json as _json, re as _re
+                with open(_ex_path, "r", encoding="utf-8") as _f:
+                    _exercises = _json.load(_f)
+                _ex_count = 0
+                for _ex in _exercises:
+                    _raw = _ex.get("skeleton_code", "") or _ex.get("starter_code", "")
+                    _funcs = _re.findall(r'def\s+(\w+)\s*\(', _raw)
+                    _target = ""
+                    for _fn in _funcs:
+                        if not _fn.startswith("_") and _fn != "__init__":
+                            _target = _fn
+                            break
+                    if not _target and _funcs:
+                        _target = _funcs[0]
+                    _cls = _re.search(r'class\s+(\w+)', _raw)
+                    _etype = "class_method" if _cls else "function"
+                    _guide = f"# 请在此处实现 {_target}() 函数功能" if _target else "# 请在此处编写代码"
+                    conn.execute(
+                        "INSERT OR IGNORE INTO exercise_test_metadata "
+                        "(exercise_id, exercise_type, target_function, locked_code, guide_comment, test_cases_json) "
+                        "VALUES (?, ?, ?, ?, ?, ?)",
+                        (_ex["id"], _etype, _target, _raw, _guide, "[]")
+                    )
+                    _ex_count += 1
+                conn.commit()
+                print(f"[OK] 已导入 {_ex_count} 条习题评测元数据")
+    except Exception as e:
+        print(f"[WARN] 习题元数据导入失败: {e}")
+
     conn.commit()
     conn.close()
 

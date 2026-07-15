@@ -6,6 +6,16 @@ services:
       - 127.0.0.1:8001:8000
     volumes:
       - backend_data:/app/data
+      - ./learning_materials:/learning_materials:ro
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: ai-learning-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
     restart: unless-stopped
 
 volumes:
