@@ -9,11 +9,8 @@ import re
 import uuid
 from typing import Optional
 
-# 题库文件路径（项目根目录下的dataset/dataset文件夹）
-DATASET_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "dataset", "dataset"
-)
+# 题库文件路径（从 config 读取，与 backend/ 同级的 dataset/dataset/）
+from config import DATASET_DIR
 
 # 6个分模块题库文件
 MODULE_FILES = [

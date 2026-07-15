@@ -12,6 +12,9 @@ DATABASE_PATH = os.path.join(BASE_DIR, "data", "learning_platform.db")
 KNOWLEDGE_TAGS_PATH = os.path.join(BASE_DIR, "data", "knowledge_tags.json")
 RESOURCES_PATH = os.path.join(BASE_DIR, "data", "resources.json")
 
+# 题库目录（backend/data/dataset/ 下）
+DATASET_DIR = os.path.join(BASE_DIR, "data", "dataset")
+
 # 出题配置
 MAX_QUESTIONS_PER_QUIZ = 20
 QUESTION_TYPES = ["单选", "多选", "判断", "简答", "填空", "代码实操"]

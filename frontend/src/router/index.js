@@ -34,15 +34,41 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
-  if (!to.meta.noAuth && !userStore.token) {
-    next('/login')
-  } else if (to.path === '/login' && userStore.token) {
-    next('/dashboard')
-  } else {
+
+  // 不需要认证的页面直接放行
+  if (to.meta.noAuth) {
     next()
+    return
   }
+
+  // 无本地 token → 强制去登录
+  if (!userStore.token) {
+    next('/login')
+    return
+  }
+
+  // 有 token 但未验证过 → 调后端校验接口确认有效性
+  if (!userStore._verified) {
+    try {
+      await userStore.verifyToken()
+      userStore._verified = true
+    } catch (e) {
+      // token 无效或过期 → 清理并跳转登录
+      userStore.logout()
+      next('/login')
+      return
+    }
+  }
+
+  // 已登录用户访问 /login → 重定向到主页
+  if (to.path === '/login') {
+    next('/dashboard')
+    return
+  }
+
+  next()
 })
 
 export default router

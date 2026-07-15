@@ -65,6 +65,12 @@ def get_profile(current_user: dict = Depends(get_current_user)):
         "learning_goal": current_user["learning_goal"], "avatar": current_user["avatar"]
     })
 
+@router.get("/verify", response_model=APIResponse)
+def verify_token(current_user: dict = Depends(get_current_user)):
+    """校验 token 是否有效（前端路由守卫使用）"""
+    return APIResponse(data={"valid": True, "user_id": current_user["id"], "username": current_user["username"]})
+
+
 @router.put("/me", response_model=APIResponse)
 def update_profile(req: UserUpdate, current_user: dict = Depends(get_current_user)):
     conn = get_db()

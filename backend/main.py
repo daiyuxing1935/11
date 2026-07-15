@@ -30,14 +30,14 @@ app = FastAPI(
 )
 
 # CORS中间件
+# 部署时设置环境变量 CORS_ORIGIN=你的域名 可限制跨域来源
+# 未设置时使用 ["*"] 允许所有来源（适合初始部署，后续建议指定具体域名）
+_cors_origin = os.getenv("CORS_ORIGIN", "")
+_allow_origins = [o.strip() for o in _cors_origin.split(",") if o.strip()] if _cors_origin else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:80",
-        "http://localhost",
-    ],
+    allow_origins=_allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -45,6 +45,32 @@ app.add_middleware(
 
 # 初始化数据库
 init_db()
+
+# 启动时检查数据文件完整性
+print("[启动检查] 验证数据文件...")
+_data_ok = True
+_checks = [
+    ("题库: module_01", os.path.join(os.path.dirname(__file__), "data", "dataset", "module_01_智能体基础通识.json")),
+    ("题库: module_02", os.path.join(os.path.dirname(__file__), "data", "dataset", "module_02_大模型与提示词工程.json")),
+    ("题库: module_03", os.path.join(os.path.dirname(__file__), "data", "dataset", "module_03_智能体四大核心能力模块.json")),
+    ("题库: module_04", os.path.join(os.path.dirname(__file__), "data", "dataset", "module_04_开发框架与工程实践.json")),
+    ("题库: module_05", os.path.join(os.path.dirname(__file__), "data", "dataset", "module_05_多智能体系统.json")),
+    ("题库: module_06", os.path.join(os.path.dirname(__file__), "data", "dataset", "module_06_评估安全与前沿拓展.json")),
+    ("习题数据", os.path.join(os.path.dirname(__file__), "data", "exercises_processed.json")),
+    ("资源索引", os.path.join(os.path.dirname(__file__), "data", "resources.json")),
+    ("知识标签", os.path.join(os.path.dirname(__file__), "data", "knowledge_tags.json")),
+    ("数据库", os.path.join(os.path.dirname(__file__), "data", "learning_platform.db")),
+]
+for name, path in _checks:
+    if os.path.exists(path):
+        print(f"  [OK] {name}")
+    else:
+        print(f"  [缺失] {name} — 请确认文件已上传到服务器: {path}")
+        _data_ok = False
+if _data_ok:
+    print("[启动检查] 全部数据文件就绪")
+else:
+    print("[启动检查] 警告: 部分数据文件缺失，相关功能将无法使用")
 
 # 注册路由
 from routers import auth_router, diagnosis_router, qa_router, learning_router, analytics_router, resource_router, knowledge_router, llm_config_router, image_router

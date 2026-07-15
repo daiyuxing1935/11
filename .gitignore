@@ -13,6 +13,9 @@ dist/
 *.sqlite
 *.sqlite3
 
+# ===== 运行时生成 =====
+backend/data/generated_images/
+
 # ===== 日志 =====
 debug.log
 *.log

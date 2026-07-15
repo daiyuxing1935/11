@@ -39,7 +39,7 @@
           </el-form>
         </el-tab-pane>
       </el-tabs>
-      <div class="demo-hint">Demo演示账号: demo / demo123</div>
+      <div class="demo-hint">首次使用请先注册账号</div>
     </div>
   </div>
 </template>
@@ -55,7 +55,7 @@ const userStore = useUserStore()
 const activeTab = ref('login')
 const loading = ref(false)
 
-const loginForm = reactive({ username: 'demo', password: 'demo123' })
+const loginForm = reactive({ username: '', password: '' })
 const loginRules = { username: [{ required: true, message: '请输入用户名' }], password: [{ required: true, message: '请输入密码' }] }
 const regForm = reactive({ username: '', password: '', nickname: '', learning_stage: '入门', learning_goal: '课程预习' })
 const regRules = {
