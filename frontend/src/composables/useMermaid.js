@@ -31,7 +31,7 @@ const BASE_THEME = {
   },
   maxTextSize: 50000,
   maxEdges: 500,
-  securityLevel: 'sandbox',
+  securityLevel: 'loose',
   startOnLoad: false,
 }
 
@@ -52,6 +52,7 @@ export async function renderMermaidIn(container) {
   if (!container) return 0
   if (!initialized) initMermaid()
 
+  // step 1: convert <code class="language-mermaid"> to <div class="mermaid">
   container.querySelectorAll('code.language-mermaid').forEach((code) => {
     const pre = code.closest('pre')
     if (!pre) return
@@ -61,21 +62,42 @@ export async function renderMermaidIn(container) {
     pre.replaceWith(div)
   })
 
+  // step 2: render each mermaid div individually (better error isolation)
   const divs = container.querySelectorAll('div.mermaid:not([data-processed])')
   if (divs.length === 0) return 0
-  try {
-    divs.forEach(d => d.setAttribute('data-processed', 'true'))
-    await mermaid.run({ nodes: Array.from(divs) })
-    return divs.length
-  } catch (e) {
-    console.warn('[useMermaid] 渲染失败:', e)
-    divs.forEach((d) => {
-      if (!d.querySelector('svg')) {
-        d.style.cssText = 'padding:12px;background:#fff5f5;border:1px solid #F56C6C;border-radius:8px;color:#F56C6C;font-size:12px;white-space:pre-wrap;'
+
+  let successCount = 0
+  for (const d of divs) {
+    d.setAttribute('data-processed', 'true')
+    const code = d.textContent.trim()
+    if (!code) continue
+
+    try {
+      // 先验证语法
+      await mermaid.parse(code)
+      // 语法OK，生成唯一ID并渲染
+      const id = 'mermaid_' + Math.random().toString(36).slice(2, 10)
+      const { svg } = await mermaid.render(id, code)
+      d.innerHTML = svg
+      successCount++
+    } catch (e) {
+      console.error('[useMermaid] 渲染失败:', e.message || e, 'code:', code.substring(0, 200))
+      // 提取第一个节点名作为标题
+      var title = '流程图'
+      var m = code.match(/flowchart\s+(TD|LR)\s*([\s\S]*)/i)
+      if (m) {
+        var firstNode = m[2].match(/(\w+)\[/)
+        if (firstNode) title = firstNode[1]
       }
-    })
-    return 0
+      d.innerHTML = '<div style="padding:16px;background:#fafafa;border:1px dashed #d9d9d9;border-radius:8px;text-align:center;color:#909399;font-size:13px">'
+        + '<span>图表渲染失败</span>'
+        + '<span style="display:block;margin-top:4px;font-size:11px;color:#c0c4cc">' + title + '</span>'
+        + '</div>'
+      // 把错误信息存为隐藏属性方便调试
+      d.setAttribute('data-mermaid-error', e.message || 'unknown')
+    }
   }
+  return successCount
 }
 
 // ===================================================================
@@ -141,6 +163,16 @@ const SEMANTIC_MAP = {
   '消息传递': 'msgPass', '任务分配': 'taskAssign', '结果汇总': 'resultMerge',
   '承担特定角色': 'takeRole', '履行角色职责': 'dutyExec',
   '冲突解决': 'conflictResolve', '资源竞争共识': 'resourceConsensus',
+}
+
+/** 清洗 mermaid 节点标签中的非法字符（引号、换行等会导致解析失败） */
+function _sanitizeLabel(text) {
+  if (!text) return ''
+  return text
+    .replace(/["""]/g, '')      // 移除所有双引号（mermaid 用 " 做标签定界符）
+    .replace(/\n/g, ' ')        // 换行 → 空格
+    .replace(/\\/g, '')         // 反斜杠 → 移除
+    .trim()
 }
 
 /** 将文本转为 camelCase 语义 ID */
@@ -211,10 +243,10 @@ export function asciiToMermaid(ascii) {
 function _aiAgent() {
   const defs = [
     '    %% 顶层节点',
-    '    aiAgent["🤖 AI智能体"]',
-    '    llmCore["🧠 大语言模型<br/>（推理引擎）"]',
+    '    aiAgent[" AI智能体"]',
+    '    llmCore[" 大语言模型<br/>（推理引擎）"]',
     '',
-    '    subgraph cap ["💡 推理能力"]',
+    '    subgraph cap [" 推理能力"]',
     '        direction LR',
     '        textUnderstand["文本理解"]',
     '        knowledgeReason["知识推理"]',
@@ -224,23 +256,23 @@ function _aiAgent() {
     '        logicJudge["逻辑判断"]',
     '    end',
     '',
-    '    subgraph toolSystem ["🔧 工具系统"]',
+    '    subgraph toolSystem [" 工具系统"]',
     '        searchCode["搜索/代码"]',
     '        apiFile["API/文件"]',
     '    end',
     '',
-    '    subgraph memorySystem ["📦 记忆系统"]',
+    '    subgraph memorySystem [" 记忆系统"]',
     '        shortMemory["短期记忆"]',
     '        longMemory["长期记忆"]',
     '        workingMemory["工作记忆"]',
     '    end',
     '',
-    '    subgraph planningSystem ["📋 规划系统"]',
+    '    subgraph planningSystem [" 规划系统"]',
     '        taskSplit["任务拆解"]',
     '        stepSchedule["步骤调度"]',
     '    end',
     '',
-    '    subgraph perceptionSystem ["👁️ 感知系统"]',
+    '    subgraph perceptionSystem [" 感知系统"]',
     '        multimodal["多模态"]',
     '        realtimeData["实时数据"]',
     '    end',
@@ -272,10 +304,10 @@ function _ota(ascii) {
   if (isOODA) {
     defs = [
       '    %% 节点定义',
-      '    observe["👁️ Observe 观察"]',
+      '    observe[" Observe 观察"]',
       '    orient["🧭 Orient 判断"]',
-      '    decide["✅ Decide 决策"]',
-      '    actOoda["⚡ Act 行动"]',
+      '    decide[" Decide 决策"]',
+      '    actOoda[" Act 行动"]',
     ].join('\n')
     edges = [
       '    %% 循环关系',
@@ -288,9 +320,9 @@ function _ota(ascii) {
   } else {
     defs = [
       '    %% 节点定义',
-      '    observe["👁️ Observe 观察"]',
-      '    think["🧠 Think 思考"]',
-      '    act["⚡ Act 行动"]',
+      '    observe[" Observe 观察"]',
+      '    think[" Think 思考"]',
+      '    act[" Act 行动"]',
     ].join('\n')
     edges = [
       '    %% 循环关系',
@@ -327,7 +359,7 @@ function _vertical(ascii, lines) {
 
   const seen = new Set(), dl = [], el = [], ids = []
   entries.forEach((e, i) => {
-    if (!seen.has(e.id)) { dl.push('    ' + e.id + '["' + e.label.replace(/"/g, '\\"') + '"]'); seen.add(e.id); ids.push(e.id) }
+    if (!seen.has(e.id)) { dl.push('    ' + e.id + '["' + _sanitizeLabel(e.label) + '"]'); seen.add(e.id); ids.push(e.id) }
     if (i > 0) el.push('    ' + entries[i - 1].id + ' --> ' + e.id)
   })
   if (dl.length > 0) dl.unshift('    %% 节点定义')
@@ -358,7 +390,7 @@ function _layered(ascii, lines) {
   layers.forEach((ly, i) => {
     const id = _id(ly.title)
     const desc = ly.items.length ? '<br/>' + ly.items.map(x => '· ' + x).join('<br/>') : ''
-    dl.push('    ' + id + '["' + (ly.title + desc).replace(/"/g, '\\"') + '"]')
+    dl.push('    ' + id + '["' + _sanitizeLabel(ly.title + desc) + '"]')
     ids.push(id)
     if (i > 0) el.push('    ' + _id(layers[i - 1].title) + ' --> ' + id)
   })
@@ -400,7 +432,7 @@ function _horizontal(ascii, lines) {
     let uid = e.id
     if (seen.has(uid)) uid = e.id + (i + 1)
     seen.add(uid)
-    dl.push('    ' + uid + '["' + e.label.replace(/"/g, '\\"') + '"]')
+    dl.push('    ' + uid + '["' + _sanitizeLabel(e.label) + '"]')
     ids.push(uid)
     if (i > 0) el.push('    ' + ents[i - 1].id + ' --> ' + uid)
   })
@@ -411,7 +443,7 @@ function _horizontal(ascii, lines) {
     const note = nm[0].trim()
     if (note.length > 3 && !note.startsWith('```')) {
       const nid = 'note' + note.replace(/[^一-龥]/g, '').substring(0, 4)
-      dl.push('    ' + nid + '["📝 ' + note.replace(/"/g, '\\"') + '"]')
+      dl.push('    ' + nid + '["' + _sanitizeLabel(note) + '"]')
       ids.push(nid)
       el.push('    ' + ents[ents.length - 1].id + ' -..-> ' + nid)
     }
@@ -446,7 +478,7 @@ function _tree(ascii, lines) {
   }
 
   const dl = [], ids = []
-  map.forEach((label, id) => { dl.push('    ' + id + '["' + label.replace(/"/g, '\\"') + '"]'); ids.push(id) })
+  map.forEach((label, id) => { dl.push('    ' + id + '["' + _sanitizeLabel(label) + '"]'); ids.push(id) })
   const el = Array.from(es).map(e => '    ' + e)
 
   if (dl.length > 0) dl.unshift('    %% 节点定义')

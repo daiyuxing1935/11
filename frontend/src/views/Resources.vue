@@ -99,13 +99,13 @@
       </div>
     </div>
     <!-- 学习资料弹窗 -->
-    <div v-if="dialogVisible" @click.self="dialogVisible=false" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding-top:3vh">
-      <div style="background:#fff;border-radius:8px;width:90%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-bottom:1px solid #e4e7ed">
+    <div v-if="dialogVisible" @click.self="dialogVisible=false" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:8px;width:75%;max-width:1300px;height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px;border-bottom:1px solid #e4e7ed;flex-shrink:0">
           <h2 style="margin:0;font-size:18px">{{ dialogTitle }}</h2>
-          <button @click="dialogVisible=false" style="background:none;border:none;font-size:28px;cursor:pointer;color:#909399">&times;</button>
+          <button @click="dialogVisible=false" style="background:none;border:none;font-size:28px;cursor:pointer;color:#909399;line-height:1">&times;</button>
         </div>
-        <div style="flex:1;overflow-y:auto;padding:16px 24px;font-size:15px;line-height:1.8;color:#303133">
+        <div style="flex:1;overflow-y:auto;padding:20px 28px;font-size:16px;line-height:1.9;color:#303133">
           <div v-if="dialogLoading" style="text-align:center;padding:40px;color:#409EFF">加载中...</div>
           <div v-else v-html="dialogContent" ref="contentRef"></div>
         </div>
@@ -131,7 +131,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { getResourceList, getResourceLearnMaterial, uploadPdf, getPdfList, getPdfUrl, deletePdf, batchDeletePdfs } from '../api/resource'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { recordStudyVisit } from '../api/learning'
@@ -296,16 +296,13 @@ async function openResource(resource) {
       var raw = res.content
       // ===== ASCII‑Art → Mermaid 自动转换 =====
       raw = raw.replace(/```\s*\n?([\s\S]*?)```/g, function(m, content) {
-        // 检测盒绘图字符
         var boxCount = (content.match(/[┌─│└├┐┘┴┬┤┼]/g) || []).length
         if (boxCount >= 8) {
           var mermaidCode = asciiToMermaid(content)
           if (mermaidCode) {
-            // asciiToMermaid 已经包含了 ``` 包裹
-            return mermaidCode
+            return mermaidCode  // asciiToMermaid 已包含 ```mermaid 包裹
           }
-          // 无法识别 → 隐藏，不显示乱码 ASCII
-          return '\n\n> *此结构图暂未适配 Mermaid，如需显示请联系管理员转换。*\n\n'
+          return ''  // 无法识别 → 静默移除，不显示乱码也不显示提示
         }
         return m
       })
@@ -322,12 +319,50 @@ async function openResource(resource) {
         }
         return ''
       })
+      // ===== 逐行扫描：将裸露的 flowchart/graph 文本块包裹为 ```mermaid 围栏 =====
+      // 先用正则匹配完整的 flowchart 块（单行或多行），避免把后续正文一起吞掉
+      raw = raw.replace(
+        /(?:^|\n\n)((?:flowchart|graph)\s+(?:TD|LR|BT|RL)\b[\s\S]*?)(?=\n\n[^\n]|\n#{1,4}\s|$)/gi,
+        function(match) {
+          var code = match.trim()
+          // 必须有 mermaid 特征（箭头/子图/类定义）
+          if (code.length > 50 && (/-->|subgraph|classDef|style/i.test(code))) {
+            // 提取纯 flowchart 代码，去掉前后空白和紧跟的正文
+            // 如果 flowchart 是多行的，逐行提取直到遇到非 mermaid 行
+            var lines = code.split('\n')
+            var cleanLines = []
+            for (var i = 0; i < lines.length; i++) {
+              var s = lines[i].trim()
+              if (i === 0) { cleanLines.push(lines[i]); continue }
+              // flowchart 续行特征：以节点ID/classDef/style/subgraph/end/箭头开头
+              if (/^(classDef|style|subgraph|end\b|direction\b)/i.test(s) ||
+                  /^[a-zA-Z_]\w*\s*[\[(>]/.test(s) ||
+                  /^[a-zA-Z_]\w*\s*-->|---/.test(s) ||
+                  s === '') {
+                cleanLines.push(lines[i])
+              } else {
+                break  // 遇到正文，停止收集
+              }
+            }
+            var finalCode = cleanLines.join('\n').trim()
+            if (finalCode.length > 50 && (/-->|subgraph|classDef|style/i.test(finalCode))) {
+              return '\n\n```mermaid\n' + finalCode + '\n```\n\n'
+            }
+          }
+          return match  // 不够特征 → 原样保留
+        }
+      )
+
       var html = window.marked.parse(raw)
-      // ===== Mermaid 代码块直接转为 <div class="mermaid"> =====
+      // ===== Mermaid 代码块 → 先存代码到全局变量，div 中只放占位文字 =====
+      window._mermaidCodes = {}
+      var mermaidIdx = 0
       html = html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, function(m, code) {
-        // marked.js 会把 < > & 转义，需要解码
         var decoded = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"')
-        return '<div class="mermaid">' + decoded + '</div>'
+        var id = 'mermaid_' + (mermaidIdx++)
+        window._mermaidCodes[id] = decoded
+        // 占位 div，不暴露任何代码文本
+        return '<div class="mermaid" data-mermaid-id="' + id + '" style="padding:20px;text-align:center;color:#909399;font-size:13px">流程图加载中...</div>'
       })
       // 按 h2 分页
       var parts = html.split(/(?=<h2)/i)
@@ -426,8 +461,31 @@ async function openResource(resource) {
     }
   } catch(e) {}
   dialogLoading.value = false
-  // ===== 渲染 Mermaid 图表（dialogLoading=false 后 DOM 才挂载）=====
-  nextTick(function() { renderMermaidIn(contentRef.value) })
+  // ===== 将存储的 mermaid 代码注入占位 div，再渲染 =====
+  nextTick(function() {
+    if (!contentRef.value) return
+    var codes = window._mermaidCodes || {}
+    // 填充每个占位 div 的实际代码
+    var divs = contentRef.value.querySelectorAll('.mermaid[data-mermaid-id]')
+    divs.forEach(function(d) {
+      var id = d.getAttribute('data-mermaid-id')
+      if (codes[id]) {
+        d.textContent = codes[id]
+        d.removeAttribute('data-mermaid-id')
+        d.removeAttribute('style')
+      }
+    })
+    // 渲染
+    renderMermaidIn(contentRef.value)
+    // 检查是否有渲染失败的（无 SVG），替换为简洁占位
+    setTimeout(function() {
+      contentRef.value.querySelectorAll('.mermaid:not([data-mermaid-id])').forEach(function(d) {
+        if (!d.querySelector('svg')) {
+          d.innerHTML = '<div style=\"padding:16px;text-align:center;color:#909399;font-size:13px\">流程图</div>'
+        }
+      })
+    }, 2000)
+  })
 }
 
 async function loadCached() {
@@ -583,4 +641,5 @@ async function genImage(btn, pid) {
   padding: 2px 8px;
   height: 26px;
 }
+
 </style>

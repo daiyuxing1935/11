@@ -1,8 +1,117 @@
 """资源推荐服务"""
 import json
 import os
+import re as _re_mermaid
 from database import get_db
 from services.diagnosis_service import get_user_knowledge_profile
+
+
+# ================================================================
+# Mermaid 提取工具 — 将正文与流程图代码分离
+# ================================================================
+
+def _wrap_naked_mermaid(content: str) -> str:
+    """
+    用正则匹配完整的 flowchart/graph 块（单行或多行），包裹为 ```mermaid 围栏。
+    关键：只收集真正的 mermaid 续行（节点ID/classDef/style/subgraph/箭头），
+    遇到普通正文行立即停止，避免把后续文章内容一起吞进代码块。
+    """
+    def _is_mermaid_continuation(s):
+        """判断一行是否为 mermaid 代码的续行"""
+        if not s:
+            return True  # 空行可能是块内空行
+        if s.startswith('```'):
+            return False  # 围栏标记
+        # flowchart 续行特征
+        if _re_mermaid.match(r'^(classDef|style|subgraph|end\b|direction\b)', s, _re_mermaid.IGNORECASE):
+            return True
+        if _re_mermaid.match(r'^[a-zA-Z_]\w*\s*[\[(>]', s):  # 节点定义或箭头
+            return True
+        if _re_mermaid.match(r'^[a-zA-Z_]\w*\s*-->|---|==>', s):  # 箭头语句
+            return True
+        if _re_mermaid.match(r'^(flowchart|graph)\s+(TD|LR|BT|RL)\b', s, _re_mermaid.IGNORECASE):
+            return True
+        return False
+
+    def replacer(m):
+        block = m.group(0).strip()
+        lines = block.split('\n')
+        clean = []
+        for i, line in enumerate(lines):
+            s = line.strip()
+            if i == 0:
+                clean.append(line)
+                continue
+            if _is_mermaid_continuation(s):
+                clean.append(line)
+            else:
+                break  # 遇到正文，停止
+        code = '\n'.join(clean).strip()
+        if len(code) > 50 and ('-->' in code or 'subgraph' in code or 'classDef' in code):
+            return '\n\n```mermaid\n' + code + '\n```\n\n'
+        return m.group(0)  # 不够特征，原样保留
+
+    # 匹配 flowchart/graph 开头的块（前面是空行或文本开头）
+    return _re_mermaid.sub(
+        r'(?:^|\n\n)((?:flowchart|graph)\s+(?:TD|LR|BT|RL)\b[\s\S]*?)(?=\n\n[^\n]|\n#{1,4}\s|$)',
+        replacer,
+        content,
+        flags=_re_mermaid.IGNORECASE | _re_mermaid.MULTILINE
+    )
+
+
+def extract_mermaid_blocks(content: str) -> dict:
+    """
+    从文章内容中提取所有 mermaid 代码块，返回分离后的结构。
+
+    Args:
+        content: 包含 ```mermaid ... ``` 代码块的原始文本
+
+    Returns:
+        {
+            "article_text": str,       # 正文（mermaid 代码块替换为占位标记）
+            "mermaid_list": [str, ...] # 提取出的 mermaid 代码（已去除围栏标记）
+        }
+    占位标记格式: <!--MERMAID_0--> <!--MERMAID_1--> ...
+    前端收到后替换为 <div class="mermaid"> 即可渲染。
+    """
+    mermaid_list = []
+    counter = [0]  # 用列表实现闭包引用
+
+    def replacer(m):
+        code = m.group(1).strip()
+        mermaid_list.append(code)
+        placeholder = f'<!--MERMAID_{counter[0]}-->'
+        counter[0] += 1
+        return placeholder
+
+    # 匹配 ```mermaid ... ``` 代码块
+    article_text = _re_mermaid.sub(
+        r'```mermaid\s*\n(.*?)```',
+        replacer,
+        content,
+        flags=_re_mermaid.DOTALL
+    )
+
+    return {
+        "article_text": article_text,
+        "mermaid_list": mermaid_list,
+    }
+
+
+def inject_mermaid_placeholders(article_text: str, mermaid_list: list) -> str:
+    """
+    将 mermaid 代码列表注入回正文中的占位标记位置。
+    用于前端渲染前重组内容。
+    返回完整的 HTML（占位标记替换为 <div class=\"mermaid\">）。
+    """
+    result = article_text
+    for i, code in enumerate(mermaid_list):
+        placeholder = f'<!--MERMAID_{i}-->'
+        # 包裹为 mermaid 可渲染的 div
+        # 前端 mermaid-js 会自动渲染 .mermaid 类的 div
+        result = result.replace(placeholder, f'<div class="mermaid">\n{code}\n</div>')
+    return result
 from config import RESOURCES_PATH
 
 def load_resources():
@@ -334,16 +443,21 @@ def _inject_cached_images(content: str, allowed_hashes: set = None) -> str:
 
 
 def _read_material_file(rel_path: str, tag: str, allowed_hashes: set = None) -> dict:
-    """读取Markdown文件内容，自动注入已缓存的配图"""
+    """读取Markdown文件内容，自动注入已缓存的配图，并提取Mermaid代码"""
     full_path = _os.path.join(MATERIALS_BASE_DIR, rel_path)
     if _os.path.exists(full_path):
         try:
             with open(full_path, 'r', encoding='utf-8') as f:
                 content = f.read()
+            content = _wrap_naked_mermaid(content)  # 后端统一包裹裸露的 flowchart
             content = _inject_cached_images(content, allowed_hashes=allowed_hashes)
+            # 提取 mermaid 代码块（正文分离 + 独立列表）
+            extracted = extract_mermaid_blocks(content)
             return {
                 "found": True,
-                "content": content,
+                "content": content,  # 保留原始完整内容（兼容旧版前端）
+                "article_text": extracted["article_text"],
+                "mermaid_code_list": extracted["mermaid_list"],
                 "file_path": rel_path,
                 "matched_tag": tag,
                 "format": "markdown"
@@ -528,6 +642,7 @@ async def search_and_curate_material(user_id: int, knowledge: str) -> dict:
         )
 
         if curated_content and not curated_content.startswith("LLM调用异常"):
+            curated_content = _wrap_naked_mermaid(curated_content)
             return {
                 "found": True,
                 "content": curated_content,
