@@ -39,7 +39,6 @@
           <template #header>
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div style="display:flex;align-items:center;gap:8px">
-                <span style="font-size:18px">📚</span>
                 <span style="font-weight:700;color:#1a1a2e">电子书</span>
                 <el-tag size="small" type="info">{{ pdfs.length }}本</el-tag>
               </div>
@@ -70,9 +69,9 @@
           <!-- 上传状态 -->
           <div v-if="uploadTasks.length > 0" style="margin-bottom:12px">
             <div v-for="t in uploadTasks" :key="t.name" style="font-size:12px;padding:4px 0;color:#909399">
-              <span v-if="t.status==='uploading'">⏳ {{ t.name }}</span>
-              <span v-else-if="t.status==='done'" style="color:#67C23A">✅ {{ t.name }}</span>
-              <span v-else-if="t.status==='error'" style="color:#F56C6C">❌ {{ t.name }}: {{ t.err }}</span>
+              <span v-if="t.status==='uploading'">{{ t.name }}</span>
+              <span v-else-if="t.status==='done'" style="color:#67C23A">{{ t.name }}</span>
+              <span v-else-if="t.status==='error'" style="color:#F56C6C">{{ t.name }}: {{ t.err }}</span>
             </div>
           </div>
 
@@ -84,7 +83,7 @@
             <el-checkbox :model-value="selectedPdfs.has(pdf.id)" @change="(v) => togglePdfSelect(pdf.id, v)" style="flex-shrink:0" />
             <div class="pdf-cover" @click="openPdf(pdf)">
               <img v-if="pdf.cover" :src="`/api/resources/pdf/cover/${pdf.id}`" class="cover-img" />
-              <span v-else class="pdf-icon">📄</span>
+              <span v-else class="pdf-icon">PDF</span>
             </div>
             <div class="pdf-info">
               <div class="pdf-name" :title="pdf.name">{{ pdf.name }}</div>
@@ -161,12 +160,12 @@ function togglePdfSelect(id, checked) {
 }
 
 const moduleList = [
-  { key: '模块一：智能体基础通识', label: '模块一：智能体基础通识', icon: '🤖' },
-  { key: '模块二：大模型与提示词工程', label: '模块二：大模型与提示词工程', icon: '🧠' },
-  { key: '模块三：智能体四大核心能力模块', label: '模块三：智能体四大核心能力模块', icon: '⚙️' },
-  { key: '模块四：开发框架与工程实践', label: '模块四：开发框架与工程实践', icon: '🔧' },
-  { key: '模块五：多智能体系统', label: '模块五：多智能体系统', icon: '🤝' },
-  { key: '模块六：评估、安全与前沿拓展', label: '模块六：评估、安全与前沿拓展', icon: '🛡️' }
+  { key: '模块一：智能体基础通识', label: '模块一：智能体基础通识', icon: '' },
+  { key: '模块二：大模型与提示词工程', label: '模块二：大模型与提示词工程', icon: '' },
+  { key: '模块三：智能体四大核心能力模块', label: '模块三：智能体四大核心能力模块', icon: '' },
+  { key: '模块四：开发框架与工程实践', label: '模块四：开发框架与工程实践', icon: '' },
+  { key: '模块五：多智能体系统', label: '模块五：多智能体系统', icon: '' },
+  { key: '模块六：评估、安全与前沿拓展', label: '模块六：评估、安全与前沿拓展', icon: '' }
 ]
 
 const moduleGroups = computed(() => {
@@ -306,7 +305,7 @@ async function openResource(resource) {
             return mermaidCode
           }
           // 无法识别 → 隐藏，不显示乱码 ASCII
-          return '\n\n> ⚠️ *此结构图暂未适配 Mermaid，如需显示请联系管理员转换。*\n\n'
+          return '\n\n> *此结构图暂未适配 Mermaid，如需显示请联系管理员转换。*\n\n'
         }
         return m
       })
@@ -348,8 +347,8 @@ async function openResource(resource) {
         if (first.length > 120) first = first.substring(0, 120) + '...'
         var card = '<div class="prompt-card" data-pid="' + i + '" style="margin:24px 0;border-radius:10px;overflow:hidden;background:#fff;border:1px solid #d4e6ff;box-shadow:0 1px 8px rgba(64,158,255,0.06)">' +
           '<div style="display:flex;align-items:center;gap:8px;padding:10px 18px;background:linear-gradient(135deg,#eef6ff,#e3f0ff)">' +
-            '<span style="font-size:18px">🖼️</span><span style="font-weight:600;color:#2c6fce;font-size:13px">配图</span>' +
-            '<button class="gen-btn" data-pid="' + i + '" style="margin-left:auto;padding:5px 14px;background:#409EFF;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer">✨ 生成</button>' +
+            '<span style="font-size:18px">️</span><span style="font-weight:600;color:#2c6fce;font-size:13px">配图</span>' +
+            '<button class="gen-btn" data-pid="' + i + '" style="margin-left:auto;padding:5px 14px;background:#409EFF;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer"> 生成</button>' +
           '</div>' +
           '<div style="padding:14px 18px">' +
             '<div class="img-result" data-pid="' + i + '" style="display:none;margin-bottom:12px;text-align:center"></div>' +
@@ -377,15 +376,15 @@ async function openResource(resource) {
           if (f2.length > 120) f2 = f2.substring(0, 120) + '...'
           hidden += '<div class="prompt-card" data-pid="' + j + '" style="margin:16px 0;border-radius:10px;overflow:hidden;background:#fff;border:1px solid #d4e6ff;box-shadow:0 1px 8px rgba(64,158,255,0.06)">' +
             '<div style="display:flex;align-items:center;gap:8px;padding:10px 18px;background:linear-gradient(135deg,#eef6ff,#e3f0ff)">' +
-              '<span style="font-size:18px">🖼️</span><span style="font-weight:600;color:#2c6fce;font-size:13px">配图</span>' +
-              '<button class="gen-btn" data-pid="' + j + '" style="margin-left:auto;padding:5px 14px;background:#409EFF;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer">✨ 生成</button>' +
+              '<span style="font-size:18px">️</span><span style="font-weight:600;color:#2c6fce;font-size:13px">配图</span>' +
+              '<button class="gen-btn" data-pid="' + j + '" style="margin-left:auto;padding:5px 14px;background:#409EFF;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer"> 生成</button>' +
             '</div>' +
             '<div style="padding:14px 18px">' +
               '<div class="img-result" data-pid="' + j + '" style="display:none;margin-bottom:12px;text-align:center"></div>' +
               '<p style="margin:0 0 10px;font-size:13px;color:#444;line-height:1.7">' + f2 + '</p>' +
             '</div></div>'
         }
-        html += '<details style="margin-top:24px"><summary style="cursor:pointer;font-size:14px;color:#409EFF;font-weight:600">📋 更多配图 (+' + (counter - maxShow) + '条)</summary>' + hidden + '</details>'
+        html += '<details style="margin-top:24px"><summary style="cursor:pointer;font-size:14px;color:#409EFF;font-weight:600"> 更多配图 (+' + (counter - maxShow) + '条)</summary>' + hidden + '</details>'
       }
       dialogContent.value = html
       // 分页渲染
@@ -450,7 +449,7 @@ async function loadCached() {
             if (div && btn) {
               div.innerHTML = '<div style="text-align:center;padding:12px;background:#fafbfc;border-radius:6px;overflow:hidden;max-height:800px"><img src="' + item.url + '" style="max-width:100%;height:auto;display:block" onerror="this.parentElement.innerHTML=\'加载失败\'" /></div>'
               div.style.display = 'block'
-              btn.textContent = '✅'
+              btn.textContent = ''
               btn.style.background = '#67C23A'
             }
           }
@@ -474,7 +473,7 @@ async function genImage(btn, pid) {
   var card = btn.closest('.prompt-card')
   var resultDiv = card.querySelector('.img-result')
   btn.disabled = true
-  btn.textContent = '⏳...'
+  btn.textContent = '...'
   btn.style.background = '#909399'
   try {
     var resp = await fetch('/api/images/generate?prompt=' + encodeURIComponent(prompt), {
@@ -488,16 +487,16 @@ async function genImage(btn, pid) {
       svg = svg.replace('<svg', '<svg width="100%" style="max-width:100%;height:auto;display:block"')
       resultDiv.innerHTML = '<div style="text-align:center;padding:12px;background:#fafbfc;border-radius:6px;overflow:hidden;max-height:800px">' + svg + '</div>'
       resultDiv.style.display = 'block'
-      btn.textContent = '🔄'
+      btn.textContent = ''
       btn.style.background = '#67C23A'
     } else {
-      btn.textContent = '❌'
+      btn.textContent = ''
       btn.style.background = '#F56C6C'
       resultDiv.style.display = 'block'
       resultDiv.innerHTML = '<div style="text-align:center;padding:20px;color:#F56C6C">' + (data.message || '失败') + '</div>'
     }
   } catch(e) {
-    btn.textContent = '❌'
+    btn.textContent = ''
     btn.style.background = '#F56C6C'
   }
   btn.disabled = false

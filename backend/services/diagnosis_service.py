@@ -55,7 +55,6 @@ def get_user_knowledge_profile(user_id: int) -> dict:
         "SELECT knowledge_tag FROM error_questions WHERE user_id = ?",
         (user_id,)
     ).fetchall()
-    conn.close()
 
     all_tags = get_all_tags_flat()
     tag_names = [t["name"] for t in all_tags]
@@ -71,8 +70,9 @@ def get_user_knowledge_profile(user_id: int) -> dict:
     # 反过来：标签名 → 分类名
     tag_to_category = {t["name"]: t["category"] for t in all_tags}
 
-    # 初始化掌握度
-    mastery = {name: 0.5 for name in tag_names}
+    # 初始化掌握度（默认 0 = 无数据）
+    mastery = {name: 0.0 for name in tag_names}
+    has_data = {name: False for name in tag_names}  # 追踪哪些标签有真实数据
 
     # ---- 第1步：从 AI 报告提取 mastery ----
     for q in quizzes:
@@ -87,10 +87,12 @@ def get_user_knowledge_profile(user_id: int) -> dict:
             # 直接匹配标签名
             if name in mastery:
                 mastery[name] = score
+                has_data[name] = True
             # 分类名 → 映射到该分类下所有标签
             elif name in category_to_tags:
                 for tag_name in category_to_tags[name]:
                     mastery[tag_name] = score
+                    has_data[tag_name] = True
 
     # ---- 第2步：从历史做题数据计算正确率 ----
     # 统计各标签的答对数和总题数
@@ -126,13 +128,18 @@ def get_user_knowledge_profile(user_id: int) -> dict:
             for sub_tag in category_to_tags[tag_name]:
                 total += tag_total.get(sub_tag, 0)
                 correct += tag_correct.get(sub_tag, 0)
+        if total >= 1:
+            # 只要做过题就标记有数据（即使只有1题）
+            if not has_data.get(tag_name, False):
+                has_data[tag_name] = True
         if total >= 2:  # 至少 2 题才有统计意义
             rate = correct / total
             # 只在 AI 报告未覆盖时用正确率更新（AI 报告优先）
-            if mastery[tag_name] == 0.5:
+            if not has_data.get(tag_name, False):
                 mastery[tag_name] = round(rate, 2)
+                has_data[tag_name] = True
             # AI 报告是分类级数据时，也合并正确率
-            elif mastery.get(tag_name, 0.5) < rate:
+            elif mastery.get(tag_name, 0.0) < rate:
                 mastery[tag_name] = round(rate, 2)
 
     # ---- 第3步：错题惩罚 ----
@@ -147,9 +154,73 @@ def get_user_knowledge_profile(user_id: int) -> dict:
         if err_cnt == 0 and tag_name in category_to_tags:
             for sub_tag in category_to_tags[tag_name]:
                 err_cnt += error_counts.get(sub_tag, 0)
-        if err_cnt > 0:
+        if err_cnt > 0 and has_data.get(tag_name, False):
             penalty = err_cnt * 0.03
-            mastery[tag_name] = max(0.1, round(mastery[tag_name] - penalty, 2))
+            mastery[tag_name] = max(0.0, round(mastery[tag_name] - penalty, 2))
+
+    # ---- 第4步：代码练习完成度 ----
+    # 模块号 → 分类名的映射
+    module_to_categories = {
+        1: ["智能体基础概念"],
+        2: ["大模型基座原理", "提示词工程"],
+        3: ["智能体算法逻辑"],
+        4: ["智能体框架开发"],
+        5: ["多智能体应用"],
+        6: [],  # 模块六暂无独立知识标签
+    }
+
+    # 读取代码提交记录，按模块聚合完成率
+    code_rows = conn.execute(
+        "SELECT exercise_id, passed, total FROM code_submissions WHERE user_id = ?",
+        (user_id,)
+    ).fetchall()
+
+    # 按模块统计代码完成情况：{ module_num: (passed_count, total_count) }
+    module_code_stats = {i: [0, 0] for i in range(1, 7)}
+    import re as _re2
+    for row in code_rows:
+        eid = row["exercise_id"]
+        m = _re2.match(r"(\d+)-\d+", eid)
+        if not m:
+            continue
+        mod_num = int(m.group(1))
+        if mod_num not in module_code_stats:
+            continue
+        module_code_stats[mod_num][0] += 1 if row["passed"] else 0
+        module_code_stats[mod_num][1] += 1
+
+    # 将模块完成率映射到知识标签
+    code_mastery = {}  # { tag_name: completion_rate }
+    code_has_data = {}  # { tag_name: bool }
+    for mod_num, cats in module_to_categories.items():
+        passed, total = module_code_stats[mod_num]
+        if total == 0:
+            continue
+        rate = round(passed / total, 2)
+        for cat in cats:
+            if cat in category_to_tags:
+                for tag_name in category_to_tags[cat]:
+                    code_mastery[tag_name] = rate
+                    code_has_data[tag_name] = True
+
+    # 合并代码完成度与做题正确率（各占50%）
+    for tag_name in tag_names:
+        quiz_score = mastery.get(tag_name, 0.0)
+        code_score = code_mastery.get(tag_name)
+        has_quiz = has_data.get(tag_name, False)
+        has_code = code_has_data.get(tag_name, False)
+
+        if has_quiz and has_code:
+            # 两种数据都有 → 各占50%
+            mastery[tag_name] = round(quiz_score * 0.5 + code_score * 0.5, 2)
+            has_data[tag_name] = True
+        elif has_code and not has_quiz:
+            # 只有代码数据 → 代码完成度 × 0.8（纯代码没有做题验证，稍微打折）
+            mastery[tag_name] = round(code_score * 0.8, 2)
+            has_data[tag_name] = True
+        # has_quiz only → 保持原值不变
+
+    conn.close()
 
     # ---- 薄弱点 / 强项 ----
     weak_points_by_category = {}
@@ -163,12 +234,13 @@ def get_user_knowledge_profile(user_id: int) -> dict:
         cat = t["category"]
         if cat not in cat_mastery:
             cat_mastery[cat] = []
-        cat_mastery[cat].append(mastery.get(t["name"], 0.5))
+        cat_mastery[cat].append(mastery.get(t["name"], 0.0))
     cat_avg_mastery = {cat: round(sum(s) / len(s), 2) for cat, s in cat_mastery.items()}
     strong_points = [cat for cat, _ in sorted(cat_avg_mastery.items(), key=lambda x: -x[1])[:5]]
 
     return {
         "mastery": mastery,
+        "has_data": has_data,
         "weak_points": weak_points,
         "strong_points": strong_points,
         "error_tags": error_counts,
@@ -272,7 +344,7 @@ async def submit_quiz(session_id: int, user_id: int, answers: list) -> dict:
     questions = json.loads(session["questions_json"])
 
     # 批改
-    correct_count = 0
+    total_score = 0.0
     answer_details = []
     error_questions = []
 
@@ -285,37 +357,86 @@ async def submit_quiz(session_id: int, user_id: int, answers: list) -> dict:
             continue
 
         correct_answer = question.get("answer", "").strip()
-        # 使用更灵活的答案比较：忽略大小写和空白差异，支持部分匹配
-        is_correct = _compare_answers(ua, correct_answer, question.get("question_type", ""))
+        qtype = question.get("question_type", "")
+        question_text = question.get("question", "")
 
-        if is_correct:
-            correct_count += 1
-        else:
-            # 判断错误类型
-            error_type = classify_error_type(ua, correct_answer, question.get("question_type", ""))
-            error_questions.append({
+        # ── 简答题：LLM 语义判分（支持部分得分）──
+        if qtype == "简答":
+            try:
+                q_score, feedback, judge_detail = await _judge_short_answer(
+                    ua, correct_answer, question_text,
+                    full_score=1, user_id=user_id
+                )
+            except Exception as e:
+                print(f"[submit_quiz] 简答 LLM 判分失败，回退关键词匹配: {e}")
+                q_score, feedback, judge_detail = _fallback_keyword_score(ua, correct_answer, 1)
+
+            total_score += q_score
+            is_correct = q_score >= 1  # 满分才算全对
+
+            answer_details.append({
                 "question_id": qid,
-                "question": question.get("question", ""),
-                "question_type": question.get("question_type", ""),
-                "options": question.get("options", []),
                 "user_answer": ua,
                 "correct_answer": correct_answer,
-                "error_type": error_type,
+                "is_correct": is_correct,
+                "score": q_score,
+                "full_score": 1,
+                "question_type": qtype,
                 "knowledge_tag": question.get("knowledge_tag", ""),
-                "analysis": question.get("analysis", ""),
                 "difficulty": question.get("difficulty", ""),
-                "option_analysis": question.get("option_analysis", {})
+                "llm_feedback": feedback,
+                "judge_detail": judge_detail,
             })
 
-        answer_details.append({
-            "question_id": qid,
-            "user_answer": ua,
-            "correct_answer": correct_answer,
-            "is_correct": is_correct,
-            "question_type": question.get("question_type", ""),
-            "knowledge_tag": question.get("knowledge_tag", ""),
-            "difficulty": question.get("difficulty", "")
-        })
+            if not is_correct:
+                error_type = "知识点遗漏" if q_score == 0 else "概念认知偏差"
+                error_questions.append({
+                    "question_id": qid,
+                    "question": question_text,
+                    "question_type": qtype,
+                    "options": question.get("options", []),
+                    "user_answer": ua,
+                    "correct_answer": correct_answer,
+                    "error_type": error_type,
+                    "knowledge_tag": question.get("knowledge_tag", ""),
+                    "analysis": question.get("analysis", ""),
+                    "difficulty": question.get("difficulty", ""),
+                    "option_analysis": question.get("option_analysis", {}),
+                    "llm_feedback": feedback,
+                })
+        else:
+            # ── 客观题：沿用原有精确匹配逻辑 ──
+            is_correct = _compare_answers(ua, correct_answer, qtype)
+            q_score = 1.0 if is_correct else 0.0
+            total_score += q_score
+
+            answer_details.append({
+                "question_id": qid,
+                "user_answer": ua,
+                "correct_answer": correct_answer,
+                "is_correct": is_correct,
+                "score": q_score,
+                "full_score": 1,
+                "question_type": qtype,
+                "knowledge_tag": question.get("knowledge_tag", ""),
+                "difficulty": question.get("difficulty", ""),
+            })
+
+            if not is_correct:
+                error_type = classify_error_type(ua, correct_answer, qtype)
+                error_questions.append({
+                    "question_id": qid,
+                    "question": question_text,
+                    "question_type": qtype,
+                    "options": question.get("options", []),
+                    "user_answer": ua,
+                    "correct_answer": correct_answer,
+                    "error_type": error_type,
+                    "knowledge_tag": question.get("knowledge_tag", ""),
+                    "analysis": question.get("analysis", ""),
+                    "difficulty": question.get("difficulty", ""),
+                    "option_analysis": question.get("option_analysis", {})
+                })
 
     # 将未作答的题目也加入错题本
     answered_qids = {a.get("question_id", "") for a in answers}
@@ -345,9 +466,9 @@ async def submit_quiz(session_id: int, user_id: int, answers: list) -> dict:
                 "difficulty": question.get("difficulty", "")
             })
 
-    score = correct_count
+    score = int(round(total_score))
     total = len(questions)
-    correct_rate = score / total if total > 0 else 0
+    correct_rate = total_score / total if total > 0 else 0
 
     # 保存错题到错题本
     for eq in error_questions:
@@ -416,8 +537,161 @@ async def submit_quiz(session_id: int, user_id: int, answers: list) -> dict:
         "report": report
     }
 
+# ── LLM 语义判分 Prompt ────────────────────────────────────────
+# 设计思路：
+#   1. 让 LLM 先拆解标准答案为若干"得分要点"，每个要点是一个独立的知识点或判断维度
+#   2. 逐一比对学生的回答是否"覆盖"了每个要点
+#   3. "覆盖"的定义是语义等价，不是字面匹配——同义词、语序颠倒、口语化转述都算命中
+#   4. 只有概念理解错误、完全没提到该要点时才判定为未命中
+#   5. 得分 = 命中要点数 ÷ 总要点数 × 题目满分，结果取整
+#   6. 要求 LLM 必须返回 JSON，方便程序解析；增加格式约束防止多余文本
+#   7. 阈值：当学生回答与标准要点的语义相似度 > 70% 时判定命中
+
+SHORT_ANSWER_JUDGE_PROMPT = """你是一位严格但公正的阅卷老师。你的任务是评判学生简答题的得分。
+
+【评分规则 — 务必遵守】
+1. 先把"标准答案"拆解为若干个独立的得分要点（core_points），每个要点 10 字以上、表达一个完整的知识点
+2. 逐一检查学生的回答是否覆盖了每个要点
+3. "覆盖"的判定标准（重要！）：
+   - 学生用自己的话转述、同义词替换、语序调整 → 只要核心意思一致 → 算命中
+   - 学生回答中有该要点的关键信息，即使表述不完整 → 语义相似度 > 70% → 算命中
+   - 只有学生完全没提到该要点、或理解完全错误 → 才算未命中
+4. 不要因为学生用词不够专业、句子不够通顺而扣分
+5. 最终得分 = 命中要点数 ÷ 总要点数 × 题目满分（{full_score} 分），结果四舍五入取整数
+
+【输出格式 — 必须严格遵守】
+只输出一个 JSON 对象，不要有任何其他文字：
+{{
+  "core_points": ["要点1：xxx", "要点2：xxx"],
+  "hit_points": ["命中的要点原文"],
+  "score": 整数得分,
+  "feedback": "简短评语（30字内），指出命中了哪些要点、哪些缺失"
+}}
+
+【题目】
+{question_text}
+
+【标准答案】
+{correct_answer}
+
+【学生回答】
+{user_answer}
+
+请立即输出 JSON："""
+
+
+async def _judge_short_answer(user_answer: str, correct_answer: str,
+                               question_text: str = "", full_score: int = 1,
+                               user_id: int = 1) -> tuple[int, str, dict]:
+    """
+    LLM 语义判分——简答题专用。
+
+    返回:
+        (score, feedback, detail)
+        - score: 0 ~ full_score 之间的整数
+        - feedback: 简短评语
+        - detail: {"core_points": [...], "hit_points": [...], "raw_score": int}
+    """
+    if not user_answer or not user_answer.strip():
+        return 0, "未作答", {"core_points": [], "hit_points": [], "raw_score": 0}
+
+    if not correct_answer or not correct_answer.strip():
+        return full_score, "", {"core_points": [], "hit_points": [], "raw_score": full_score}
+
+    # 极短答案（< 3 字）回退到快速判断
+    ua = user_answer.strip()
+    if len(ua) < 3:
+        ca = correct_answer.strip()
+        if ua in ca or ca in ua:
+            return full_score, "答案正确", {"core_points": [], "hit_points": [], "raw_score": full_score}
+        return 0, "答案过短，无法判定为正确", {"core_points": [], "hit_points": [], "raw_score": 0}
+
+    prompt = SHORT_ANSWER_JUDGE_PROMPT.format(
+        question_text=question_text or "（见上文）",
+        correct_answer=correct_answer,
+        user_answer=user_answer,
+        full_score=full_score,
+    )
+
+    try:
+        raw = await asyncio.wait_for(
+            call_llm(user_id, [{"role": "user", "content": prompt}],
+                     temperature=0.1, max_tokens=600),
+            timeout=20.0
+        )
+    except asyncio.TimeoutError:
+        # 超时 → 回退到关键词匹配
+        return _fallback_keyword_score(user_answer, correct_answer, full_score)
+    except Exception as e:
+        print(f"[_judge_short_answer] LLM 调用失败: {e}")
+        return _fallback_keyword_score(user_answer, correct_answer, full_score)
+
+    # 解析 JSON
+    try:
+        result = extract_json_object(raw)
+    except Exception:
+        # 尝试从原始回复中提取 JSON
+        import re as _re2
+        m = _re2.search(r'\{[^{}]*"core_points"[^{}]*\}', raw, _re2.DOTALL)
+        if m:
+            try:
+                result = json.loads(m.group())
+            except Exception:
+                return _fallback_keyword_score(user_answer, correct_answer, full_score)
+        else:
+            return _fallback_keyword_score(user_answer, correct_answer, full_score)
+
+    # 校验并规范化
+    core_points = result.get("core_points", [])
+    hit_points = result.get("hit_points", [])
+    raw_score = result.get("score", 0)
+    feedback = result.get("feedback", "")
+
+    # 合理性校验：得分不能超过满分
+    if isinstance(raw_score, (int, float)):
+        score = max(0, min(full_score, int(round(raw_score))))
+    else:
+        score = 0
+
+    # 如果没有提取到要点，回退
+    if not core_points:
+        return _fallback_keyword_score(user_answer, correct_answer, full_score)
+
+    detail = {
+        "core_points": core_points,
+        "hit_points": hit_points,
+        "raw_score": score,
+    }
+
+    return score, feedback, detail
+
+
+def _fallback_keyword_score(user_answer: str, correct_answer: str, full_score: int) -> tuple:
+    """
+    兜底方案：LLM 不可用时用关键词匹配估算分数。
+    返回 (score, feedback, detail)
+    """
+    import re as _re3
+    ca_keywords = _re3.findall(r'[一-鿿]{2,}', correct_answer)
+    if not ca_keywords:
+        return 0, "", {"core_points": [], "hit_points": [], "raw_score": 0}
+
+    matches = sum(1 for kw in ca_keywords if kw in user_answer)
+    ratio = matches / len(ca_keywords)
+    score = int(round(ratio * full_score))
+    return score, f"（自动判分：关键词匹配率 {int(ratio * 100)}%）", {
+        "core_points": ca_keywords,
+        "hit_points": [kw for kw in ca_keywords if kw in user_answer],
+        "raw_score": score,
+    }
+
+
+# 为了在同步上下文中使用，需要 asyncio
+import asyncio
+
+
 def _compare_answers(user_answer: str, correct_answer: str, question_type: str) -> bool:
-    """灵活的答案比较，支持忽略大小写/空白差异"""
+    """灵活的答案比较——简答题已迁移至 LLM 语义判分，此函数仅处理客观题"""
     if not user_answer or not correct_answer:
         return False
 
@@ -430,32 +704,32 @@ def _compare_answers(user_answer: str, correct_answer: str, question_type: str) 
 
     # 填空题：更严格的匹配（短答案需要精确匹配）
     if question_type == "填空":
-        # 去除标点符号后比较
         import re
         ua_clean = re.sub(r'[^\w一-鿿]', '', ua)
         ca_clean = re.sub(r'[^\w一-鿿]', '', ca)
         if ua_clean == ca_clean:
             return True
-        # 允许单字差异（如"通义晓蜜" vs "通义晓蜜大模型"）
         if len(ca_clean) >= 3 and (ca_clean in ua_clean or ua_clean in ca_clean):
             return True
         return False
 
-    # 对于简答题，检查用户答案是否包含正确答案的关键内容
-    # 提取正确答案中的关键内容（去除非中文/英文的噪音字符）
-    import re
-    # 提取中文字符序列作为关键词
-    ca_keywords = re.findall(r'[一-鿿]{2,}', correct_answer)
-    if ca_keywords:
-        matches = sum(1 for kw in ca_keywords if kw in ua)
-        if matches >= len(ca_keywords) * 0.5:  # 至少50%关键词匹配
-            return True
-
     # 对于选择题/判断题，只要答案核心内容匹配即可
     if question_type in ["单选", "多选", "判断"]:
+        import re
         ua_clean = re.sub(r'\s+', '', ua)
         ca_clean = re.sub(r'\s+', '', ca)
         return ua_clean == ca_clean
+
+    # 简答题 → 由 LLM 语义判分（_judge_short_answer），此处不再用关键词匹配
+    # 如果在 submit_quiz 中未调用 LLM（回退路径），则用原有关键词逻辑兜底
+    if question_type == "简答":
+        import re
+        ca_keywords = re.findall(r'[一-鿿]{2,}', correct_answer)
+        if ca_keywords:
+            matches = sum(1 for kw in ca_keywords if kw in ua)
+            if matches >= len(ca_keywords) * 0.5:
+                return True
+        return False
 
     return False
 

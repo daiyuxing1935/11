@@ -32,6 +32,7 @@ export const useStatStore = defineStore('statistics', () => {
   // ===== 图表 =====
   const weeklyStats = ref([])
   const knowledgeMastery = ref({})
+  const masteryHasData = ref({})  // 哪些标签有真实数据（非默认值）
 
   // ===== 动态 =====
   const recentActivity = ref([])
@@ -46,6 +47,76 @@ export const useStatStore = defineStore('statistics', () => {
 
   // ===== 计算 =====
   const hasMasteryData = computed(() => Object.keys(knowledgeMastery.value).length > 0)
+
+  // ===== 知识点 → 模块映射 =====
+  // 将后端返回的细粒度知识点掌握度聚合为六大模块
+  const moduleNames = [
+    '模块一：智能体基础通识',
+    '模块二：大模型基座与提示词',
+    '模块三：智能体核心能力',
+    '模块四：智能体框架开发',
+    '模块五：多智能体应用',
+    '模块六：评估与安全前沿',
+  ]
+
+  const tagToModule = {
+    // 模块一：智能体基础通识
+    'AI智能体定义': 0, '智能体核心特征': 0, '智能体分类': 0,
+    '智能体与大模型区别': 0, '智能体应用边界': 0, '智能体架构设计': 0,
+    // 模块二：大模型基座与提示词
+    'LLM上下文窗口': 1, 'Transformer架构': 1, '预训练与微调': 1,
+    '模型参数能力': 1, '推理机制': 1, '模型局限性': 1,
+    '零样本提示': 1, '角色提示': 1, '少样本提示': 1,
+    '结构化输出提示': 1, '思维链Prompt': 1, 'Prompt优化技巧': 1,
+    // 模块三：智能体核心能力
+    '任务拆解逻辑': 2, '推理链路算法': 2, '知识检索增强': 2,
+    '自主决策算法': 2, '反思迭代机制': 2, '强化学习与智能体': 2,
+    // 模块四：智能体框架开发
+    '框架基础': 3, 'Agent运行机制': 3, '记忆模块': 3,
+    '行动-工具调用FunctionCalling': 3, '规划-任务分解': 3, '多模态智能体': 3,
+    // 模块五：多智能体应用
+    '场景落地实践': 4, '多Agent协作': 4, '分工机制': 4,
+    '通信协议设计': 4, '冲突解决逻辑': 4, '多智能体系统架构': 4,
+    // 模块六：评估与安全前沿（暂无独立知识点标签，从模块六练习题完成度计算）
+  }
+
+  const moduleMastery = computed(() => {
+    const raw = knowledgeMastery.value
+    if (!raw || Object.keys(raw).length === 0) return {}
+
+    // 按模块聚合
+    const buckets = moduleNames.map(() => ({ sum: 0, count: 0 }))
+    let totalDataPoints = 0
+
+    for (const [tag, score] of Object.entries(raw)) {
+      const modIdx = tagToModule[tag]
+      if (modIdx === undefined) continue
+      const num = Number(score)
+      if (num == null || isNaN(num)) continue
+      // 优先用后端 has_data 标记；没有则回退为「分数非零」
+      const hasData = masteryHasData.value[tag]
+      if (hasData === true) { /* 有明确标记，允许 0 分 */ }
+      else if (hasData === false) continue
+      else if (num <= 0) continue  // 兜底：无标记且分数为0，视为无数据
+      buckets[modIdx].sum += num
+      buckets[modIdx].count += 1
+      totalDataPoints++
+    }
+
+    // 没有任何真实数据 → 返回空，前端显示空状态
+    if (totalDataPoints === 0) return {}
+
+    const result = {}
+    moduleNames.forEach((name, i) => {
+      if (buckets[i].count > 0) {
+        result[name] = Math.round(buckets[i].sum / buckets[i].count * 100)
+      } else {
+        result[name] = 0  // 该模块无数据
+      }
+    })
+
+    return result
+  })
 
   // ===== 调试：监听 knowledgeMastery 每次变化 =====
   watch(knowledgeMastery, (newVal, oldVal) => {
@@ -70,7 +141,8 @@ export const useStatStore = defineStore('statistics', () => {
   async function loadKnowledgeMastery() {
     const data = await fetchKnowledgeMastery()
     console.log('[statStore] 后端原始 mastery:', JSON.stringify(data).slice(0, 200))
-    knowledgeMastery.value = data
+    knowledgeMastery.value = data.mastery || data
+    masteryHasData.value = data.has_data || {}
     console.log('[statStore] Pinia mastery 已存入, 标签数:', Object.keys(knowledgeMastery.value).length)
   }
 
@@ -127,7 +199,8 @@ export const useStatStore = defineStore('statistics', () => {
     weeklyStats.value     = s.weekly_stats || []
 
     console.log('[statStore.refreshStatData] 后端原始 mastery:', JSON.stringify(masteryResult).slice(0, 200))
-    knowledgeMastery.value = masteryResult
+    knowledgeMastery.value = masteryResult.mastery || masteryResult
+    masteryHasData.value = masteryResult.has_data || {}
     console.log('[statStore.refreshStatData] Pinia mastery 已存入, 标签数:', Object.keys(knowledgeMastery.value).length)
 
     recentActivity.value  = activityResult
@@ -152,7 +225,8 @@ export const useStatStore = defineStore('statistics', () => {
       weeklyStats.value     = s.weekly_stats || []
 
       console.log('[statStore.refreshAll] 后端原始 mastery:', JSON.stringify(masteryResult).slice(0, 200))
-      knowledgeMastery.value = masteryResult
+      knowledgeMastery.value = masteryResult.mastery || masteryResult
+      masteryHasData.value = masteryResult.has_data || {}
       console.log('[statStore.refreshAll] Pinia mastery 已存入, 标签数:', Object.keys(knowledgeMastery.value).length)
 
       recentActivity.value = activityResult
@@ -168,9 +242,9 @@ export const useStatStore = defineStore('statistics', () => {
 
   return {
     studyDays, totalQuestions, avgCorrectRate, quizCount, quizAvgScore, errorCount,
-    weeklyStats, knowledgeMastery, recentActivity,
+    weeklyStats, knowledgeMastery, masteryHasData, recentActivity,
     weeklyReport, monthlyReport, growthData, loading,
-    hasMasteryData,
+    hasMasteryData, moduleMastery, moduleNames,
     refreshStatData, refreshAll,
   }
 })

@@ -27,7 +27,7 @@ export async function fetchKnowledgeMastery() {
   })
   const data = await res.json()
   const profile = data.data || data
-  return profile.mastery || {}
+  return { mastery: profile.mastery || {}, has_data: profile.has_data || {} }
 }
 
 // ============ 以下为暂未对接后端的 mock（保留用于动态列表/报告，后续切换） ============

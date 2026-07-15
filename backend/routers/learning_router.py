@@ -438,29 +438,60 @@ def _extract_eval_hints(eval_code: str) -> str:
     return ""
 
 
-async def _validate_code_in_sandbox(code: str, language: str = "python") -> tuple[bool, str]:
-    """在沙箱中运行代码，返回 (是否通过, 错误信息)"""
+async def _validate_code_in_sandbox(code: str, language: str = "python",
+                                     exercise_id: str = "") -> tuple[bool, str]:
+    """在沙箱中运行代码并验证，返回 (是否通过, 错误信息)。
+
+    当提供 exercise_id 时，会注入该题目的测试驱动并用实际评测验证。
+    """
     import subprocess, tempfile, os as _os
     try:
         if language.lower() not in ("python", "py", "python3"):
             return True, ""  # 非 Python 暂不验证
 
+        # 如果代码没有 __main__ 测试入口，尝试注入测试驱动
+        test_code = code
+        has_test_driver = 'if __name__' in code or '__main__' in code
+
+        if not has_test_driver and exercise_id:
+            injected = _inject_test_driver(code, exercise_id)
+            if injected:
+                test_code = injected
+                has_test_driver = True
+
         with tempfile.TemporaryDirectory() as tmp:
             src = _os.path.join(tmp, "main.py")
             with open(src, "w", encoding="utf-8") as f:
-                f.write(code)
+                f.write(test_code)
             proc = subprocess.run(
                 ["python", src],
-                capture_output=True, text=True, timeout=15,
-                cwd=tmp
+                capture_output=True, text=True, encoding='utf-8', errors='replace',
+                timeout=15, cwd=tmp
             )
-            if proc.returncode != 0:
-                return False, f"退出码={proc.returncode}\nstderr:\n{proc.stderr[:600]}\nstdout:\n{proc.stdout[:300]}"
-            # 检查是否有实质性输出（不只是空）
             stdout = (proc.stdout or "").strip()
-            if not stdout:
-                return False, "代码运行成功但没有产生任何输出（缺少 print 或测试代码未调用）。"
-            return True, ""
+            stderr = (proc.stderr or "").strip()
+
+            if proc.returncode != 0:
+                return False, f"退出码={proc.returncode}\nstderr:\n{stderr[:600]}\nstdout:\n{stdout[:300]}"
+
+            # 如果有测试驱动，检查 [PASS]/[FAIL] 标记
+            if has_test_driver:
+                pass_count = stdout.count('[PASS]')
+                fail_count = stdout.count('[FAIL]')
+                total = pass_count + fail_count
+                if total == 0 and not stdout:
+                    return False, "代码运行成功但没有产生任何输出（缺少 print 或测试代码未调用）。"
+                if fail_count > 0 or (total == 0 and not stdout):
+                    if fail_count > 0:
+                        return False, f"测试未全部通过：{pass_count}/{total} 通过，{fail_count} 失败"
+                    if not stdout:
+                        return False, "代码运行成功但没有产生任何输出。"
+                return True, ""
+            else:
+                # 没有测试驱动，只检查是否有输出
+                if not stdout:
+                    return False, "代码运行成功但没有产生任何输出（缺少 print 或测试代码未调用）。"
+                return True, ""
     except subprocess.TimeoutExpired:
         return False, "代码执行超时（>15秒），可能存在死循环。"
     except Exception as e:
@@ -627,7 +658,8 @@ async def get_code_answer_by_problem(req: CodeAnswerByProblemRequest, current_us
             if not answer_code:
                 break  # 没有代码可验证
 
-            is_valid, validation_error = await _validate_code_in_sandbox(answer_code, req.language)
+            is_valid, validation_error = await _validate_code_in_sandbox(
+                answer_code, req.language, exercise_id=req.exercise_id)
             if is_valid:
                 result["_validated"] = True
                 break
@@ -669,7 +701,18 @@ async def evaluate_code_submission(req: CodeEvaluateRequest, current_user: dict 
         if 'if __name__' in req.code or '__main__' in req.code:
             result = _evaluate_with_embedded_tests(req.code)
         elif meta:
-            result = evaluate_code(req.code, meta)
+            # 检查 meta 测试用例是否全部无法提取期望值（expected=None）
+            test_cases = meta.get('test_cases', [])
+            if test_cases and all(tc.get('expected') is None for tc in test_cases):
+                # 降级：注入骨架代码中的测试驱动，走嵌入式测试路径
+                injected = _inject_test_driver(req.code, req.exercise_id)
+                if injected:
+                    result = _evaluate_with_embedded_tests(injected)
+                else:
+                    # 无法注入测试驱动，用原始 meta 评测（结果可能不准）
+                    result = evaluate_code(req.code, meta)
+            else:
+                result = evaluate_code(req.code, meta)
         else:
             return APIResponse(code=400, message=f"未找到习题 {req.exercise_id} 的评测配置", data=None)
 
@@ -707,7 +750,8 @@ def _evaluate_with_embedded_tests(code: str) -> dict:
                 f.write(code)
             proc = subprocess.run(
                 [_os.environ.get('PYTHON_PATH', 'python'), src],
-                capture_output=True, text=True, timeout=15, cwd=tmp
+                capture_output=True, text=True, encoding='utf-8', errors='replace',
+                timeout=15, cwd=tmp
             )
             stdout = proc.stdout or ''
             stderr = proc.stderr or ''
@@ -760,6 +804,87 @@ def _evaluate_with_embedded_tests(code: str) -> dict:
             'compile_error': f'评测异常: {str(e)}',
             'results': [], 'execution_time': round(_time.time() - start, 3)
         }
+
+
+def _inject_test_driver(user_code: str, exercise_id: str) -> str | None:
+    """当用户代码缺少 __main__ 测试入口时，从题库骨架代码中提取测试驱动并注入。
+
+    返回组合后的完整代码，如果找不到该题目的骨架代码则返回 None。
+    """
+    import json as _json, os as _os, re as _re
+
+    # 加载题库数据
+    processed_path = _os.path.join(
+        _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+        "data", "exercises_processed.json"
+    )
+    if not _os.path.exists(processed_path):
+        return None
+
+    try:
+        with open(processed_path, 'r', encoding='utf-8') as f:
+            exercises = _json.load(f)
+    except Exception:
+        return None
+
+    # 查找目标题目的骨架代码
+    skeleton_code = ""
+    for ex in exercises:
+        if ex.get('id') == exercise_id:
+            skeleton_code = ex.get('skeleton_code', '')
+            break
+
+    if not skeleton_code:
+        return None
+
+    # 从骨架代码中提取 __main__ 测试块
+    main_idx = skeleton_code.find("if __name__")
+    if main_idx < 0:
+        # 尝试匹配 "if __name__" 的各种变体
+        import re as _re2
+        m = _re2.search(r'if\s+__name__\s*==\s*[\'"]__main__[\'"]', skeleton_code)
+        if m:
+            main_idx = m.start()
+
+    if main_idx < 0:
+        return None
+
+    test_block = skeleton_code[main_idx:]
+
+    # ----- 清洗用户代码 -----
+    cleaned = user_code
+
+    # 移除 CODE_START/CODE_END 标记及其外部框架代码，只保留用户编写部分
+    start_marker = "# ==========你的代码开始=========="
+    end_marker = "# ==========你的代码结束=========="
+
+    if start_marker in cleaned:
+        start_idx = cleaned.find(start_marker) + len(start_marker)
+        end_idx = cleaned.find(end_marker)
+        if end_idx > start_idx:
+            cleaned = cleaned[start_idx:end_idx].strip()
+        else:
+            # 结束标记缺失，取开始标记之后的所有内容
+            cleaned = cleaned[start_idx:].strip()
+
+    # 如果用户代码中已有 __main__ 块，移除它（避免重复定义）
+    # 使用同样的检测逻辑
+    existing_main_idx = cleaned.find("if __name__")
+    if existing_main_idx < 0:
+        import re as _re3
+        m = _re3.search(r'if\s+__name__\s*==\s*[\'"]__main__[\'"]', cleaned)
+        if m:
+            existing_main_idx = m.start()
+
+    if existing_main_idx >= 0:
+        # 确保 __main__ 不在字符串或注释中（简单检测：前面没有未闭合的引号）
+        before = cleaned[:existing_main_idx]
+        if before.count("'''") % 2 == 0 and before.count('"""') % 2 == 0:
+            cleaned = cleaned[:existing_main_idx].strip()
+
+    # 组合：用户代码 + 测试驱动
+    combined = cleaned + "\n\n" + test_block
+    return combined
 
 
 def _load_exercise_test_meta(exercise_id: str) -> dict | None:

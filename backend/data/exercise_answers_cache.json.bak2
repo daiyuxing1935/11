@@ -31,7 +31,7 @@
   },
   "1-6": {
     "approach": "智能体的辅助特征：记忆能力与学习能力",
-    "answer_code": "def assess_agent_level(features_dict):\n    \"\"\"根据所有特征评分判断智能体等级\"\"\"\n    core = [\"Autonomy\", \"Perception\", \"Reasoning\", \"Planning\", \"Action\"]\n    if any(features_dict.get(k, 0) < 60 for k in core):\n        return \"L1-基础\"\n    memory = features_dict.get(\"Memory\", 0)\n    learning = features_dict.get(\"Learning\", 0)\n    if memory >= 60 and learning >= 60:\n        return \"L3-高级\"\n    return \"L2-标准\"",
+    "answer_code": "def assess_agent_level(features_dict):\n    \"\"\"根据所有特征评分判断智能体等级\"\"\"\n    core = [\"Autonomy\", \"Perception\", \"Reasoning\", \"Planning\", \"Action\"]\n    if any(features_dict.get(k, 0) < 60 for k in core):\n        return \"L1-基础\"\n    memory = features_dict.get(\"Memory\", 0)\n    learning = features_dict.get(\"Learning\", 0)\n    if memory >= 60 and learning >= 60:\n        return \"L3-高阶\"\n    return \"L2-标准\"",
     "explanations": [],
     "_validated": true
   },
@@ -43,7 +43,7 @@
   },
   "1-8": {
     "approach": "基于记忆与目标导向智能体的工作原理",
-    "answer_code": "class GoalBasedAgent:\n    def __init__(self, initial_state, goal_state):\n        self.state = initial_state\n        self.goal = goal_state\n        self.history = []\n\n    def perceive(self, observation):\n        self.history.append(observation)\n        return f\"已处理输入: {observation}\"\n\n    def decide(self):\n        if self.state != self.goal:\n            return f\"前往{self.goal}\"\n        return \"Stay\"\n\n    def act(self, action):\n        if action.startswith(\"Move to\"):\n            self.state = action.replace(\"Move to \", \"\").strip().replace(\"Move to \", \"\").strip()\n        return f\"执行: {action}\"",
+    "answer_code": "class GoalBasedAgent:\n    def __init__(self, initial_state, goal_state):\n        self.state = initial_state\n        self.goal = goal_state\n        self.history = []\n\n    def perceive(self, observation):\n        self.history.append(observation)\n        return f\"已处理输入: {observation}\"\n\n    def decide(self):\n        if self.state != self.goal:\n            return f\"前往{self.goal}\"\n        return \"Stay\"\n\n    def act(self, action):\n        if action.startswith(\"Move to\"):\n            self.state = action.replace(\"Move to \", \"\").strip()\n        return f\"执行: {action}\"",
     "explanations": [],
     "_validated": true
   },
@@ -61,7 +61,7 @@
   },
   "2-2": {
     "approach": "预训练与指令微调",
-    "answer_code": "def simulate_finetune_effect(base_model_knowledge, instruction_data):\n    \"\"\"模拟指令微调：对 instruction_data 中出现的词提高概率（每个词最多提升一次）\"\"\"\n    result = dict(base_model_knowledge)\n    boost = 0.1\n    boosted = set()\n    for title, text in instruction_data:\n        combined = title + text\n        for key in result:\n            if key not in boosted and key in combined:\n                result[key] = round(result[key] + boost, 2)\n                boosted.add(key)\n    return result\n",
+    "answer_code": "def simulate_finetune_effect(base_model_knowledge, instruction_data):\n    \"\"\"模拟指令微调：对 instruction_data 中出现的词提高概率\"\"\"\n    result = dict(base_model_knowledge)\n    boost = 0.1\n    for _, text in instruction_data:\n        for word in text.split():\n            word = word.strip(\"，。！？、；：\"\"''（）\")\n            if word in result:\n                result[word] = round(result[word] + boost, 2)\n    return result",
     "explanations": [],
     "_validated": true
   },
@@ -79,7 +79,7 @@
   },
   "2-5": {
     "approach": "Prompt 标准结构",
-    "answer_code": "def build_structured_prompt(role, task, output_format):\n    \"\"\"构建标准 Prompt 结构\"\"\"\n    return {\n        \"messages\": [\n            {\"role\": \"system\", \"content\": f\"你是一位{role}。请按以下格式输出：{output_format}\"},\n            {\"role\": \"user\", \"content\": f\"{task}\\n\\n输出格式要求：{output_format}\"}\n        ]\n    }\n",
+    "answer_code": "def build_structured_prompt(role, task, output_format):\n    \"\"\"构建标准 Prompt 结构\"\"\"\n    return {\n        \"messages\": [\n            {\"role\": \"system\", \"content\": f\"你是一位{role}。请按以下格式输出：{output_format}\"},\n            {\"role\": \"user\", \"content\": task}\n        ]\n    }",
     "explanations": [],
     "_validated": true
   },
@@ -91,7 +91,7 @@
   },
   "2-7": {
     "approach": "思维树 Tree of Thoughts",
-    "answer_code": "def tot_search(branches_scores):\n    \"\"\"思维树搜索：返回得分最高的前k条路径（最多3条）\"\"\"\n    sorted_branches = sorted(branches_scores, key=lambda x: -x[1])\n    if not sorted_branches:\n        return []\n    top_score = sorted_branches[0][1]\n    results = [name for name, score in sorted_branches if score == top_score or score >= top_score - 1]\n    return results[:3]",
+    "answer_code": "def tot_search(branches_scores):\n    \"\"\"思维树搜索：返回得分最高的前k条路径\"\"\"\n    sorted_branches = sorted(branches_scores, key=lambda x: -x[1])\n    if not sorted_branches:\n        return []\n    top_score = sorted_branches[0][1]\n    return [name for name, score in sorted_branches if score == top_score or score >= top_score - 1]",
     "explanations": [],
     "_validated": true
   },
@@ -115,7 +115,7 @@
   },
   "3-1": {
     "approach": "自然语言指令解析",
-    "answer_code": "def parse_nl_instruction(text):\n    import re\n    intent = \"unknown\"\n    entities = {}\n    if \"天气\" in text:\n        intent = \"query_weather\"\n        city_match = re.search(r\"查询(.+?)天气\", text)\n        if city_match:\n            entities[\"city\"] = city_match.group(1)\n    elif \"搜索\" in text or \"查找\" in text:\n        intent = \"search\"\n    elif \"计算\" in text:\n        intent = \"calculate\"\n    elif \"提醒\" in text:\n        intent = \"set_reminder\"\n    elif \"翻译\" in text:\n        intent = \"translate\"\n    return {\"intent\": intent, \"entities\": entities}",
+    "answer_code": "def parse_nl_instruction(text):\n    \"\"\"解析自然语言指令，提取意图和实体\"\"\"\n    intent = \"\"\n    entities = {}\n    if \"天气\" in text:\n        intent = \"query_weather\"\n        import re\n        city_match = re.search(r\"查询(.+?)天气\", text)\n        if city_match:\n            entities[\"city\"] = city_match.group(1)\n    elif \"提醒\" in text:\n        intent = \"set_reminder\"\n    elif \"翻译\" in text:\n        intent = \"translate\"\n    else:\n        intent = \"unknown\"\n    return {\"intent\": intent, \"entities\": entities}",
     "explanations": [],
     "_validated": true
   },
@@ -139,13 +139,13 @@
   },
   "3-5": {
     "approach": "长期记忆 — 向量数据库语义检索模拟",
-    "answer_code": "import math\n\ndef cosine_similarity(query, store, **kwargs):\n    \"\"\"Calculate cosine similarity between query and all items in store.\n    store: list of (id, description, embedding_vector) tuples\"\"\"\n    results = []\n    for item_id, desc, vec in store:\n        dot = sum(q * v for q, v in zip(query, vec))\n        norm_q = math.sqrt(sum(x**2 for x in query))\n        norm_v = math.sqrt(sum(x**2 for x in vec))\n        sim = dot / (norm_q * norm_v) if norm_q and norm_v else 0.0\n        results.append({\"id\": item_id, \"description\": desc, \"score\": round(sim, 4)})\n    results.sort(key=lambda x: -x[\"score\"])\n    top_k = kwargs.get('top_k', len(results))\n    return results[:top_k]\n\ndef semantic_search(query_embedding, memory_store, top_k=3):\n    \"\"\"Search memory store for most similar items.\"\"\"\n    return cosine_similarity(query_embedding, memory_store, top_k=top_k)",
+    "answer_code": "import math\n\ndef cosine_similarity(a, b):\n    dot = sum(x * y for x, y in zip(a, b))\n    norm_a = math.sqrt(sum(x**2 for x in a))\n    norm_b = math.sqrt(sum(x**2 for x in b))\n    return dot / (norm_a * norm_b) if norm_a and norm_b else 0.0\n\ndef semantic_search(query_embedding, memory_store, top_k=3):\n    \"\"\"余弦相似度检索最相关的 top_k 条记忆\"\"\"\n    scores = [(cosine_similarity(query_embedding, item[\"vector\"]), item) for item in memory_store]\n    scores.sort(key=lambda x: -x[0])\n    return [item for _, item in scores[:top_k]]",
     "explanations": [],
     "_validated": true
   },
   "3-6": {
     "approach": "【KnowledgeGraph】",
-    "answer_code": "class KnowledgeGraph:\n    def __init__(self):\n        self.graph = {}\n    def add_triple(self, subject, relation, obj):\n        if subject not in self.graph:\n            self.graph[subject] = []\n        self.graph[subject].append((relation, obj))\n\ndef query_related_concepts(kg, entity, max_depth=1):\n    visited = set()\n    result = set()\n    current = {entity}\n    for _ in range(max_depth):\n        nxt = set()\n        for e in current:\n            if e in kg.graph:\n                for rel, obj in kg.graph[e]:\n                    if obj not in visited:\n                        result.add(obj)\n                        nxt.add(obj)\n            visited.add(e)\n        current = nxt\n    return list(result)",
+    "answer_code": "class KnowledgeGraph:\n    def __init__(self):\n        self.graph = {}\n\n    def add_triple(self, subject, relation, obj):\n        if subject not in self.graph:\n            self.graph[subject] = []\n        self.graph[subject].append((relation, obj))\n\ndef query_related_concepts(kg, entity, max_depth=1):\n    visited = set()\n    current = {entity}\n    for _ in range(max_depth):\n        nxt = set()\n        for e in current:\n            if e in kg.graph and e not in visited:\n                visited.add(e)\n                for _, tgt in kg.graph[e]:\n                    nxt.add(tgt)\n        current = nxt\n    visited.update(current)\n    visited.discard(entity)\n    return visited",
     "explanations": [],
     "_validated": true
   },
@@ -181,7 +181,7 @@
   },
   "3-12": {
     "approach": "沙箱安全执行代码",
-    "answer_code": "import io, sys\n\ndef sandbox_execute(code, allowed_builtins=None):\n    \"\"\"在受限环境中执行 Python 代码\"\"\"\n    if allowed_builtins is None:\n        allowed_builtins = {\"print\", \"len\", \"range\", \"int\", \"float\", \"str\", \"list\", \"dict\", \"abs\", \"min\", \"max\", \"sum\"}\n    import builtins\n    safe_builtins = {k: getattr(builtins, k) for k in allowed_builtins if hasattr(builtins, k)}\n    safe_globals = {\"__builtins__\": safe_builtins}\n    old_stdout = sys.stdout\n    sys.stdout = io.StringIO()\n    try:\n        exec(code, safe_globals)\n        output = sys.stdout.getvalue()\n        return {\"success\": True, \"output\": output}\n    except Exception as e:\n        return {\"success\": False, \"output\": str(e)}\n    finally:\n        sys.stdout = old_stdout\n",
+    "answer_code": "import io\nimport sys\n\ndef sandbox_execute(code, allowed_builtins=None):\n    \"\"\"在受限环境中执行 Python 代码\"\"\"\n    if allowed_builtins is None:\n        allowed_builtins = {\"print\", \"len\", \"range\", \"int\", \"float\", \"str\", \"list\", \"dict\", \"abs\", \"min\", \"max\", \"sum\"}\n    safe_globals = {\"__builtins__\": {k: __builtins__[k] for k in allowed_builtins if k in __builtins__}}\n    safe_globals[\"__builtins__\"][\"__import__\"] = None\n    old_stdout = sys.stdout\n    sys.stdout = io.StringIO()\n    try:\n        exec(code, safe_globals)\n        output = sys.stdout.getvalue()\n        return {\"success\": True, \"output\": output}\n    except Exception as e:\n        return {\"success\": False, \"output\": str(e)}\n    finally:\n        sys.stdout = old_stdout",
     "explanations": [],
     "_validated": true
   },
@@ -199,7 +199,7 @@
   },
   "4-1": {
     "approach": "LangChain 核心组件模拟",
-    "answer_code": "class SimpleChain:\n    def __init__(self):\n        self.steps = []\n        self.log = []\n    def add_step(self, name, func):\n        self.steps.append((name, func))\n    def run(self, input_data):\n        current = input_data\n        self.log = []\n        for name, func in self.steps:\n            current = func(current)\n            self.log.append(f\"{name}: {current}\")\n        return {\"result\": current, \"log\": self.log}",
+    "answer_code": "class SimpleChain:\n    def __init__(self):\n        self.steps = []\n\n    def add_step(self, name, func):\n        self.steps.append((name, func))\n\n    def run(self, input_data):\n        current = input_data\n        for name, func in self.steps:\n            current = func(current)\n        return {\"result\": current}",
     "explanations": [],
     "_validated": true
   },
@@ -211,7 +211,7 @@
   },
   "4-3": {
     "approach": "LlamaIndex RAG 框架模拟",
-    "answer_code": "class SimpleIndex:\n    def __init__(self):\n        self.docs = []\n    def add_documents(self, docs):\n        self.docs.extend(docs)\n    def build_index(self):\n        self.index = {}\n        for i, doc in enumerate(self.docs):\n            for word in doc.lower().split():\n                if word not in self.index:\n                    self.index[word] = []\n                self.index[word].append(i)\n    def search(self, query, top_k=2):\n        results = []\n        keywords = query.lower().split()\n        for keyword in keywords:\n            for doc in self.docs:\n                if keyword in doc.lower() and doc not in results:\n                    results.append(doc)\n        return results[:top_k]\n",
+    "answer_code": "class SimpleIndex:\n    def __init__(self):\n        self.docs = []\n        self.index = {}\n\n    def add_documents(self, docs):\n        self.docs.extend(docs)\n\n    def build_index(self):\n        self.index = {}\n        for i, doc in enumerate(self.docs):\n            for word in doc.split():\n                w = word.lower()\n                if w not in self.index:\n                    self.index[w] = []\n                if i not in self.index[w]:\n                    self.index[w].append(i)\n\n    def search(self, query, top_k=3):\n        query_words = query.lower().split()\n        scores = {}\n        for w in query_words:\n            for doc_id in self.index.get(w, []):\n                scores[doc_id] = scores.get(doc_id, 0) + 1\n        ranked = sorted(scores.items(), key=lambda x: -x[1])\n        return [self.docs[doc_id] for doc_id, _ in ranked[:top_k]]",
     "explanations": [],
     "_validated": true
   },
@@ -343,7 +343,7 @@
   },
   "6-5": {
     "approach": "幻觉抑制 — 检索增强与约束解码",
-    "answer_code": "def reduce_hallucination(query, knowledge_base, response):\n    \"\"\"检测并标记回答中的疑似幻觉内容\"\"\"\n    kb_chars = set(knowledge_base)\n    suspicious = []\n    # 检查response中连续2+字不在kb中的片段\n    i = 0\n    while i < len(response):\n        if response[i] not in kb_chars and response[i] not in '，。！？；：、\"\"''（） ':\n            start = i\n            while i < len(response) and response[i] not in kb_chars:\n                i += 1\n            segment = response[start:i].strip()\n            if len(segment) >= 2:\n                suspicious.append(segment)\n        else:\n            i += 1\n    return {\n        \"clean\": len(suspicious) == 0,\n        \"suspicious\": suspicious[:5],\n        \"verified_response\": response if len(suspicious) == 0 else response + \" [内容已核查]\"\n    }",
+    "answer_code": "def reduce_hallucination(query, knowledge_base, response):\n    \"\"\"检测并标记回答中的疑似幻觉内容\"\"\"\n    kb_words = set(knowledge_base.lower().split())\n    resp_words = response.lower().split()\n    suspicious = []\n    for word in set(resp_words):\n        if len(word) > 3 and word not in kb_words and word not in query.lower():\n            suspicious.append(word)\n    return {\n        \"clean\": len(suspicious) == 0,\n        \"suspicious\": suspicious[:5],\n        \"verified_response\": response if len(suspicious) == 0 else response + \" [引用已核查]\"\n    }",
     "explanations": [],
     "_validated": true
   },
@@ -367,7 +367,7 @@
   },
   "6-9": {
     "approach": "MCP 模型上下文协议模拟",
-    "answer_code": "class MCPServer:\n    def __init__(self):\n        self.tools = {}\n    def register_tool(self, name, description, input_schema, handler):\n        self.tools[name] = {\"name\": name, \"description\": description, \"input_schema\": input_schema, \"handler\": handler}\n    def list_tools(self):\n        return [{\"name\": t[\"name\"], \"description\": t[\"description\"]} for t in self.tools.values()]\n    def call_tool(self, name, args):\n        if name not in self.tools:\n            raise ValueError(f\"Tool {name} not found\")\n        result = self.tools[name][\"handler\"](args)\n        return {\"content\": str(result)}\n",
+    "answer_code": "class MCPServer:\n    def __init__(self):\n        self.tools = {}\n\n    def register_tool(self, name, description, input_schema, handler):\n        self.tools[name] = {\n            \"description\": description,\n            \"input_schema\": input_schema,\n            \"handler\": handler\n        }\n\n    def list_tools(self):\n        return [{\"name\": name, \"description\": info[\"description\"]} for name, info in self.tools.items()]\n\n    def call_tool(self, name, arguments):\n        if name not in self.tools:\n            raise ValueError(f\"工具 {name} 未注册\")\n        return self.tools[name][\"handler\"](arguments)",
     "explanations": [],
     "_validated": true
   },

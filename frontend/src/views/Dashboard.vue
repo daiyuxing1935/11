@@ -4,7 +4,7 @@
     <div class="welcome-banner">
       <div class="welcome-content">
         <div class="welcome-left">
-          <h1 class="welcome-title">{{ greeting }}，{{ userStore.user?.nickname || '同学' }} 👋</h1>
+          <h1 class="welcome-title">{{ greeting }}，{{ userStore.user?.nickname || '同学' }}</h1>
           <p class="welcome-subtitle">{{ welcomeQuote }}</p>
           <div class="welcome-meta">
             <el-tag type="info" effect="plain" size="large">{{ userStore.learningStage || '入门' }}学员</el-tag>
@@ -86,8 +86,8 @@
             </div>
           </template>
           <!-- v-show 保持 DOM 存在，数据到达时 watch 能正常初始化图表 -->
-          <div v-show="statStore.hasMasteryData" ref="radarChart" style="height:300px"></div>
-          <el-empty v-if="!statStore.hasMasteryData" description="完成测评后即可查看知识掌握度" :image-size="80" />
+          <div v-if="hasModuleData" ref="radarChart" style="height:300px"></div>
+          <el-empty v-else description="完成测评后即可查看知识掌握度" :image-size="80" />
         </el-card>
       </el-col>
     </el-row>
@@ -198,7 +198,7 @@ const greeting = computed(() => {
   if (h < 6) return '夜深了'; if (h < 9) return '早上好'; if (h < 12) return '上午好'
   if (h < 14) return '中午好'; if (h < 18) return '下午好'; return '晚上好'
 })
-const welcomeQuotes = ['每天进步一点点，AI的世界等你探索 🚀','坚持是最好的学习方法，今天也要加油 💪','知识改变命运，AI创造未来 🌟','学习如逆水行舟，不进则退 📚','今天的努力是明天的基石 ⛏️']
+const welcomeQuotes = ['每天进步一点点，AI的世界等你探索','坚持是最好的学习方法，今天也要加油','知识改变命运，AI创造未来','学习如逆水行舟，不进则退','今天的努力是明天的基石']
 const welcomeQuote = ref(welcomeQuotes[Math.floor(Math.random() * welcomeQuotes.length)])
 
 // ===== 快捷功能 =====
@@ -227,7 +227,7 @@ async function markTaskDone() {
     const isCompleted = dailyTasks.value?.completed
     await learningStore.finishTask('', isCompleted ? 0 : 1)
     dailyTasks.value = enrichTasks(await getDailyTasks()) || {}
-    ElMessage.success(isCompleted ? '任务已重新打开' : '今日任务全部完成！🎉')
+    ElMessage.success(isCompleted ? '任务已重新打开' : '今日任务全部完成！')
   } catch (e) { ElMessage.error('更新失败') }
 }
 
@@ -236,7 +236,7 @@ onMounted(async () => {
   recordStudyVisit()
   // 先注册 watcher，后续 Pinia 变化自动重绘
   watch(() => statStore.weeklyStats, () => { nextTick(() => initGrowthChart()) }, { deep: true })
-  watch(() => statStore.knowledgeMastery, () => { nextTick(() => initRadarChart()) }, { deep: true })
+  watch(() => statStore.moduleMastery, () => { nextTick(() => initRadarChart()) }, { deep: true })
   // 拉数据
   try { await statStore.refreshAll() } catch (e) { console.error(e) }
   // 首次渲染
@@ -268,20 +268,20 @@ function initGrowthChart() {
   })
 }
 
-// 雷达图：直接从 statStore.knowledgeMastery 读，不用中间变量
+// 雷达图：展示六大模块掌握度
+const hasModuleData = computed(() => Object.keys(statStore.moduleMastery).length > 0)
+
 function initRadarChart() {
   if (!radarChart.value) return
   if (!radarChartInst) {
     radarChartInst = echarts.init(radarChart.value)
     window.addEventListener('resize', () => radarChartInst?.resize())
   }
-  // 直接从 Pinia 读取，保证拿到最新值
-  const mastery = statStore.knowledgeMastery
+  const mastery = statStore.moduleMastery
   const keys = Object.keys(mastery || {})
-  console.log('[Dashboard] initRadarChart 渲染, mastery 标签数:', keys.length)
   if (keys.length === 0) return
-  const names = keys.slice(0, 6)
-  const values = names.map(n => Math.round((mastery[n] || 0) * 100))
+  const names = statStore.moduleNames || keys
+  const values = names.map(n => mastery[n] || 0)
   radarChartInst.setOption({
     tooltip: { trigger: 'item' },
     radar: {
