@@ -1,11 +1,11 @@
 {
   "meta": {
     "module": "模块六：评估、安全与前沿拓展",
-    "total_qa": 100,
+    "total_qa": 99,
     "source": "rebuild_v2 — 50选择 + 50判断",
     "type_distribution": {
       "multiple_choice": 50,
-      "true_false": 50
+      "true_false": 49
     }
   },
   "qa_pairs": [
@@ -1493,19 +1493,6 @@
       "source": "generated_v2",
       "section": "智能体框架开发",
       "difficulty": "medium",
-      "knowledge_point": "智能体框架开发"
-    },
-    {
-      "question": "智能体在工作流自动化中的一个典型应用场景是：接收用户自然语言请求 → 解析意图 → 调用多个API → 汇总结果返回用户。",
-      "answer": "正确",
-      "options": [
-        "正确",
-        "错误"
-      ],
-      "type": "true_false",
-      "source": "generated_v2",
-      "section": "智能体框架开发",
-      "difficulty": "easy",
       "knowledge_point": "智能体框架开发"
     }
   ]

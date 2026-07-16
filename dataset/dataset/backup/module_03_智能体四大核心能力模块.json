@@ -1,11 +1,11 @@
 {
   "meta": {
     "module": "模块三：智能体四大核心能力模块",
-    "total_qa": 100,
+    "total_qa": 98,
     "source": "rebuild_v2 — 50选择 + 50判断",
     "type_distribution": {
       "multiple_choice": 50,
-      "true_false": 50
+      "true_false": 48
     }
   },
   "qa_pairs": [
@@ -1481,32 +1481,6 @@
       "section": "智能体算法逻辑",
       "difficulty": "medium",
       "knowledge_point": "智能体算法逻辑"
-    },
-    {
-      "question": "智能体在工具调用中，工具返回的错误信息不需要反馈给LLM，直接忽略即可避免混淆。",
-      "answer": "错误",
-      "options": [
-        "正确",
-        "错误"
-      ],
-      "type": "true_false",
-      "source": "generated_v2",
-      "section": "智能体框架开发",
-      "difficulty": "medium",
-      "knowledge_point": "智能体框架开发"
-    },
-    {
-      "question": "代码沙箱执行环境中的超时限制（Timeout）是为了防止用户代码出现死循环或无限递归导致系统资源耗尽。",
-      "answer": "正确",
-      "options": [
-        "正确",
-        "错误"
-      ],
-      "type": "true_false",
-      "source": "generated_v2",
-      "section": "智能体框架开发",
-      "difficulty": "medium",
-      "knowledge_point": "智能体框架开发"
     }
   ]
 }

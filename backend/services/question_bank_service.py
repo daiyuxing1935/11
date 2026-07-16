@@ -54,6 +54,7 @@ TYPE_MAP = {
     "example": "简答",
     "process": "简答",
     "multiple_choice": "单选",
+    "true_false": "判断",
     "fill_in_blank": "填空",
 }
 
@@ -297,26 +298,39 @@ def _generate_options(correct_answer: str, question_type: str, section: str = ""
 
 
 def _generate_analysis(question: str, answer: str, knowledge_category: str, difficulty: str, qtype: str = "") -> str:
-    """生成详细的题目解析"""
-    lines = [f"【知识点】{knowledge_category}（{difficulty}）"]
-    lines.append(f"【正确答案】{answer}")
+    """生成详细的题目解析（Markdown 格式）"""
+    lines = [f"**核心知识点**：{knowledge_category}（{difficulty}）", ""]
 
-    if qtype == "填空":
-        lines.append(f"【解析】本题为填空题，考察对{knowledge_category}中关键概念的记忆与理解。")
-        lines.append(f"正确答案为「{answer}」，这是{knowledge_category}领域的核心知识点。")
-        lines.append(f"【记忆技巧】建议通过概念关联记忆法，将「{answer}」与{knowledge_category}中的其他核心概念建立联系，形成知识网络。")
-        lines.append(f"【拓展】理解该概念的定义、原理和应用场景后，尝试用自己的话复述，并思考它在实际工程或研究中的价值。")
+    if qtype == "判断":
+        is_true = answer.strip() == "正确"
+        lines.append(f"**正确答案**：{answer}")
+        lines.append("")
+        if is_true:
+            lines.append(f"**解析**：题干陈述符合{knowledge_category}领域的核心事实和公认知识，因此该判断为「正确」。")
+        else:
+            lines.append(f"**解析**：题干陈述在关键细节上与{knowledge_category}的实际情况存在出入，因此该判断为「错误」。")
+        lines.append("")
+        lines.append(f"**复习建议**：准确理解{knowledge_category}中的核心概念和关键原理，注意区分易混淆的相似说法。")
     elif qtype == "单选":
-        lines.append(f"【解析】本题为单选题，考察对{knowledge_category}中不同概念之间的辨析能力。")
+        lines.append(f"**正确答案**：{answer}")
+        lines.append("")
+        lines.append(f"**解析**：本题为单选题，考察对{knowledge_category}中不同概念之间的辨析能力。")
         lines.append(f"正确选项是「{answer}」。要选对该选项，需要准确理解{knowledge_category}的核心概念，并能区分易混淆的相似概念。")
-        lines.append(f"【解题思路】先排除明显错误的选项，再对比剩余选项的细微差别，最终选出最符合题意的答案。")
-        lines.append(f"【易错提醒】做选择题时最容易犯的错误是「凭感觉选」而非「凭知识选」。务必回归知识点本身，用理性分析代替直觉判断。")
-    elif qtype == "简答":
-        lines.append(f"【解析】本题为简答题，考察对{knowledge_category}知识的理解深度和表达能力。")
-        lines.append(f"回答要点：①准确阐述核心概念 ②逻辑清晰、层次分明 ③关键术语使用规范 ④必要时给出示例或应用场景。")
-        lines.append(f"【答题模板】概念定义 → 核心原理/机制 → 关键特点 → 应用场景/实例 → （可选）与其他概念的对比。")
+        lines.append("")
+        lines.append(f"**解题思路**：先排除明显错误的选项，再对比剩余选项的细微差别，最终选出最符合题意的答案。")
+        lines.append("")
+        lines.append(f"**易错提醒**：做选择题时最容易犯的错误是「凭感觉选」而非「凭知识选」。务必回归知识点本身，用理性分析代替直觉判断。")
+    elif qtype == "填空":
+        lines.append(f"**正确答案**：{answer}")
+        lines.append("")
+        lines.append(f"**解析**：本题为填空题，考察对{knowledge_category}中关键概念的记忆与理解。")
+        lines.append(f"正确答案为「{answer}」，这是{knowledge_category}领域的核心知识点。")
+        lines.append("")
+        lines.append(f"**记忆技巧**：建议通过概念关联记忆法，将「{answer}」与{knowledge_category}中的其他核心概念建立联系，形成知识网络。")
     else:
-        lines.append(f"【解析】本题考察{knowledge_category}知识点，正确答案为「{answer}」。")
+        lines.append(f"**正确答案**：{answer}")
+        lines.append("")
+        lines.append(f"**解析**：本题考察{knowledge_category}知识点。")
         lines.append(f"建议系统复习{knowledge_category}相关内容，重点理解其核心概念、关键原理和典型应用。")
 
     return '\n'.join(lines)
@@ -500,40 +514,52 @@ def select_questions(
     else:  # 高阶
         difficulty_ratio = {"easy": 0.10, "medium": 0.40, "hard": 0.50}
 
-    # 按难度+题型同时分组
-    by_diff_type = {
-        "easy": {"填空": [], "单选": [], "简答": []},
-        "medium": {"填空": [], "单选": [], "简答": []},
-        "hard": {"填空": [], "单选": [], "简答": []},
-    }
+    # 按难度+题型同时分组（只保留题库中实际存在的题型）
+    by_diff_type = {"easy": {}, "medium": {}, "hard": {}}
+    # 题库中可能存在的映射后题型
+    _all_qtypes = {"单选", "判断", "填空", "简答"}
+    for diff in by_diff_type:
+        by_diff_type[diff] = {qt: [] for qt in _all_qtypes}
+
     for q in bank:
         diff = q.get("difficulty", "medium")
         qtype = _map_question_type(q.get("type", "definition"))
         if diff in by_diff_type and qtype in by_diff_type[diff]:
             by_diff_type[diff][qtype].append(q)
 
-    # === 第三步：题型配比 ===
-    if stage == "入门":
-        type_ratio = {"填空": 0.30, "单选": 0.35, "简答": 0.35}
-    elif stage == "进阶":
-        type_ratio = {"填空": 0.20, "单选": 0.25, "简答": 0.55}
+    # 统计题库中实际有哪些题型
+    available_types = set()
+    for diff in by_diff_type:
+        for qt, pool in by_diff_type[diff].items():
+            if pool:
+                available_types.add(qt)
+
+    # === 第三步：题型配比（从题库实际题型中均匀分配）===
+    # 新题库：单选 + 判断各占约50%。如有填空/简答残留也兼容。
+    if available_types:
+        ratio_per_type = 1.0 / len(available_types)
+        type_ratio = {qt: ratio_per_type for qt in available_types}
     else:
-        type_ratio = {"填空": 0.10, "单选": 0.15, "简答": 0.75}
+        type_ratio = {"单选": 0.5, "判断": 0.5}
 
     # === 第四步：按题型+难度组合采样 ===
     selected = []
     for qtype, type_ratio_val in type_ratio.items():
         type_needed = int(count * type_ratio_val)
+        # 确保至少分配给每个题型 1 题
+        if type_needed == 0 and len(selected) < count:
+            type_needed = 1
         for diff, diff_ratio in difficulty_ratio.items():
             needed = int(type_needed * diff_ratio)
-            pool = by_diff_type[diff][qtype]
+            pool = by_diff_type[diff].get(qtype, [])
             if pool:
                 n = min(needed, len(pool))
                 selected.extend(random.sample(pool, n))
 
-    # === 第五步：不足时从过滤后的 bank 中补题 ===
+    # === 第五步：不足时随机补题（保证题型混合）===
     if len(selected) < count:
         used = {q.get("question", "") for q in selected}
+        # 优先从未被选中的剩余题目中补足
         remaining = [q for q in bank if q.get("question", "") not in used]
         if remaining:
             additional = random.sample(remaining, min(count - len(selected), len(remaining)))

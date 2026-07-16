@@ -1,11 +1,11 @@
 {
   "meta": {
     "module": "模块二：大模型（LLM）与提示词工程",
-    "total_qa": 100,
+    "total_qa": 99,
     "source": "rebuild_v2 — 50选择 + 50判断",
     "type_distribution": {
       "multiple_choice": 50,
-      "true_false": 50
+      "true_false": 49
     }
   },
   "qa_pairs": [
@@ -1497,19 +1497,6 @@
     {
       "question": "模型训练中，过拟合（Overfitting）是指模型在训练数据上表现很好但在新数据上表现差的现象。",
       "answer": "正确",
-      "options": [
-        "正确",
-        "错误"
-      ],
-      "type": "true_false",
-      "source": "generated_v2",
-      "section": "大模型基座原理",
-      "difficulty": "medium",
-      "knowledge_point": "大模型基座原理"
-    },
-    {
-      "question": "Temperature参数控制模型输出的随机性：值越高输出越确定性，值越低输出越随机多样。",
-      "answer": "错误",
       "options": [
         "正确",
         "错误"

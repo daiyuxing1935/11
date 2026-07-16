@@ -1,11 +1,11 @@
 {
   "meta": {
     "module": "模块五：多智能体系统",
-    "total_qa": 100,
+    "total_qa": 99,
     "source": "rebuild_v2 — 50选择 + 50判断",
     "type_distribution": {
       "multiple_choice": 50,
-      "true_false": 50
+      "true_false": 49
     }
   },
   "qa_pairs": [
@@ -1481,19 +1481,6 @@
     },
     {
       "question": "在多智能体系统中，时效性是重要的性能指标，指系统能否在规定时间内完成任务。",
-      "answer": "正确",
-      "options": [
-        "正确",
-        "错误"
-      ],
-      "type": "true_false",
-      "source": "generated_v2",
-      "section": "多智能体应用",
-      "difficulty": "medium",
-      "knowledge_point": "多智能体应用"
-    },
-    {
-      "question": "在多智能体代码生成场景中，可以让一个Agent编写代码、另一个Agent编写测试、第三个Agent执行代码审查，形成完整的开发流水线。",
       "answer": "正确",
       "options": [
         "正确",

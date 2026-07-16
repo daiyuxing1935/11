@@ -30,6 +30,36 @@ async def get_growth(current_user: dict = Depends(get_current_user)):
     data = analytics_service.get_growth_data(current_user["id"])
     return APIResponse(data=data)
 
+@router.get("/activity", response_model=APIResponse)
+async def get_recent_activity(limit: int = 20, current_user: dict = Depends(get_current_user)):
+    """获取用户最近学习动态（跨设备一致）
+
+    合并测评、答疑、错题复习三类活动，按时间倒序返回。
+    """
+    activities = analytics_service.get_recent_activity(current_user["id"], limit)
+    return APIResponse(data=activities)
+
+
+@router.post("/submit-result", response_model=APIResponse)
+async def submit_quiz_result(
+    knowledge_tag: str = "",
+    result: str = "",
+    current_user: dict = Depends(get_current_user)
+):
+    """提交测评结果并记录活动（跨设备同步）"""
+    import json as _json
+    result_data = {}
+    if result:
+        try:
+            result_data = _json.loads(result)
+        except Exception:
+            result_data = {"raw": result}
+    analytics_service.record_learning_activity(
+        current_user["id"], knowledge_tag or "综合练习", "quiz", 0, result_data
+    )
+    return APIResponse(message="记录成功")
+
+
 @router.post("/record", response_model=APIResponse)
 async def record_activity(
     knowledge_tag: str = "",

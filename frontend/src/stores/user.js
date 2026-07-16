@@ -57,4 +57,11 @@ export const useUserStore = defineStore('user', () => {
   }
 
   return { token, user, _verified, isLoggedIn, learningStage, login, register, verifyToken, fetchProfile, updateUser, logout }
-}, { persist: true })
+}, {
+  persist: {
+    omit: ['_verified'],  // 不持久化 _verified，确保每次打开页面都验证 token 有效性
+    afterRestore: (ctx) => {
+      ctx.store._verified = false  // 恢复后强制重置，兼容旧数据
+    }
+  }
+})
