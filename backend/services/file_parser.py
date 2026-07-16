@@ -31,8 +31,23 @@ MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
 # ---- OCR 引擎（双引擎 fallback：tesseract → easyocr） ----
 _easyocr_reader = None
 _tesseract_available = None
-_TESSERACT_CMD = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
+_TESSERACT_CMD = None  # None 表示让 pytesseract 自动检测
 _TESSDATA_DIR = None  # 自定义 tessdata 目录（用于存放额外下载的语言包）
+
+# 常见平台上的 Tesseract 安装路径（按优先级排列）
+_TESSERACT_CANDIDATES = [
+    # 自动检测（系统 PATH）
+    'tesseract',
+    # Windows 默认路径
+    r'C:/Program Files/Tesseract-OCR/tesseract.exe',
+    r'C:/Program Files (x86)/Tesseract-OCR/tesseract.exe',
+    # Linux 默认路径
+    '/usr/bin/tesseract',
+    '/usr/local/bin/tesseract',
+    # macOS Homebrew
+    '/opt/homebrew/bin/tesseract',
+    '/usr/local/bin/tesseract',
+]
 
 
 def _setup_tesseract_env():
@@ -45,13 +60,21 @@ def _setup_tesseract_env():
 
 
 def _check_tesseract() -> bool:
-    """检测 Tesseract 是否可用（离线 OCR 引擎）"""
-    global _tesseract_available
+    """检测 Tesseract 是否可用（离线 OCR 引擎），跨平台自动查找安装路径"""
+    global _tesseract_available, _TESSERACT_CMD
     if _tesseract_available is None:
         try:
             import pytesseract
+            import shutil as _shutil
             _setup_tesseract_env()
-            pytesseract.pytesseract.tesseract_cmd = _TESSERACT_CMD
+            # 如果尚未确定路径，逐个尝试候选路径
+            if _TESSERACT_CMD is None:
+                for _candidate in _TESSERACT_CANDIDATES:
+                    if _shutil.which(_candidate):
+                        _TESSERACT_CMD = _candidate
+                        break
+            if _TESSERACT_CMD:
+                pytesseract.pytesseract.tesseract_cmd = _TESSERACT_CMD
             pytesseract.get_tesseract_version()
             _tesseract_available = True
         except Exception:

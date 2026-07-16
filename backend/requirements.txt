@@ -33,3 +33,5 @@ python-docx>=1.0.0
 openpyxl>=3.1.0
 
 # --- 图片OCR（提取图片中的文字，兼容所有纯文本LLM） ---
+Pillow>=10.0.0
+pytesseract>=0.3.0

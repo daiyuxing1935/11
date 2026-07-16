@@ -54,14 +54,14 @@
           <!-- 上传按钮 -->
           <div style="margin-bottom:16px">
             <input
-              ref="fileInput"
+              ref="pdfFileInput"
               type="file"
               accept=".pdf"
               multiple
-              style="display:none"
+              class="hidden-file-input"
               @change="onFilesSelected"
             />
-            <el-button type="primary" style="width:100%" :loading="uploading" @click="$refs.fileInput.click()">
+            <el-button type="primary" style="width:100%" :loading="uploading" @click="triggerPdfUpload">
               <el-icon><Upload /></el-icon> 上传PDF（可多选）
             </el-button>
             <div style="font-size:11px;color:#c0c4cc;margin-top:4px">支持PDF，单文件最大200MB，可一次选多个</div>
@@ -147,9 +147,14 @@ const dialogLoading = ref(false)
 const contentRef = ref(null)
 
 // PDF 电子书
+const pdfFileInput = ref(null)
 const pdfs = ref([])
 const uploading = ref(false)
 const uploadTasks = ref([])
+
+function triggerPdfUpload() {
+  pdfFileInput.value?.click()
+}
 const selectedPdfs = ref(new Set())
 const batchDeleting = ref(false)
 
@@ -207,7 +212,7 @@ async function onFilesSelected(e) {
   else if (failCount > 0) ElMessage.error(`${failCount} 个上传失败`)
   await fetchPdfs()
   // 重置 input 以便再次选择相同文件
-  e.target.value = ''
+  if (pdfFileInput.value) pdfFileInput.value.value = ''
   setTimeout(() => { uploadTasks.value = [] }, 3000)
 }
 // PDF 阅读器
@@ -640,6 +645,16 @@ async function genImage(btn, pid) {
   font-size: 12px;
   padding: 2px 8px;
   height: 26px;
+}
+
+/* 隐藏文件输入框（兼容所有浏览器的安全策略） */
+.hidden-file-input {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
 }
 
 </style>
