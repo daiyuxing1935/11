@@ -173,7 +173,8 @@ def load_question_bank() -> list:
             mod_data = json.load(f)
 
         pairs = mod_data.get("qa_pairs", [])
-        module_name = mod_data.get("meta", {}).get("module_name", mod_file)
+        # 优先从 meta.module 读取模块名，兼容 module_name 字段
+        module_name = mod_data.get("meta", {}).get("module") or mod_data.get("meta", {}).get("module_name", mod_file)
         total_raw += len(pairs)
 
         for q in pairs:
@@ -183,9 +184,8 @@ def load_question_bank() -> list:
                 continue
             key = question.strip()
             if key not in seen_questions:
-                # 补充 module / knowledge_point 信息
-                if "module" not in q:
-                    q["module"] = module_name
+                # 统一设置 module（覆盖可能缺失或不一致的字段）
+                q["module"] = module_name
                 seen_questions[key] = q
 
         print(f"[OK] {mod_file}: {len(pairs)} raw -> 有效加载")
@@ -534,8 +534,7 @@ def select_questions(
             if pool:
                 available_types.add(qt)
 
-    # === 第三步：题型配比（从题库实际题型中均匀分配）===
-    # 新题库：单选 + 判断各占约50%。如有填空/简答残留也兼容。
+    # === 第三步：题型配比（选择题+判断题，各约50%）===
     if available_types:
         ratio_per_type = 1.0 / len(available_types)
         type_ratio = {qt: ratio_per_type for qt in available_types}
@@ -545,21 +544,21 @@ def select_questions(
     # === 第四步：按题型+难度组合采样 ===
     selected = []
     for qtype, type_ratio_val in type_ratio.items():
-        type_needed = int(count * type_ratio_val)
-        # 确保至少分配给每个题型 1 题
-        if type_needed == 0 and len(selected) < count:
-            type_needed = 1
+        type_needed = max(1, int(count * type_ratio_val))
+        type_needed = min(type_needed, count - len(selected))
         for diff, diff_ratio in difficulty_ratio.items():
-            needed = int(type_needed * diff_ratio)
+            needed = max(1, int(type_needed * diff_ratio))
             pool = by_diff_type[diff].get(qtype, [])
             if pool:
-                n = min(needed, len(pool))
-                selected.extend(random.sample(pool, n))
+                used_q = {q.get("question", "") for q in selected}
+                pool = [q for q in pool if q.get("question", "") not in used_q]
+                if pool:
+                    n = min(needed, len(pool))
+                    selected.extend(random.sample(pool, n))
 
-    # === 第五步：不足时随机补题（保证题型混合）===
+    # === 第五步：不足时随机补题 ===
     if len(selected) < count:
         used = {q.get("question", "") for q in selected}
-        # 优先从未被选中的剩余题目中补足
         remaining = [q for q in bank if q.get("question", "") not in used]
         if remaining:
             additional = random.sample(remaining, min(count - len(selected), len(remaining)))
