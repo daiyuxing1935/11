@@ -176,12 +176,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLearningStore } from '../stores/learning'
 import { useDiagnosisStore } from '../stores/diagnosis'
 import { generateTaskQuiz, getLearningResource, recordStudyVisit } from '../api/learning'
 import { ElMessage } from 'element-plus'
+import { renderMarkdown as renderMdWithCopy, bindCodeBlockActions } from '../composables/useCodeBlockRenderer'
 import { marked } from 'marked'
 
 const router = useRouter()
@@ -387,9 +388,13 @@ async function goToLearning(task) {
     const res = await getLearningResource(knowledge)
     if (res && res.content) {
       learnDialogTitle.value = res.matched_tag || knowledge
-      learnDialogContent.value = marked.parse(res.content)
+      learnDialogContent.value = renderMdWithCopy(res.content)
       currentLearnTask.value = task
       learnDialogVisible.value = true
+      nextTick(() => {
+        const el = document.querySelector('.learn-material-content')
+        if (el) bindCodeBlockActions(el)
+      })
       // 立刻标记"去学习"完成（对话框打开即视为已学习）
       const key = `${task.day}-${task.topic}`
       try {

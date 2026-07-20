@@ -136,6 +136,9 @@ import { getResourceList, getResourceLearnMaterial, uploadPdf, getPdfList, getPd
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { recordStudyVisit } from '../api/learning'
 import { renderMermaidIn, asciiToMermaid } from '../composables/useMermaid'
+import { marked } from 'marked'
+import { copyToClipboard } from '../utils/clipboard'
+import { renderMarkdown as renderMdWithCopy, bindCodeBlockActions } from '../composables/useCodeBlockRenderer'
 
 const activeTab = ref('all')
 const allResources = ref({ items: [] })
@@ -174,12 +177,16 @@ const moduleGroups = computed(() => {
 
 onMounted(() => { recordStudyVisit(); fetchAll(); fetchPdfs() })
 async function fetchAll() {
-  try { allResources.value = await getResourceList({ page: 1, page_size: 100, category: filterCategory.value||undefined }) } catch(e) {}
+  try { allResources.value = await getResourceList({ page: 1, page_size: 100, category: filterCategory.value||undefined }) } catch(e) {
+    ElMessage.error('加载资源列表失败: ' + (e?.message || '网络错误'))
+  }
 }
 
 // PDF 电子书相关
 async function fetchPdfs() {
-  try { pdfs.value = await getPdfList() } catch(e) {}
+  try { pdfs.value = await getPdfList() } catch(e) {
+    ElMessage.error('加载PDF列表失败: ' + (e?.message || '网络错误'))
+  }
 }
 async function onFilesSelected(e) {
   const files = e.target.files
@@ -282,14 +289,6 @@ async function openResource(resource) {
   dialogContent.value = ''
   dialogLoading.value = true
   try {
-    if (!window.marked) {
-      await new Promise((resolve) => {
-        const s = document.createElement('script')
-        s.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js'
-        s.onload = resolve
-        document.head.appendChild(s)
-      })
-    }
     const res = await getResourceLearnMaterial(resource.id)
     if (res && res.content) {
       dialogTitle.value = res.resource_title || resource.title
@@ -353,7 +352,7 @@ async function openResource(resource) {
         }
       )
 
-      var html = window.marked.parse(raw)
+      var html = renderMdWithCopy(raw)
       // ===== Mermaid 代码块 → 先存代码到全局变量，div 中只放占位文字 =====
       window._mermaidCodes = {}
       var mermaidIdx = 0
@@ -365,7 +364,7 @@ async function openResource(resource) {
         return '<div class="mermaid" data-mermaid-id="' + id + '" style="padding:20px;text-align:center;color:#909399;font-size:13px">流程图加载中...</div>'
       })
       // 按 h2 分页
-      var parts = html.split(/(?=<h2)/i)
+      var parts = html.split(/(?=<h2)/i)
       if (parts.length > 1) {
         var pages = parts
         var cid = 'pages_' + Date.now()
@@ -459,8 +458,15 @@ async function openResource(resource) {
         if (btns.length > 2) setTimeout(function(){ genImage(btns[2], 2) }, 1000)
       }, 200)
     }
-  } catch(e) {}
+  } catch(e) {
+    ElMessage.error('加载资源失败: ' + (e?.message || '未知错误'))
+    dialogVisible.value = false
+  }
   dialogLoading.value = false
+  // 绑定代码块复制按钮事件
+  nextTick(() => {
+    if (contentRef.value) bindCodeBlockActions(contentRef.value)
+  })
   // ===== 将存储的 mermaid 代码注入占位 div，再渲染 =====
   nextTick(function() {
     if (!contentRef.value) return
@@ -514,7 +520,9 @@ async function loadCached() {
         }
       }
     }
-  } catch(e) {}
+  } catch(e) {
+    console.warn('[Resources] 加载缓存图片失败:', e.message)
+  }
 }
 
 async function onPageClick(e) {

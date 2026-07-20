@@ -171,6 +171,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import * as monaco from 'monaco-editor'
 import { MODULES } from '../config/exercises'
 import { useStatStore } from '../stores/statStore'
+import { copyToClipboard } from '../utils/clipboard'
 
 const router = useRouter()
 const statStore = useStatStore()
@@ -360,7 +361,7 @@ const startTime = ref(Date.now())
 const elapsedSeconds = ref(0)
 let timerInterval = null
 
-onMounted(() => {
+onMounted(async () => {
   initEditor()
   loadCurrentTask()
   document.addEventListener('mousemove', onDrag)
@@ -370,6 +371,8 @@ onMounted(() => {
   timerInterval = setInterval(() => {
     elapsedSeconds.value = Math.floor((Date.now() - startTime.value) / 1000)
   }, 1000)
+  // 从服务器同步已通关的习题列表（跨设备同步）
+  syncCompletionsFromServer()
 })
 
 onBeforeUnmount(() => {
@@ -447,7 +450,7 @@ async function submitCode() {
       terminalContent.value.push({ type: 'out', text: `*** 全部测试通过！恭喜完成本题！***` })
       terminalContent.value.push({ type: 'out', text: `用时: ${timeStr}` })
 
-      // 标记完成（保存到 localStorage）
+      // 标记完成（保存到 localStorage 作为本地缓存 + 服务器已通过 code-evaluate 记录）
       try {
         const completed = JSON.parse(localStorage.getItem('code_completed') || '{}')
         const key = `${currentModuleId.value}_${currentTaskId.value}`
@@ -460,6 +463,8 @@ async function submitCode() {
         }
         localStorage.setItem('code_completed', JSON.stringify(completed))
       } catch (e) { /* ignore */ }
+      // 同步通关数据到服务器（已在 code-evaluate 中自动记录，此处仅刷新本地缓存）
+      syncCompletionsFromServer()
 
       // 刷新统计（容错：统计接口失败不阻塞主流程）
       try {
@@ -547,13 +552,47 @@ async function fetchAnswer() {
   }
 }
 
-function copyAnswerCode() {
+async function syncCompletionsFromServer() {
+  try {
+    const resp = await fetch('/api/learning/code-completions', {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    })
+    const data = await resp.json()
+    if (data.code === 200 && Array.isArray(data.data)) {
+      const completed = JSON.parse(localStorage.getItem('code_completed') || '{}')
+      let updated = false
+      data.data.forEach(exerciseId => {
+        // 用 exercise_id 构建 key（格式：module_taskId，如 "1_5-6"）
+        // 也尝试直接匹配
+        if (!completed[exerciseId]) {
+          // 尝试匹配当前模块下的 key
+          const key = `${currentModuleId.value}_${exerciseId}`
+          if (!completed[key]) {
+            completed[key] = {
+              time: '已同步',
+              seconds: 0,
+              passedCount: 1,
+              totalCount: 1,
+              completedAt: null,
+              synced: true
+            }
+            updated = true
+          }
+        }
+      })
+      if (updated) {
+        localStorage.setItem('code_completed', JSON.stringify(completed))
+      }
+    }
+  } catch (e) {
+    console.warn('[CodeLab] 同步通关数据失败:', e.message)
+  }
+}
+
+async function copyAnswerCode() {
   if (!answerData.value?.answer_code) return
-  navigator.clipboard.writeText(answerData.value.answer_code).then(() => {
-    ElMessage.success('参考代码已复制到剪贴板')
-  }).catch(() => {
-    ElMessage.warning('复制失败，请手动复制')
-  })
+  const ok = await copyToClipboard(answerData.value.answer_code)
+  ElMessage[ok ? 'success' : 'warning'](ok ? '参考代码已复制到剪贴板' : '复制失败，请手动复制')
 }
 
 // ===== 终端操作 =====

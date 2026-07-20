@@ -32,13 +32,14 @@ app = FastAPI(
 # CORS中间件
 # 部署时设置环境变量 CORS_ORIGIN=你的域名 可限制跨域来源
 # 未设置时使用 ["*"] 允许所有来源（适合初始部署，后续建议指定具体域名）
+# 注意：JWT token 通过 Authorization header 传递（非 cookie），无需 allow_credentials=True
 _cors_origin = os.getenv("CORS_ORIGIN", "")
 _allow_origins = [o.strip() for o in _cors_origin.split(",") if o.strip()] if _cors_origin else ["*"]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_allow_origins,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

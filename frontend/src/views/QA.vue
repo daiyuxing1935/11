@@ -160,6 +160,7 @@ import { askQuestionStream, getQAHistory, deleteQAHistory, clearQAHistory, saveQ
 import { ElMessage } from 'element-plus'
 import { marked } from 'marked'
 import { recordStudyVisit } from '../api/learning'
+import { copyToClipboard } from '../utils/clipboard'
 
 const router = useRouter()
 
@@ -260,10 +261,8 @@ function handleCodeBlockAction(e) {
   const codeEl = wrapper?.querySelector('code')
   const code = codeEl?.textContent || ''
   if (btn.dataset.action === 'copy') {
-    navigator.clipboard.writeText(code).then(() => {
-      ElMessage.success('代码已复制到剪贴板')
-    }).catch(() => {
-      ElMessage.warning('复制失败，请手动复制')
+    copyToClipboard(code).then(ok => {
+      ElMessage[ok ? 'success' : 'warning'](ok ? '代码已复制到剪贴板' : '复制失败，请手动复制')
     })
   } else if (btn.dataset.action === 'run') {
     const lang = btn.dataset.lang || 'python'

@@ -1169,3 +1169,15 @@ async def batch_delete_errors(req: BatchDeleteRequest, current_user: dict = Depe
     """批量删除错题（保留兼容）"""
     result = await learning_service.batch_delete_errors(current_user["id"], req.ids)
     return APIResponse(data=result)
+
+
+@router.get("/code-completions", response_model=APIResponse)
+async def get_code_completions(current_user: dict = Depends(get_current_user)):
+    """获取用户已通过的编程习题ID列表（跨设备同步通关状态）"""
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT DISTINCT exercise_id FROM code_submissions WHERE user_id = ? AND passed = 1",
+        (current_user["id"],)
+    ).fetchall()
+    conn.close()
+    return APIResponse(data=[r["exercise_id"] for r in rows])

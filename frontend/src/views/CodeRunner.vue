@@ -80,6 +80,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { runCode as runCodeApi } from '../api/qa'
 import { ElMessage } from 'element-plus'
+import { copyToClipboard } from '../utils/clipboard'
 
 const router = useRouter()
 
@@ -149,16 +150,13 @@ async function runCode() {
   }
 }
 
-function copyCode() {
+async function copyCode() {
   if (!code.value.trim()) {
     ElMessage.warning('没有可复制的代码')
     return
   }
-  navigator.clipboard.writeText(code.value).then(() => {
-    ElMessage.success('代码已复制到剪贴板')
-  }).catch(() => {
-    ElMessage.warning('复制失败，请手动复制')
-  })
+  const ok = await copyToClipboard(code.value)
+  ElMessage[ok ? 'success' : 'warning'](ok ? '代码已复制到剪贴板' : '复制失败，请手动复制')
 }
 
 function resetCode() {

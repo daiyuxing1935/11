@@ -1,9 +1,14 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
-// 基础地址：开发环境走 Vite 代理(/api)，生产环境从 .env.production 读取
+// 基础地址优先级：运行时配置 > 环境变量 > 默认值
+// window.__API_BASE_URL__ 由 public/config.js 注入，部署后可直接修改无需重新构建
+const apiBaseUrl = window.__API_BASE_URL__
+  || import.meta.env.VITE_API_BASE_URL
+  || '/api'
+
 const request = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  baseURL: apiBaseUrl,
   timeout: 120000
 })
 
