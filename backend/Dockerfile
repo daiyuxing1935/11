@@ -9,6 +9,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 复制源码
 COPY . .
 
+# Fail the image build if resource configuration points at an SVG that was
+# not committed. This prevents a successful deploy with silent placeholders.
+RUN python validate_resource_images.py
+
 # 创建数据目录
 RUN mkdir -p /app/data
 

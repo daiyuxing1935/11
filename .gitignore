@@ -14,7 +14,8 @@ dist/
 *.sqlite3
 
 # ===== 运行时生成 =====
-backend/data/generated_images/
+backend/data/generated_images/*
+!backend/data/generated_images/*.svg
 
 # ===== 日志 =====
 debug.log
