@@ -113,7 +113,7 @@
 
         <!-- 原题完整复述 -->
         <div class="error-original-question">
-          <div class="section-title">📝 原题</div>
+          <div class="section-title">原题</div>
           <div class="question-full">
             <div class="q-type-tag">
               <el-tag size="small" effect="dark" type="primary">{{ getQuestionType(error) }}</el-tag>
@@ -127,8 +127,8 @@
                   <span class="opt-text">{{ opt }}</span>
                 </div>
                 <div class="opt-tags">
-                  <el-tag v-if="isCorrectOption(opt, error.correct_answer)" size="small" type="success" effect="dark">✓ 正确</el-tag>
-                  <el-tag v-if="isUserPick(opt, error.user_answer) && !isCorrectOption(opt, error.correct_answer)" size="small" type="danger" effect="dark">✗ 你的选择</el-tag>
+                  <el-tag v-if="isCorrectOption(opt, error.correct_answer)" size="small" type="success" effect="dark">正确</el-tag>
+                  <el-tag v-if="isUserPick(opt, error.user_answer) && !isCorrectOption(opt, error.correct_answer)" size="small" type="danger" effect="dark">你的选择</el-tag>
                 </div>
               </div>
             </div>
@@ -137,24 +137,24 @@
 
         <!-- 答案对比 -->
         <div class="error-answer-compare">
-          <div class="section-title">⚡ 答案对比</div>
+          <div class="section-title">答案对比</div>
           <div class="answer-row">
             <div class="answer-box wrong-box">
-              <div class="answer-label">✗ 你的答案</div>
+              <div class="answer-label">你的答案</div>
               <div class="answer-text">{{ error.user_answer || '未作答' }}</div>
             </div>
-            <div class="answer-arrow">→</div>
+            <div class="answer-arrow">></div>
             <div class="answer-box correct-box">
-              <div class="answer-label">✓ 正确答案</div>
+              <div class="answer-label">正确答案</div>
               <div class="answer-text">{{ error.correct_answer }}</div>
             </div>
           </div>
         </div>
 
         <!-- 题目解析 -->
-        <div v-if="getAnalysisText(error) && getAnalysisText(error) !== '暂无解析'" class="error-analysis">
-          <div class="section-title">📖 详细解析</div>
-          <div class="analysis-text">{{ getAnalysisText(error) }}</div>
+        <div v-if="getAnalysisText(error)" class="error-analysis">
+          <div class="section-title">详细解析</div>
+          <div class="analysis-text" v-html="getAnalysisText(error)" />
         </div>
       </div>
 
@@ -177,6 +177,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useLearningStore } from '../stores/learning'
 import { deleteSessionErrors, deleteOrphanErrors, recordStudyVisit } from '../api/learning'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { marked } from 'marked'
 
 const store = useLearningStore()
 const loading = ref(false)
@@ -396,7 +397,10 @@ function isUserPick(opt, userAnswer) {
 
 function getAnalysisText(error) {
   const qd = getQuestionData(error)
-  return qd.analysis || '暂无解析'
+  const raw = qd.analysis || ''
+  if (!raw) return ''
+  // 将 markdown 解析为 HTML，正确渲染 **加粗**、# 标题 等格式
+  return marked.parse(raw, { breaks: true })
 }
 
 function getErrorTypeColor(type) {
@@ -465,5 +469,8 @@ function getErrorTypeColor(type) {
 
 /* 详细解析 */
 .error-analysis { background: #f0f5ff; padding: 12px 14px; border-radius: 8px; border-left: 4px solid #409EFF; }
-.analysis-text { font-size: 14px; color: #303133; line-height: 1.7; white-space: pre-wrap; }
+.analysis-text { font-size: 14px; color: #303133; line-height: 1.8; }
+.analysis-text :deep(p) { margin: 4px 0; }
+.analysis-text :deep(strong) { color: #1a1a2e; }
+.analysis-text :deep(h1), .analysis-text :deep(h2), .analysis-text :deep(h3) { font-size: 15px; margin: 8px 0 4px; color: #303133; }
 </style>

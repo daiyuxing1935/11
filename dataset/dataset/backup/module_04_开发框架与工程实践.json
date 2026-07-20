@@ -1,11 +1,11 @@
 {
   "meta": {
     "module": "模块四：开发框架与工程实践",
-    "total_qa": 100,
+    "total_qa": 97,
     "source": "rebuild_v2 — 50选择 + 50判断",
     "type_distribution": {
       "multiple_choice": 50,
-      "true_false": 50
+      "true_false": 47
     }
   },
   "qa_pairs": [
@@ -1461,45 +1461,6 @@
       "source": "generated_v2",
       "section": "智能体框架开发",
       "difficulty": "medium",
-      "knowledge_point": "智能体框架开发"
-    },
-    {
-      "question": "Agent的性能评估只需要关注最终任务的成功率，不需要关注每一步的决策质量。",
-      "answer": "错误",
-      "options": [
-        "正确",
-        "错误"
-      ],
-      "type": "true_false",
-      "source": "generated_v2",
-      "section": "智能体框架开发",
-      "difficulty": "medium",
-      "knowledge_point": "智能体框架开发"
-    },
-    {
-      "question": "多轮对话Agent需要考虑对话状态管理，追踪用户在对话历史中的意图变化和信息更新。",
-      "answer": "正确",
-      "options": [
-        "正确",
-        "错误"
-      ],
-      "type": "true_false",
-      "source": "generated_v2",
-      "section": "智能体框架开发",
-      "difficulty": "medium",
-      "knowledge_point": "智能体框架开发"
-    },
-    {
-      "question": "在Agent系统中，Prompt模板中的变量占位符（如{user_name}）在运行时会被替换为实际值。",
-      "answer": "正确",
-      "options": [
-        "正确",
-        "错误"
-      ],
-      "type": "true_false",
-      "source": "generated_v2",
-      "section": "智能体框架开发",
-      "difficulty": "easy",
       "knowledge_point": "智能体框架开发"
     }
   ]

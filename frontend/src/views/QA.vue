@@ -84,7 +84,7 @@
                   <el-icon><Upload /></el-icon> 上传文件
                 </el-button>
               </el-tooltip>
-              <input ref="fileInput" type="file" @change="handleFileSelect" style="display:none"
+              <input ref="fileInput" type="file" @change="handleFileSelect" class="hidden-file-input"
                 accept=".pdf,.pptx,.docx,.xlsx,.png,.jpg,.jpeg,.gif,.bmp,.webp,.txt,.md,.py,.js,.ts,.json,.csv,.html,.css,.xml,.java,.c,.cpp,.sql" />
             </div>
             <div v-if="uploadedFile" class="file-tag">
@@ -604,6 +604,17 @@ async function handleClearHistory() {
 
 .feedback-btns { margin-top: 4px; padding-left: 2px; }
 .feedback-btns .el-button { font-size: 12px; padding: 2px 8px; }
+
+/* 隐藏文件输入框（兼容所有浏览器的安全策略） */
+.hidden-file-input {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
 .input-options { margin-bottom: 8px; display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
 .file-tag { margin-bottom: 6px; }
 .send-area { margin-top: 8px; }

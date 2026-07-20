@@ -147,25 +147,45 @@ export const useStatStore = defineStore('statistics', () => {
   }
 
   async function loadRecentActivity() {
-    recentActivity.value = await fetchRecentActivity()
+    try {
+      recentActivity.value = await fetchRecentActivity()
+    } catch (e) {
+      console.warn('[statStore] 学习动态加载失败，保留现有数据:', e.message)
+      // recentActivity 保持现有值（可能为空数组），不中断其他数据加载
+    }
   }
 
   async function loadWeeklyReport() {
-    loading.value = true
-    try { weeklyReport.value = await fetchWeeklyReport() } catch (e) { console.error(e) }
-    finally { loading.value = false }
+    try {
+      loading.value = true
+      weeklyReport.value = await fetchWeeklyReport()
+    } catch (e) {
+      console.warn('[statStore] 周报加载失败:', e.message)
+    } finally {
+      loading.value = false
+    }
   }
 
   async function loadMonthlyReport() {
-    loading.value = true
-    try { monthlyReport.value = await fetchMonthlyReport() } catch (e) { console.error(e) }
-    finally { loading.value = false }
+    try {
+      loading.value = true
+      monthlyReport.value = await fetchMonthlyReport()
+    } catch (e) {
+      console.warn('[statStore] 月报加载失败:', e.message)
+    } finally {
+      loading.value = false
+    }
   }
 
   async function loadGrowthData() {
-    loading.value = true
-    try { growthData.value = await fetchGrowthData() } catch (e) { console.error(e) }
-    finally { loading.value = false }
+    try {
+      loading.value = true
+      growthData.value = await fetchGrowthData()
+    } catch (e) {
+      console.warn('[statStore] 成长数据加载失败:', e.message)
+    } finally {
+      loading.value = false
+    }
   }
 
   // ================================================================
@@ -174,47 +194,30 @@ export const useStatStore = defineStore('statistics', () => {
 
   /**
    * 【核心】做题提交后调用
-   * 依次请求：① 概览统计  ② 知识点掌握度  ③ 学习动态
-   * 全部完成后再赋值 Pinia state，缺一不可
+   * 依次请求：① 提交结果记录  ② 概览统计  ③ 知识点掌握度  ④ 学习动态
+   * 各接口独立容错，单个失败不影响其他数据更新
    */
   async function refreshStatData(result) {
-    // 通知后端（mock 记录动态）
-    await submitQuizResult(result)
+    // 通知后端记录测评结果（跨设备同步到 learning_records 表）
+    try {
+      await submitQuizResult(result)
+    } catch (e) {
+      console.warn('[statStore.refreshStatData] 提交结果记录失败:', e.message)
+    }
 
-    // 并行拉取三份数据，全部完成后再赋值
+    // 各接口独立调用
+    const settle = (p) => p.catch(e => {
+      console.warn('[statStore.refreshStatData] 接口失败:', e.message)
+      return null
+    })
+
     const [statsResult, masteryResult, activityResult] = await Promise.all([
-      fetchStats(),
-      fetchKnowledgeMastery(),
-      fetchRecentActivity(),
+      settle(fetchStats()),
+      settle(fetchKnowledgeMastery()),
+      settle(fetchRecentActivity()),
     ])
 
-    // ===== 统一赋值（确保三个接口全部成功才更新 state） =====
-    const s = statsResult
-    studyDays.value       = s.study_days || 0
-    totalQuestions.value  = s.total_questions || 0
-    avgCorrectRate.value  = s.avg_correct_rate || 0
-    quizCount.value       = s.quiz_count || 0
-    quizAvgScore.value    = s.quiz_avg_score || 0
-    errorCount.value      = s.error_count || 0
-    weeklyStats.value     = s.weekly_stats || []
-
-    console.log('[statStore.refreshStatData] 后端原始 mastery:', JSON.stringify(masteryResult).slice(0, 200))
-    knowledgeMastery.value = masteryResult.mastery || masteryResult
-    masteryHasData.value = masteryResult.has_data || {}
-    console.log('[statStore.refreshStatData] Pinia mastery 已存入, 标签数:', Object.keys(knowledgeMastery.value).length)
-
-    recentActivity.value  = activityResult
-  }
-
-  /** 全量刷新（Dashboard 进入时调用，不产生假动态） */
-  async function refreshAll() {
-    try {
-      await refreshApi()
-      const [statsResult, masteryResult, activityResult] = await Promise.all([
-        fetchStats(),
-        fetchKnowledgeMastery(),
-        fetchRecentActivity(),
-      ])
+    if (statsResult) {
       const s = statsResult
       studyDays.value       = s.study_days || 0
       totalQuestions.value  = s.total_questions || 0
@@ -223,21 +226,67 @@ export const useStatStore = defineStore('statistics', () => {
       quizAvgScore.value    = s.quiz_avg_score || 0
       errorCount.value      = s.error_count || 0
       weeklyStats.value     = s.weekly_stats || []
+    }
 
-      console.log('[statStore.refreshAll] 后端原始 mastery:', JSON.stringify(masteryResult).slice(0, 200))
+    if (masteryResult) {
       knowledgeMastery.value = masteryResult.mastery || masteryResult
       masteryHasData.value = masteryResult.has_data || {}
-      console.log('[statStore.refreshAll] Pinia mastery 已存入, 标签数:', Object.keys(knowledgeMastery.value).length)
-
-      recentActivity.value = activityResult
-
-      // 报告（异步，失败不影响主要数据）
-      loadWeeklyReport().catch(() => {})
-      loadMonthlyReport().catch(() => {})
-      loadGrowthData().catch(() => {})
-    } catch (e) {
-      console.error('[statStore.refreshAll] 失败:', e)
     }
+
+    if (activityResult) {
+      recentActivity.value = activityResult
+    }
+  }
+
+  /** 全量刷新（Dashboard 进入时调用，各接口独立容错） */
+  async function refreshAll() {
+    // 先验证后端可达
+    try {
+      await refreshApi()
+    } catch (e) {
+      console.warn('[statStore.refreshAll] 后端连通性检查失败:', e.message)
+    }
+
+    // 各接口独立调用，单个失败不影响其他数据
+    const settle = (p) => p.catch(e => {
+      console.warn('[statStore.refreshAll] 接口失败:', e.message)
+      return null
+    })
+
+    const [statsResult, masteryResult, activityResult] = await Promise.all([
+      settle(fetchStats()),
+      settle(fetchKnowledgeMastery()),
+      settle(fetchRecentActivity()),
+    ])
+
+    if (statsResult) {
+      const s = statsResult
+      studyDays.value       = s.study_days || 0
+      totalQuestions.value  = s.total_questions || 0
+      avgCorrectRate.value  = s.avg_correct_rate || 0
+      quizCount.value       = s.quiz_count || 0
+      quizAvgScore.value    = s.quiz_avg_score || 0
+      errorCount.value      = s.error_count || 0
+      weeklyStats.value     = s.weekly_stats || []
+    }
+
+    if (masteryResult) {
+      knowledgeMastery.value = masteryResult.mastery || masteryResult
+      masteryHasData.value = masteryResult.has_data || {}
+    } else {
+      console.warn('[statStore.refreshAll] 掌握度数据加载失败，保持现有数据')
+    }
+
+    if (activityResult) {
+      recentActivity.value = activityResult
+    } else {
+      console.warn('[statStore.refreshAll] 学习动态加载失败，保持现有数据')
+    }
+
+    // 报告（异步，失败不影响主要数据）
+    loadWeeklyReport().catch(() => {})
+    loadMonthlyReport().catch(() => {})
+    loadGrowthData().catch(() => {})
   }
 
   return {

@@ -8,11 +8,11 @@ echo.
 :: 检查并安装 Python 依赖
 echo [1/3] 检查后端依赖...
 cd /d "%~dp0backend"
-pip show bcrypt >nul 2>&1 || (
-    echo 正在安装 Python 依赖...
+pip install -r requirements.txt --quiet 2>nul || (
+    echo 默认源安装失败，尝试使用清华镜像...
     pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-    echo [OK] Python 依赖安装完成
-) && echo [OK] Python 依赖已就绪
+)
+echo [OK] Python 依赖已就绪
 
 :: 检查并安装前端依赖
 echo.

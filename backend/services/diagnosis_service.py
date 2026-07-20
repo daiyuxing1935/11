@@ -383,6 +383,7 @@ async def submit_quiz(session_id: int, user_id: int, answers: list) -> dict:
                 "full_score": 1,
                 "question_type": qtype,
                 "knowledge_tag": question.get("knowledge_tag", ""),
+                "knowledge_point": question.get("knowledge_point", ""),
                 "difficulty": question.get("difficulty", ""),
                 "llm_feedback": feedback,
                 "judge_detail": judge_detail,
@@ -419,6 +420,7 @@ async def submit_quiz(session_id: int, user_id: int, answers: list) -> dict:
                 "full_score": 1,
                 "question_type": qtype,
                 "knowledge_tag": question.get("knowledge_tag", ""),
+                "knowledge_point": question.get("knowledge_point", ""),
                 "difficulty": question.get("difficulty", ""),
             })
 
@@ -463,6 +465,7 @@ async def submit_quiz(session_id: int, user_id: int, answers: list) -> dict:
                 "is_correct": False,
                 "question_type": question.get("question_type", ""),
                 "knowledge_tag": question.get("knowledge_tag", ""),
+                "knowledge_point": question.get("knowledge_point", ""),
                 "difficulty": question.get("difficulty", "")
             })
 
@@ -755,18 +758,26 @@ def classify_error_type(user_answer: str, correct_answer: str, question_type: st
     return "审题理解偏差"
 
 async def generate_report(questions: list, answer_details: list, correct_rate: float) -> dict:
-    """生成学情诊断报告"""
-    # 按知识点统计
+    """生成学情诊断报告
+
+    所有分析数据均来源于本次测评的实际作答，无任何硬编码占位值。
+    """
+    # ===== 第一步：按知识点统计正确率 =====
+    # 注意：answer_details 中的 knowledge_tag 是分类名（如"智能体基础概念"），
+    # knowledge_point 才是具体知识点名（如"AI智能体定义"）
     knowledge_stats = {}
     for ad in answer_details:
-        tag = ad.get("knowledge_tag", "未分类")
+        # 优先用 knowledge_point（更细粒度），回退到 knowledge_tag
+        tag = ad.get("knowledge_point", "") or ad.get("knowledge_tag", "") or "未分类"
         if tag not in knowledge_stats:
             knowledge_stats[tag] = {"correct": 0, "total": 0}
         knowledge_stats[tag]["total"] += 1
         if ad["is_correct"]:
             knowledge_stats[tag]["correct"] += 1
 
-    # 按能力维度统计
+    # ===== 第二步：能力维度分析（基于实际作答数据） =====
+    # 关键认知：knowledge_tag 字段存储的是分类名（如"智能体基础概念"），
+    # 直接与 ability_map 的 categories 做精确匹配即可，无需通过 tag_to_category 中转。
     ability_map = {
         "概念理解": ["智能体基础概念"],
         "原理辨析": ["大模型基座原理"],
@@ -776,68 +787,153 @@ async def generate_report(questions: list, answer_details: list, correct_rate: f
     }
 
     ability_stats = {}
-    for ability, categories in ability_map.items():
-        total_c = 0
-        total_t = 0
-        for ad in answer_details:
-            tag = ad.get("knowledge_tag", "")
-            qcat = ""
-            for q in questions:
-                if q.get("question_id") == ad["question_id"]:
-                    break
-            # 通过knowledge_tag匹配所属category
-            for cat in categories:
-                all_tags = get_all_tags_flat()
-                for t in all_tags:
-                    if t["name"] == tag and t["category"] in categories:
-                        total_t += 1
-                        if ad["is_correct"]:
-                            total_c += 1
-                        break
-        if total_t == 0:
-            ability_stats[ability] = {"score": 0.5, "comment": "暂无数据"}
-        else:
-            score = total_c / total_t
-            level = "优秀" if score >= 0.9 else "良好" if score >= 0.7 else "一般" if score >= 0.5 else "薄弱"
-            ability_stats[ability] = {"score": round(score, 2), "comment": f"{level}，{total_c}/{total_t}正确"}
+    covered_abilities = []
 
-    # 构建知识分析
+    for ability, categories in ability_map.items():
+        total_c = 0   # 该维度答对数
+        total_t = 0   # 该维度总题数
+        detail_cats = set()  # 该维度具体涉及的知识分类
+
+        for ad in answer_details:
+            cat = ad.get("knowledge_tag", "")  # 已经是分类名！
+            if cat in categories:
+                total_t += 1
+                detail_cats.add(cat)
+                if ad["is_correct"]:
+                    total_c += 1
+
+        if total_t == 0:
+            # 本次测评未涵盖此维度 — 如实标注
+            ability_stats[ability] = {"score": 0, "comment": "本次测评未涉及此维度"}
+        else:
+            covered_abilities.append(ability)
+            score = total_c / total_t
+            if score >= 0.9:
+                level = "优秀"
+            elif score >= 0.7:
+                level = "良好"
+            elif score >= 0.5:
+                level = "一般"
+            else:
+                level = "薄弱"
+            detail = "、".join(sorted(detail_cats))
+            ability_stats[ability] = {
+                "score": round(score, 2),
+                "comment": f"{level}（{total_c}/{total_t}正确），涉及：{detail}"
+            }
+
+    # ===== 第三步：知识点掌握度分析 =====
     knowledge_analysis = {}
     for tag, stats in knowledge_stats.items():
         m = stats["correct"] / stats["total"] if stats["total"] > 0 else 0
-        level = "优秀" if m >= 0.9 else "良好" if m >= 0.7 else "一般" if m >= 0.5 else "薄弱" if m >= 0.3 else "盲区"
+        if m >= 0.9:
+            level = "优秀"
+        elif m >= 0.7:
+            level = "良好"
+        elif m >= 0.5:
+            level = "一般"
+        elif m >= 0.3:
+            level = "薄弱"
+        else:
+            level = "盲区"
         knowledge_analysis[tag] = {
             "mastery": round(m, 2),
             "level": level,
             "comment": f"{stats['correct']}/{stats['total']}题正确，{level}水平"
         }
 
-    # 找出薄弱点和优势点
+    # ===== 第四步：薄弱点与优势领域 =====
     weak_points = [tag for tag, s in knowledge_stats.items()
-                   if s["correct"] / s["total"] < 0.5] if knowledge_stats else []
+                   if s["correct"] / max(s["total"], 1) < 0.5] if knowledge_stats else []
     strong_points = [tag for tag, s in knowledge_stats.items()
-                     if s["correct"] / s["total"] >= 0.8] if knowledge_stats else []
+                     if s["correct"] / max(s["total"], 1) >= 0.8] if knowledge_stats else []
 
-    # 利用AI生成综合评语
+    # 按能力维度汇总薄弱项
+    weak_abilities = [a for a, info in ability_stats.items()
+                      if info["score"] > 0 and info["score"] < 0.5]
+    strong_abilities = [a for a, info in ability_stats.items()
+                        if info["score"] >= 0.8]
+
+    # ===== 第五步：动态学习建议（基于实际作答表现） =====
     quiz_summary = f"共{len(answer_details)}题，正确{int(correct_rate * len(answer_details))}题，正确率{round(correct_rate*100, 1)}%"
-    suggestions = [
-        "建议重点复习薄弱知识点，结合错题本进行针对性练习",
-        "已掌握内容可进行拔高拓展，挑战更高难度题目",
-        "实操类题目建议多动手编码，配合智能体框架实战练习"
-    ]
+    suggestions = []
 
+    # 建议1：薄弱知识点攻坚（基于实际错题）
     if weak_points:
-        suggestions.insert(0, f"重点攻坚：{'、'.join(weak_points[:3])}")
+        suggestions.append(f"重点攻坚薄弱知识点：{'、'.join(weak_points[:3])}。建议回到对应学习资料重新理解概念，然后做专项练习巩固")
+    else:
+        suggestions.append("各知识点掌握均衡，可以挑战更高难度的题目")
+
+    # 建议2：基于实际失分的能力维度分析
+    if weak_abilities:
+        suggestions.append(f"能力短板在{'、'.join(weak_abilities)}维度，建议增加该类型题目的练习量")
+    elif covered_abilities:
+        # 所有已覆盖维度表现不错
+        best = max(ability_stats.items(), key=lambda x: x[1]["score"] if x[1]["score"] > 0 else -1)
+        suggestions.append(f"各能力维度表现良好，其中「{best[0]}」维度尤为突出，可在此基础上拓展进阶内容")
+
+    # 建议3：基于实际优势的拔高建议
+    if strong_points:
+        suggestions.append(f"已熟练掌握{'、'.join(strong_points[:2])}，可学习这些知识点的进阶内容或关联知识")
+    elif strong_abilities:
+        suggestions.append(f"「{'、'.join(strong_abilities)}」能力突出，可尝试综合应用类题目加深理解")
+    else:
+        suggestions.append("建议从基础概念入手，循序渐进提升各维度能力，每天保持30-45分钟专注学习")
+
+    # 建议4：实操引导（只在涉及代码实操维度且有失分时出现）
+    has_code_dimension = any(
+        ad.get("knowledge_tag", "") in ["智能体框架开发"]
+        for ad in answer_details
+    )
+    if has_code_dimension:
+        code_ability = ability_stats.get("代码实操", {})
+        if code_ability.get("score", 1) < 0.7:
+            suggestions.append("编程实操类题目失分较多，建议在「写代码」模块多动手练习，重点理解框架的API用法和设计模式")
+
+    # ===== 第六步：综合评语（基于多维度实际表现） =====
+    if correct_rate >= 0.9:
+        assessment_level = "表现优秀，基础扎实！各维度均衡发展，可以挑战高阶内容"
+    elif correct_rate >= 0.8:
+        if weak_abilities:
+            assessment_level = f"整体表现良好，但{'、'.join(weak_abilities[:2])}维度还需加强"
+        else:
+            assessment_level = "表现良好，各能力维度较为均衡，继续巩固即可迈向优秀"
+    elif correct_rate >= 0.6:
+        if weak_abilities:
+            assessment_level = f"中等水平，{'、'.join(weak_abilities[:2])}是当前的主要短板，建议优先突破"
+        elif weak_points:
+            assessment_level = f"还有提升空间，重点加强{'、'.join(weak_points[:2])}的理解"
+        else:
+            assessment_level = "还有提升空间，保持练习节奏，针对性加强薄弱环节"
+    else:
+        if weak_abilities:
+            assessment_level = f"基础较为薄弱，建议从{'、'.join(weak_abilities[:2])}的基本概念开始系统复习"
+        else:
+            assessment_level = "需要系统性地巩固基础，建议从入门知识点开始重新梳理"
+
+    # ===== 第七步：下一步聚焦建议 =====
+    if weak_points:
+        next_focus = f"优先复习「{weak_points[0]}」及其关联知识点"
+    elif covered_abilities:
+        # 没有明显薄弱点，推荐最有成长空间的维度
+        existing_scores = [(a, info["score"]) for a, info in ability_stats.items() if info["score"] > 0]
+        if existing_scores:
+            existing_scores.sort(key=lambda x: x[1])
+            next_focus = f"当前最需提升的维度是「{existing_scores[0][0]}」，可挑战进阶题目"
+        else:
+            next_focus = "全面巩固，适当拔高"
+    else:
+        next_focus = "建议先完成一次包含更多知识点的全面测评，以获取完整的能力画像"
 
     return {
-        "overall_assessment": f"本次测评{quiz_summary}。{'表现优秀，基础扎实！' if correct_rate >= 0.8 else '表现良好，继续努力！' if correct_rate >= 0.6 else '还有提升空间，针对性加强薄弱环节。'}",
+        "overall_assessment": f"本次测评{quiz_summary}。{assessment_level}",
         "knowledge_analysis": knowledge_analysis,
         "ability_analysis": ability_stats,
         "weak_points": weak_points,
         "strong_points": strong_points,
-        "error_summary": f"主要错误集中在{'、'.join(weak_points[:3]) if weak_points else '无明显薄弱环节'}",
+        "error_summary": f"主要错误集中在{'、'.join(weak_points[:3])}" if weak_points else "无明显薄弱环节，各知识点表现均衡",
         "study_suggestions": suggestions,
-        "next_focus": weak_points[0] if weak_points else "全面巩固，适当拔高"
+        "next_focus": next_focus
     }
 
 async def get_diagnosis_history(user_id: int) -> list:

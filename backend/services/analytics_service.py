@@ -194,6 +194,71 @@ def get_monthly_report(user_id: int) -> dict:
         "growth_direction": "up" if growth > 0 else "down" if growth < 0 else "stable"
     }
 
+def get_recent_activity(user_id: int, limit: int = 20) -> list:
+    """获取用户最近学习动态（跨设备一致，来源于数据库）
+
+    合并三类数据源:
+      - quiz_sessions (完成测评) → type: 'exam'
+      - qa_history (AI答疑)     → type: 'chat'
+      - error_questions (错题复习) → type: 'wrong'
+    按时间倒序排列，截取前 limit 条
+    """
+    conn = get_db()
+
+    activities = []
+
+    # 1. 完成的测评
+    for row in conn.execute(
+        "SELECT 'exam' as type, "
+        "'完成了测评练习' as content, "
+        "COALESCE(completed_at, created_at) as create_time "
+        "FROM quiz_sessions WHERE user_id = ? AND status = 'completed' "
+        "ORDER BY COALESCE(completed_at, created_at) DESC LIMIT ?",
+        (user_id, limit)
+    ).fetchall():
+        activities.append({
+            "type": row["type"],
+            "content": row["content"],
+            "createTime": row["create_time"]
+        })
+
+    # 2. AI 答疑历史
+    for row in conn.execute(
+        "SELECT 'chat' as type, "
+        "('进行了AI答疑：' || SUBSTR(question, 1, 30) || CASE WHEN LENGTH(question) > 30 THEN '...' ELSE '' END) as content, "
+        "created_at as create_time "
+        "FROM qa_history WHERE user_id = ? "
+        "ORDER BY created_at DESC LIMIT ?",
+        (user_id, limit)
+    ).fetchall():
+        activities.append({
+            "type": row["type"],
+            "content": row["content"],
+            "createTime": row["create_time"]
+        })
+
+    # 3. 错题复习
+    for row in conn.execute(
+        "SELECT 'wrong' as type, "
+        "('复习了错题：' || COALESCE(knowledge_tag, '综合') || '') as content, "
+        "created_at as create_time "
+        "FROM error_questions WHERE user_id = ? AND reviewed = 1 "
+        "ORDER BY created_at DESC LIMIT ?",
+        (user_id, limit)
+    ).fetchall():
+        activities.append({
+            "type": row["type"],
+            "content": row["content"],
+            "createTime": row["create_time"]
+        })
+
+    conn.close()
+
+    # 按时间倒序，截取前 limit 条
+    activities.sort(key=lambda x: x["createTime"] or "", reverse=True)
+    return activities[:limit]
+
+
 def record_learning_activity(user_id: int, knowledge_tag: str, action_type: str,
                              duration: int = 0, result: dict = None):
     """记录学习活动"""
