@@ -265,6 +265,55 @@ def init_db():
     except Exception as e:
         print(f"[WARN] Demo seed failed: {e}")
 
+    # Seed bundled PDF metadata without replacing the persistent database.
+    # The PDF binaries are version-controlled, while the live SQLite file is
+    # intentionally not; merge missing rows by username and filename.
+    try:
+        import json as _json
+
+        _pdf_seed_path = os.path.join(os.path.dirname(__file__), "data", "pdf_books_seed.json")
+        _pdf_dir = os.path.join(os.path.dirname(__file__), "data", "pdfs")
+        _pdf_count = 0
+        if os.path.exists(_pdf_seed_path):
+            with open(_pdf_seed_path, "r", encoding="utf-8") as _f:
+                _pdf_seed = _json.load(_f)
+            for _book in _pdf_seed:
+                _user = conn.execute(
+                    "SELECT id FROM users WHERE username = ?", (_book.get("username", ""),)
+                ).fetchone()
+                _filename = os.path.basename(str(_book.get("filename", "")))
+                _pdf_path = os.path.join(_pdf_dir, _filename)
+                if not _user or not _filename or not os.path.isfile(_pdf_path):
+                    continue
+                _existing = conn.execute(
+                    "SELECT 1 FROM pdf_books WHERE user_id = ? AND filename = ?",
+                    (_user["id"], _filename),
+                ).fetchone()
+                if _existing:
+                    continue
+                _cover = _book.get("cover")
+                if _cover and not os.path.isfile(os.path.join(_pdf_dir, "covers", os.path.basename(_cover))):
+                    _cover = None
+                conn.execute(
+                    "INSERT INTO pdf_books "
+                    "(user_id, filename, original_name, file_size, cover, created_at) "
+                    "VALUES (?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP))",
+                    (
+                        _user["id"],
+                        _filename,
+                        _book.get("original_name") or _filename,
+                        os.path.getsize(_pdf_path),
+                        _cover,
+                        _book.get("created_at"),
+                    ),
+                )
+                _pdf_count += 1
+            conn.commit()
+        if _pdf_count:
+            print(f"[OK] Imported {_pdf_count} bundled PDF book records")
+    except Exception as e:
+        print(f"[WARN] Bundled PDF metadata import failed: {e}")
+
     # Seed knowledge_tags from JSON (only if table is empty to avoid duplicates)
     try:
         _tags_path = os.path.join(os.path.dirname(__file__), "data", "knowledge_tags.json")

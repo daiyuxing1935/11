@@ -9,6 +9,8 @@ from pathlib import Path
 DATA_DIR = Path(__file__).resolve().parent / "data"
 CONFIG_PATH = DATA_DIR / "resource_image_config.json"
 IMAGES_DIR = DATA_DIR / "generated_images"
+PDF_SEED_PATH = DATA_DIR / "pdf_books_seed.json"
+PDF_DIR = DATA_DIR / "pdfs"
 
 
 def main() -> None:
@@ -27,7 +29,22 @@ def main() -> None:
         )
         raise SystemExit(f"Missing configured resource SVG files: {details}")
 
-    print(f"Validated {sum(map(len, config.values()))} configured resource SVG references")
+    pdf_seed = json.loads(PDF_SEED_PATH.read_text(encoding="utf-8"))
+    missing_pdfs = []
+    for book in pdf_seed:
+        filename = Path(str(book.get("filename", ""))).name
+        cover = Path(str(book.get("cover", ""))).name if book.get("cover") else None
+        if not filename or not (PDF_DIR / filename).is_file():
+            missing_pdfs.append(filename or "<empty filename>")
+        if cover and not (PDF_DIR / "covers" / cover).is_file():
+            missing_pdfs.append(f"covers/{cover}")
+    if missing_pdfs:
+        raise SystemExit(f"Missing bundled PDF files: {', '.join(missing_pdfs)}")
+
+    print(
+        f"Validated {sum(map(len, config.values()))} configured resource SVG references "
+        f"and {len(pdf_seed)} bundled PDF records"
+    )
 
 
 if __name__ == "__main__":
