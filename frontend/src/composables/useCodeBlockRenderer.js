@@ -49,24 +49,23 @@ export function renderMarkdown(text) {
  * @param {HTMLElement} container - 包含渲染后 HTML 的容器元素
  */
 export function bindCodeBlockActions(container) {
-  if (!container) return
+  if (!container || container.dataset.codeCopyBound === 'true') return
 
-  // 只处理 code-block-wrapper 内部的复制按钮
-  container.querySelectorAll('.code-block-wrapper').forEach(wrapper => {
-    const btn = wrapper.querySelector('.copy-btn')
-    if (btn && !btn._bound) {
-      btn._bound = true
-      btn.addEventListener('click', async () => {
-        const codeEl = wrapper.querySelector('code')
-        const code = codeEl?.textContent || ''
-        const ok = await copyToClipboard(code)
-        if (ok) {
-          ElMessage.success('代码已复制到剪贴板')
-        } else {
-          ElMessage.warning('复制失败，请手动复制')
-        }
-      })
-    }
+  // Use event delegation because resource pagination replaces its rendered
+  // HTML. A single listener keeps copy buttons on every new page working.
+  container.dataset.codeCopyBound = 'true'
+  container.addEventListener('click', async (event) => {
+    const target = event.target
+    if (!(target instanceof Element)) return
+    const btn = target.closest('.code-block-wrapper .copy-btn')
+    if (!btn || !container.contains(btn)) return
+
+    const wrapper = btn.closest('.code-block-wrapper')
+    const code = wrapper?.querySelector('code')?.textContent || ''
+    const ok = await copyToClipboard(code)
+    ElMessage[ok ? 'success' : 'warning'](
+      ok ? '代码已复制到剪贴板' : '复制失败，请手动复制'
+    )
   })
 }
 

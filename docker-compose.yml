@@ -6,7 +6,11 @@ services:
       - 127.0.0.1:8001:8000
     volumes:
       - backend_data:/app/data
+      # Keep the persistent volume, but seed it from the checked-out revision
+      # before each backend start so newly committed resources are not hidden.
+      - ./backend/data:/app/seed-data:ro
       - ./learning_materials:/learning_materials:ro
+    command: ["sh", "/app/docker-entrypoint.sh"]
     restart: unless-stopped
 
   frontend:
