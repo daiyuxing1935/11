@@ -19,6 +19,9 @@ hub
 *.sqlite
 *.sqlite3
 
+# 例外：保留 chroma 向量数据库
+!backend/data/chroma_db/chroma.sqlite3
+
 # ===== 运行时生成 =====
 backend/data/generated_images/*
 !backend/data/generated_images/*.svg
