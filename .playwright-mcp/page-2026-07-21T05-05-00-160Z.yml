@@ -1,0 +1,152 @@
+- generic [ref=f15e3]:
+  - complementary [ref=f15e4]:
+    - generic [ref=f15e5] [cursor=pointer]: AI智能体学习平台
+    - menubar [ref=f15e11]:
+      - menuitem "学习控制台" [ref=f15e12] [cursor=pointer]
+      - menuitem "学情自测" [ref=f15e17] [cursor=pointer]
+      - menuitem "智能答疑" [ref=f15e22] [cursor=pointer]
+      - menuitem "学习路径" [ref=f15e28] [cursor=pointer]
+      - menuitem "错题本" [ref=f15e34] [cursor=pointer]
+      - menuitem "学情复盘" [ref=f15e39] [cursor=pointer]
+      - menuitem "学习资源" [ref=f15e44] [cursor=pointer]
+      - menuitem "写代码" [ref=f15e50] [cursor=pointer]
+      - menuitem "个人中心" [ref=f15e55] [cursor=pointer]
+  - generic [ref=f15e60]:
+    - generic [ref=f15e61]:
+      - generic [ref=f15e62]:
+        - button [ref=f15e63] [cursor=pointer]
+        - navigation "面包屑" [ref=f15e68]:
+          - generic [ref=f15e69]:
+            - link "AI智能体学科" [ref=f15e70]
+            - text: /
+          - link "个人中心" [ref=f15e72]
+      - generic [ref=f15e73]:
+        - generic [ref=f15e74]: Lv.入门
+        - button [ref=f15e77] [cursor=pointer]
+    - main [ref=f15e84]:
+      - generic [ref=f15e86]:
+        - generic [ref=f15e89]:
+          - heading "Demo学员" [level=2] [ref=f15e94]
+          - generic [ref=f15e95]: 入门 学习者
+          - paragraph [ref=f15e97]: 系统掌握AI智能体学科知识
+          - separator [ref=f15e98]
+          - table [ref=f15e101]:
+            - rowgroup [ref=f15e102]:
+              - row [ref=f15e103]:
+                - cell "用户名demo" [ref=f15e104]
+              - row [ref=f15e105]:
+                - cell "年级大一/计算机科学" [ref=f15e106]
+        - generic [ref=f15e107]:
+          - generic [ref=f15e108]:
+            - generic [ref=f15e109]: 个人信息设置
+            - generic [ref=f15e115]:
+              - generic [ref=f15e116]:
+                - generic [ref=f15e117]: 昵称
+                - textbox "昵称" [ref=f15e121]: Demo学员
+              - generic [ref=f15e122]:
+                - generic [ref=f15e123]: 年级/专业
+                - textbox "年级/专业" [ref=f15e127]:
+                  - /placeholder: 如：大一/计算机科学
+                  - text: 大一/计算机科学
+              - generic [ref=f15e128]:
+                - generic [ref=f15e129]: 学习阶段
+                - radiogroup "学习阶段" [ref=f15e131]:
+                  - generic [ref=f15e132] [cursor=pointer]:
+                    - radio "入门" [checked] [ref=f15e134]
+                    - generic [ref=f15e136]: 入门
+                  - generic [ref=f15e137] [cursor=pointer]:
+                    - radio "进阶" [ref=f15e139]
+                    - generic [ref=f15e141]: 进阶
+                  - generic [ref=f15e142] [cursor=pointer]:
+                    - radio "高阶" [ref=f15e144]
+                    - generic [ref=f15e146]: 高阶
+              - generic [ref=f15e147]:
+                - generic [ref=f15e148]: 学习目标
+                - generic [ref=f15e151] [cursor=pointer]:
+                  - generic:
+                    - combobox "学习目标" [ref=f15e153]
+                    - generic [ref=f15e154]: 系统掌握AI智能体学科知识
+              - button "保存设置" [ref=f15e161] [cursor=pointer]
+          - generic [ref=f15e163]:
+            - generic [ref=f15e164]: AI大模型配置
+            - generic [ref=f15e170]:
+              - paragraph [ref=f15e171]: 配置您自己的大模型API，支持OpenAI及兼容接口（如DeepSeek、Azure、本地模型等）
+              - generic [ref=f15e252]:
+                - generic [ref=f15e253]:
+                  - generic [ref=f15e254]: 服务商
+                  - generic [ref=f15e257] [cursor=pointer]:
+                    - generic:
+                      - combobox "服务商" [ref=f15e259]
+                      - generic [ref=f15e260]: DeepSeek
+                - generic [ref=f15e265]:
+                  - generic [ref=f15e266]: API Key
+                  - generic [ref=f15e267]:
+                    - textbox "API Key" [ref=f15e270]:
+                      - /placeholder: sk-...
+                    - generic [ref=f15e271]: 支持OpenAI、DeepSeek等兼容接口的API Key
+                - generic [ref=f15e272]:
+                  - generic [ref=f15e273]: 接口地址
+                  - textbox "接口地址" [ref=f15e277]:
+                    - /placeholder: https://api.openai.com
+                    - text: https://api.deepseek.com
+                - generic [ref=f15e278]:
+                  - generic [ref=f15e279]: 模型名称
+                  - generic [ref=f15e280]:
+                    - textbox "模型名称" [ref=f15e283]:
+                      - /placeholder: gpt-4o
+                      - text: deepseek-chat
+                    - generic [ref=f15e284]:
+                      - text: 点击快速选择：
+                      - generic [ref=f15e285] [cursor=pointer]: deepseek-chat
+                      - generic [ref=f15e287] [cursor=pointer]: deepseek-reasoner
+                      - generic [ref=f15e289] [cursor=pointer]: deepseek-v4-pro
+                - generic [ref=f15e291]:
+                  - generic [ref=f15e292]: 图片生成 Key
+                  - generic [ref=f15e293]:
+                    - textbox "图片生成 Key" [ref=f15e296]:
+                      - /placeholder: r8_...
+                    - generic [ref=f15e297]:
+                      - text: Replicate API Key，用于AI配图生成。
+                      - link "免费注册获取 →" [ref=f15e298] [cursor=pointer]:
+                        - /url: https://replicate.com/account/api-tokens
+                - generic [ref=f15e299]:
+                  - generic [ref=f15e300]: 温度参数
+                  - generic [ref=f15e301]:
+                    - slider "温度参数" [ref=f15e305] [cursor=pointer]
+                    - generic [ref=f15e319]: 0.7 (越高越随机)
+                - generic [ref=f15e320]:
+                  - generic [ref=f15e321]: 最大Token数
+                  - generic [ref=f15e323]:
+                    - button "减少数值" [ref=f15e324] [cursor=pointer]
+                    - button "增加数值" [ref=f15e328] [cursor=pointer]
+                    - spinbutton "最大Token数" [ref=f15e334]: "4096"
+                - generic [ref=f15e336]:
+                  - button "保存配置" [ref=f15e337] [cursor=pointer]
+                  - button "取消" [ref=f15e339] [cursor=pointer]
+          - generic [ref=f15e201]:
+            - generic [ref=f15e202]: 自定义学习设置
+            - generic [ref=f15e208]:
+              - generic [ref=f15e209]:
+                - generic [ref=f15e210]: 答疑讲解深度
+                - radiogroup "答疑讲解深度" [ref=f15e212]:
+                  - generic [ref=f15e213] [cursor=pointer]:
+                    - radio "入门通俗" [ref=f15e215]
+                    - generic [ref=f15e217]: 入门通俗
+                  - generic [ref=f15e218] [cursor=pointer]:
+                    - radio "标准分步" [checked] [ref=f15e220]
+                    - generic [ref=f15e222]: 标准分步
+                  - generic [ref=f15e223] [cursor=pointer]:
+                    - radio "拔高拓展" [ref=f15e225]
+                    - generic [ref=f15e227]: 拔高拓展
+              - generic [ref=f15e228]:
+                - generic [ref=f15e229]: 每日学习提醒
+                - generic [ref=f15e231]:
+                  - switch "每日学习提醒" [checked]
+                  - generic [ref=f15e232] [cursor=pointer]: 关闭
+                  - generic [ref=f15e236] [cursor=pointer]: 开启
+              - generic [ref=f15e238]:
+                - generic [ref=f15e239]: 学习节奏
+                - generic [ref=f15e240]:
+                  - slider "学习节奏" [ref=f15e244] [cursor=pointer]
+                  - generic [ref=f15e247]: 标准
+              - button "保存偏好" [ref=f15e250] [cursor=pointer]

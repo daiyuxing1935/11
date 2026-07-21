@@ -51,6 +51,9 @@
                 {{ llmConfig.is_configured ? '已自定义配置' : '使用系统默认（未配置）' }}
               </el-tag>
             </el-form-item>
+            <el-form-item v-if="llmConfig.is_configured" label="服务商">
+              <el-tag size="small">{{ llmConfig.provider === 'deepseek' ? 'DeepSeek' : llmConfig.provider === 'openai' ? 'OpenAI' : llmConfig.provider || '自定义' }}</el-tag>
+            </el-form-item>
             <el-form-item v-if="llmConfig.is_configured" label="模型名称">
               <span>{{ llmConfig.model_name }}</span>
             </el-form-item>
@@ -66,23 +69,31 @@
             </el-form-item>
           </el-form>
           <el-form v-else label-width="120px" style="max-width:500px">
-            <el-form-item label="LLM API Key">
+            <el-form-item label="服务商">
+              <el-select v-model="llmForm.provider" @change="onProviderChange" style="width:200px">
+                <el-option label="OpenAI" value="openai" />
+                <el-option label="DeepSeek" value="deepseek" />
+                <el-option label="自定义" value="custom" />
+              </el-select>
+              <el-button v-if="llmForm.provider !== 'deepseek'" size="small" type="success" plain @click="quickSetupDeepSeek" style="margin-left:8px">⚡ 一键配置DeepSeek</el-button>
+            </el-form-item>
+            <el-form-item label="API Key">
               <el-input v-model="llmForm.api_key" type="password" show-password placeholder="sk-..." />
               <div style="font-size:12px;color:#909399">支持OpenAI、DeepSeek等兼容接口的API Key</div>
+            </el-form-item>
+            <el-form-item label="接口地址">
+              <el-input v-model="llmForm.base_url" placeholder="https://api.openai.com" />
+            </el-form-item>
+            <el-form-item label="模型名称">
+              <el-input v-model="llmForm.model_name" placeholder="gpt-4o" />
+              <div style="font-size:12px;margin-top:4px">
+                <span style="color:#909399">点击快速选择：</span>
+                <el-tag v-for="m in currentModelSuggestions" :key="m" size="small" :type="llmForm.model_name === m ? 'primary' : 'info'" @click="llmForm.model_name = m" style="cursor:pointer;margin:2px">{{ m }}</el-tag>
+              </div>
             </el-form-item>
             <el-form-item label="图片生成 Key">
               <el-input v-model="llmForm.image_api_key" type="password" show-password placeholder="r8_..." />
               <div style="font-size:12px;color:#909399">Replicate API Key，用于AI配图生成。<a href="https://replicate.com/account/api-tokens" target="_blank" style="color:#409EFF">免费注册获取 →</a></div>
-            </el-form-item>
-            <el-form-item label="接口地址">
-              <el-input v-model="llmForm.base_url" placeholder="https://api.openai.com" />
-              <div style="font-size:12px;color:#909399">OpenAI: https://api.openai.com | DeepSeek: https://api.deepseek.com</div>
-            </el-form-item>
-            <el-form-item label="模型名称">
-              <el-input v-model="llmForm.model_name" placeholder="gpt-4o" />
-              <div style="font-size:12px;color:#909399">
-                <el-tag v-for="m in modelSuggestions" :key="m" size="small" @click="llmForm.model_name = m" style="cursor:pointer;margin:2px">{{ m }}</el-tag>
-              </div>
             </el-form-item>
             <el-form-item label="温度参数">
               <el-slider v-model="llmForm.temperature" :min="0" :max="2" :step="0.1" show-stops style="width:200px" />
@@ -124,7 +135,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getLLMConfig, saveLLMConfig, resetLLMConfig } from '../api/llm'
@@ -154,6 +165,7 @@ const llmConfig = ref({
   is_configured: false
 })
 const llmForm = reactive({
+  provider: 'openai',
   api_key: '',
   image_api_key: '',
   base_url: 'https://api.openai.com',
@@ -161,7 +173,32 @@ const llmForm = reactive({
   temperature: 0.7,
   max_tokens: 4096
 })
-const modelSuggestions = ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo', 'deepseek-chat', 'deepseek-reasoner', 'qwen-turbo', 'glm-4']
+const modelSuggestions = {
+  openai: ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo', 'o1-mini', 'o1-preview'],
+  deepseek: ['deepseek-chat', 'deepseek-reasoner', 'deepseek-v4-pro'],
+  custom: ['gpt-4o', 'deepseek-chat', 'deepseek-reasoner', 'deepseek-v4-pro', 'qwen-turbo', 'glm-4']
+}
+const currentModelSuggestions = computed(() => modelSuggestions[llmForm.provider] || modelSuggestions.custom)
+
+function onProviderChange(provider) {
+  const presets = {
+    openai: { base_url: 'https://api.openai.com', model_name: 'gpt-4o' },
+    deepseek: { base_url: 'https://api.deepseek.com', model_name: 'deepseek-chat' },
+    custom: { base_url: '', model_name: '' }
+  }
+  const preset = presets[provider]
+  if (preset) {
+    llmForm.base_url = preset.base_url
+    llmForm.model_name = preset.model_name
+  }
+}
+
+function quickSetupDeepSeek() {
+  llmForm.provider = 'deepseek'
+  llmForm.base_url = 'https://api.deepseek.com'
+  llmForm.model_name = 'deepseek-chat'
+  ElMessage.success('已切换到DeepSeek配置，请输入您的API Key后保存')
+}
 
 onMounted(async () => {
   try {
@@ -170,6 +207,7 @@ onMounted(async () => {
     if (data.is_configured) {
       llmForm.api_key = ''
       llmForm.image_api_key = ''
+      llmForm.provider = data.provider || 'openai'
       llmForm.base_url = data.base_url
       llmForm.model_name = data.model_name
       llmForm.temperature = data.temperature
@@ -211,6 +249,7 @@ async function handleResetLLM() {
     await ElMessageBox.confirm('确认重置为系统默认配置？', '提示', { confirmButtonText: '确认', cancelButtonText: '取消', type: 'warning' })
     await resetLLMConfig()
     llmConfig.value = { provider: 'openai', api_key: '', image_api_key: '', base_url: 'https://api.openai.com', model_name: 'gpt-4o', temperature: 0.7, max_tokens: 4096, is_configured: false }
+    llmForm.provider = 'openai'
     llmForm.api_key = ''
     llmForm.image_api_key = ''
     llmForm.base_url = 'https://api.openai.com'

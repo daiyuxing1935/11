@@ -81,6 +81,9 @@ export function askQuestionStream(data, { onChunk, onDone, onError, onSearchResu
           if (data === '[DONE]') continue
           try {
             const parsed = JSON.parse(data)
+            if (parsed.rag_sources && onRagSources) {
+              onRagSources(parsed.rag_sources)
+            }
             if (parsed.search_results && onSearchResults) {
               onSearchResults(parsed.search_results, parsed.search_query || '')
             }

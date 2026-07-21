@@ -28,6 +28,21 @@
                     <div v-html="renderMarkdown(msg.thinking)"></div>
                   </div>
                 </div>
+                <!-- RAG 知识库来源 -->
+                <div v-if="msg.ragSources && msg.ragSources.length" class="rag-sources-block">
+                  <div class="rag-sources-header">
+                    <el-icon color="#67C23A"><Collection /></el-icon>
+                    <span>参考知识库（{{ msg.ragSources.length }} 条来源）</span>
+                  </div>
+                  <div class="rag-source-list">
+                    <div v-for="(s, i) in msg.ragSources" :key="i" class="rag-source-item">
+                      <span class="rag-source-icon">{{ s.source_type === 'pdf' ? '📖' : '📝' }}</span>
+                      <span class="rag-source-title">{{ s.title }}</span>
+                      <span v-if="s.section" class="rag-source-section">— {{ s.section }}</span>
+                      <span v-if="s.page" class="rag-source-page">(第{{ s.page }}页)</span>
+                    </div>
+                  </div>
+                </div>
                 <!-- 联网搜索结果 -->
                 <div v-if="msg.searchResults && msg.searchResults.length" class="search-results-block">
                   <div class="search-header">
@@ -184,6 +199,7 @@ const currentQaId = ref(null)
 const feedbackGiven = ref(false)
 const searchResultsData = ref(null)
 const searchQuery = ref('')
+const ragSourcesData = ref(null)
 
 const quickQuestions = [
   'AI智能体和大模型有什么区别？',
@@ -362,6 +378,7 @@ async function sendMessage() {
 
   searchResultsData.value = null
   searchQuery.value = ''
+  ragSourcesData.value = null
 
   abortStream.value = askQuestionStream(
     {
@@ -375,6 +392,15 @@ async function sendMessage() {
       history: conversationHistory
     },
     {
+      onRagSources(sources) {
+        ragSourcesData.value = sources
+        if (messages.value[assistantIdx]) {
+          messages.value[assistantIdx] = {
+            ...messages.value[assistantIdx],
+            ragSources: sources
+          }
+        }
+      },
       onSearchResults(results, sq) {
         searchResultsData.value = results
         searchQuery.value = sq
@@ -397,6 +423,9 @@ async function sendMessage() {
       },
       onDone(fullAnswer) {
         const msg = _buildAssistantMsg(fullAnswer)
+        if (ragSourcesData.value) {
+          msg.ragSources = ragSourcesData.value
+        }
         if (searchResultsData.value) {
           msg.searchResults = searchResultsData.value
           msg.searchQuery = searchQuery.value
@@ -671,6 +700,40 @@ async function handleClearHistory() {
 .thinking-content :deep(code) { font-size: 11px; background: #fef9e7; color: #b45309; }
 .thinking-content :deep(pre) { font-size: 11px; background: #fffbeb; }
 
+/* 联网搜索结果 */
+/* RAG 知识库来源 */
+.rag-sources-block {
+  margin-bottom: 10px;
+  background: #f0fdf4;
+  border: 1px solid #b7e4c7;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.rag-sources-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #67C23A;
+  background: #e8f8ef;
+}
+.rag-source-list { padding: 4px 8px 8px; max-height: 200px; overflow-y: auto; }
+.rag-source-item {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 6px 10px;
+  margin: 2px 0;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #606266;
+}
+.rag-source-icon { flex-shrink: 0; }
+.rag-source-title { font-weight: 500; color: #2e7d32; }
+.rag-source-section { color: #909399; }
+.rag-source-page { color: #b0b3bb; font-size: 11px; }
 /* 联网搜索结果 */
 .search-results-block {
   margin-bottom: 10px;

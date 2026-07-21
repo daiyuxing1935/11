@@ -195,10 +195,33 @@ def init_db():
         );
     """)
 
+    # RAG 知识库文档追踪表
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS rag_documents (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            source_path TEXT NOT NULL,
+            source_type TEXT NOT NULL,
+            source_title TEXT DEFAULT '',
+            source_module TEXT DEFAULT '',
+            doc_hash TEXT NOT NULL,
+            chunk_count INTEGER DEFAULT 0,
+            char_count INTEGER DEFAULT 0,
+            status TEXT DEFAULT 'pending',
+            error_msg TEXT DEFAULT '',
+            ingested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_rag_source ON rag_documents(source_path)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_rag_status ON rag_documents(status)")
+
     # 数据库迁移
     _run_migration(conn, "error_questions", "session_id INTEGER", "错题表迁移: 添加 session_id 列")
     _run_migration(conn, "user_llm_config", "image_api_key TEXT DEFAULT ''", "LLM配置表迁移: 添加 image_api_key 列")
+    _run_migration(conn, "user_llm_config", "embedding_provider TEXT DEFAULT ''", "LLM配置表迁移: 添加 embedding_provider 列")
+    _run_migration(conn, "user_llm_config", "embedding_api_key TEXT DEFAULT ''", "LLM配置表迁移: 添加 embedding_api_key 列")
+    _run_migration(conn, "user_llm_config", "embedding_model TEXT DEFAULT 'text-embedding-v3'", "LLM配置表迁移: 添加 embedding_model 列")
     _run_migration(conn, "learning_stats", "mastery_detail_json TEXT DEFAULT '{}'", "学习统计表迁移: 添加 mastery_detail_json 列")
+    _run_migration(conn, "qa_history", "rag_sources_json TEXT DEFAULT ''", "QA历史表迁移: 添加 rag_sources_json 列")
 
     # 习题评测元数据表 — 存储每道题的锁定代码/目标函数/测试用例
     conn.execute("""

@@ -80,6 +80,7 @@ class QARequest(BaseModel):
     file_text: Optional[str] = None  # 上传文件提取的文本内容
     file_base64: Optional[str] = None  # 上传图片的 base64 data URL (如 data:image/png;base64,...)
     history: Optional[List[Dict[str, str]]] = None  # 多轮对话历史 [{role, content}, ...]
+    use_rag: bool = True  # 是否启用 RAG 知识库增强
 
 class QAResponse(BaseModel):
     id: int

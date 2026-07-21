@@ -21,6 +21,8 @@ backend/data/generated_images/*
 debug.log
 *.log
 
+.venv
+
 # ===== 临时文件 =====
 tmp_*.json
 *.tmp

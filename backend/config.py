@@ -15,6 +15,11 @@ RESOURCES_PATH = os.path.join(BASE_DIR, "data", "resources.json")
 # 题库目录（backend/data/dataset/ 下）
 DATASET_DIR = os.path.join(BASE_DIR, "data", "dataset")
 
+# RAG 知识库配置
+CHROMA_DB_PATH = os.path.join(BASE_DIR, "data", "chroma_db")
+RAG_TOP_K = 5
+RAG_DEFAULT_EMBEDDING_PROVIDER = "dashscope"  # "dashscope" | "bge"
+
 # 出题配置
 MAX_QUESTIONS_PER_QUIZ = 20
 QUESTION_TYPES = ["单选", "多选", "判断", "简答", "填空", "代码实操"]

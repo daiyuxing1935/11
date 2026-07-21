@@ -35,3 +35,10 @@ openpyxl>=3.1.0
 # --- 图片OCR（提取图片中的文字，兼容所有纯文本LLM） ---
 Pillow>=10.0.0
 pytesseract>=0.3.0
+
+# --- RAG 向量数据库 & 云端嵌入 ---
+chromadb>=0.5.0
+dashscope>=1.20.0
+
+# --- RAG 本地嵌入模型（仅本地开发，拉入 torch，Docker 不安装）---
+# sentence-transformers>=2.7.0  → 见 requirements-dev.txt

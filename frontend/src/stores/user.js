@@ -28,12 +28,8 @@ export const useUserStore = defineStore('user', () => {
   }
 
   async function register(form) {
+    // 注册成功不自动登录，仅调用 API
     const data = await registerApi(form)
-    token.value = data.access_token
-    user.value = data.user
-    _verified.value = true
-    localStorage.setItem('token', data.access_token)
-    localStorage.setItem('user', JSON.stringify(data.user))
     return data
   }
 

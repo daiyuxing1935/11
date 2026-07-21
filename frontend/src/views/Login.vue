@@ -69,26 +69,40 @@ const loginFormRef = ref(null)
 const regFormRef = ref(null)
 
 async function handleLogin() {
-  const valid = await loginFormRef.value.validate().catch(() => false)
-  if (!valid) return
+  if (!loginForm.username.trim() || !loginForm.password.trim()) {
+    ElMessage.warning('请输入用户名和密码')
+    return
+  }
   loading.value = true
   try {
     await userStore.login(loginForm.username, loginForm.password)
     ElMessage.success('登录成功')
     router.push('/dashboard')
-  } catch(e) { ElMessage.error(e.response?.data?.detail || '登录失败') }
+  } catch(e) { ElMessage.error(e.response?.data?.detail || e.message || '登录失败，请检查网络连接') }
   finally { loading.value = false }
 }
 
 async function handleRegister() {
-  const valid = await regFormRef.value.validate().catch(() => false)
-  if (!valid) return
+  if (!regForm.username.trim() || !regForm.password.trim() || !regForm.nickname.trim()) {
+    ElMessage.warning('请填写完整的注册信息')
+    return
+  }
+  if (regForm.password.length < 6) {
+    ElMessage.warning('密码至少需要6位')
+    return
+  }
   loading.value = true
   try {
     await userStore.register(regForm)
-    ElMessage.success('注册成功')
-    router.push('/dashboard')
-  } catch(e) { ElMessage.error(e.response?.data?.detail || '注册失败') }
+    ElMessage.success('注册成功，请登录')
+    // 清空登录表单并切换到登录 tab
+    loginForm.username = regForm.username
+    loginForm.password = ''
+    regForm.username = ''
+    regForm.password = ''
+    regForm.nickname = ''
+    activeTab.value = 'login'
+  } catch(e) { ElMessage.error(e.response?.data?.detail || e.message || '注册失败，请稍后重试') }
   finally { loading.value = false }
 }
 </script>

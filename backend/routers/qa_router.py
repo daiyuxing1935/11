@@ -214,6 +214,7 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
     # 初始化变量（代码路径和非代码路径共用）
     search_results = []
     search_query_rewritten = ""
+    rag_sources = None
     messages = []
     temperature = 0.7
     max_tokens = 4096
@@ -312,11 +313,57 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
         else:
             from services.ai_service import QA_STANDARD_PROMPT as prompt_template
 
-        prompt = prompt_template.format(
-            question=req.question,
-            question_type=req.question_type,
-            context=(req.context or "无额外上下文") + search_context
-        )
+        # 【RAG】知识库检索增强（非代码类问题）
+        rag_sources = None
+        if req.use_rag:
+            try:
+                from services.rag_service import get_rag_service
+                from database import get_db
+                _conn = get_db()
+                _row = _conn.execute(
+                    "SELECT embedding_provider, embedding_api_key, embedding_model FROM user_llm_config WHERE user_id = ?",
+                    (current_user["id"],)
+                ).fetchone()
+                _conn.close()
+                if _row and _row["embedding_api_key"]:
+                    _rag = get_rag_service(
+                        provider=_row["embedding_provider"] or "dashscope",
+                        api_key=_row["embedding_api_key"],
+                    )
+                    _chunks = _rag.retrieve(req.question, top_k=5)
+                    if _chunks:
+                        rag_context = _rag.format_context(_chunks)
+                        prompt = prompt_template.format(
+                            question=req.question,
+                            question_type=req.question_type,
+                            context=(req.context or "无额外上下文") + search_context + "\n\n" + rag_context
+                        )
+                        rag_sources = _rag.get_sources(_chunks)
+                    else:
+                        prompt = prompt_template.format(
+                            question=req.question,
+                            question_type=req.question_type,
+                            context=(req.context or "无额外上下文") + search_context
+                        )
+                else:
+                    prompt = prompt_template.format(
+                        question=req.question,
+                        question_type=req.question_type,
+                        context=(req.context or "无额外上下文") + search_context
+                    )
+            except Exception:
+                # RAG 失败不影响主流程
+                prompt = prompt_template.format(
+                    question=req.question,
+                    question_type=req.question_type,
+                    context=(req.context or "无额外上下文") + search_context
+                )
+        else:
+            prompt = prompt_template.format(
+                question=req.question,
+                question_type=req.question_type,
+                context=(req.context or "无额外上下文") + search_context
+            )
 
         # 【自进化】注入成功模式 + 学生画像
         try:
@@ -354,7 +401,9 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
         max_tokens = 8192 if req.deep_thinking else 4096
 
     async def _stream_with_search():
-        """先发送搜索结果，再流式输出 LLM 回答"""
+        """先发送 RAG 来源和搜索结果，再流式输出 LLM 回答"""
+        if rag_sources:
+            yield f"data: {json.dumps({'rag_sources': rag_sources}, ensure_ascii=False)}\n\n"
         if search_results:
             search_msg = {"search_results": search_results}
             if search_query_rewritten:

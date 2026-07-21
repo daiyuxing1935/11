@@ -1,0 +1,14 @@
+- generic [ref=f4e4]:
+  - generic [ref=f4e5]:
+    - heading "AI智能体学科学习平台" [level=1] [ref=f4e10]
+    - paragraph [ref=f4e11]: 个性化 · 伴随式 · 智能化
+  - generic [ref=f4e12]:
+    - tablist [ref=f4e16]:
+      - tab "登录" [selected] [ref=f4e18]
+      - tab "注册" [ref=f4e19]
+    - tabpanel "登录" [ref=f4e21]:
+      - generic [ref=f4e22]:
+        - textbox "用户名" [ref=f4e31]
+        - textbox "密码" [ref=f4e41]
+        - button "登 录" [ref=f4e44] [cursor=pointer]
+  - generic [ref=f4e46]: 首次使用请先注册账号
