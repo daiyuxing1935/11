@@ -3,6 +3,7 @@ node_modules/
 __pycache__/
 *.pyc
 *.pyo
+.playwright-mcp
 
 # ===== 构建产物 =====
 dist/
