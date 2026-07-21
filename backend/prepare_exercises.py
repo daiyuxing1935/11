@@ -242,7 +242,7 @@ def _inject_markers(lines):
     # CODE_START: 在第一个需实现的 def 之前
     # CODE_END: 在最后一个需实现的方法结束之后
     def_indent = len(lines[first_def]) - len(lines[first_def].lstrip())
-    body_indent = " " * (def_indent + 4)
+    marker_indent = " " * def_indent
 
     result = []
     start_inserted = False
@@ -251,14 +251,14 @@ def _inject_markers(lines):
     for i, line in enumerate(lines):
         # 在第一个 def 之前插入 CODE_START
         if not start_inserted and i == first_def:
-            result.append(body_indent + CODE_START)
+            result.append(marker_indent + CODE_START)
             start_inserted = True
 
         result.append(line)
 
         # 在方法结束行后插入 CODE_END
         if not end_inserted and i == last_def_end:
-            result.append(body_indent + CODE_END)
+            result.append(marker_indent + CODE_END)
             end_inserted = True
 
     if not start_inserted:

@@ -7,6 +7,43 @@ from schemas import APIResponse
 router = APIRouter()
 
 
+def _get_rag_for_user(user_id: int):
+    """根据用户配置获取 RAG 服务实例
+
+    策略：用户配置的嵌入 API Key → BGE 本地（仅开发环境兜底）
+    ⚠️ 绝不使用硬编码的默认 Key，未配置时抛出异常
+    """
+    from services.rag_service import get_rag_service, reset_rag_service
+    from database import get_db
+
+    conn = get_db()
+    row = conn.execute(
+        "SELECT embedding_provider, embedding_api_key, embedding_model FROM user_llm_config WHERE user_id = ?",
+        (user_id,)
+    ).fetchone()
+    conn.close()
+
+    # 1. 用户已配置自己的嵌入 API Key → 优先使用
+    if row and row["embedding_api_key"]:
+        try:
+            return get_rag_service(
+                provider=row["embedding_provider"] or "dashscope",
+                api_key=row["embedding_api_key"],
+            )
+        except Exception:
+            reset_rag_service()
+
+    # 2. 本地 BGE 模型兜底（需要 sentence-transformers + torch，仅本地开发环境）
+    try:
+        return get_rag_service(provider="bge")
+    except Exception:
+        reset_rag_service()
+        raise HTTPException(
+            status_code=400,
+            detail="未配置嵌入 API Key。请在个人中心配置 DashScope API Key 后重试。"
+        )
+
+
 @router.post("/build", response_model=APIResponse)
 async def build_knowledge_base(current_user: dict = Depends(get_current_user)):
     """触发知识库构建（全量）
@@ -15,13 +52,12 @@ async def build_knowledge_base(current_user: dict = Depends(get_current_user)):
     耗时取决于文档数量，通常 3-10 分钟。
     """
     try:
-        from services.embedding_service import get_embedding_backend, test_dashscope_connection
+        from services.embedding_service import get_embedding_backend, reset_embedding_backend
         from services.rag_service import RAGService
         from services.document_loader import load_all_documents
-
-        # 获取用户配置的嵌入服务
-        # 先尝试 dashscope，如果用户没有配置则用 bge local
         from database import get_db
+
+        # 获取嵌入配置（必须由用户提供自己的 API Key）
         conn = get_db()
         row = conn.execute(
             "SELECT embedding_provider, embedding_api_key, embedding_model FROM user_llm_config WHERE user_id = ?",
@@ -29,20 +65,15 @@ async def build_knowledge_base(current_user: dict = Depends(get_current_user)):
         ).fetchone()
         conn.close()
 
-        provider = "dashscope"
-        api_key = ""
-        model = "text-embedding-v3"
-
-        if row:
-            provider = row["embedding_provider"] or "dashscope"
-            api_key = row["embedding_api_key"] or ""
-            model = row["embedding_model"] or "text-embedding-v3"
-
-        if provider == "dashscope" and not api_key:
+        if not row or not row["embedding_api_key"]:
             raise HTTPException(
                 status_code=400,
-                detail="请在「个人中心 → Embedding 配置」中设置阿里云 DashScope API Key"
+                detail="请先在个人中心配置嵌入 API Key 后再构建知识库"
             )
+
+        provider = row["embedding_provider"] or "dashscope"
+        api_key = row["embedding_api_key"]
+        model = row["embedding_model"] or "text-embedding-v3"
 
         # 加载文档
         import os
@@ -57,6 +88,7 @@ async def build_knowledge_base(current_user: dict = Depends(get_current_user)):
             return APIResponse(data={"error": "未找到任何文档", "total": 0, "new": 0})
 
         # 构建向量库
+        reset_embedding_backend()
         backend = get_embedding_backend(provider=provider, api_key=api_key, model=model, force_reload=True)
         rag = RAGService(backend=backend)
         result = rag.rebuild(chunks)
@@ -77,21 +109,11 @@ async def build_knowledge_base(current_user: dict = Depends(get_current_user)):
 async def get_rag_status(current_user: dict = Depends(get_current_user)):
     """获取知识库状态"""
     try:
-        from services.rag_service import get_rag_service
-
-        # 使用默认配置尝试获取状态（不需要用户的 API key）
-        try:
-            rag = get_rag_service(provider="dashscope", api_key="dummy")
-            status = rag.get_status()
-        except Exception:
-            # 如果 dashscope 不可用，尝试 bge
-            from services.rag_service import reset_rag_service
-            reset_rag_service()
-            rag = get_rag_service(provider="bge")
-            status = rag.get_status()
-
+        rag = _get_rag_for_user(current_user["id"])
+        status = rag.get_status()
         return APIResponse(data=status)
-
+    except HTTPException:
+        raise
     except Exception as e:
         return APIResponse(data={"error": str(e), "total_chunks": 0})
 
@@ -102,7 +124,6 @@ async def reindex_knowledge_base(current_user: dict = Depends(get_current_user))
     try:
         from services.rag_service import reset_rag_service
         reset_rag_service()
-        # 调用 build 逻辑
         return await build_knowledge_base(current_user)
     except HTTPException:
         raise
@@ -121,31 +142,7 @@ async def search_rag(
         return APIResponse(data={"results": [], "query": ""})
 
     try:
-        from services.embedding_service import get_embedding_backend
-        from services.rag_service import RAGService
-
-        # 尝试获取用户配置
-        from database import get_db
-        conn = get_db()
-        row = conn.execute(
-            "SELECT embedding_provider, embedding_api_key, embedding_model FROM user_llm_config WHERE user_id = ?",
-            (current_user["id"],)
-        ).fetchone()
-        conn.close()
-
-        provider = "dashscope"
-        api_key = ""
-        model = "text-embedding-v3"
-
-        if row and row["embedding_api_key"]:
-            provider = row["embedding_provider"] or "dashscope"
-            api_key = row["embedding_api_key"]
-            model = row["embedding_model"] or "text-embedding-v3"
-        else:
-            provider = "bge"
-
-        backend = get_embedding_backend(provider=provider, api_key=api_key, model=model)
-        rag = RAGService(backend=backend)
+        rag = _get_rag_for_user(current_user["id"])
         results = rag.retrieve(q, top_k=top_k)
         sources = rag.get_sources(results)
 
@@ -165,6 +162,8 @@ async def search_rag(
             ],
         })
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"检索失败: {str(e)}")
 
@@ -182,17 +181,14 @@ async def test_embedding_connection(current_user: dict = Depends(get_current_use
         conn.close()
 
         if not row or not row["embedding_api_key"]:
-            raise HTTPException(status_code=400, detail="请先配置 Embedding API Key")
+            raise HTTPException(status_code=400, detail="请先配置嵌入 API Key")
 
         from services.embedding_service import test_dashscope_connection
         result = test_dashscope_connection(
             api_key=row["embedding_api_key"],
             model=row["embedding_model"] or "text-embedding-v3",
         )
-
         return APIResponse(data=result)
 
-    except HTTPException:
-        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"测试失败: {str(e)}")

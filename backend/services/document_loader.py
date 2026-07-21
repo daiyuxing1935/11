@@ -86,8 +86,8 @@ def load_pdf_documents(pdf_dir: str) -> List[DocumentChunk]:
                 if not text or len(text) < 20:  # 跳过空页或极短页
                     continue
 
-                # 按段落分块
-                paragraphs = _split_paragraphs(text, max_chars=800, min_chars=200)
+                # 按段落分块（放宽到 1200 字符，RTX 5060 显存充裕）
+                paragraphs = _split_paragraphs(text, max_chars=1200, min_chars=200)
                 for ci, para_text in enumerate(paragraphs):
                     # 尝试提取第一个标题作为 section
                     section = _extract_first_heading(para_text) or f"第{page_num+1}页"
@@ -166,8 +166,8 @@ def load_markdown_documents(
                 if not section_text.strip() or len(section_text.strip()) < 30:
                     continue
 
-                # 过长的 section 按段落二次分割
-                sub_chunks = _split_paragraphs(section_text, max_chars=1000, min_chars=200)
+                # 过长的 section 按段落二次分割（放宽到 1200 字符）
+                sub_chunks = _split_paragraphs(section_text, max_chars=1200, min_chars=200)
                 for sub_text in sub_chunks:
                     chunks.append(DocumentChunk(
                         text=sub_text,
@@ -213,11 +213,11 @@ def load_qa_documents(dataset_dir: str) -> List[DocumentChunk]:
             with open(jf, 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
-            # 支持两种格式：直接数组 或 {"questions": [...]}
+            # 支持多种格式：直接数组 / {"qa_pairs": [...]} / {"questions": [...]}
             if isinstance(data, list):
                 questions = data
             elif isinstance(data, dict):
-                questions = data.get("questions", [])
+                questions = data.get("qa_pairs", data.get("questions", []))
             else:
                 continue
 
@@ -380,6 +380,9 @@ def _infer_module_from_title(title: str) -> str:
         "应用": "模块三：智能体四大核心能力模块",
         "多智能体": "模块五：多智能体系统",
         "系统构建": "模块五：多智能体系统",
+        "数据挖掘": "数据分析与挖掘",
+        "数据分析": "数据分析与挖掘",
+        "数据仓库": "数据分析与挖掘",
     }
     for kw, mod in module_keywords.items():
         if kw in title:

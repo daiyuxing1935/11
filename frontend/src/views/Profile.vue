@@ -42,9 +42,61 @@
           </el-form>
         </el-card>
 
+        <el-card shadow="hover" style="margin-top:20px" class="deepseek-quick-card">
+          <template #header>
+            <div class="page-title">
+              <el-icon><Cpu /></el-icon> 🔑 DeepSeek API Key 快速配置
+              <el-tag v-if="deepseekConfigured" type="success" size="small" style="margin-left:12px">已配置</el-tag>
+            </div>
+          </template>
+          <p style="color:#909399;font-size:13px;margin-bottom:16px">
+            输入您的 DeepSeek API Key 即可一键启用，自动配置接口地址和模型。<br/>
+            <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:#409EFF">获取 DeepSeek API Key →</a>
+          </p>
+          <el-form label-width="80px" style="max-width:500px">
+            <el-form-item label="API Key">
+              <el-input v-model="deepseekApiKey" type="password" show-password placeholder="sk-..." size="large" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" size="large" @click="handleSaveDeepSeek" :loading="deepseekSaving" style="width:100%">
+                🚀 保存并启用 DeepSeek
+              </el-button>
+            </el-form-item>
+            <el-form-item v-if="deepseekConfigured">
+              <el-button type="danger" plain @click="handleResetDeepSeek">重置 DeepSeek 配置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+
+        <el-card shadow="hover" style="margin-top:20px" class="embedding-quick-card">
+          <template #header>
+            <div class="page-title">
+              <el-icon><Collection /></el-icon> 📚 知识库嵌入 API Key 快速配置
+              <el-tag v-if="embeddingConfigured" type="success" size="small" style="margin-left:12px">已配置</el-tag>
+            </div>
+          </template>
+          <p style="color:#909399;font-size:13px;margin-bottom:16px">
+            输入阿里云 DashScope text-embedding-v3 API Key，启用 RAG 知识库检索增强。<br/>
+            <a href="https://help.aliyun.com/zh/model-studio/get-api-key" target="_blank" style="color:#409EFF">获取 DashScope API Key →</a>
+          </p>
+          <el-form label-width="80px" style="max-width:500px">
+            <el-form-item label="API Key">
+              <el-input v-model="embeddingApiKey" type="password" show-password placeholder="sk-..." size="large" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="success" size="large" @click="handleSaveEmbedding" :loading="embeddingSaving" style="width:100%">
+                📚 保存并启用知识库
+              </el-button>
+            </el-form-item>
+            <el-form-item v-if="embeddingConfigured">
+              <el-button type="danger" plain @click="handleResetEmbedding">重置嵌入配置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+
         <el-card shadow="hover" style="margin-top:20px">
-          <template #header><div class="page-title"><el-icon><Cpu /></el-icon> AI大模型配置</div></template>
-          <p style="color:#909399;font-size:13px;margin-bottom:16px">配置您自己的大模型API，支持OpenAI及兼容接口（如DeepSeek、Azure、本地模型等）</p>
+          <template #header><div class="page-title"><el-icon><Cpu /></el-icon> AI大模型配置（高级）</div></template>
+          <p style="color:#909399;font-size:13px;margin-bottom:16px">高级自定义配置，支持OpenAI及兼容接口（如Azure、本地模型等）。如仅需使用 DeepSeek，请在上方快速配置。</p>
           <el-form v-if="!llmEditing" label-width="120px" style="max-width:500px">
             <el-form-item label="配置状态">
               <el-tag :type="llmConfig.is_configured ? 'success' : 'info'">
@@ -75,7 +127,7 @@
                 <el-option label="DeepSeek" value="deepseek" />
                 <el-option label="自定义" value="custom" />
               </el-select>
-              <el-button v-if="llmForm.provider !== 'deepseek'" size="small" type="success" plain @click="quickSetupDeepSeek" style="margin-left:8px">⚡ 一键配置DeepSeek</el-button>
+              <el-button v-if="llmForm.provider !== 'deepseek'" size="small" type="success" plain @click="quickSetupDeepSeek" style="margin-left:8px">⚡ 快速填充DeepSeek</el-button>
             </el-form-item>
             <el-form-item label="API Key">
               <el-input v-model="llmForm.api_key" type="password" show-password placeholder="sk-..." />
@@ -89,6 +141,13 @@
               <div style="font-size:12px;margin-top:4px">
                 <span style="color:#909399">点击快速选择：</span>
                 <el-tag v-for="m in currentModelSuggestions" :key="m" size="small" :type="llmForm.model_name === m ? 'primary' : 'info'" @click="llmForm.model_name = m" style="cursor:pointer;margin:2px">{{ m }}</el-tag>
+              </div>
+            </el-form-item>
+            <el-form-item label="嵌入 API Key">
+              <el-input v-model="llmForm.embedding_api_key" type="password" show-password placeholder="sk-..." />
+              <div style="font-size:12px;color:#909399">
+                DashScope text-embedding-v3 API Key，用于 RAG 知识库向量检索。
+                <a href="https://help.aliyun.com/zh/model-studio/get-api-key" target="_blank" style="color:#409EFF">阿里云百炼获取 →</a>
               </div>
             </el-form-item>
             <el-form-item label="图片生成 Key">
@@ -138,12 +197,18 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getLLMConfig, saveLLMConfig, resetLLMConfig } from '../api/llm'
+import { getLLMConfig, saveLLMConfig, resetLLMConfig, saveEmbeddingConfig } from '../api/llm'
 
 const userStore = useUserStore()
 const saving = ref(false)
 const llmEditing = ref(false)
 const llmSaving = ref(false)
+const deepseekSaving = ref(false)
+const deepseekApiKey = ref('')
+const deepseekConfigured = ref(false)
+const embeddingSaving = ref(false)
+const embeddingApiKey = ref('')
+const embeddingConfigured = ref(false)
 const form = reactive({
   nickname: userStore.user?.nickname || '',
   grade: userStore.user?.grade || '',
@@ -168,6 +233,9 @@ const llmForm = reactive({
   provider: 'openai',
   api_key: '',
   image_api_key: '',
+  embedding_api_key: '',
+  embedding_provider: 'dashscope',
+  embedding_model: 'text-embedding-v3',
   base_url: 'https://api.openai.com',
   model_name: 'gpt-4o',
   temperature: 0.7,
@@ -204,14 +272,20 @@ onMounted(async () => {
   try {
     const data = await getLLMConfig()
     llmConfig.value = data
+    // Check if DeepSeek / Embedding are already configured
+    deepseekConfigured.value = data.is_configured && data.provider === 'deepseek'
+    embeddingConfigured.value = !!(data.embedding_api_key)
     if (data.is_configured) {
       llmForm.api_key = ''
       llmForm.image_api_key = ''
+      llmForm.embedding_api_key = ''
       llmForm.provider = data.provider || 'openai'
       llmForm.base_url = data.base_url
       llmForm.model_name = data.model_name
       llmForm.temperature = data.temperature
       llmForm.max_tokens = data.max_tokens
+      llmForm.embedding_provider = data.embedding_provider || 'dashscope'
+      llmForm.embedding_model = data.embedding_model || 'text-embedding-v3'
     }
   } catch(e) {}
 })
@@ -240,18 +314,125 @@ async function handleSaveLLM() {
     llmEditing.value = false
     const data = await getLLMConfig()
     llmConfig.value = data
+    deepseekConfigured.value = data.is_configured && data.provider === 'deepseek'
+    embeddingConfigured.value = !!(data.embedding_api_key)
   } catch(e) { ElMessage.error('保存失败: ' + (e.message || '未知错误')) }
   finally { llmSaving.value = false }
+}
+
+async function handleSaveDeepSeek() {
+  if (!deepseekApiKey.value.trim()) {
+    ElMessage.warning('请输入 DeepSeek API Key')
+    return
+  }
+  if (!deepseekApiKey.value.trim().startsWith('sk-')) {
+    ElMessage.warning('API Key 格式不正确，DeepSeek API Key 应以 sk- 开头')
+    return
+  }
+  deepseekSaving.value = true
+  try {
+    await saveLLMConfig({
+      provider: 'deepseek',
+      api_key: deepseekApiKey.value.trim(),
+      base_url: 'https://api.deepseek.com',
+      model_name: 'deepseek-chat',
+      temperature: 0.7,
+      max_tokens: 4096,
+      image_api_key: ''
+    })
+    deepseekConfigured.value = true
+    deepseekApiKey.value = ''
+    ElMessage.success('DeepSeek API Key 已保存并启用！')
+    // Refresh config display
+    const data = await getLLMConfig()
+    llmConfig.value = data
+  } catch(e) {
+    ElMessage.error('保存失败: ' + (e.message || '未知错误'))
+  } finally {
+    deepseekSaving.value = false
+  }
+}
+
+async function handleResetDeepSeek() {
+  try {
+    await ElMessageBox.confirm('确认重置 DeepSeek 配置？将恢复为系统默认。', '提示', {
+      confirmButtonText: '确认重置',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    await resetLLMConfig()
+    deepseekConfigured.value = false
+    deepseekApiKey.value = ''
+    embeddingConfigured.value = false
+    llmConfig.value = { provider: 'openai', api_key: '', image_api_key: '', embedding_api_key: '', base_url: 'https://api.openai.com', model_name: 'gpt-4o', temperature: 0.7, max_tokens: 4096, is_configured: false }
+    ElMessage.success('DeepSeek 配置已重置')
+  } catch(e) {
+    if (e !== 'cancel') ElMessage.error('重置失败')
+  }
+}
+
+async function handleSaveEmbedding() {
+  if (!embeddingApiKey.value.trim()) {
+    ElMessage.warning('请输入 DashScope API Key')
+    return
+  }
+  if (!embeddingApiKey.value.trim().startsWith('sk-')) {
+    ElMessage.warning('API Key 格式不正确，DashScope API Key 应以 sk- 开头')
+    return
+  }
+  embeddingSaving.value = true
+  try {
+    await saveEmbeddingConfig({
+      embedding_api_key: embeddingApiKey.value.trim(),
+      embedding_provider: 'dashscope',
+      embedding_model: 'text-embedding-v3'
+    })
+    embeddingConfigured.value = true
+    embeddingApiKey.value = ''
+    ElMessage.success('嵌入 API Key 已保存！知识库检索已启用。')
+    const data = await getLLMConfig()
+    llmConfig.value = data
+  } catch(e) {
+    ElMessage.error('保存失败: ' + (e.message || '未知错误'))
+  } finally {
+    embeddingSaving.value = false
+  }
+}
+
+async function handleResetEmbedding() {
+  try {
+    await ElMessageBox.confirm('确认重置嵌入配置？知识库检索将不可用。', '提示', {
+      confirmButtonText: '确认重置',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    await saveEmbeddingConfig({
+      embedding_api_key: '',
+      embedding_provider: 'dashscope',
+      embedding_model: 'text-embedding-v3'
+    })
+    embeddingConfigured.value = false
+    embeddingApiKey.value = ''
+    const data = await getLLMConfig()
+    llmConfig.value = data
+    ElMessage.success('嵌入配置已重置')
+  } catch(e) {
+    if (e !== 'cancel') ElMessage.error('重置失败')
+  }
 }
 
 async function handleResetLLM() {
   try {
     await ElMessageBox.confirm('确认重置为系统默认配置？', '提示', { confirmButtonText: '确认', cancelButtonText: '取消', type: 'warning' })
     await resetLLMConfig()
-    llmConfig.value = { provider: 'openai', api_key: '', image_api_key: '', base_url: 'https://api.openai.com', model_name: 'gpt-4o', temperature: 0.7, max_tokens: 4096, is_configured: false }
+    llmConfig.value = { provider: 'openai', api_key: '', image_api_key: '', embedding_api_key: '', base_url: 'https://api.openai.com', model_name: 'gpt-4o', temperature: 0.7, max_tokens: 4096, is_configured: false }
+    deepseekConfigured.value = false
     llmForm.provider = 'openai'
     llmForm.api_key = ''
     llmForm.image_api_key = ''
+    llmForm.embedding_api_key = ''
+    llmForm.embedding_provider = 'dashscope'
+    llmForm.embedding_model = 'text-embedding-v3'
     llmForm.base_url = 'https://api.openai.com'
     llmForm.model_name = 'gpt-4o'
     llmForm.temperature = 0.7
@@ -266,4 +447,10 @@ async function handleResetLLM() {
 
 <style scoped>
 .page-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: bold; }
+.deepseek-quick-card {
+  border-left: 4px solid #409EFF;
+}
+.embedding-quick-card {
+  border-left: 4px solid #67C23A;
+}
 </style>

@@ -17,8 +17,10 @@ DATASET_DIR = os.path.join(BASE_DIR, "data", "dataset")
 
 # RAG 知识库配置
 CHROMA_DB_PATH = os.path.join(BASE_DIR, "data", "chroma_db")
-RAG_TOP_K = 5
-RAG_DEFAULT_EMBEDDING_PROVIDER = "dashscope"  # "dashscope" | "bge"
+RAG_TOP_K = 10
+RAG_DEFAULT_EMBEDDING_PROVIDER = "dashscope"  # "dashscope" | "bge"（Docker 默认 DashScope 云端嵌入）
+# ⚠️ 此处不写入任何 API Key。用户必须在个人中心配置自己的嵌入 API Key 后才能使用 RAG。
+# 规则：未配置 → 不可用；绝不使用硬编码的默认 Key（会扣别人的钱）。
 
 # 出题配置
 MAX_QUESTIONS_PER_QUIZ = 20

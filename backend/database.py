@@ -249,10 +249,60 @@ def init_db():
             passed INTEGER DEFAULT 0,
             total INTEGER DEFAULT 0,
             score REAL DEFAULT 0,
+            verified INTEGER DEFAULT 0,
             results_json TEXT DEFAULT '[]',
             submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
         );
+    """)
+    conn.commit()
+    _run_migration(conn, "code_submissions", "verified INTEGER DEFAULT 0", "代码提交表迁移: 添加能力验证状态")
+
+    # 编程能力真实性验证会话：代码正确只是起点，答辩与故障修复通过后才算掌握
+    conn.executescript("""
+        CREATE TABLE IF NOT EXISTS capability_sessions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            exercise_id TEXT NOT NULL,
+            exercise_title TEXT DEFAULT '',
+            knowledge_tag TEXT DEFAULT '',
+            status TEXT DEFAULT 'coding',
+            original_code TEXT DEFAULT '',
+            defense_questions_json TEXT DEFAULT '[]',
+            defense_answers_json TEXT DEFAULT '[]',
+            mutation_code TEXT DEFAULT '',
+            mutation_description TEXT DEFAULT '',
+            repair_code TEXT DEFAULT '',
+            repair_explanation TEXT DEFAULT '',
+            ai_usage TEXT DEFAULT '未使用',
+            code_score REAL DEFAULT 0,
+            defense_score REAL DEFAULT 0,
+            repair_score REAL DEFAULT 0,
+            process_score REAL DEFAULT 0,
+            total_score REAL DEFAULT 0,
+            verified INTEGER DEFAULT 0,
+            report_json TEXT DEFAULT '{}',
+            started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            code_passed_at TIMESTAMP,
+            completed_at TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+
+        CREATE TABLE IF NOT EXISTS capability_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            event_type TEXT NOT NULL,
+            payload_json TEXT DEFAULT '{}',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES capability_sessions(id),
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_capability_session_user_exercise
+            ON capability_sessions(user_id, exercise_id, started_at);
+        CREATE INDEX IF NOT EXISTS idx_capability_events_session
+            ON capability_events(session_id, created_at);
     """)
     conn.commit()
 

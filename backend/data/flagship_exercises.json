@@ -1,0 +1,13 @@
+[
+  {
+    "id": "7-1",
+    "module": "旗舰实战：智能客服工单分派",
+    "title": "为客服 Agent 实现可上线的工单分派引擎",
+    "description": "你正在为一家 SaaS 企业实现客服 Agent 的核心决策函数。每个新工单到达后，系统必须结合业务优先级、等待时长、客服技能、在线状态和当前负载，给出稳定且可审计的分派结果。这个函数会直接影响紧急客户能否及时得到响应，不能只处理理想输入。\n\n业务规则：\n1. priority 只允许 low、normal、high、urgent；VIP 客户提升一级；等待满 60 分钟再提升一级，最高为 urgent。\n2. 只有在线、具备对应 category 技能且 active_cases < capacity 的客服可接单。\n3. 从候选人中选择负载率 active_cases / capacity 最低者；负载率相同时按客服 id 字典序选择，保证结果可复现。\n4. SLA 分钟数分别为：urgent=15、high=30、normal=120、low=480。\n5. 无候选人时进入队列。所有非法结构或数值必须抛出 ValueError，且函数不得修改输入对象。",
+    "input_output": "实现函数：dispatch_ticket(ticket, agents, now_minutes) -> dict\n\nticket 必填字段：id、category、priority、vip、created_at。created_at 与 now_minutes 均为非负整数，且 now_minutes 不得早于 created_at。\nagent 必填字段：id、skills、online、active_cases、capacity；capacity 必须大于 0，active_cases 必须是非负整数。\n\n已分派时返回：\n{\"ticket_id\": 工单ID, \"status\": \"assigned\", \"agent_id\": 客服ID, \"effective_priority\": 最终优先级, \"sla_minutes\": SLA分钟数, \"reason\": \"matched_skill_and_capacity\"}\n\n进入队列时返回：\n{\"ticket_id\": 工单ID, \"status\": \"queued\", \"agent_id\": null, \"effective_priority\": 最终优先级, \"sla_minutes\": SLA分钟数, \"reason\": \"no_eligible_agent\"}\n\n示例：normal 优先级的 VIP 工单会提升为 high；若等待又满 60 分钟，则继续提升为 urgent。平台会用服务端私有场景检查边界条件，编辑器中不提供可修改的判题代码。",
+    "starter_code": "def dispatch_ticket(ticket, agents, now_minutes):\n    \"\"\"根据业务规则返回稳定、可审计的工单分派结果。\"\"\"\n    # 1. 校验 ticket、agents 和时间字段\n    # 2. 计算 effective_priority 与 SLA\n    # 3. 过滤候选客服，并按 (负载率, id) 选择\n    # 4. 返回 assigned 或 queued 结构，且不要修改输入\n    raise NotImplementedError(\"请实现工单分派规则\")\n",
+    "skeleton_code": "def dispatch_ticket(ticket, agents, now_minutes):\n    \"\"\"根据业务规则返回稳定、可审计的工单分派结果。\"\"\"\n    # 1. 校验 ticket、agents 和时间字段\n    # 2. 计算 effective_priority 与 SLA\n    # 3. 过滤候选客服，并按 (负载率, id) 选择\n    # 4. 返回 assigned 或 queued 结构，且不要修改输入\n    raise NotImplementedError(\"请实现工单分派规则\")\n",
+    "judge_mode": "private_business_cases",
+    "skills": ["需求建模", "数据校验", "确定性决策", "边界处理", "不可变输入"]
+  }
+]

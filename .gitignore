@@ -11,6 +11,9 @@ dist/
 
 pdf
 
+hub
+
+*.png
 # ===== 数据库 =====
 *.db
 *.sqlite

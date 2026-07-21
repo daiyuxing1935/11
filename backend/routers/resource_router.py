@@ -250,6 +250,15 @@ import glob as _glob
 
 EXERCISES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "exercises")
 EXERCISES_PROCESSED = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "exercises_processed.json")
+FLAGSHIP_EXERCISES = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "flagship_exercises.json")
+
+
+def _load_flagship_exercises():
+    try:
+        with open(FLAGSHIP_EXERCISES, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
 
 def _parse_exercise(text):
     lines = text.strip().split("\n")
@@ -311,7 +320,9 @@ def _load_all_exercises():
 
 @router.get("/exercises", response_model=APIResponse)
 async def list_exercises(module: str = None):
-    all_ex = _load_all_exercises()
+    # 主入口只发布经过私有业务场景验证的旗舰题。旧题仍可按 ID 访问，
+    # 但不再用数量制造“课程很深”的错觉。
+    all_ex = _load_flagship_exercises()
     if module:
         all_ex = [e for e in all_ex if module in e.get("module", "")]
     items = [{"id": e["id"], "module": e["module"], "title": e["title"],
@@ -321,7 +332,7 @@ async def list_exercises(module: str = None):
 
 @router.get("/exercises/{exercise_id}", response_model=APIResponse)
 async def get_exercise(exercise_id: str):
-    all_ex = _load_all_exercises()
+    all_ex = _load_flagship_exercises() + _load_all_exercises()
     for e in all_ex:
         if e["id"] == exercise_id:
             return APIResponse(data=e)

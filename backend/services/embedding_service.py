@@ -1,16 +1,24 @@
 """嵌入服务 — 双后端（阿里云 DashScope text-embedding-v3 + 本地 BAAI/bge-large-zh-v1.5）
 
 生产环境：用户配置 dashscope API Key → 使用云端 text-embedding-v3（1024维）
-本地/离线环境：自动降级到 bge-large-zh-v1.5（1024维，GPU/CPU推理）
+本地/离线环境：默认使用 bge-large-zh-v1.5（1024维，GPU/CPU推理）
 """
 
 import os
 import hashlib
 import logging
+from pathlib import Path
 from typing import List, Optional
 
 # HuggingFace 国内镜像加速
 os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
+
+# BGE 本地模型路径（用户手动下载的离线模型）
+_BGE_LOCAL_PATH = Path(__file__).parent.parent / "data" / "hub" / "models--BAAI--bge-large-zh-v1.5" / "snapshots" / "79e7739b6ab944e86d6171e44d24c997fc1e0116"
+
+# 文本截断保护：BGE max_seq_length=512 tokens ≈ 1000-1500 中文字符
+# 实测 RTX 5060 峰值仅 2.1GB，放宽到 2400 字符以保留更多语义上下文
+MAX_TEXT_CHARS = 2400
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +85,8 @@ class DashScopeBackend(EmbeddingBackend):
 class BGELocalBackend(EmbeddingBackend):
     """BAAI/bge-large-zh-v1.5 本地推理"""
     NAME = "bge-large-zh-v1.5"
-    BATCH_SIZE = 32
+    BATCH_SIZE = 16  # 降低批大小，防止 GPU OOM
+    MAX_SEQ_LENGTH = 512  # BGE 模型最大 token 数
 
     def __init__(self, device: str = None):
         from sentence_transformers import SentenceTransformer
@@ -86,22 +95,25 @@ class BGELocalBackend(EmbeddingBackend):
             import torch
             device = "cuda" if torch.cuda.is_available() else "cpu"
 
-        logger.info(f"Loading BAAI/bge-large-zh-v1.5 on {device} ...")
-        self.model = SentenceTransformer(
-            "BAAI/bge-large-zh-v1.5",
-            device=device,
-        )
+        # 优先使用本地预下载的模型，避免在线下载
+        model_path = str(_BGE_LOCAL_PATH) if _BGE_LOCAL_PATH.exists() else "BAAI/bge-large-zh-v1.5"
+
+        logger.info(f"Loading BAAI/bge-large-zh-v1.5 on {device} from {model_path} ...")
+        self.model = SentenceTransformer(model_path, device=device)
         self._device = device
         logger.info(f"BGE model loaded on {device}")
 
     def embed(self, texts: List[str]) -> List[List[float]]:
-        """本地批量推理"""
+        """本地批量推理（自动截断过长文本，防止 GPU OOM）"""
         if not texts:
             return []
 
+        # 截断过长文本：BGE max_seq_length=512 tokens ≈ 1000-1500 中文字符
+        safe_texts = [_truncate_text(t, MAX_TEXT_CHARS) for t in texts]
+
         # bge-large-zh-v1.5 自带中文优化，无需额外 prefix
         embeddings = self.model.encode(
-            texts,
+            safe_texts,
             batch_size=self.BATCH_SIZE,
             show_progress_bar=False,
             normalize_embeddings=True,  # 归一化到单位向量，便于余弦相似度
@@ -204,6 +216,18 @@ def reset_embedding_backend():
     """重置嵌入后端（切换 provider 时调用）"""
     global _backend_instance
     _backend_instance = None
+
+
+def _truncate_text(text: str, max_chars: int = MAX_TEXT_CHARS) -> str:
+    """截断文本到安全长度，防止单个文本块过大导致 GPU OOM
+
+    BGE max_seq_length=512 tokens ≈ 1000-1500 中文字符（中文约 1.5-2 char/token）。
+    在字符层面截断而非 tokenizer 层面，避免加载 tokenizer 的开销。
+    """
+    if len(text) <= max_chars:
+        return text
+    logger.warning(f"文本过长（{len(text)} chars），已截断至 {max_chars} chars")
+    return text[:max_chars]
 
 
 def test_dashscope_connection(api_key: str, model: str = "text-embedding-v3") -> dict:

@@ -29,7 +29,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { MODULES, MOCK_PROGRESS } from '../config/exercises'
+import { MODULES, MOCK_PROGRESS } from '../config/flagshipExercises'
 import { recordStudyVisit } from '../api/learning'
 
 const router = useRouter()

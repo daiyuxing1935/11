@@ -160,6 +160,9 @@ class LLMConfigRequest(BaseModel):
     temperature: Optional[float] = 0.7
     max_tokens: Optional[int] = 4096
     image_api_key: Optional[str] = ""  # Replicate API key for image generation
+    embedding_api_key: Optional[str] = ""  # DashScope API key for RAG embedding
+    embedding_provider: Optional[str] = "dashscope"
+    embedding_model: Optional[str] = "text-embedding-v3"
 
 class LLMConfigResponse(BaseModel):
     provider: str = "openai"
@@ -170,6 +173,9 @@ class LLMConfigResponse(BaseModel):
     max_tokens: int = 4096
     is_configured: bool = False  # whether user has set a custom config
     image_api_key: str = ""  # masked: "r8_...xyz"
+    embedding_api_key: str = ""  # masked
+    embedding_provider: str = "dashscope"
+    embedding_model: str = "text-embedding-v3"
 
 # ===== Common =====
 class APIResponse(BaseModel):

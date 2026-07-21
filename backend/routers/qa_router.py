@@ -10,6 +10,7 @@ from auth import get_current_user
 from schemas import APIResponse, QARequest, QASaveRequest, QAFeedbackRequest, CodeRunRequest
 from services import qa_service
 from services.ai_service import stream_llm, call_llm, _get_user_llm_config, DEEP_THINKING_PROMPT, web_search
+from config import RAG_TOP_K
 from services.file_parser import parse_file
 from services.evolution_service import extract_pattern, find_similar_patterns, evolve
 from services.student_model import get_student_profile, record_qa_activity
@@ -317,7 +318,7 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
         rag_sources = None
         if req.use_rag:
             try:
-                from services.rag_service import get_rag_service
+                from services.rag_service import get_rag_service, reset_rag_service
                 from database import get_db
                 _conn = get_db()
                 _row = _conn.execute(
@@ -325,26 +326,39 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
                     (current_user["id"],)
                 ).fetchone()
                 _conn.close()
+
+                # 策略：仅使用用户自己配置的嵌入 API Key
+                # ⚠️ 绝不使用硬编码的默认 Key，未配置时 RAG 静默跳过
+                _rag = None
                 if _row and _row["embedding_api_key"]:
-                    _rag = get_rag_service(
-                        provider=_row["embedding_provider"] or "dashscope",
-                        api_key=_row["embedding_api_key"],
+                    try:
+                        _rag = get_rag_service(
+                            provider=_row["embedding_provider"] or "dashscope",
+                            api_key=_row["embedding_api_key"],
+                        )
+                    except Exception:
+                        reset_rag_service()
+
+                # 本地开发兜底：尝试 BGE 本地模型（需要 sentence-transformers + torch）
+                if _rag is None:
+                    try:
+                        _rag = get_rag_service(provider="bge")
+                    except Exception:
+                        reset_rag_service()
+                        _rag = None
+
+                if _rag is None:
+                    raise RuntimeError("未配置嵌入 API Key，跳過 RAG")
+
+                _chunks = _rag.retrieve(req.question, top_k=RAG_TOP_K)
+                if _chunks:
+                    rag_context = _rag.format_context(_chunks)
+                    prompt = prompt_template.format(
+                        question=req.question,
+                        question_type=req.question_type,
+                        context=(req.context or "无额外上下文") + search_context + "\n\n" + rag_context
                     )
-                    _chunks = _rag.retrieve(req.question, top_k=5)
-                    if _chunks:
-                        rag_context = _rag.format_context(_chunks)
-                        prompt = prompt_template.format(
-                            question=req.question,
-                            question_type=req.question_type,
-                            context=(req.context or "无额外上下文") + search_context + "\n\n" + rag_context
-                        )
-                        rag_sources = _rag.get_sources(_chunks)
-                    else:
-                        prompt = prompt_template.format(
-                            question=req.question,
-                            question_type=req.question_type,
-                            context=(req.context or "无额外上下文") + search_context
-                        )
+                    rag_sources = _rag.get_sources(_chunks)
                 else:
                     prompt = prompt_template.format(
                         question=req.question,
@@ -401,10 +415,17 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
         max_tokens = 8192 if req.deep_thinking else 4096
 
     async def _stream_with_search():
-        """先发送 RAG 来源和搜索结果，再流式输出 LLM 回答"""
+        """先发送 RAG 来源/不可用提示和搜索结果，再流式输出 LLM 回答"""
         if rag_sources:
             yield f"data: {json.dumps({'rag_sources': rag_sources}, ensure_ascii=False)}\n\n"
+        elif req.use_rag == True:
+            # RAG 已开启但嵌入后端不可用 → 告知用户如何配置
+            yield f"data: {json.dumps({'rag_unavailable': True, 'message': '📚 知识库检索暂不可用：未配置嵌入 API Key。请在「个人中心 → AI大模型配置」中添加 DashScope text-embedding-v3 的 API Key 后即可启用知识库增强。'}, ensure_ascii=False)}\n\n"
         if search_results:
+            search_msg = {"search_results": search_results}
+            if search_query_rewritten:
+                search_msg["search_query"] = search_query_rewritten
+            yield f"data: {json.dumps(search_msg, ensure_ascii=False)}\n\n"
             search_msg = {"search_results": search_results}
             if search_query_rewritten:
                 search_msg["search_query"] = search_query_rewritten

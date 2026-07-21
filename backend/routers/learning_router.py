@@ -689,42 +689,27 @@ async def evaluate_code_submission(req: CodeEvaluateRequest, current_user: dict 
     """真实沙箱评测：语法校验 + 动态函数调用 + 多用例判题"""
     try:
         from database import get_db
-        from services.code_evaluator import evaluate_code
+        from services.judge_service import is_flagship_exercise, judge_submission
 
-        # 1. 加载习题评测元数据
-        meta = _load_exercise_test_meta(req.exercise_id)
-        if not meta:
-            # 降级：尝试从 processed exercises 中获取
-            meta = _load_exercise_test_meta_from_processed(req.exercise_id)
+        if not is_flagship_exercise(req.exercise_id):
+            return APIResponse(
+                code=410,
+                message="该旧题已停止判题，待按真实业务场景和服务端私有测试标准重制",
+                data=None,
+            )
 
-        # 2. 执行评测：用户代码含测试驱动则直接运行，否则用元数据评测
-        if 'if __name__' in req.code or '__main__' in req.code:
-            result = _evaluate_with_embedded_tests(req.code)
-        elif meta:
-            # 检查 meta 测试用例是否全部无法提取期望值（expected=None）
-            test_cases = meta.get('test_cases', [])
-            if test_cases and all(tc.get('expected') is None for tc in test_cases):
-                # 降级：注入骨架代码中的测试驱动，走嵌入式测试路径
-                injected = _inject_test_driver(req.code, req.exercise_id)
-                if injected:
-                    result = _evaluate_with_embedded_tests(injected)
-                else:
-                    # 无法注入测试驱动，用原始 meta 评测（结果可能不准）
-                    result = evaluate_code(req.code, meta)
-            else:
-                result = evaluate_code(req.code, meta)
-        else:
-            return APIResponse(code=400, message=f"未找到习题 {req.exercise_id} 的评测配置", data=None)
+        # 私有业务场景完全由服务端掌握，浏览器输出不能伪造通过结果。
+        result = judge_submission(req.exercise_id, req.code)
 
         # 3. 保存提交记录
         try:
             import json as _json
             conn = get_db()
             conn.execute(
-                "INSERT INTO code_submissions (user_id, exercise_id, code, passed, total, score, results_json) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO code_submissions (user_id, exercise_id, code, passed, total, score, verified, results_json) "
+                "VALUES (?, ?, ?, ?, ?, ?, 0, ?)",
                 (current_user["id"], req.exercise_id, req.code,
-                 result['passed_count'], result['total'],
+                 1 if result.get('passed') else 0, result['total'],
                  round(result['passed_count'] / max(result['total'], 1) * 100),
                  _json.dumps(result['results'], ensure_ascii=False))
             )
@@ -1176,7 +1161,7 @@ async def get_code_completions(current_user: dict = Depends(get_current_user)):
     """获取用户已通过的编程习题ID列表（跨设备同步通关状态）"""
     conn = get_db()
     rows = conn.execute(
-        "SELECT DISTINCT exercise_id FROM code_submissions WHERE user_id = ? AND passed = 1",
+        "SELECT DISTINCT exercise_id FROM code_submissions WHERE user_id = ? AND passed = 1 AND verified = 1",
         (current_user["id"],)
     ).fetchall()
     conn.close()

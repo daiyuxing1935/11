@@ -59,7 +59,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { MODULES, MOCK_PROGRESS } from '../config/exercises'
+import { MODULES, MOCK_PROGRESS } from '../config/flagshipExercises'
 
 const router = useRouter()
 const route = useRoute()

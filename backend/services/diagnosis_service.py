@@ -171,7 +171,9 @@ def get_user_knowledge_profile(user_id: int) -> dict:
 
     # 读取代码提交记录，按模块聚合完成率
     code_rows = conn.execute(
-        "SELECT exercise_id, passed, total FROM code_submissions WHERE user_id = ?",
+        """SELECT exercise_id, MAX(verified) AS verified
+           FROM code_submissions WHERE user_id = ?
+           GROUP BY exercise_id""",
         (user_id,)
     ).fetchall()
 
@@ -186,7 +188,7 @@ def get_user_knowledge_profile(user_id: int) -> dict:
         mod_num = int(m.group(1))
         if mod_num not in module_code_stats:
             continue
-        module_code_stats[mod_num][0] += 1 if row["passed"] else 0
+        module_code_stats[mod_num][0] += 1 if row["verified"] else 0
         module_code_stats[mod_num][1] += 1
 
     # 将模块完成率映射到知识标签

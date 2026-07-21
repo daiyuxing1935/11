@@ -38,10 +38,12 @@ export const saveQA = (data) => request.post('/qa/save', data)
  * @param {Object} data — { question, question_type, explanation_level, context, deep_thinking, enable_search }
  * @param {Function} onChunk — 每收到一个文本块时调用 (chunkText: string)
  * @param {Function} onDone — 流结束时调用 (fullAnswer: string)
+ * @param {Function} onRagSources — 收到RAG知识库来源时调用 (sources: Array)
+ * @param {Function} onRagUnavailable — RAG不可用时调用 (message: string)
  * @param {Function} onError — 出错时调用 (error: Error)
  * @returns {Function} abort — 调用以取消请求
  */
-export function askQuestionStream(data, { onChunk, onDone, onError, onSearchResults }) {
+export function askQuestionStream(data, { onChunk, onDone, onError, onSearchResults, onRagSources, onRagUnavailable }) {
   const token = localStorage.getItem('token')
   const controller = new AbortController()
 
@@ -83,6 +85,9 @@ export function askQuestionStream(data, { onChunk, onDone, onError, onSearchResu
             const parsed = JSON.parse(data)
             if (parsed.rag_sources && onRagSources) {
               onRagSources(parsed.rag_sources)
+            }
+            if (parsed.rag_unavailable && onRagUnavailable) {
+              onRagUnavailable(parsed.message || '知识库暂不可用')
             }
             if (parsed.search_results && onSearchResults) {
               onSearchResults(parsed.search_results, parsed.search_query || '')

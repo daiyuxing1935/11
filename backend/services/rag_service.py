@@ -13,6 +13,7 @@ from typing import List, Dict, Optional, Tuple
 
 from .embedding_service import EmbeddingBackend, get_embedding_backend, reset_embedding_backend
 from .document_loader import DocumentChunk, load_all_documents
+from config import CHROMA_DB_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +21,8 @@ logger = logging.getLogger(__name__)
 # 配置常量
 # ============================================================
 
-DEFAULT_CHROMA_PATH = "backend/data/chroma_db"
-DEFAULT_TOP_K = 5
+DEFAULT_CHROMA_PATH = CHROMA_DB_PATH
+from config import RAG_TOP_K as DEFAULT_TOP_K
 CANDIDATE_MULTIPLIER = 3  # 候选文档倍率（语义检索取 top_k * 3，融合后取 top_k）
 
 # RAG Prompt 模板

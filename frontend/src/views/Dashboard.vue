@@ -4,10 +4,11 @@
     <div class="welcome-banner">
       <div class="welcome-content">
         <div class="welcome-left">
+          <span class="welcome-eyebrow">TODAY'S LEARNING ROUTE</span>
           <h1 class="welcome-title">{{ greeting }}，{{ userStore.user?.nickname || '同学' }}</h1>
           <p class="welcome-subtitle">{{ welcomeQuote }}</p>
           <div class="welcome-meta">
-            <el-tag type="info" effect="plain" size="large">{{ userStore.learningStage || '入门' }}学员</el-tag>
+            <span class="stage-badge"><i></i>{{ userStore.learningStage || '入门' }}阶段</span>
             <span class="welcome-date">{{ todayDate }}</span>
           </div>
         </div>
@@ -203,20 +204,20 @@ const welcomeQuote = ref(welcomeQuotes[Math.floor(Math.random() * welcomeQuotes.
 
 // ===== 快捷功能 =====
 const quickActions = [
-  { label: '学情自测', desc: '测试当前水平', icon: 'EditPen', bg: 'linear-gradient(135deg, #667eea, #764ba2)', route: '/diagnosis' },
-  { label: '学习路径', desc: 'AI定制学习计划', icon: 'Guide', bg: 'linear-gradient(135deg, #f093fb, #f5576c)', route: '/learning-path' },
-  { label: '智能答疑', desc: '随时随地解惑', icon: 'ChatDotRound', bg: 'linear-gradient(135deg, #4facfe, #00f2fe)', route: '/qa' },
-  { label: '学习资源', desc: '精选教程文章', icon: 'Collection', bg: 'linear-gradient(135deg, #43e97b, #38f9d7)', route: '/resources' },
-  { label: '错题本', desc: '查漏补缺', icon: 'Notebook', bg: 'linear-gradient(135deg, #fa709a, #fee140)', route: '/error-book' },
-  { label: '学情复盘', desc: '数据驱动成长', icon: 'DataAnalysis', bg: 'linear-gradient(135deg, #a18cd1, #fbc2eb)', route: '/analytics' },
+  { label: '学情自测', desc: '定位知识盲区', icon: 'EditPen', bg: 'linear-gradient(145deg, #4657d8, #6273e6)', route: '/diagnosis' },
+  { label: '学习路径', desc: '规划下一步', icon: 'Guide', bg: 'linear-gradient(145deg, #ff8166, #ef9a67)', route: '/learning-path' },
+  { label: '智能答疑', desc: '拆解复杂问题', icon: 'ChatDotRound', bg: 'linear-gradient(145deg, #3899bd, #61bfde)', route: '/qa' },
+  { label: '学习资源', desc: '精选可信资料', icon: 'Collection', bg: 'linear-gradient(145deg, #319a7a, #4bc49e)', route: '/resources' },
+  { label: '错题本', desc: '回看薄弱环节', icon: 'Notebook', bg: 'linear-gradient(145deg, #d7833b, #ecad55)', route: '/error-book' },
+  { label: '学情复盘', desc: '看见真实成长', icon: 'DataAnalysis', bg: 'linear-gradient(145deg, #6953a8, #8c73c4)', route: '/analytics' },
 ]
 
 // ===== 统计卡片（computed 从 Pinia 取值，保证响应式） =====
 const statsCards = computed(() => [
-  { label: '学习天数', value: statStore.studyDays, icon: 'Timer', bg: '#ecf5ff', color: '#409EFF', route: '/analytics', trend: null },
-  { label: '做题总数', value: statStore.totalQuestions, icon: 'EditPen', bg: '#f0f9eb', color: '#67C23A', route: '/error-book', trend: null },
-  { label: '平均正确率', value: Number(statStore.avgCorrectRate).toFixed(1) + '%', icon: 'TrendCharts', bg: '#fdf6ec', color: '#E6A23C', route: '/analytics', trend: null },
-  { label: '测评次数', value: statStore.quizCount, icon: 'DocumentChecked', bg: '#fef0f0', color: '#F56C6C', route: '/diagnosis', trend: null },
+  { label: '学习天数', value: statStore.studyDays, icon: 'Timer', bg: '#eef0fc', color: '#4657d8', route: '/analytics', trend: null },
+  { label: '做题总数', value: statStore.totalQuestions, icon: 'EditPen', bg: '#edf9f5', color: '#319a7a', route: '/error-book', trend: null },
+  { label: '平均正确率', value: Number(statStore.avgCorrectRate).toFixed(1) + '%', icon: 'TrendCharts', bg: '#fff5ed', color: '#e08243', route: '/analytics', trend: null },
+  { label: '测评次数', value: statStore.quizCount, icon: 'DocumentChecked', bg: '#fff0ed', color: '#ed7059', route: '/diagnosis', trend: null },
 ])
 
 // ===== 今日任务 =====
@@ -261,8 +262,8 @@ function initGrowthChart() {
     xAxis: { type: 'category', data: dates, boundaryGap: false },
     yAxis: [{ type: 'value', name: '题数', minInterval: 1 }, { type: 'value', name: '%', max: 100 }],
     series: [
-      { name: '做题数量', type: 'bar', data: data.map(w => w.questions || 0), itemStyle: { color: '#409EFF', borderRadius: [4, 4, 0, 0] }, barWidth: 20 },
-      { name: '正确率(%)', type: 'line', yAxisIndex: 1, data: data.map(w => Math.round(w.correct_rate || 0)), itemStyle: { color: '#67C23A' }, smooth: true, symbol: 'circle', symbolSize: 8, lineStyle: { width: 3 } }
+      { name: '做题数量', type: 'bar', data: data.map(w => w.questions || 0), itemStyle: { color: '#4657d8', borderRadius: [7, 7, 2, 2] }, barWidth: 18 },
+      { name: '正确率(%)', type: 'line', yAxisIndex: 1, data: data.map(w => Math.round(w.correct_rate || 0)), itemStyle: { color: '#ff8166' }, smooth: true, symbol: 'circle', symbolSize: 7, lineStyle: { width: 3, color: '#ff8166' } }
     ],
     grid: { left: 60, right: 70, top: 30, bottom: 40 }
   })
@@ -289,52 +290,22 @@ function initRadarChart() {
       center: ['50%', '55%'], radius: '65%',
       axisName: { color: '#606266', fontSize: 12 }
     },
-    series: [{ name: '掌握度', type: 'radar', data: [{ value: values, name: '当前掌握度' }], areaStyle: { color: 'rgba(64, 158, 255, 0.25)' }, lineStyle: { color: '#409EFF', width: 2 }, itemStyle: { color: '#409EFF' }, symbol: 'circle', symbolSize: 6 }]
+    series: [{ name: '掌握度', type: 'radar', data: [{ value: values, name: '当前掌握度' }], areaStyle: { color: 'rgba(70, 87, 216, 0.2)' }, lineStyle: { color: '#4657d8', width: 2 }, itemStyle: { color: '#ff8166' }, symbol: 'circle', symbolSize: 6 }]
   })
 }
 </script>
 
 <style scoped>
-.dashboard { max-width: 1400px; }
-.welcome-banner { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%); border-radius: 16px; padding: 32px 36px; margin-bottom: 24px; position: relative; overflow: hidden; }
-.welcome-banner::before { content: ''; position: absolute; right: -60px; top: -60px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(64,158,255,0.15) 0%, transparent 70%); border-radius: 50%; }
-.welcome-content { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
-.welcome-title { color: #fff; font-size: 26px; font-weight: 700; margin: 0 0 8px 0; }
-.welcome-subtitle { color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 0 14px 0; }
-.welcome-meta { display: flex; align-items: center; gap: 16px; }
-.welcome-date { color: rgba(255,255,255,0.6); font-size: 13px; }
-.welcome-right { display: flex; gap: 32px; }
-.welcome-stats-row { display: flex; gap: 32px; }
-.welcome-mini-stat { text-align: center; }
-.wms-value { font-size: 28px; font-weight: 700; color: #fff; }
-.wms-label { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 4px; }
-.quick-actions { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 24px; }
-.qa-card { background: #fff; border-radius: 12px; padding: 20px 16px; text-align: center; cursor: pointer; transition: all 0.25s; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-.qa-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
-.qa-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #fff; }
-.qa-label { font-size: 14px; font-weight: 600; color: #303133; margin-bottom: 4px; }
-.qa-desc { font-size: 12px; color: #909399; }
-.stat-card { cursor: pointer; transition: all 0.2s; border-radius: 12px; }
-.stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
-.stat-inner { display: flex; align-items: center; gap: 14px; }
-.stat-icon-wrap { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.stat-body { flex: 1; }
-.stat-value { font-size: 26px; font-weight: 700; color: #303133; line-height: 1.2; }
-.stat-label { font-size: 13px; color: #909399; }
-.stat-trend { display: flex; align-items: center; gap: 2px; font-size: 13px; color: #909399; }
-.chart-card, .task-card, .activity-card { border-radius: 12px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; }
-.card-title { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; color: #303133; }
-.task-row { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f5f5f5; }
-.task-row:last-child { border-bottom: none; }
-.task-check { padding-top: 2px; }
-.task-topic { font-size: 14px; font-weight: 500; color: #303133; }
-.task-topic.done { color: #909399; text-decoration: line-through; }
-.task-action { font-size: 12px; color: #909399; margin-top: 4px; }
-.tips-bar { margin-top: 14px; padding: 10px 14px; background: #ecf5ff; border-radius: 8px; color: #409EFF; font-size: 13px; display: flex; align-items: center; gap: 8px; }
-.task-footer { margin-top: 16px; text-align: center; }
-.activity-item { display: flex; align-items: center; gap: 8px; }
-.activity-desc { font-size: 13px; color: #606266; }
-@media (max-width: 1200px) { .quick-actions { grid-template-columns: repeat(3, 1fr); } .welcome-stats-row { display: none; } }
-@media (max-width: 768px) { .welcome-banner { padding: 20px; } .welcome-title { font-size: 20px; } .quick-actions { grid-template-columns: repeat(2, 1fr); } }
+.welcome-banner { position: relative; overflow: hidden; margin-bottom: 22px; padding: 34px 38px; border-radius: 24px; color: #fff; background: radial-gradient(circle at 76% 18%, rgba(86,183,220,.26), transparent 25%), linear-gradient(118deg, #1b284d 0%, #202d5c 60%, #324a75 100%); box-shadow: 0 18px 46px rgba(24,36,76,.18); }
+.welcome-banner::before, .welcome-banner::after { position: absolute; border: 1px solid rgba(112,196,226,.24); border-radius: 50%; content: ''; transform: rotate(-14deg); }.welcome-banner::before { right: -45px; top: -68px; width: 370px; height: 220px; }.welcome-banner::after { right: 85px; bottom: -120px; width: 290px; height: 220px; }
+.welcome-content { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+.welcome-eyebrow { display: block; margin-bottom: 13px; color: #79c7e5; font-size: 10px; font-weight: 750; letter-spacing: .17em; }
+.welcome-title { margin: 0 0 9px; color: #fff; font-size: clamp(25px, 2.4vw, 35px); font-weight: 740; letter-spacing: -.035em; }.welcome-subtitle { margin: 0 0 18px; color: rgba(255,255,255,.63); font-size: 13px; }
+.welcome-meta { display: flex; align-items: center; gap: 14px; }.stage-badge { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; color: rgba(255,255,255,.84); background: rgba(255,255,255,.07); font-size: 11px; font-weight: 650; }.stage-badge i { width: 6px; height: 6px; border-radius: 50%; background: #ff927a; }.welcome-date { color: rgba(255,255,255,.4); font-size: 11px; }
+.welcome-stats-row { display: flex; gap: 8px; }.welcome-mini-stat { min-width: 94px; padding: 14px 16px; border: 1px solid rgba(255,255,255,.11); border-radius: 15px; text-align: center; background: rgba(255,255,255,.07); backdrop-filter: blur(8px); }.wms-value { color: #fff; font-family: Georgia, serif; font-size: 27px; }.wms-label { margin-top: 5px; color: rgba(255,255,255,.43); font-size: 10px; }
+.quick-actions { display: grid; grid-template-columns: repeat(6, 1fr); gap: 13px; margin-bottom: 22px; }.qa-card { position: relative; overflow: hidden; padding: 18px 14px; border: 1px solid var(--line); border-radius: 16px; text-align: left; background: rgba(255,255,255,.92); box-shadow: var(--shadow-sm); cursor: pointer; transition: .22s ease; }.qa-card::after { position: absolute; right: 14px; top: 19px; color: #c9cfdd; font-size: 16px; content: '↗'; }.qa-card:hover { border-color: #cfd5f3; transform: translateY(-3px); box-shadow: 0 13px 28px rgba(30,45,84,.1); }.qa-icon { display: flex; width: 44px; height: 44px; align-items: center; justify-content: center; margin: 0 0 14px; border-radius: 13px; color: #fff; box-shadow: 0 8px 17px rgba(44,57,101,.16); }.qa-label { margin-bottom: 4px; color: var(--ink-950); font-size: 13px; font-weight: 720; }.qa-desc { color: var(--ink-400); font-size: 10px; }
+.stat-card { position: relative; overflow: hidden; cursor: pointer; }.stat-card::after { position: absolute; right: -26px; bottom: -42px; width: 100px; height: 100px; border: 1px solid #edf0f7; border-radius: 50%; content: ''; }.stat-inner { display: flex; align-items: center; gap: 14px; }.stat-icon-wrap { display: flex; width: 46px; height: 46px; flex-shrink: 0; align-items: center; justify-content: center; border-radius: 13px; }.stat-body { flex: 1; }.stat-value { color: var(--ink-950); font-family: Georgia, serif; font-size: 27px; font-weight: 600; line-height: 1.2; }.stat-label { margin-top: 3px; color: var(--ink-400); font-size: 11px; }.stat-trend { display: flex; align-items: center; gap: 2px; color: var(--ink-400); font-size: 12px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; }.card-title { display: flex; align-items: center; gap: 8px; font-size: 14px; }.task-row { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid #edf0f6; }.task-row:last-child { border: 0; }.task-check { padding-top: 2px; }.task-topic { color: var(--ink-800); font-size: 13px; font-weight: 650; }.task-topic.done { color: var(--ink-400); text-decoration: line-through; }.task-action { margin-top: 4px; color: var(--ink-400); font-size: 11px; }.tips-bar { display: flex; align-items: center; gap: 8px; margin-top: 14px; padding: 11px 14px; border: 1px solid #dce4fb; border-radius: 11px; color: var(--primary); background: #f3f5ff; font-size: 12px; }.task-footer { margin-top: 16px; text-align: center; }.activity-desc { color: var(--ink-600); font-size: 12px; }
+@media (max-width: 1240px) { .quick-actions { grid-template-columns: repeat(3,1fr); }.welcome-stats-row { display: none; } }
+@media (max-width: 720px) { .welcome-banner { padding: 25px 22px; border-radius: 19px; }.welcome-title { font-size: 24px; }.welcome-date { display: none; }.quick-actions { grid-template-columns: repeat(2,1fr); gap: 10px; }.qa-card { padding: 15px 12px; }.qa-icon { width: 40px; height: 40px; }.stat-value { font-size: 24px; } }
 </style>

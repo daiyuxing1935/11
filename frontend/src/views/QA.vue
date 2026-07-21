@@ -28,6 +28,11 @@
                     <div v-html="renderMarkdown(msg.thinking)"></div>
                   </div>
                 </div>
+                <!-- RAG 知识库暂不可用提示 -->
+                <div v-if="msg.ragUnavailable" class="rag-unavailable-block">
+                  <el-icon color="#E6A23C"><WarningFilled /></el-icon>
+                  <span>{{ msg.ragUnavailable }}</span>
+                </div>
                 <!-- RAG 知识库来源 -->
                 <div v-if="msg.ragSources && msg.ragSources.length" class="rag-sources-block">
                   <div class="rag-sources-header">
@@ -87,6 +92,11 @@
               <el-tooltip content="开启后将引导AI进行更深入的逐步推理分析" placement="top">
                 <el-button size="small" :type="deepThinking ? 'warning' : ''" :plain="!deepThinking" @click="deepThinking = !deepThinking">
                   <el-icon><View /></el-icon> 深度思考 {{ deepThinking ? 'ON' : 'OFF' }}
+                </el-button>
+              </el-tooltip>
+              <el-tooltip content="开启后将从知识库中检索相关资料辅助回答" placement="top">
+                <el-button size="small" :type="useRag ? 'primary' : ''" :plain="!useRag" @click="useRag = !useRag" style="margin-left:4px">
+                  <el-icon><Collection /></el-icon> 知识库 {{ useRag ? 'ON' : 'OFF' }}
                 </el-button>
               </el-tooltip>
               <el-tooltip content="开启后将联网搜索最新资料辅助回答" placement="top">
@@ -186,6 +196,7 @@ const questionType = ref('text')
 const explanationLevel = ref('standard')
 const deepThinking = ref(false)
 const enableSearch = ref(false)
+const useRag = ref(true)
 const history = ref([])
 const chatBox = ref(null)
 const abortStream = ref(null)
@@ -200,6 +211,7 @@ const feedbackGiven = ref(false)
 const searchResultsData = ref(null)
 const searchQuery = ref('')
 const ragSourcesData = ref(null)
+const ragUnavailableMsg = ref('')
 
 const quickQuestions = [
   'AI智能体和大模型有什么区别？',
@@ -387,6 +399,7 @@ async function sendMessage() {
       explanation_level: explanationLevel.value,
       deep_thinking: deepThinking.value,
       enable_search: enableSearch.value,
+      use_rag: useRag.value,
       file_text: file_text_sent,
       file_base64: file_base64_sent,
       history: conversationHistory
@@ -394,10 +407,21 @@ async function sendMessage() {
     {
       onRagSources(sources) {
         ragSourcesData.value = sources
+        ragUnavailableMsg.value = ''
         if (messages.value[assistantIdx]) {
           messages.value[assistantIdx] = {
             ...messages.value[assistantIdx],
-            ragSources: sources
+            ragSources: sources,
+            ragUnavailable: null
+          }
+        }
+      },
+      onRagUnavailable(message) {
+        ragUnavailableMsg.value = message
+        if (messages.value[assistantIdx]) {
+          messages.value[assistantIdx] = {
+            ...messages.value[assistantIdx],
+            ragUnavailable: message
           }
         }
       },
@@ -414,6 +438,12 @@ async function sendMessage() {
       },
       onChunk(chunkText, fullAnswer) {
         const msg = _buildAssistantMsg(fullAnswer)
+        if (ragUnavailableMsg.value) {
+          msg.ragUnavailable = ragUnavailableMsg.value
+        }
+        if (ragSourcesData.value) {
+          msg.ragSources = ragSourcesData.value
+        }
         if (searchResultsData.value) {
           msg.searchResults = searchResultsData.value
           msg.searchQuery = searchQuery.value
@@ -423,6 +453,9 @@ async function sendMessage() {
       },
       onDone(fullAnswer) {
         const msg = _buildAssistantMsg(fullAnswer)
+        if (ragUnavailableMsg.value) {
+          msg.ragUnavailable = ragUnavailableMsg.value
+        }
         if (ragSourcesData.value) {
           msg.ragSources = ragSourcesData.value
         }
@@ -701,6 +734,19 @@ async function handleClearHistory() {
 .thinking-content :deep(pre) { font-size: 11px; background: #fffbeb; }
 
 /* 联网搜索结果 */
+/* RAG 知识库暂不可用 */
+.rag-unavailable-block {
+  margin-bottom: 10px;
+  background: #fef8e7;
+  border: 1px solid #f5dab1;
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #b88230;
+}
 /* RAG 知识库来源 */
 .rag-sources-block {
   margin-bottom: 10px;
