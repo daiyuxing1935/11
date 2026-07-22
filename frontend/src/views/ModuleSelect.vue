@@ -2,8 +2,8 @@
   <!-- 第1层：模块选择页面（头歌风格 - 纯文字卡片） -->
   <div class="module-select-page">
     <div class="page-header">
-      <h1>AI 编程实验室</h1>
-      <p class="header-sub">选择一个学习模块，开始你的 AI 智能体编程之旅</p>
+      <h1>Agent 工程编程实验室</h1>
+      <p class="header-sub">从一段对话代码开始，逐关搭出可恢复、可审计的完整 Agent。建议按阶段顺序学习。</p>
     </div>
 
     <div class="module-grid">
@@ -13,8 +13,12 @@
         class="module-card"
         @click="enterModule(mod)"
       >
-        <h3 class="card-title">{{ mod.name }}</h3>
+        <div class="card-heading">
+          <h3 class="card-title">{{ mod.name }}</h3>
+          <el-tag size="small" effect="plain">{{ mod.level }}</el-tag>
+        </div>
         <p class="card-desc">{{ mod.description }}</p>
+        <p class="card-project">阶段项目：{{ mod.project }}</p>
         <div class="card-footer">
           <span class="card-count">共 {{ mod.taskCount }} 个关卡</span>
           <span class="card-progress" :class="{ done: getProgress(mod.id) >= mod.taskCount, active: getProgress(mod.id) > 0 && getProgress(mod.id) < mod.taskCount }">
@@ -29,7 +33,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { MODULES, MOCK_PROGRESS } from '../config/flagshipExercises'
+import { MODULES } from '../config/flagshipExercises'
 import { recordStudyVisit } from '../api/learning'
 
 const router = useRouter()
@@ -38,10 +42,16 @@ onMounted(() => { recordStudyVisit() })
 
 /**
  * 获取模块完成进度
- * TODO: 对接后端 GET /api/progress/module/{moduleId}
+ * 读取本机已完成的能力验证；登录后的服务端结果会在实验页同步回来。
  */
 function getProgress(moduleId) {
-  return MOCK_PROGRESS[moduleId] || 0
+  try {
+    const completed = JSON.parse(localStorage.getItem('code_completed') || '{}')
+    const module = MODULES.find(item => item.id === moduleId)
+    return (module?.tasks || []).filter(task => completed[`${moduleId}_${task.id}`]).length
+  } catch {
+    return 0
+  }
 }
 
 /** 点击模块 → 进入关卡列表页 */
@@ -52,8 +62,9 @@ function enterModule(mod) {
 
 <style scoped>
 .module-select-page {
-  padding: 32px;
-  max-width: 960px;
+  min-height: 100%;
+  padding: 24px 28px;
+  max-width: 1180px;
   margin: 0 auto;
 }
 .page-header {
@@ -71,11 +82,14 @@ function enterModule(mod) {
   margin: 0;
 }
 .module-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 .module-card {
+  display: flex;
+  min-height: 176px;
+  flex-direction: column;
   background: #fff;
   border-radius: 6px;
   padding: 20px 24px;
@@ -94,6 +108,8 @@ function enterModule(mod) {
   color: #1a1a2e;
   margin: 0 0 6px;
 }
+.card-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card-project { margin: -4px 0 14px; color: #303133; font-size: 13px; font-weight: 600; }
 .card-desc {
   font-size: 13px;
   color: #909399;
@@ -104,6 +120,7 @@ function enterModule(mod) {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: auto;
 }
 .card-count {
   font-size: 13px;
@@ -119,5 +136,9 @@ function enterModule(mod) {
 }
 .card-progress.done {
   color: #67C23A;
+}
+@media (max-width: 820px) {
+  .module-select-page { padding: 20px 16px; }
+  .module-grid { grid-template-columns: 1fr; }
 }
 </style>

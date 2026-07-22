@@ -1,6 +1,20 @@
 {
   "base_dir": "learning_materials",
   "modules": {
+    "项目制 Agent 工程实战": {
+      "01-第一段LangChain对话": "Agent工程实战/01-第一段LangChain对话.md",
+      "02-多轮对话与上下文": "Agent工程实战/02-多轮对话与上下文.md",
+      "03-流式输出与健壮配置": "Agent工程实战/03-流式输出与健壮配置.md",
+      "04-LangChain提示链": "Agent工程实战/04-LangChain提示链.md",
+      "05-LangChain工具调用": "Agent工程实战/05-LangChain工具调用.md",
+      "06-LangChain工具Agent": "Agent工程实战/06-LangChain工具Agent.md",
+      "07-LangGraph状态图": "Agent工程实战/07-LangGraph状态图.md",
+      "08-LangGraph条件路由": "Agent工程实战/08-LangGraph条件路由.md",
+      "09-LangGraph记忆与恢复": "Agent工程实战/09-LangGraph记忆与恢复.md",
+      "10-RAG检索与引用": "Agent工程实战/10-RAG检索与引用.md",
+      "11-有依据回答与降级": "Agent工程实战/11-有依据回答与降级.md",
+      "12-端到端Agent工程": "Agent工程实战/12-端到端Agent工程.md"
+    },
     "模块一：智能体基础通识": {
       "AI智能体定义": "智能体基础概念/AI智能体定义.md",
       "智能体核心特征": "智能体基础概念/智能体核心特征.md",

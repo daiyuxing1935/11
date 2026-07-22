@@ -14,8 +14,29 @@ from config import RAG_TOP_K
 from services.file_parser import parse_file
 from services.evolution_service import extract_pattern, find_similar_patterns, evolve
 from services.student_model import get_student_profile, record_qa_activity
+from services.personalization_service import (
+    build_personalized_system_prompt,
+    create_conversation,
+    delete_conversation,
+    get_conversation,
+    get_or_create_current_conversation,
+    get_conversation_history,
+    get_memory_overview,
+    list_conversations,
+)
+from services.guidance_context_service import build_learning_context, public_learning_context
 
 router = APIRouter()
+
+MEMORY_VISIBILITY_PHRASES = (
+    "你对我有什么认识", "你了解我什么", "你记得我什么", "你还记得我吗",
+    "我的画像", "我的长期记忆", "查看我的记忆", "关于我的信息",
+)
+
+
+def _is_memory_visibility_query(question: str) -> bool:
+    compact = "".join(str(question or "").lower().split())
+    return any("".join(phrase.lower().split()) in compact for phrase in MEMORY_VISIBILITY_PHRASES)
 
 def _require_llm_config(user_id: int):
     """检查用户是否已配置LLM，未配置则抛出400错误"""
@@ -199,8 +220,11 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
 
     # 过滤与学习无关的内容（有文件附件时跳过，文件内容可能是学习材料）
     # 多轮对话中跳过学习相关性检查（上下文已建立）
-    has_history = req.history and len(req.history) > 0
-    if not req.file_text and not has_history and not qa_service.is_learning_related(req.question):
+    persisted_history = get_conversation_history(current_user["id"], req.conversation_id, limit=20)
+    has_history = bool(persisted_history or (req.history and len(req.history) > 0))
+    if (not req.file_text and not has_history
+            and not _is_memory_visibility_query(req.question)
+            and not qa_service.is_learning_related(req.question)):
         async def _reject_stream():
             msg = "这是一个教学平台，我无法解答你的这个问题。请提出与学习、知识相关的问题。"
             yield f"data: {json.dumps({'content': msg}, ensure_ascii=False)}\n\n"
@@ -219,6 +243,7 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
     messages = []
     temperature = 0.7
     max_tokens = 4096
+    learning_context = build_learning_context(current_user["id"], req.question)
 
     # 自动检测代码输入
     is_code = qa_service.is_code_input(req.question)
@@ -258,6 +283,11 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
 
 不要只分析不修改。用户要的是修改后的代码！"""
 
+        system_prompt = build_personalized_system_prompt(
+            current_user["id"], req.question, system_prompt,
+        )
+        system_prompt += "\n\n" + learning_context["prompt"]
+
         # 深度思考：追加思考指令 + 调整参数
         if req.deep_thinking:
             system_prompt += DEEP_THINKING_PROMPT
@@ -287,9 +317,14 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
         else:
             system_prompt += "\n\n注意：直接回答即可，不要输出你的思考过程、不要说你正在做什么、不要以角色自我介绍开头。"
 
+        system_prompt = build_personalized_system_prompt(
+            current_user["id"], req.question, system_prompt,
+        )
+        system_prompt += "\n\n" + learning_context["prompt"]
+
         # 联网搜索：先改写查询，再搜索
         search_context = ""
-        if req.enable_search:
+        if req.enable_search and not _is_memory_visibility_query(req.question):
             try:
                 # 用 LLM 从用户问题中提取搜索意图，改写为精确的搜索词
                 search_query_rewritten = await _rewrite_search_query(req.question, current_user["id"])
@@ -316,7 +351,7 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
 
         # 【RAG】知识库检索增强（非代码类问题）
         rag_sources = None
-        if req.use_rag:
+        if req.use_rag and not _is_memory_visibility_query(req.question):
             try:
                 from services.rag_service import get_rag_service, reset_rag_service
                 from database import get_db
@@ -401,8 +436,9 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
             {"role": "system", "content": system_prompt},
         ]
         # 多轮对话：注入之前的对话历史（最近20条，即10轮）
-        if req.history:
-            for h in req.history[-20:]:  # 最多保留最近10轮对话
+        effective_history = persisted_history or (req.history or [])
+        if effective_history:
+            for h in effective_history[-20:]:  # 最多保留最近10轮对话
                 role = h.get("role", "user")
                 content = h.get("content", "")
                 if role in ("user", "assistant") and content:
@@ -416,9 +452,11 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
 
     async def _stream_with_search():
         """先发送 RAG 来源/不可用提示和搜索结果，再流式输出 LLM 回答"""
+        if learning_context.get("available"):
+            yield f"data: {json.dumps({'learning_context': public_learning_context(learning_context)}, ensure_ascii=False)}\n\n"
         if rag_sources:
             yield f"data: {json.dumps({'rag_sources': rag_sources}, ensure_ascii=False)}\n\n"
-        elif req.use_rag == True:
+        elif req.use_rag == True and not _is_memory_visibility_query(req.question):
             # RAG 已开启但嵌入后端不可用 → 告知用户如何配置
             yield f"data: {json.dumps({'rag_unavailable': True, 'message': '📚 知识库检索暂不可用：未配置嵌入 API Key。请在「个人中心 → AI大模型配置」中添加 DashScope text-embedding-v3 的 API Key 后即可启用知识库增强。'}, ensure_ascii=False)}\n\n"
         if search_results:
@@ -451,6 +489,45 @@ async def get_history(page: int = 1, page_size: int = 20, current_user: dict = D
     return APIResponse(data=result)
 
 
+@router.post("/conversations", response_model=APIResponse)
+async def start_conversation(current_user: dict = Depends(get_current_user)):
+    """创建一个中期记忆会话。"""
+    return APIResponse(data=create_conversation(current_user["id"]))
+
+
+@router.get("/conversations", response_model=APIResponse)
+async def conversations(current_user: dict = Depends(get_current_user)):
+    """获取左侧会话历史。"""
+    return APIResponse(data=list_conversations(current_user["id"]))
+
+
+@router.get("/conversations/current", response_model=APIResponse)
+async def current_conversation(current_user: dict = Depends(get_current_user)):
+    """刷新页面时续接当前用户最近的中期记忆会话。"""
+    return APIResponse(data=get_or_create_current_conversation(current_user["id"]))
+
+
+@router.get("/conversations/{conversation_id}", response_model=APIResponse)
+async def conversation_detail(conversation_id: int, current_user: dict = Depends(get_current_user)):
+    conversation = get_conversation(current_user["id"], conversation_id)
+    if not conversation:
+        raise HTTPException(status_code=404, detail="会话不存在或无权访问")
+    return APIResponse(data=conversation)
+
+
+@router.delete("/conversations/{conversation_id}", response_model=APIResponse)
+async def remove_conversation(conversation_id: int, current_user: dict = Depends(get_current_user)):
+    if not delete_conversation(current_user["id"], conversation_id):
+        raise HTTPException(status_code=404, detail="会话不存在或无权删除")
+    return APIResponse(data={"deleted": True, "id": conversation_id})
+
+
+@router.get("/memory", response_model=APIResponse)
+async def memory_overview(current_user: dict = Depends(get_current_user)):
+    """返回当前用户的分层记忆和三维掌握度概览。"""
+    return APIResponse(data=get_memory_overview(current_user["id"]))
+
+
 @router.delete("/history", response_model=APIResponse)
 async def clear_history(current_user: dict = Depends(get_current_user)):
     """清空当前用户的所有问答历史"""
@@ -475,7 +552,8 @@ async def save_qa(req: QASaveRequest, current_user: dict = Depends(get_current_u
         question=req.question,
         answer=req.answer,
         question_type=req.question_type,
-        explanation_level=req.explanation_level
+        explanation_level=req.explanation_level,
+        conversation_id=req.conversation_id,
     )
     # 【自进化】记录学习活动
     try:

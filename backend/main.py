@@ -74,7 +74,7 @@ else:
     print("[启动检查] 警告: 部分数据文件缺失，相关功能将无法使用")
 
 # 注册路由
-from routers import auth_router, diagnosis_router, qa_router, learning_router, analytics_router, resource_router, knowledge_router, llm_config_router, image_router, rag_router, capability_router
+from routers import auth_router, diagnosis_router, qa_router, learning_router, analytics_router, resource_router, knowledge_router, llm_config_router, image_router, rag_router, capability_router, workspace_router
 
 app.include_router(auth_router.router, prefix="/api/auth", tags=["认证"])
 app.include_router(diagnosis_router.router, prefix="/api/diagnosis", tags=["学情诊断"])
@@ -87,6 +87,7 @@ app.include_router(llm_config_router.router, prefix="/api/llm-config", tags=["LL
 app.include_router(image_router.router, prefix="/api/images", tags=["图片生成"])
 app.include_router(rag_router.router, prefix="/api/rag", tags=["RAG知识库"])
 app.include_router(capability_router.router, prefix="/api/capability", tags=["能力真实性验证"])
+app.include_router(workspace_router.router, prefix="/api/workspaces", tags=["项目编程实验室"])
 
 
 @app.get("/")

@@ -11,6 +11,9 @@
           <el-descriptions :column="1" size="small">
             <el-descriptions-item label="用户名">{{ userStore.user?.username }}</el-descriptions-item>
             <el-descriptions-item label="年级">{{ userStore.user?.grade || '未设置' }}</el-descriptions-item>
+            <el-descriptions-item label="技术背景">{{ userStore.user?.programming_background || '未设置' }}</el-descriptions-item>
+            <el-descriptions-item label="相关经验">{{ userStore.user?.years_experience || 0 }} 年</el-descriptions-item>
+            <el-descriptions-item label="讲解偏好">{{ userStore.user?.answer_preference || '分步清晰' }}</el-descriptions-item>
           </el-descriptions>
         </el-card>
       </el-col>
@@ -20,6 +23,18 @@
           <el-form :model="form" label-width="100px" style="max-width:500px">
             <el-form-item label="昵称"><el-input v-model="form.nickname" /></el-form-item>
             <el-form-item label="年级/专业"><el-input v-model="form.grade" placeholder="如：大一/计算机科学" /></el-form-item>
+            <el-form-item label="技术/职业背景"><el-input v-model="form.programming_background" placeholder="如：Java 业务开发工程师" /></el-form-item>
+            <el-form-item label="相关经验">
+              <el-input-number v-model="form.years_experience" :min="0" :max="60" />
+              <span style="margin-left:8px;color:#909399">年</span>
+            </el-form-item>
+            <el-form-item label="AI讲解偏好">
+              <el-select v-model="form.answer_preference" style="width:100%">
+                <el-option label="直观简洁 · 先给结论" value="直观简洁" />
+                <el-option label="分步清晰 · 代码配解释" value="分步清晰" />
+                <el-option label="工程深入 · 重点讲业务取舍" value="工程深入" />
+              </el-select>
+            </el-form-item>
             <el-form-item label="学习阶段">
               <el-radio-group v-model="form.learning_stage">
                 <el-radio label="入门">入门</el-radio>
@@ -41,6 +56,40 @@
             </el-form-item>
           </el-form>
         </el-card>
+
+        <el-card shadow="hover" style="margin-top:20px" class="memory-overview-card">
+          <template #header><div class="page-title"><el-icon><Connection /></el-icon> AI 个性化记忆</div></template>
+          <div class="memory-stats">
+            <div><span>短期记忆</span><strong>当前对话</strong><small>{{ memoryOverview.short_term || '即时消息窗口' }}</small></div>
+            <div><span>中期记忆</span><strong>{{ memoryOverview.medium_term_sessions || 0 }} 个会话</strong><small>保存多轮对话摘要</small></div>
+            <button class="memory-stat-button" type="button" @click="memoryDialogVisible = true">
+              <span>长期记忆</span><strong>{{ memoryOverview.long_term_memories?.length || 0 }} 条</strong>
+              <small>{{ memoryOverview.vector_store?.enabled ? 'Chroma 向量检索已启用' : '配置嵌入 Key 后启用向量检索' }}</small>
+              <em>查看具体记忆 →</em>
+            </button>
+          </div>
+          <div v-if="memoryOverview.long_term_memories?.length" class="memory-facts">
+            <el-tag v-for="item in memoryOverview.long_term_memories.slice(0, 8)" :key="`${item.category}-${item.fact_key}`" effect="plain" class="memory-tag" @click="openMemory(item)">
+              {{ item.fact_value }} · {{ item.mention_count }} 次
+            </el-tag>
+          </div>
+        </el-card>
+
+        <el-dialog v-model="memoryDialogVisible" title="我的长期记忆" width="760px" class="memory-dialog">
+          <div class="memory-dialog-note"><el-icon><Lock /></el-icon>记忆由系统根据学习和对话自动整理，仅支持查看，不能手动修改。</div>
+          <el-empty v-if="!memoryOverview.long_term_memories?.length" description="还没有形成长期记忆" />
+          <div v-else class="memory-detail-list">
+            <article v-for="item in memoryOverview.long_term_memories" :key="`${item.category}-${item.fact_key}`" :class="{ selected: selectedMemory === item }">
+              <div class="memory-detail-head">
+                <el-tag size="small" effect="plain">{{ memoryCategoryLabel(item.category) }}</el-tag>
+                <span>被提及 {{ item.mention_count }} 次 · 调用 {{ item.access_count }} 次</span>
+              </div>
+              <h4>{{ item.fact_value }}</h4>
+              <p>记忆键：{{ item.fact_key }} · 置信度 {{ Math.round((item.confidence || 0) * 100) }}%</p>
+              <small>最近确认：{{ formatMemoryTime(item.last_seen_at) }}</small>
+            </article>
+          </div>
+        </el-dialog>
 
         <el-card shadow="hover" style="margin-top:20px" class="deepseek-quick-card">
           <template #header>
@@ -198,6 +247,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getLLMConfig, saveLLMConfig, resetLLMConfig, saveEmbeddingConfig } from '../api/llm'
+import { getMemoryOverview } from '../api/qa'
 
 const userStore = useUserStore()
 const saving = ref(false)
@@ -209,12 +259,32 @@ const deepseekConfigured = ref(false)
 const embeddingSaving = ref(false)
 const embeddingApiKey = ref('')
 const embeddingConfigured = ref(false)
+const memoryOverview = ref({})
+const memoryDialogVisible = ref(false)
+const selectedMemory = ref(null)
 const form = reactive({
   nickname: userStore.user?.nickname || '',
   grade: userStore.user?.grade || '',
   learning_stage: userStore.user?.learning_stage || '入门',
   learning_goal: userStore.user?.learning_goal || '',
+  programming_background: userStore.user?.programming_background || '',
+  years_experience: userStore.user?.years_experience || 0,
+  answer_preference: userStore.user?.answer_preference || '分步清晰',
 })
+
+function openMemory(item) {
+  selectedMemory.value = item
+  memoryDialogVisible.value = true
+}
+
+function memoryCategoryLabel(category) {
+  return ({ preference: '偏好', profile: '画像', goal: '目标', interest: '关注知识点' })[category] || category || '记忆'
+}
+
+function formatMemoryTime(value) {
+  if (!value) return '暂无时间'
+  return String(value).replace('T', ' ').slice(0, 16)
+}
 const settings = reactive({
   explanationLevel: localStorage.getItem('qa_level') || 'standard',
   reminder: localStorage.getItem('reminder') !== 'false',
@@ -269,6 +339,7 @@ function quickSetupDeepSeek() {
 }
 
 onMounted(async () => {
+  getMemoryOverview().then(data => { memoryOverview.value = data || {} }).catch(() => {})
   try {
     const data = await getLLMConfig()
     llmConfig.value = data
@@ -447,6 +518,7 @@ async function handleResetLLM() {
 
 <style scoped>
 .page-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: bold; }
+.memory-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.memory-stats>div,.memory-stat-button{padding:13px;border:1px solid #e4e9f2;border-radius:12px;background:#fafbfe;text-align:left}.memory-stat-button{font:inherit;cursor:pointer;transition:.18s}.memory-stat-button:hover{border-color:#aeb9ee;background:#f5f7ff;transform:translateY(-1px)}.memory-stats span,.memory-stats strong,.memory-stats small{display:block}.memory-stats span{color:#8792a6;font-size:10px}.memory-stats strong{margin:6px 0;color:#273550;font-size:14px}.memory-stats small{color:#9099aa;font-size:9px;line-height:1.5}.memory-stat-button em{display:block;margin-top:8px;color:#5364d8;font-size:10px;font-style:normal;font-weight:700}.memory-facts{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}.memory-tag{cursor:pointer}.memory-dialog-note{display:flex;align-items:center;gap:7px;margin-bottom:14px;padding:10px 12px;border-radius:10px;color:#66738a;background:#f3f5f9;font-size:12px}.memory-detail-list{display:grid;gap:10px;max-height:58vh;overflow-y:auto;padding-right:4px}.memory-detail-list article{padding:14px 16px;border:1px solid #e2e7f1;border-radius:12px;background:#fff}.memory-detail-list article.selected{border-color:#9eaae8;background:#f7f8ff}.memory-detail-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.memory-detail-head>span{color:#98a1b1;font-size:10px}.memory-detail-list h4{margin:10px 0 6px;color:#273550;font-size:14px}.memory-detail-list p,.memory-detail-list small{margin:0;color:#7f899b;font-size:11px;line-height:1.6}@media(max-width:900px){.memory-stats{grid-template-columns:1fr}}
 .deepseek-quick-card {
   border-left: 4px solid #409EFF;
 }

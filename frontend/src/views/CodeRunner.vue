@@ -182,6 +182,10 @@ function goBack() {
 
 <style scoped>
 .code-runner-page {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -189,10 +193,14 @@ function goBack() {
   margin-bottom: 12px;
 }
 .runner-body {
+  flex: 1;
+  min-height: 0;
   margin: 0 !important;
 }
+.runner-body > :deep(.el-col) { height: 100%; }
 .editor-panel {
-  height: calc(100vh - 140px);
+  height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
@@ -223,7 +231,8 @@ function goBack() {
   color: #6a6a6a;
 }
 .output-panel {
-  height: calc(100vh - 140px);
+  height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }

@@ -6,6 +6,16 @@ from schemas import UserRegister, UserLogin, UserUpdate, UserResponse, TokenResp
 
 router = APIRouter()
 
+def _user_payload(user) -> dict:
+    return {
+        "id": user["id"], "username": user["username"], "nickname": user["nickname"],
+        "grade": user["grade"], "learning_stage": user["learning_stage"],
+        "learning_goal": user["learning_goal"], "avatar": user["avatar"],
+        "programming_background": user["programming_background"] or "",
+        "years_experience": int(user["years_experience"] or 0),
+        "answer_preference": user["answer_preference"] or "分步清晰",
+    }
+
 @router.post("/register", response_model=APIResponse)
 def register(req: UserRegister):
     conn = get_db()
@@ -16,8 +26,9 @@ def register(req: UserRegister):
 
     password_hash = hash_password(req.password)
     cursor = conn.execute(
-        "INSERT INTO users (username, password_hash, nickname, grade, learning_stage, learning_goal) VALUES (?, ?, ?, ?, ?, ?)",
-        (req.username, password_hash, req.nickname or req.username, req.grade, req.learning_stage, req.learning_goal)
+        "INSERT INTO users (username, password_hash, nickname, grade, learning_stage, learning_goal, programming_background, years_experience, answer_preference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (req.username, password_hash, req.nickname or req.username, req.grade, req.learning_stage, req.learning_goal,
+         req.programming_background, req.years_experience, req.answer_preference)
     )
     user_id = cursor.lastrowid
     conn.commit()
@@ -29,11 +40,7 @@ def register(req: UserRegister):
     return APIResponse(data={
         "access_token": token,
         "token_type": "bearer",
-        "user": {
-            "id": user["id"], "username": user["username"], "nickname": user["nickname"],
-            "grade": user["grade"], "learning_stage": user["learning_stage"],
-            "learning_goal": user["learning_goal"], "avatar": user["avatar"]
-        }
+        "user": _user_payload(user)
     })
 
 @router.post("/login", response_model=APIResponse)
@@ -49,21 +56,12 @@ def login(req: UserLogin):
     return APIResponse(data={
         "access_token": token,
         "token_type": "bearer",
-        "user": {
-            "id": user["id"], "username": user["username"], "nickname": user["nickname"],
-            "grade": user["grade"], "learning_stage": user["learning_stage"],
-            "learning_goal": user["learning_goal"], "avatar": user["avatar"]
-        }
+        "user": _user_payload(user)
     })
 
 @router.get("/me", response_model=APIResponse)
 def get_profile(current_user: dict = Depends(get_current_user)):
-    return APIResponse(data={
-        "id": current_user["id"], "username": current_user["username"],
-        "nickname": current_user["nickname"], "grade": current_user["grade"],
-        "learning_stage": current_user["learning_stage"],
-        "learning_goal": current_user["learning_goal"], "avatar": current_user["avatar"]
-    })
+    return APIResponse(data=_user_payload(current_user))
 
 @router.get("/verify", response_model=APIResponse)
 def verify_token(current_user: dict = Depends(get_current_user)):
@@ -83,6 +81,12 @@ def update_profile(req: UserUpdate, current_user: dict = Depends(get_current_use
         updates["learning_stage"] = req.learning_stage
     if req.learning_goal is not None:
         updates["learning_goal"] = req.learning_goal
+    if req.programming_background is not None:
+        updates["programming_background"] = req.programming_background
+    if req.years_experience is not None:
+        updates["years_experience"] = req.years_experience
+    if req.answer_preference is not None:
+        updates["answer_preference"] = req.answer_preference
 
     if updates:
         set_clause = ", ".join(f"{k} = ?" for k in updates)

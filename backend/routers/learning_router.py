@@ -378,6 +378,15 @@ def _has_code_body(code: str) -> bool:
 
 def _load_exercise_by_id(exercise_id: str) -> dict | None:
     """从习题文件中加载指定ID的习题数据"""
+    # 项目制实验优先，确保参考答案也使用当前课程契约。
+    try:
+        from services.judge_service import get_flagship_exercise
+        flagship = get_flagship_exercise(exercise_id)
+        if flagship:
+            return flagship
+    except Exception:
+        pass
+
     import os as _os, glob as _glob
     exercises_dir = _os.path.join(
         _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
@@ -448,6 +457,23 @@ async def _validate_code_in_sandbox(code: str, language: str = "python",
     try:
         if language.lower() not in ("python", "py", "python3"):
             return True, ""  # 非 Python 暂不验证
+
+        # 当前项目制实验统一走服务端私有场景，避免生成答案只凭“能运行”被误判通过。
+        if exercise_id:
+            try:
+                from services.judge_service import is_flagship_exercise, judge_submission
+                if is_flagship_exercise(exercise_id):
+                    result = judge_submission(exercise_id, code)
+                    if result.get("passed"):
+                        return True, ""
+                    failed = [
+                        item.get("description", "私有场景")
+                        for item in result.get("results", []) if not item.get("passed")
+                    ]
+                    detail = "、".join(failed[:4]) or result.get("compile_error") or "私有场景未通过"
+                    return False, f"服务端私有场景验证失败：{detail}"
+            except Exception as exc:
+                return False, f"服务端私有场景验证异常：{str(exc)[:240]}"
 
         # 如果代码没有 __main__ 测试入口，尝试注入测试驱动
         test_code = code
@@ -554,11 +580,21 @@ async def get_code_answer_by_problem(req: CodeAnswerByProblemRequest, current_us
         # ===== 2. 构建 prompt =====
         from services.ai_service import call_llm
 
-        # 判断学生代码是否缺少测试入口
+        # 项目制实验由服务端私有场景判题，答案只能包含函数/类定义；旧题保留自带测试入口。
+        try:
+            from services.judge_service import is_flagship_exercise
+            is_project_lab = bool(req.exercise_id and is_flagship_exercise(req.exercise_id))
+        except Exception:
+            is_project_lab = False
         has_test_code = ('if __name__' in req.code and '__main__' in req.code) if req.code else False
-        test_reminder = ""
-        if not has_test_code and req.code:
-            test_reminder = "\n\n【重要】学生的代码缺少 if __name__ == '__main__': 测试入口，参考答案务必在末尾包含测试代码，让学生复制后直接运行就能看到输出。"
+        if is_project_lab:
+            test_reminder = "\n\n【重要】本题使用服务端私有场景判题。答案只保留题目要求的函数或类定义，不要添加 import、print 或模块顶层测试代码。"
+            answer_runtime_requirement = "- 只输出函数/类实现，不要包含 import、print 或 if __name__ 测试入口"
+        else:
+            test_reminder = ""
+            if not has_test_code and req.code:
+                test_reminder = "\n\n【重要】学生的代码缺少 if __name__ == '__main__': 测试入口，参考答案务必在末尾包含测试代码，让学生复制后直接运行就能看到输出。"
+            answer_runtime_requirement = "- 必须包含 if __name__ == '__main__': 测试入口，末尾创建实例、调用方法、用 print() 输出结果"
 
         # starter 代码上下文：告诉 AI 必须遵循的接口
         starter_context = ""
@@ -612,7 +648,7 @@ async def get_code_answer_by_problem(req: CodeAnswerByProblemRequest, current_us
 给出完整的、可直接运行的参考答案代码。要求：
 - 基于初始代码模板实现，类名和方法签名保持一致
 - 核心逻辑加注释
-- **必须包含 if __name__ == '__main__': 测试入口**，末尾创建实例、调用方法、用 print() 输出结果
+{answer_runtime_requirement}
 - 代码风格规范、可直接复制运行
 
 ## 任务3：关键代码解释
@@ -632,7 +668,7 @@ async def get_code_answer_by_problem(req: CodeAnswerByProblemRequest, current_us
 
 注意：
 - 用中文回答
-- answer_code 中的代码必须完整、可直接运行、包含测试入口
+- answer_code 中的代码必须完整，并遵循本题的判题入口要求
 - answer_code 里不要用转义字符（\\n、\\t 等），就是正常的代码文本
 - 解释要通俗易懂，适合初学者"""
 

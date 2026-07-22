@@ -30,7 +30,7 @@ class CapabilityLoopTest(unittest.TestCase):
         return CORRECT_SOLUTION
 
     def test_code_defense_repair_report_loop(self):
-        session = capability_service.start_session(self.user_id, "7-1")
+        session = capability_service.start_session(self.user_id, "1-1")
         capability_service.record_events(self.user_id, session["id"], [
             {"type": "edit", "payload": {"delta": 42, "length": 900}},
             {"type": "run", "payload": {"passed": False, "failed": 1}},
@@ -45,8 +45,8 @@ class CapabilityLoopTest(unittest.TestCase):
         self.assertNotEqual(passed["mutation_code"], self.correct_code())
 
         answers = [
-            {"question_id": "q1", "answer": "dispatch_ticket 的输入参数是工单、客服列表和当前时间；处理步骤是校验、优先级升级、筛选与负载率选择，输出并返回分派字典结果。"},
-            {"question_id": "q2", "answer": "for 循环在客服列表遍历结束时终止；空输入是边界场景。规模扩大时复杂度近似线性，需要关注扫描性能。"},
+            {"question_id": "q1", "answer": "build_chat_messages 的输入参数是系统提示和用户文本；处理步骤是类型校验、清理空白和构造消息，输出并返回消息列表。"},
+            {"question_id": "q2", "answer": "if 分支用于拒绝空字符串和错误类型；去掉后非法输入不会失败，私有错误用例会失败。"},
             {"question_id": "q3", "answer": "面对异常或边界输入，我会在入口校验层增加保护，明确修改位置，并补充测试用例验证 ValueError 和返回结构。"},
         ]
         defense = capability_service.submit_defense(
@@ -59,7 +59,7 @@ class CapabilityLoopTest(unittest.TestCase):
         conn.execute(
             """INSERT INTO code_submissions
                (user_id, exercise_id, code, passed, total, score, verified)
-               VALUES (?, '7-1', ?, 1, 10, 100, 0)""",
+               VALUES (?, '1-1', ?, 1, 4, 100, 0)""",
             (self.user_id, self.correct_code()),
         )
         conn.commit()
@@ -77,7 +77,7 @@ class CapabilityLoopTest(unittest.TestCase):
 
         conn = database.get_db()
         row = conn.execute(
-            "SELECT verified FROM code_submissions WHERE user_id = ? AND exercise_id = '7-1'",
+            "SELECT verified FROM code_submissions WHERE user_id = ? AND exercise_id = '1-1'",
             (self.user_id,),
         ).fetchone()
         conn.close()

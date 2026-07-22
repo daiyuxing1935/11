@@ -1,15 +1,37 @@
 <template>
   <div class="qa-page">
     <div class="qa-layout">
-      <!-- 左侧：聊天区域 -->
+      <aside :class="['conversation-sidebar', { collapsed: historyCollapsed }]">
+        <button class="conversation-toggle" :title="historyCollapsed ? '展开历史记录' : '收起历史记录'" @click="toggleHistory">
+          <el-icon><component :is="historyCollapsed ? 'Expand' : 'Fold'" /></el-icon>
+        </button>
+        <template v-if="!historyCollapsed">
+          <button class="new-chat-button" :disabled="sending" @click="newConversation">
+            <el-icon><CirclePlus /></el-icon><span>新建对话</span>
+          </button>
+          <div class="conversation-caption">最近对话</div>
+          <div class="conversation-list">
+            <button
+              v-for="item in conversations"
+              :key="item.id"
+              :class="['conversation-item', { active: item.id === conversationId }]"
+              @click="openConversation(item.id)"
+            >
+              <span class="conversation-copy"><b>{{ item.title || '新对话' }}</b><small>{{ item.summary || '还没有消息' }}</small></span>
+              <el-icon class="conversation-delete" title="删除会话" @click.stop="removeConversation(item.id)"><Delete /></el-icon>
+            </button>
+            <div v-if="!conversations.length" class="conversation-empty">暂无历史对话</div>
+          </div>
+        </template>
+      </aside>
+
       <div class="chat-column">
-        <el-card shadow="hover" class="chat-card">
-          <template #header><div class="page-title"><el-icon><ChatDotRound /></el-icon> AI智能体学科专属答疑</div></template>
+        <el-card shadow="never" class="chat-card">
           <div class="chat-messages" ref="chatBox" @click="handleCodeBlockAction">
             <div v-if="messages.length === 0" class="welcome-msg">
-              <el-icon :size="48" color="#409EFF"><Cpu /></el-icon>
-              <h3>AI智能体学科智能答疑助手</h3>
-              <p>专注于AI智能体学科：基础概念、大模型原理、提示词工程、框架开发、算法逻辑、多智能体应用</p>
+              <div class="welcome-orb"><el-icon :size="32"><Cpu /></el-icon></div>
+              <h3>今天想一起解决什么？</h3>
+              <p>我会结合你的学习记录、长期记忆与当前进度回答。</p>
               <div class="quick-questions">
                 <el-tag v-for="q in quickQuestions" :key="q" @click="quickAsk(q)" class="quick-tag">{{ q }}</el-tag>
               </div>
@@ -17,6 +39,11 @@
             <div v-for="(msg, idx) in messages" :key="idx" :class="['message', msg.role]">
               <div class="msg-avatar"><el-icon :size="24"><component :is="msg.role === 'user' ? 'UserFilled' : 'Cpu'" /></el-icon></div>
               <div class="msg-body">
+                <div v-if="msg.role === 'assistant' && msg.learningContext" class="learning-context-block">
+                  <el-icon><Guide /></el-icon>
+                  <span>依据学习路径：第 {{ msg.learningContext.day }} 项 · {{ msg.learningContext.topic }}</span>
+                  <button v-if="msg.learningContext.lab_id" @click="openContextLab(msg.learningContext)">打开实验 {{ msg.learningContext.lab_id }}</button>
+                </div>
                 <!-- 深度思考过程 -->
                 <div v-if="msg.thinking" class="thinking-block">
                   <div class="thinking-header" @click="msg.thinkingExpanded = !msg.thinkingExpanded">
@@ -83,95 +110,41 @@
             </div>
           </div>
           <div class="chat-input">
-            <div class="input-options">
-              <el-tooltip content="清空当前对话，开始新会话" placement="top">
-                <el-button size="small" @click="newConversation" :disabled="sending">
-                  <el-icon><Plus /></el-icon> 新建对话
-                </el-button>
-              </el-tooltip>
-              <el-tooltip content="开启后将引导AI进行更深入的逐步推理分析" placement="top">
-                <el-button size="small" :type="deepThinking ? 'warning' : ''" :plain="!deepThinking" @click="deepThinking = !deepThinking">
-                  <el-icon><View /></el-icon> 深度思考 {{ deepThinking ? 'ON' : 'OFF' }}
-                </el-button>
-              </el-tooltip>
-              <el-tooltip content="开启后将从知识库中检索相关资料辅助回答" placement="top">
-                <el-button size="small" :type="useRag ? 'primary' : ''" :plain="!useRag" @click="useRag = !useRag" style="margin-left:4px">
-                  <el-icon><Collection /></el-icon> 知识库 {{ useRag ? 'ON' : 'OFF' }}
-                </el-button>
-              </el-tooltip>
-              <el-tooltip content="开启后将联网搜索最新资料辅助回答" placement="top">
-                <el-button size="small" :type="enableSearch ? 'success' : ''" :plain="!enableSearch" @click="enableSearch = !enableSearch" style="margin-left:4px" :loading="enableSearch && sending">
-                  <el-icon><Search /></el-icon> 联网搜索 {{ enableSearch ? 'ON' : 'OFF' }}
-                </el-button>
-              </el-tooltip>
-              <el-tooltip content="上传PDF/PPTX/图片等文件，自动识别内容" placement="top">
-                <el-button size="small" @click="triggerUpload" :disabled="sending" style="margin-left:4px">
-                  <el-icon><Upload /></el-icon> 上传文件
-                </el-button>
-              </el-tooltip>
-              <input ref="fileInput" type="file" @change="handleFileSelect" class="hidden-file-input"
-                accept=".pdf,.pptx,.docx,.xlsx,.png,.jpg,.jpeg,.gif,.bmp,.webp,.txt,.md,.py,.js,.ts,.json,.csv,.html,.css,.xml,.java,.c,.cpp,.sql" />
-            </div>
             <div v-if="uploadedFile" class="file-tag">
               <el-tag type="info" closable @close="removeFile" size="small">
                 <el-icon><Document /></el-icon>
                 {{ uploadedFile.name }} <span v-if="uploading">(解析中...)</span><span v-else>({{ fileType }})</span>
               </el-tag>
             </div>
-            <el-input v-model="inputText" placeholder="输入AI智能体学科相关问题..." @keyup.enter="sendMessage" size="large" class="text-input" :disabled="sending" />
-            <div class="send-area">
-              <el-button v-if="!sending" type="primary" size="large" @click="sendMessage" :disabled="!inputText.trim() && !uploadedFile">
-                <el-icon><Promotion /></el-icon> {{ uploadedFile && !inputText.trim() ? '发送文件' : '提问' }}
-              </el-button>
-              <el-button v-else type="danger" size="large" @click="stopStreaming">
-                <el-icon><CircleClose /></el-icon> 停止生成
-              </el-button>
-            </div>
-          </div>
-        </el-card>
-      </div>
-      <!-- 右侧：问答历史（窄列，固定） -->
-      <div class="history-column">
-        <el-card shadow="hover" class="history-card">
-          <template #header>
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <span><el-icon><Clock /></el-icon> 历史</span>
-              <el-popconfirm
-                v-if="history.length > 0"
-                title="确定要清空所有问答历史吗？此操作不可恢复。"
-                confirm-button-text="确认清空"
-                cancel-button-text="取消"
-                @confirm="handleClearHistory"
-              >
-                <template #reference>
-                  <el-button type="danger" size="small" text>清空全部</el-button>
-                </template>
-              </el-popconfirm>
-            </div>
-          </template>
-          <div class="history-list">
-            <div v-for="h in history" :key="h.id" class="history-item" @click="loadHistory(h)">
-              <div style="display:flex;justify-content:space-between;align-items:flex-start">
-                <div style="flex:1;min-width:0">
-                  <div class="h-question">{{ h.question.slice(0, 40) }}{{ h.question.length > 40 ? '...' : '' }}</div>
-                  <div class="h-meta">{{ h.created_at?.slice(0,16) }} · {{ h.explanation_level }}</div>
-                </div>
-                <el-popconfirm
-                  title="确定删除这条记录？"
-                  confirm-button-text="删除"
-                  cancel-button-text="取消"
-                  @confirm.stop="handleDeleteHistory(h.id)"
-                >
-                  <template #reference>
-                    <el-button size="small" text type="danger" @click.stop>
-                      <el-icon><Delete /></el-icon>
-                    </el-button>
-                  </template>
-                </el-popconfirm>
+            <textarea
+              v-model="inputText"
+              rows="2"
+              placeholder="给 AI 导师发送消息"
+              :disabled="sending"
+              @keydown.enter.exact.prevent="sendMessage"
+            ></textarea>
+            <div class="composer-toolbar">
+              <div class="composer-left">
+                <el-tooltip content="上传文件" placement="top">
+                  <button class="round-tool" :disabled="sending" aria-label="上传文件" @click="triggerUpload"><el-icon><Paperclip /></el-icon></button>
+                </el-tooltip>
+                <el-popover placement="top-start" :width="240" trigger="click" popper-class="qa-tool-popover">
+                  <template #reference><button class="round-tool" aria-label="更多能力"><el-icon><Operation /></el-icon></button></template>
+                  <div class="capability-menu">
+                    <button @click="useRag = !useRag"><el-icon><Collection /></el-icon><span><b>知识库答疑</b><small>{{ useRag ? '已开启' : '点击开启' }}</small></span><em :class="{ on: useRag }"></em></button>
+                    <button disabled><el-icon><MagicStick /></el-icon><span><b>生成个性化资源</b><small>即将开放</small></span></button>
+                    <button disabled><el-icon><Reading /></el-icon><span><b>生成复习卡片</b><small>即将开放</small></span></button>
+                  </div>
+                </el-popover>
+                <button :class="['mode-chip', { active: deepThinking }]" @click="deepThinking = !deepThinking"><el-icon><View /></el-icon>深度思考</button>
+                <button :class="['mode-chip', { active: enableSearch }]" @click="enableSearch = !enableSearch"><el-icon><Search /></el-icon>联网搜索</button>
               </div>
+              <button v-if="!sending" class="send-button" :disabled="!inputText.trim() && !uploadedFile" aria-label="发送" @click="sendMessage"><el-icon><Promotion /></el-icon></button>
+              <button v-else class="send-button stop" aria-label="停止生成" @click="stopStreaming"><el-icon><CircleClose /></el-icon></button>
             </div>
+            <input ref="fileInput" type="file" @change="handleFileSelect" class="hidden-file-input"
+              accept=".pdf,.pptx,.docx,.xlsx,.png,.jpg,.jpeg,.gif,.bmp,.webp,.txt,.md,.py,.js,.ts,.json,.csv,.html,.css,.xml,.java,.c,.cpp,.sql" />
           </div>
-          <el-empty v-if="history.length === 0" description="暂无记录" :image-size="50" />
         </el-card>
       </div>
     </div>
@@ -181,7 +154,7 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { askQuestionStream, getQAHistory, deleteQAHistory, clearQAHistory, saveQA, uploadFile, submitFeedback } from '../api/qa'
+import { askQuestionStream, saveQA, uploadFile, submitFeedback, startConversation, getCurrentConversation, getConversations, getConversation, deleteConversation } from '../api/qa'
 import { ElMessage } from 'element-plus'
 import { marked } from 'marked'
 import { recordStudyVisit } from '../api/learning'
@@ -194,10 +167,11 @@ const inputText = ref('')
 const sending = ref(false)
 const questionType = ref('text')
 const explanationLevel = ref('standard')
-const deepThinking = ref(false)
-const enableSearch = ref(false)
+const deepThinking = ref(true)
+const enableSearch = ref(true)
 const useRag = ref(true)
-const history = ref([])
+const conversations = ref([])
+const historyCollapsed = ref(localStorage.getItem('qa_history_collapsed') === 'true')
 const chatBox = ref(null)
 const abortStream = ref(null)
 const fileInput = ref(null)
@@ -212,8 +186,10 @@ const searchResultsData = ref(null)
 const searchQuery = ref('')
 const ragSourcesData = ref(null)
 const ragUnavailableMsg = ref('')
+const conversationId = ref(null)
 
 const quickQuestions = [
+  '你对我有什么认识？',
   'AI智能体和大模型有什么区别？',
   '什么是思维链(Chain-of-Thought)提示？',
   'Agent的工具调用(Tool Use)是如何工作的？',
@@ -224,17 +200,12 @@ const quickQuestions = [
 onMounted(async () => {
   recordStudyVisit()
   try {
-    const res = await getQAHistory()
-    history.value = (res && res.items) || []
+    const conversation = await getCurrentConversation()
+    conversationId.value = conversation?.id || null
+    messages.value = Array.isArray(conversation?.messages) ? conversation.messages : []
+    conversations.value = await getConversations() || []
 
-    // 恢复最近一次对话到聊天窗口
-    if (history.value.length > 0) {
-      const last = history.value[0]
-      currentQaId.value = last.id
-      messages.value = [
-        { role: 'user', content: last.question },
-        { role: 'assistant', content: last.answer }
-      ]
+    if (messages.value.length > 0) {
       await nextTick()
       if (chatBox.value) chatBox.value.scrollTop = chatBox.value.scrollHeight
     }
@@ -332,11 +303,49 @@ function removeFile() {
   fileType.value = ''
 }
 
-function newConversation() {
+async function newConversation() {
   messages.value = []
   currentQaId.value = null
   feedbackGiven.value = false
   removeFile()
+  try {
+    const conversation = await startConversation()
+    conversationId.value = conversation?.id || null
+    conversations.value = await getConversations() || []
+  } catch (_) {
+    conversationId.value = null
+  }
+}
+
+function toggleHistory() {
+  historyCollapsed.value = !historyCollapsed.value
+  localStorage.setItem('qa_history_collapsed', String(historyCollapsed.value))
+}
+
+async function openConversation(id) {
+  if (sending.value || id === conversationId.value) return
+  try {
+    const conversation = await getConversation(id)
+    conversationId.value = conversation?.id || id
+    messages.value = Array.isArray(conversation?.messages) ? conversation.messages : []
+    currentQaId.value = null
+    feedbackGiven.value = false
+    await nextTick()
+    if (chatBox.value) chatBox.value.scrollTop = chatBox.value.scrollHeight
+  } catch (_) {
+    ElMessage.error('会话加载失败')
+  }
+}
+
+async function removeConversation(id) {
+  try {
+    await deleteConversation(id)
+    conversations.value = conversations.value.filter(item => item.id !== id)
+    if (conversationId.value === id) await newConversation()
+    ElMessage.success('会话已删除')
+  } catch (_) {
+    ElMessage.error('会话删除失败')
+  }
 }
 
 async function giveFeedback(rating) {
@@ -355,6 +364,7 @@ async function sendMessage() {
   if ((!inputText.value.trim() && !hasFile) || sending.value) return
   const q = inputText.value.trim() || (hasFile ? `请提取以下文件的核心要点` : '')
   const isFileOnly = hasFile && !inputText.value.trim()
+  let activeLearningContext = null
 
   // 用户消息仅显示文件信息，不展示文件内容
   let displayContent
@@ -402,9 +412,19 @@ async function sendMessage() {
       use_rag: useRag.value,
       file_text: file_text_sent,
       file_base64: file_base64_sent,
-      history: conversationHistory
+      history: conversationHistory,
+      conversation_id: conversationId.value
     },
     {
+      onLearningContext(context) {
+        activeLearningContext = context
+        if (messages.value[assistantIdx]) {
+          messages.value[assistantIdx] = {
+            ...messages.value[assistantIdx],
+            learningContext: context
+          }
+        }
+      },
       onRagSources(sources) {
         ragSourcesData.value = sources
         ragUnavailableMsg.value = ''
@@ -438,6 +458,7 @@ async function sendMessage() {
       },
       onChunk(chunkText, fullAnswer) {
         const msg = _buildAssistantMsg(fullAnswer)
+        if (activeLearningContext) msg.learningContext = activeLearningContext
         if (ragUnavailableMsg.value) {
           msg.ragUnavailable = ragUnavailableMsg.value
         }
@@ -453,6 +474,7 @@ async function sendMessage() {
       },
       onDone(fullAnswer) {
         const msg = _buildAssistantMsg(fullAnswer)
+        if (activeLearningContext) msg.learningContext = activeLearningContext
         if (ragUnavailableMsg.value) {
           msg.ragUnavailable = ragUnavailableMsg.value
         }
@@ -473,10 +495,11 @@ async function sendMessage() {
           question: q,
           answer: fullAnswer,
           question_type: questionType.value,
-          explanation_level: explanationLevel.value
+          explanation_level: explanationLevel.value,
+          conversation_id: conversationId.value
         }).then((result) => {
           if (result && result.id) currentQaId.value = result.id
-          getQAHistory().then(res => { history.value = (res && res.items) || [] }).catch(() => {})
+          getConversations().then(res => { conversations.value = res || [] }).catch(() => {})
         }).catch(() => {})
       },
       onError(err) {
@@ -529,45 +552,15 @@ function quickAsk(q) {
   sendMessage()
 }
 
-function loadHistory(h) {
-  currentQaId.value = h.id
-  feedbackGiven.value = false
-  messages.value = [
-    { role: 'user', content: h.question },
-    { role: 'assistant', content: h.answer }
-  ]
-  nextTick(() => { if (chatBox.value) chatBox.value.scrollTop = chatBox.value.scrollHeight })
+function openContextLab(context) {
+  if (!context?.lab_id) return
+  router.push(`/code-lab/${String(context.lab_id).split('-')[0]}/${context.lab_id}`)
 }
 
-async function handleDeleteHistory(id) {
-  try {
-    await deleteQAHistory(id)
-    // 从本地列表中移除
-    history.value = history.value.filter(h => h.id !== id)
-    // 如果删除的是当前显示的对话，清空聊天区
-    if (currentQaId.value === id) {
-      newConversation()
-    }
-    ElMessage.success('已删除')
-  } catch(e) {
-    ElMessage.error('删除失败，请重试')
-  }
-}
-
-async function handleClearHistory() {
-  try {
-    await clearQAHistory()
-    history.value = []
-    newConversation()
-    ElMessage.success('已清空全部问答历史')
-  } catch(e) {
-    ElMessage.error('清空失败，请重试')
-  }
-}
 </script>
 
 <style scoped>
-.qa-page { height: calc(100vh - 80px); overflow: hidden; }
+.qa-page { height: 100%; min-height: 0; overflow: hidden; }
 .qa-layout { display: flex; gap: 16px; height: 100%; }
 .chat-column { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .history-column { width: 260px; flex-shrink: 0; }
@@ -827,4 +820,55 @@ async function handleClearHistory() {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.learning-context-block {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border: 1px solid #cfd7ff;
+  border-radius: 9px;
+  color: #4052a5;
+  background: #f3f5ff;
+  font-size: 12px;
+}
+.learning-context-block span { min-width: 0; flex: 1; }
+.learning-context-block button {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid #aebaf5;
+  border-radius: 7px;
+  color: #4058c5;
+  background: #fff;
+  font-size: 10px;
+  cursor: pointer;
+}
+.learning-context-block button:hover { border-color: #7186ec; background: #e9edff; }
+
+/* DeepSeek 风格的紧凑对话工作区 */
+.qa-page{height:100%!important;min-height:0;overflow:hidden}
+.qa-layout{position:relative;display:flex;height:100%;gap:0!important;overflow:hidden;border:0;border-radius:0;background:#fff;box-shadow:none}
+.conversation-sidebar{position:relative;width:252px;min-width:252px;display:flex;flex-direction:column;padding:14px 10px 10px;border-right:1px solid #e8ebf1;background:#f7f8fa;transition:width .24s,min-width .24s,padding .24s}
+.conversation-sidebar.collapsed{width:48px;min-width:48px;padding:14px 7px}
+.conversation-toggle{display:grid;width:34px;height:34px;place-items:center;align-self:flex-end;border:1px solid #dce1e9;border-radius:10px;color:#59667b;background:#fff;cursor:pointer}
+.conversation-sidebar.collapsed .conversation-toggle{align-self:center}
+.new-chat-button{height:42px;display:flex;align-items:center;justify-content:center;gap:9px;margin-top:14px;border:1px solid #dfe3ea;border-radius:12px;color:#28354c;background:#fff;font-size:13px;font-weight:650;cursor:pointer;box-shadow:0 3px 10px rgba(31,45,79,.04)}
+.new-chat-button:hover{border-color:#aab5ed;background:#f6f7ff}
+.conversation-caption{margin:20px 8px 8px;color:#9aa3b2;font-size:10px;font-weight:750;letter-spacing:.08em}
+.conversation-list{min-height:0;flex:1;overflow-y:auto}
+.conversation-item{width:100%;display:flex;align-items:center;gap:7px;margin:2px 0;padding:9px 8px;border:0;border-radius:9px;color:#344056;background:transparent;text-align:left;cursor:pointer}
+.conversation-item:hover,.conversation-item.active{background:#e9ebf1}.conversation-item.active{color:#4052c5}
+.conversation-copy{min-width:0;flex:1}.conversation-copy b,.conversation-copy small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.conversation-copy b{font-size:12px}.conversation-copy small{margin-top:4px;color:#9099a8;font-size:9px}
+.conversation-delete{opacity:0;color:#9aa2b0}.conversation-item:hover .conversation-delete{opacity:1}.conversation-delete:hover{color:#e05e6b}.conversation-empty{padding:24px 8px;color:#a2aab8;font-size:11px;text-align:center}
+.chat-column{min-height:0;flex:1;min-width:0}.chat-card{height:100%;min-height:0;border:0!important;border-radius:0!important;background:#fff}.chat-card :deep(.el-card__body){min-height:0;padding:0!important}
+.chat-messages{min-height:0;padding:18px clamp(14px,3vw,44px) 12px!important;overscroll-behavior:contain;scrollbar-gutter:stable}
+.welcome-msg{padding:clamp(55px,11vh,120px) 20px 32px}.welcome-orb{display:grid;width:62px;height:62px;margin:0 auto;place-items:center;border-radius:20px;color:#fff;background:linear-gradient(145deg,#6073ee,#55a7df);box-shadow:0 14px 30px rgba(74,104,211,.2)}.welcome-msg h3{font-size:22px}.welcome-msg p{margin-bottom:24px}
+.chat-input{margin:0 clamp(12px,3vw,44px) 12px!important;padding:12px 14px 10px!important;border:1px solid #dfe3ea!important;border-radius:18px;background:#fff;box-shadow:0 10px 28px rgba(35,49,84,.09)}
+.chat-input:focus-within{border-color:#9ba8ed!important;box-shadow:0 10px 30px rgba(66,83,185,.13)}
+.chat-input textarea{display:block;width:100%;min-height:46px;max-height:132px;resize:none;border:0;outline:0;color:#202b3e;background:transparent;font:14px/1.6 inherit}
+.chat-input textarea::placeholder{color:#a9b0bd}.composer-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:5px}.composer-left{display:flex;align-items:center;gap:7px;min-width:0;flex-wrap:wrap}
+.round-tool{display:grid;width:30px;height:30px;place-items:center;border:1px solid #e1e5eb;border-radius:9px;color:#4d596d;background:#fff;cursor:pointer}.round-tool:hover{background:#f3f5f9}.mode-chip{height:30px;display:flex;align-items:center;gap:5px;padding:0 10px;border:1px solid #e0e4ea;border-radius:15px;color:#5f6a7c;background:#fff;font-size:11px;cursor:pointer}.mode-chip.active{border-color:#a9b9ff;color:#3f63dc;background:#f0f4ff}
+.send-button{display:grid;width:34px;height:34px;flex:0 0 34px;place-items:center;border:0;border-radius:50%;color:#fff;background:#6275ee;cursor:pointer}.send-button:disabled{color:#aeb5c2;background:#eceff3;cursor:not-allowed}.send-button.stop{background:#e65f6b}.file-tag{margin:0 0 7px}.capability-menu{display:grid;gap:4px}.capability-menu button{display:flex;align-items:center;gap:9px;width:100%;padding:9px;border:0;border-radius:9px;color:#344056;background:transparent;text-align:left;cursor:pointer}.capability-menu button:hover:not(:disabled){background:#f2f4f9}.capability-menu button:disabled{opacity:.48;cursor:not-allowed}.capability-menu button>span{min-width:0;flex:1}.capability-menu b,.capability-menu small{display:block}.capability-menu b{font-size:12px}.capability-menu small{margin-top:3px;color:#98a1af;font-size:9px}.capability-menu em{width:8px;height:8px;border-radius:50%;background:#c8ced8}.capability-menu em.on{background:#4f72e8;box-shadow:0 0 0 4px rgba(79,114,232,.12)}
+@media(max-width:900px){.conversation-sidebar{position:absolute;z-index:10;inset:0 auto 0 0;box-shadow:10px 0 28px rgba(25,37,69,.14)}.conversation-sidebar.collapsed{position:relative;box-shadow:none}.chat-messages{padding-inline:16px!important}.chat-input{margin-inline:12px!important}.mode-chip{padding-inline:7px;font-size:10px}}
+@media(max-width:900px){.qa-page{height:auto!important;min-height:calc(100dvh - 112px)}}
 </style>

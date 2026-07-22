@@ -12,6 +12,9 @@ class User:
     learning_stage: str = "入门"
     learning_goal: str = ""
     avatar: str = ""
+    programming_background: str = ""
+    years_experience: int = 0
+    answer_preference: str = "分步清晰"
 
 @dataclass
 class QuizSession:

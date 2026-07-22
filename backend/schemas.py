@@ -11,6 +11,9 @@ class UserRegister(BaseModel):
     grade: Optional[str] = ""
     learning_stage: Optional[str] = "入门"
     learning_goal: Optional[str] = ""
+    programming_background: Optional[str] = ""
+    years_experience: Optional[int] = Field(default=0, ge=0, le=60)
+    answer_preference: Optional[str] = "分步清晰"
 
 class UserLogin(BaseModel):
     username: str
@@ -21,6 +24,9 @@ class UserUpdate(BaseModel):
     grade: Optional[str] = None
     learning_stage: Optional[str] = None
     learning_goal: Optional[str] = None
+    programming_background: Optional[str] = None
+    years_experience: Optional[int] = Field(default=None, ge=0, le=60)
+    answer_preference: Optional[str] = None
 
 class UserResponse(BaseModel):
     id: int
@@ -30,6 +36,9 @@ class UserResponse(BaseModel):
     learning_stage: str
     learning_goal: str
     avatar: str
+    programming_background: str = ""
+    years_experience: int = 0
+    answer_preference: str = "分步清晰"
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -81,6 +90,7 @@ class QARequest(BaseModel):
     file_base64: Optional[str] = None  # 上传图片的 base64 data URL (如 data:image/png;base64,...)
     history: Optional[List[Dict[str, str]]] = None  # 多轮对话历史 [{role, content}, ...]
     use_rag: bool = True  # 是否启用 RAG 知识库增强
+    conversation_id: Optional[int] = None  # 中期记忆所属会话
 
 class QAResponse(BaseModel):
     id: int
@@ -94,6 +104,7 @@ class QASaveRequest(BaseModel):
     answer: str
     question_type: str = "text"
     explanation_level: str = "standard"
+    conversation_id: Optional[int] = None
 
 class QAFeedbackRequest(BaseModel):
     qa_history_id: int

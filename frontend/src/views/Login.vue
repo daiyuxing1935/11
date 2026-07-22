@@ -53,6 +53,21 @@
               </div>
               <el-form-item label="密码" prop="password"><el-input v-model="regForm.password" type="password" placeholder="至少 6 位" size="large" show-password /></el-form-item>
               <div class="form-grid">
+                <el-form-item label="技术/职业背景">
+                  <el-input v-model="regForm.programming_background" placeholder="如：Java 业务开发工程师" size="large" />
+                </el-form-item>
+                <el-form-item label="相关经验（年）">
+                  <el-input-number v-model="regForm.years_experience" :min="0" :max="60" size="large" style="width:100%" />
+                </el-form-item>
+              </div>
+              <el-form-item label="希望 AI 如何讲解">
+                <el-select v-model="regForm.answer_preference" size="large" style="width:100%">
+                  <el-option label="直观简洁 · 先给结论" value="直观简洁" />
+                  <el-option label="分步清晰 · 代码配解释" value="分步清晰" />
+                  <el-option label="工程深入 · 重点讲业务取舍" value="工程深入" />
+                </el-select>
+              </el-form-item>
+              <div class="form-grid">
                 <el-form-item label="学习阶段" prop="learning_stage">
                   <el-select v-model="regForm.learning_stage" placeholder="选择阶段" size="large" style="width:100%">
                     <el-option label="入门 · 零基础开始" value="入门" /><el-option label="进阶 · 已有基础" value="进阶" /><el-option label="高阶 · 深度学习" value="高阶" />
@@ -87,7 +102,10 @@ const loading = ref(false)
 
 const loginForm = reactive({ username: '', password: '' })
 const loginRules = { username: [{ required: true, message: '请输入用户名' }], password: [{ required: true, message: '请输入密码' }] }
-const regForm = reactive({ username: '', password: '', nickname: '', learning_stage: '入门', learning_goal: '课程预习' })
+const regForm = reactive({
+  username: '', password: '', nickname: '', learning_stage: '入门', learning_goal: '课程预习',
+  programming_background: '', years_experience: 0, answer_preference: '分步清晰'
+})
 const regRules = {
   username: [{ required: true, message: '请输入用户名', min: 3 }],
   password: [{ required: true, message: '请输入密码', min: 6 }],
@@ -131,6 +149,9 @@ async function handleRegister() {
     regForm.username = ''
     regForm.password = ''
     regForm.nickname = ''
+    regForm.programming_background = ''
+    regForm.years_experience = 0
+    regForm.answer_preference = '分步清晰'
     activeTab.value = 'login'
   } catch(e) { ElMessage.error(e.response?.data?.detail || e.message || '注册失败，请稍后重试') }
   finally { loading.value = false }

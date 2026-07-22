@@ -1,12 +1,14 @@
-"""Server-owned judge for the flagship business exercise.
+"""Server-owned judge for the project-based Agent labs.
 
-The browser receives the contract and starter code, never these scenarios.  This
-is an application-level isolation boundary, not a hardened multi-tenant sandbox.
+The browser receives contracts and starter code, never the private scenarios in
+``agent_lab_specs.py``. This is an application isolation boundary rather than a
+hardened multi-tenant sandbox.
 """
 
 from __future__ import annotations
 
 import ast
+import copy
 import json
 import os
 import subprocess
@@ -14,9 +16,10 @@ import tempfile
 import time
 from pathlib import Path
 
+from services.agent_lab_specs import FLAGSHIP_IDS, SPECS
+
 
 FLAGSHIP_DATA = Path(__file__).resolve().parent.parent / "data" / "flagship_exercises.json"
-FLAGSHIP_IDS = {"7-1"}
 
 BLOCKED_CALLS = {
     "open", "exec", "eval", "compile", "__import__", "input", "breakpoint",
@@ -25,7 +28,6 @@ BLOCKED_CALLS = {
 }
 BLOCKED_NODES = (
     ast.Import, ast.ImportFrom, ast.Global, ast.Nonlocal, ast.With, ast.AsyncWith,
-    ast.Try,
 )
 
 
@@ -58,9 +60,8 @@ def _policy_error(code: str) -> str | None:
                 return "安全检查未通过：不允许使用装饰器"
             continue
         if isinstance(statement, (ast.Assign, ast.AnnAssign)):
-            value = statement.value
             try:
-                ast.literal_eval(value)
+                ast.literal_eval(statement.value)
             except Exception:
                 return "安全检查未通过：模块级变量只能使用常量值"
             continue
@@ -85,127 +86,198 @@ import sys
 import time
 
 SAFE_BUILTINS = {
-    "ValueError": ValueError, "TypeError": TypeError, "NotImplementedError": NotImplementedError,
+    "ValueError": ValueError, "TypeError": TypeError, "RuntimeError": RuntimeError,
+    "KeyError": KeyError, "Exception": Exception, "NotImplementedError": NotImplementedError,
     "dict": dict, "list": list, "tuple": tuple, "set": set, "str": str,
     "int": int, "float": float, "bool": bool, "len": len, "range": range,
     "enumerate": enumerate, "zip": zip, "sorted": sorted, "min": min,
     "max": max, "sum": sum, "all": all, "any": any, "isinstance": isinstance,
-    "abs": abs, "round": round,
+    "abs": abs, "round": round, "callable": callable, "hasattr": hasattr,
+    "AttributeError": AttributeError,
 }
 
 with open(sys.argv[1], "r", encoding="utf-8") as source_file:
     source = source_file.read()
+with open(sys.argv[2], "r", encoding="utf-8") as spec_file:
+    spec = json.load(spec_file)
+
 namespace = {"__builtins__": SAFE_BUILTINS}
 exec(compile(source, "submission.py", "exec"), namespace)
-dispatch = namespace.get("dispatch_ticket")
-if not callable(dispatch):
-    raise ValueError("必须定义 dispatch_ticket(ticket, agents, now_minutes)")
-
-def ticket(**updates):
-    value = {"id": "T-100", "category": "billing", "priority": "normal", "vip": False, "created_at": 100}
-    value.update(updates)
-    return value
-
-def agent(agent_id, skills=("billing",), online=True, active=0, capacity=5):
-    return {"id": agent_id, "skills": list(skills), "online": online, "active_cases": active, "capacity": capacity}
-
 cases = []
 
-def case(name, check):
+def record(name, check):
     started = time.perf_counter()
     try:
         check()
-        cases.append({"description": name, "passed": True, "error": None, "duration_ms": round((time.perf_counter() - started) * 1000, 2)})
+        cases.append({"description": name, "passed": True, "error": None,
+                      "duration_ms": round((time.perf_counter() - started) * 1000, 2)})
     except Exception as exc:
-        cases.append({"description": name, "passed": False, "error": str(exc)[:240], "duration_ms": round((time.perf_counter() - started) * 1000, 2)})
+        error = str(exc).strip() or type(exc).__name__
+        cases.append({"description": name, "passed": False, "error": error[:240],
+                      "duration_ms": round((time.perf_counter() - started) * 1000, 2)})
 
-def expect_equal(actual, expected):
-    if actual != expected:
-        raise AssertionError("返回结果不符合该业务场景")
+def require(condition, message):
+    if not condition:
+        raise AssertionError(message)
 
-case("基础分派与返回契约", lambda: expect_equal(
-    dispatch(ticket(), [agent("A-01")], 100),
-    {"ticket_id": "T-100", "status": "assigned", "agent_id": "A-01", "effective_priority": "normal", "sla_minutes": 120, "reason": "matched_skill_and_capacity"}
-))
-
-def excludes_unavailable():
-    result = dispatch(ticket(), [agent("A-off", online=False), agent("A-full", active=5, capacity=5), agent("A-skill", skills=("refund",)), agent("A-ok", active=4)], 100)
-    if result.get("agent_id") != "A-ok":
-        raise AssertionError("未正确排除离线、满载或技能不匹配的客服")
-case("候选客服资格过滤", excludes_unavailable)
-
-def load_ratio_not_count():
-    result = dispatch(ticket(), [agent("A-low-count", active=1, capacity=2), agent("B-low-ratio", active=2, capacity=10)], 100)
-    if result.get("agent_id") != "B-low-ratio":
-        raise AssertionError("应比较负载率，而不是当前工单数")
-case("按负载率而非绝对工单数选择", load_ratio_not_count)
-
-def vip_escalation():
-    result = dispatch(ticket(vip=True), [agent("A")], 100)
-    if (result.get("effective_priority"), result.get("sla_minutes")) != ("high", 30):
-        raise AssertionError("VIP 优先级升级或 SLA 错误")
-case("VIP 优先级升级", vip_escalation)
-
-def waiting_escalation():
-    result = dispatch(ticket(priority="low", created_at=0), [agent("A")], 60)
-    if (result.get("effective_priority"), result.get("sla_minutes")) != ("normal", 120):
-        raise AssertionError("等待时长升级边界错误")
-case("等待满 60 分钟升级", waiting_escalation)
-
-def capped_escalation():
-    result = dispatch(ticket(priority="high", vip=True, created_at=0), [agent("A")], 600)
-    if (result.get("effective_priority"), result.get("sla_minutes")) != ("urgent", 15):
-        raise AssertionError("多次升级必须封顶 urgent")
-case("优先级升级封顶", capped_escalation)
-
-def deterministic_tie():
-    result = dispatch(ticket(), [agent("B-02", active=1), agent("A-01", active=1)], 100)
-    if result.get("agent_id") != "A-01":
-        raise AssertionError("负载率相同时必须按 id 稳定选择")
-case("相同负载率的确定性选择", deterministic_tie)
-
-case("无候选人进入队列", lambda: expect_equal(
-    dispatch(ticket(), [agent("A", online=False)], 100),
-    {"ticket_id": "T-100", "status": "queued", "agent_id": None, "effective_priority": "normal", "sla_minutes": 120, "reason": "no_eligible_agent"}
-))
-
-def input_immutable():
-    source_ticket = ticket(vip=True)
-    source_agents = [agent("A", active=1)]
-    before_ticket, before_agents = copy.deepcopy(source_ticket), copy.deepcopy(source_agents)
-    dispatch(source_ticket, source_agents, 100)
-    if source_ticket != before_ticket or source_agents != before_agents:
-        raise AssertionError("函数不得修改 ticket 或 agents 输入")
-case("输入对象保持不变", input_immutable)
-
-def invalid_input():
-    invalid_values = [
-        ({"category": "billing", "priority": "normal", "vip": False, "created_at": 0}, [agent("A")], 1),
-        (ticket(priority="critical"), [agent("A")], 100),
-        (ticket(), [agent("A", capacity=0)], 100),
-        (ticket(created_at=101), [agent("A")], 100),
-    ]
-    for args in invalid_values:
+def generic_check(func, item):
+    args = copy.deepcopy(item.get("args", []))
+    before = copy.deepcopy(args)
+    expected_exception = item.get("exception")
+    if expected_exception:
         try:
-            dispatch(*args)
-        except ValueError:
-            continue
-        raise AssertionError("非法结构或数值必须抛出 ValueError")
-case("非法输入统一拒绝", invalid_input)
+            func(*args)
+        except SAFE_BUILTINS[expected_exception]:
+            return
+        raise AssertionError("该非法输入必须抛出 " + expected_exception)
+    actual = func(*args)
+    require(actual == item.get("expected"), "返回结果不符合该业务场景")
+    if item.get("fresh_result"):
+        second = func(*copy.deepcopy(item.get("args", [])))
+        require(actual is not second, "每次调用必须返回新的消息列表")
+        require(all(left is not right for left, right in zip(actual, second)), "不同调用不能共享消息字典")
+        actual[0]["content"] = "changed"
+        require(second == item.get("expected"), "返回结果之间共享了可变对象")
+    if item.get("immutable"):
+        require(args == before, "函数修改了输入对象")
+
+def run_generic():
+    func = namespace.get(spec.get("target"))
+    require(callable(func), "必须定义 " + str(spec.get("target")))
+    for item in spec.get("cases", []):
+        record(item["description"], lambda item=item: generic_check(func, item))
+
+def run_tool_call():
+    func = namespace.get("execute_tool_call")
+    require(callable(func), "必须定义 execute_tool_call(tool_call, registry)")
+    def query_order(order_id):
+        return "订单" + order_id + "：已发货"
+    def broken(order_id):
+        raise RuntimeError("上游超时")
+    registry = {
+        "query_order": {"required": ["order_id"], "handler": query_order},
+        "broken": {"required": ["order_id"], "handler": broken},
+    }
+    record("正常调用并生成工具消息", lambda: require(
+        func({"id": "c1", "name": "query_order", "args": {"order_id": "O1"}}, registry) ==
+        {"role": "tool", "tool_call_id": "c1", "name": "query_order", "status": "success", "content": "订单O1：已发货"},
+        "成功结果结构不正确"))
+    def missing_arg():
+        try: func({"id": "c2", "name": "query_order", "args": {}}, registry)
+        except ValueError: return
+        raise AssertionError("缺少必填参数必须抛出 ValueError")
+    record("拒绝缺少的必填参数", missing_arg)
+    def unknown_tool():
+        try: func({"id": "c3", "name": "delete_all", "args": {}}, registry)
+        except ValueError: return
+        raise AssertionError("未知工具必须抛出 ValueError")
+    record("拒绝未注册工具", unknown_tool)
+    def isolate_error():
+        result = func({"id": "c4", "name": "broken", "args": {"order_id": "O2"}}, registry)
+        require(result.get("status") == "error", "工具异常必须转为 error 状态")
+        require(result.get("role") == "tool" and result.get("tool_call_id") == "c4", "错误消息契约不完整")
+        require(str(result.get("content", "")).startswith("工具执行失败："), "错误内容缺少统一前缀")
+    record("隔离工具自身异常", isolate_error)
+
+def run_stream_chunks():
+    run_generic()
+    func = namespace.get("normalize_stream_chunks")
+    def one_shot_generator():
+        consumed = []
+        def chunks():
+            for item in ["逐", {"content": "步"}, None, "输出"]:
+                consumed.append(item)
+                yield item
+        require(func(chunks()) == "逐步输出", "必须支持 model.stream() 返回的一次性迭代器")
+        require(len(consumed) == 4, "流式迭代器没有被完整且仅一次消费")
+    record("消费真实流式迭代器", one_shot_generator)
+
+    class MessageChunk:
+        def __init__(self, content):
+            self.content = content
+    record("读取 LangChain 消息片段对象", lambda: require(
+        func([MessageChunk("Lang"), MessageChunk(None), MessageChunk("Chain")]) == "LangChain",
+        "应读取 AIMessageChunk 风格对象的 content 属性"))
+
+def run_tool_plan():
+    func = namespace.get("run_tool_plan")
+    require(callable(func), "必须定义 run_tool_plan(plan, registry, max_steps=5)")
+    registry = {"add": lambda a, b: a + b, "mul": lambda a, b: a * b}
+    def completed():
+        result = func([{"name": "add", "args": {"a": 1, "b": 2}}, {"name": "mul", "args": {"a": 3, "b": 4}}], registry, 5)
+        require(result.get("status") == "completed", "全部执行后状态应为 completed")
+        require([x.get("observation") for x in result.get("trace", [])] == [3, 12], "观察结果或执行顺序错误")
+        require(result.get("final_observation") == 12, "最终观察结果错误")
+        require([x.get("step") for x in result["trace"]] == [1, 2], "轨迹步号错误")
+    record("完成多步工具计划", completed)
+    def unknown():
+        result = func([{"name": "missing", "args": {}}], registry, 5)
+        require(result.get("status") == "failed", "未知工具应使计划失败")
+        require(len(result.get("trace", [])) == 1 and result["trace"][0].get("status") == "error", "失败轨迹缺失")
+    record("未知工具立即停止", unknown)
+    def stopped():
+        result = func([{"name": "add", "args": {"a": 1, "b": 1}}, {"name": "mul", "args": {"a": 2, "b": 2}}], registry, 1)
+        require(result.get("status") == "stopped", "达到上限后状态应为 stopped")
+        require(result.get("final_observation") == 2, "停止前的有效观察应保留")
+        require(len([x for x in result.get("trace", []) if x.get("status") == "success"]) == 1, "执行步数超过上限")
+    record("最大步数阻止无限循环", stopped)
+    def invalid_limit():
+        try: func([], registry, 0)
+        except ValueError: return
+        raise AssertionError("非法 max_steps 必须抛出 ValueError")
+    record("拒绝非法步数上限", invalid_limit)
+
+def run_checkpoint():
+    save = namespace.get("save_checkpoint")
+    load = namespace.get("load_checkpoint")
+    require(callable(save) and callable(load), "必须同时定义 save_checkpoint 与 load_checkpoint")
+    def versioning():
+        store = {}
+        require(save(store, "t1", {"messages": ["u1"]}) == 1, "首个版本应为1")
+        require(save(store, "t1", {"messages": ["u1", "a1"]}) == 2, "版本未递增")
+        require(load(store, "t1") == {"version": 2, "state": {"messages": ["u1", "a1"]}}, "没有读取最新检查点")
+    record("同一线程版本递增", versioning)
+    def isolation():
+        store = {}
+        save(store, "A", {"value": "a"}); save(store, "B", {"value": "b"})
+        require(load(store, "A")["state"]["value"] == "a", "线程A状态被串改")
+        require(load(store, "B")["state"]["value"] == "b", "线程B状态被串改")
+    record("不同线程互相隔离", isolation)
+    def defensive_copy():
+        store = {}; state = {"messages": [{"role": "user", "content": "hi"}]}
+        save(store, "t", state)
+        state["messages"][0]["content"] = "changed"
+        loaded = load(store, "t")
+        require(loaded["state"]["messages"][0]["content"] == "hi", "保存时未复制嵌套状态")
+        loaded["state"]["messages"].append({"role": "assistant", "content": "x"})
+        require(len(load(store, "t")["state"]["messages"]) == 1, "读取结果与内部快照共享对象")
+    record("快照读写均使用安全副本", defensive_copy)
+    record("不存在的线程返回None", lambda: require(load({}, "missing") is None, "不存在时应返回None"))
+
+mode = spec.get("mode", "generic")
+if mode == "tool_call": run_tool_call()
+elif mode == "tool_plan": run_tool_plan()
+elif mode == "checkpoint": run_checkpoint()
+elif mode == "stream_chunks": run_stream_chunks()
+else: run_generic()
 
 print("__JUDGE_RESULT__" + json.dumps(cases, ensure_ascii=False))
 '''
 
 
-def judge_submission(exercise_id: str, code: str, timeout: int = 5) -> dict:
+def judge_submission(exercise_id: str, code: str, timeout: int = 6) -> dict:
     started = time.perf_counter()
     if not is_flagship_exercise(exercise_id):
-        raise ValueError(f"{exercise_id} 不是私有场景判题任务")
+        raise ValueError(f"{exercise_id} 不是项目制私有场景判题任务")
 
     policy_error = _policy_error(code)
+    expected_total = max(
+        len(SPECS[exercise_id].get("cases", [])) + int(SPECS[exercise_id].get("extra_cases", 0)),
+        4,
+    )
     if policy_error:
         return {
-            "passed": False, "total": 10, "passed_count": 0,
+            "passed": False, "total": expected_total, "passed_count": 0,
             "compile_error": policy_error, "results": [],
             "execution_time": round(time.perf_counter() - started, 3),
             "judge_mode": "server_private_cases",
@@ -214,27 +286,27 @@ def judge_submission(exercise_id: str, code: str, timeout: int = 5) -> dict:
     try:
         with tempfile.TemporaryDirectory() as temp_dir:
             solution_path = Path(temp_dir) / "submission.py"
+            spec_path = Path(temp_dir) / "spec.json"
             runner_path = Path(temp_dir) / "runner.py"
             solution_path.write_text(code, encoding="utf-8")
+            spec_path.write_text(json.dumps(SPECS[exercise_id], ensure_ascii=False), encoding="utf-8")
             runner_path.write_text(RUNNER, encoding="utf-8")
             proc = subprocess.run(
-                [os.environ.get("PYTHON_PATH", "python"), "-I", "-X", "utf8", str(runner_path), str(solution_path)],
+                [os.environ.get("PYTHON_PATH", "python"), "-I", "-X", "utf8", str(runner_path), str(solution_path), str(spec_path)],
                 cwd=temp_dir, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout,
             )
         marker_lines = [line for line in (proc.stdout or "").splitlines() if line.startswith("__JUDGE_RESULT__")]
         if proc.returncode != 0 or not marker_lines:
-            error = (proc.stderr or proc.stdout or "提交代码未能完成执行").strip().splitlines()[-1][:300]
+            error_lines = (proc.stderr or proc.stdout or "提交代码未能完成执行").strip().splitlines()
+            error = error_lines[-1][:300] if error_lines else "提交代码未能完成执行"
             return {
-                "passed": False, "total": 10, "passed_count": 0,
+                "passed": False, "total": expected_total, "passed_count": 0,
                 "compile_error": error, "results": [],
                 "execution_time": round(time.perf_counter() - started, 3),
                 "judge_mode": "server_private_cases",
             }
         raw_results = json.loads(marker_lines[-1].removeprefix("__JUDGE_RESULT__"))
-        results = [
-            {"case_index": index, **item}
-            for index, item in enumerate(raw_results, 1)
-        ]
+        results = [{"case_index": index, **item} for index, item in enumerate(raw_results, 1)]
         passed_count = sum(1 for item in results if item["passed"])
         return {
             "passed": passed_count == len(results), "total": len(results), "passed_count": passed_count,
@@ -244,15 +316,13 @@ def judge_submission(exercise_id: str, code: str, timeout: int = 5) -> dict:
         }
     except subprocess.TimeoutExpired:
         return {
-            "passed": False, "total": 10, "passed_count": 0,
+            "passed": False, "total": expected_total, "passed_count": 0,
             "compile_error": f"执行超时（>{timeout} 秒）", "results": [],
-            "execution_time": round(time.perf_counter() - started, 3),
-            "judge_mode": "server_private_cases",
+            "execution_time": round(time.perf_counter() - started, 3), "judge_mode": "server_private_cases",
         }
     except Exception as exc:
         return {
-            "passed": False, "total": 10, "passed_count": 0,
+            "passed": False, "total": expected_total, "passed_count": 0,
             "compile_error": f"判题执行失败：{str(exc)[:240]}", "results": [],
-            "execution_time": round(time.perf_counter() - started, 3),
-            "judge_mode": "server_private_cases",
+            "execution_time": round(time.perf_counter() - started, 3), "judge_mode": "server_private_cases",
         }

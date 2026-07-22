@@ -5,6 +5,12 @@ export const getQAHistory = (page = 1) => request.get('/qa/history', { params: {
 export const deleteQAHistory = (id) => request.delete(`/qa/history/${id}`)
 export const clearQAHistory = () => request.delete('/qa/history')
 export const submitFeedback = (data) => request.post('/qa/feedback', data)
+export const startConversation = () => request.post('/qa/conversations')
+export const getConversations = () => request.get('/qa/conversations')
+export const getCurrentConversation = () => request.get('/qa/conversations/current')
+export const getConversation = (id) => request.get(`/qa/conversations/${id}`)
+export const deleteConversation = (id) => request.delete(`/qa/conversations/${id}`)
+export const getMemoryOverview = () => request.get('/qa/memory')
 
 /** 运行QA中的Python代码片段 */
 export const runCode = (data) => request.post('/qa/code-run', data)
@@ -38,12 +44,13 @@ export const saveQA = (data) => request.post('/qa/save', data)
  * @param {Object} data — { question, question_type, explanation_level, context, deep_thinking, enable_search }
  * @param {Function} onChunk — 每收到一个文本块时调用 (chunkText: string)
  * @param {Function} onDone — 流结束时调用 (fullAnswer: string)
+ * @param {Function} onLearningContext — 收到当前学习路径与实验上下文时调用
  * @param {Function} onRagSources — 收到RAG知识库来源时调用 (sources: Array)
  * @param {Function} onRagUnavailable — RAG不可用时调用 (message: string)
  * @param {Function} onError — 出错时调用 (error: Error)
  * @returns {Function} abort — 调用以取消请求
  */
-export function askQuestionStream(data, { onChunk, onDone, onError, onSearchResults, onRagSources, onRagUnavailable }) {
+export function askQuestionStream(data, { onChunk, onDone, onError, onSearchResults, onLearningContext, onRagSources, onRagUnavailable }) {
   const token = localStorage.getItem('token')
   const controller = new AbortController()
 
@@ -83,6 +90,9 @@ export function askQuestionStream(data, { onChunk, onDone, onError, onSearchResu
           if (data === '[DONE]') continue
           try {
             const parsed = JSON.parse(data)
+            if (parsed.learning_context && onLearningContext) {
+              onLearningContext(parsed.learning_context)
+            }
             if (parsed.rag_sources && onRagSources) {
               onRagSources(parsed.rag_sources)
             }

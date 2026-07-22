@@ -193,6 +193,79 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+
+        -- 对话会话：短期消息由请求承载，中期记忆持久化在会话与消息表中
+        CREATE TABLE IF NOT EXISTS conversation_sessions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            title TEXT DEFAULT '新对话',
+            summary TEXT DEFAULT '',
+            turn_count INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_active_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+
+        CREATE TABLE IF NOT EXISTS conversation_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            role TEXT NOT NULL,
+            content TEXT NOT NULL,
+            knowledge_tags TEXT DEFAULT '[]',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES conversation_sessions(id),
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+
+        -- 长期记忆权威存储；embedding_id 对应 Chroma 中的向量记录
+        CREATE TABLE IF NOT EXISTS user_memory_facts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            memory_type TEXT DEFAULT 'long_term',
+            category TEXT NOT NULL,
+            fact_key TEXT NOT NULL,
+            fact_value TEXT NOT NULL,
+            confidence REAL DEFAULT 0.8,
+            mention_count INTEGER DEFAULT 1,
+            access_count INTEGER DEFAULT 0,
+            source_session_id INTEGER,
+            embedding_id TEXT DEFAULT '',
+            first_seen_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_seen_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, category, fact_key),
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+
+        -- 编程实验三维掌握度：基本测试、用户解释、变式迁移
+        CREATE TABLE IF NOT EXISTS knowledge_mastery (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            knowledge_tag TEXT NOT NULL,
+            source_exercise_id TEXT DEFAULT '',
+            mastery_score REAL DEFAULT 0.5,
+            basic_score REAL DEFAULT 0,
+            explanation_score REAL DEFAULT 0,
+            transfer_score REAL DEFAULT 0,
+            attempt_count INTEGER DEFAULT 0,
+            incorrect_count INTEGER DEFAULT 0,
+            last_activity_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_review_at TIMESTAMP,
+            next_review_at TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, knowledge_tag),
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_conversation_user_active
+            ON conversation_sessions(user_id, last_active_at);
+        CREATE INDEX IF NOT EXISTS idx_conversation_messages_session
+            ON conversation_messages(session_id, created_at);
+        CREATE INDEX IF NOT EXISTS idx_memory_user_category
+            ON user_memory_facts(user_id, category, mention_count);
+        CREATE INDEX IF NOT EXISTS idx_mastery_user_due
+            ON knowledge_mastery(user_id, next_review_at, mastery_score);
     """)
 
     # RAG 知识库文档追踪表
@@ -222,6 +295,9 @@ def init_db():
     _run_migration(conn, "user_llm_config", "embedding_model TEXT DEFAULT 'text-embedding-v3'", "LLM配置表迁移: 添加 embedding_model 列")
     _run_migration(conn, "learning_stats", "mastery_detail_json TEXT DEFAULT '{}'", "学习统计表迁移: 添加 mastery_detail_json 列")
     _run_migration(conn, "qa_history", "rag_sources_json TEXT DEFAULT ''", "QA历史表迁移: 添加 rag_sources_json 列")
+    _run_migration(conn, "users", "programming_background TEXT DEFAULT ''", "用户表迁移: 添加技术背景")
+    _run_migration(conn, "users", "years_experience INTEGER DEFAULT 0", "用户表迁移: 添加从业年限")
+    _run_migration(conn, "users", "answer_preference TEXT DEFAULT '分步清晰'", "用户表迁移: 添加回答偏好")
 
     # 习题评测元数据表 — 存储每道题的锁定代码/目标函数/测试用例
     conn.execute("""

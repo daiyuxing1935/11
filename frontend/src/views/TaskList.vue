@@ -39,7 +39,10 @@
       <!-- 右侧：预览/空白区 -->
       <div class="task-main">
         <div v-if="selectedTask" class="task-preview">
+          <el-tag size="small" type="primary" effect="plain">{{ currentModule?.level }}阶段</el-tag>
           <h3>关卡 {{ selectedTask.id }}：{{ selectedTask.title }}</h3>
+          <p class="project-name">正在构建：{{ currentModule?.project }}</p>
+          <p class="task-duration">建议用时 {{ selectedTask.duration }}</p>
           <div v-if="getCompletion(selectedTask.id)" class="completion-info">
             <el-tag type="success" size="large">已完成</el-tag>
             <p>用时: {{ getCompletion(selectedTask.id).time }}</p>
@@ -66,8 +69,8 @@ const route = useRoute()
 
 const moduleId = computed(() => parseInt(route.params.moduleId))
 const currentModule = computed(() => MODULES.find(m => m.id === moduleId.value))
-const selectedTaskId = ref(null)
-const selectedTask = ref(null)
+const selectedTaskId = ref(currentModule.value?.tasks?.[0]?.id ?? null)
+const selectedTask = ref(currentModule.value?.tasks?.[0] ?? null)
 
 /**
  * 选择关卡（右侧显示预览，不直接跳转）
@@ -109,7 +112,8 @@ function isCompleted(taskId) {
 .task-list-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 100px);
+  height: 100%;
+  min-height: 0;
   background: #f5f6f8;
 }
 .top-bar {
@@ -240,6 +244,8 @@ function isCompleted(taskId) {
   color: #909399;
   margin: 0 0 20px;
 }
+.project-name { color: #303133; font-size: 14px; font-weight: 600; margin: 10px 0 4px; }
+.task-duration { color: #909399; font-size: 13px; margin: 0 0 14px; }
 .completion-info {
   background: #f0f9eb;
   border: 1px solid #c2e7b0;

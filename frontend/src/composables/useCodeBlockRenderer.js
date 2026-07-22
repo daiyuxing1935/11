@@ -38,9 +38,20 @@ renderer.code = function (code, infostring) {
  * @param {string} text - Markdown 文本
  * @returns {string} HTML 字符串
  */
-export function renderMarkdown(text) {
+export function renderMarkdown(text, options = {}) {
   if (!text) return ''
-  return marked(text, { breaks: true, renderer })
+  const completed = new Set(options.completedStages || [])
+  const stageMap = new Map((options.stages || []).map(stage => [stage.id, stage]))
+  const withChecks = text.replace(/<!--\s*lab-check:([\w-]+)\s*-->/g, (_, stageId) => {
+    const stage = stageMap.get(stageId) || { title: stageId }
+    const passed = completed.has(stageId)
+    return `<div class="doc-lab-check ${passed ? 'is-passed' : 'is-pending'}" data-stage-id="${escapeHtml(stageId)}">
+      <span class="doc-check-icon">${passed ? '✓' : '○'}</span>
+      <span class="doc-check-copy"><b>${escapeHtml(stage.title)}</b><small>${passed ? '编程实验室已通过该检查点' : '完成本节后，到编程实验室运行 AI 检查'}</small></span>
+      <span class="doc-check-status">${passed ? '已通过' : '待检查'}</span>
+    </div>`
+  })
+  return marked(withChecks, { breaks: true, renderer })
 }
 
 /**

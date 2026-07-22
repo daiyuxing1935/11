@@ -95,6 +95,26 @@ button, input, textarea, select { font: inherit; }
 .el-progress-bar__outer { background: #edf0f7 !important; }
 .el-progress-bar__inner { background: linear-gradient(90deg, var(--primary), var(--sky)) !important; }
 
+/* Shared tutorial code blocks: language at top-left, copy action at top-right. */
+.code-block-wrapper { position: relative; margin: 18px 0; overflow: hidden; border: 1px solid #29334c; border-radius: 12px; background: #12192a; box-shadow: 0 10px 26px rgba(20, 29, 52, .12); }
+.code-block-wrapper .code-toolbar { position: absolute; z-index: 2; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; height: 40px; padding: 0 10px 0 14px; border-bottom: 1px solid rgba(255,255,255,.08); background: #192237; }
+.code-block-wrapper .code-lang-tag { color: #9eabc0; font: 700 10px/1 var(--el-font-family); letter-spacing: .08em; text-transform: uppercase; }
+.code-block-wrapper .code-toolbar-actions { margin-left: auto; }
+.code-block-wrapper .code-toolbar-btn { display: inline-flex; align-items: center; gap: 5px; min-height: 28px; padding: 5px 9px; border: 1px solid #3a4762; border-radius: 7px; color: #cbd5e5; background: #222d46; font-size: 11px; cursor: pointer; }
+.code-block-wrapper .code-toolbar-btn:hover { color: #fff; border-color: #6f79df; background: #39447a; }
+.code-block-wrapper pre { margin: 0 !important; padding: 56px 18px 18px !important; border: 0 !important; border-radius: 0 !important; background: #12192a !important; }
+.code-block-wrapper pre code { color: #edf2fb !important; background: transparent !important; }
+.doc-lab-check { display: flex; align-items: center; gap: 11px; margin: 16px 0; padding: 12px 14px; border: 1px solid #dfe4ef; border-radius: 11px; background: #f8f9fd; }
+.doc-lab-check.is-passed { border-color: #b9e3d4; background: #f0fbf7; }
+.doc-check-icon { display: grid; width: 26px; height: 26px; flex: 0 0 26px; place-items: center; border-radius: 50%; color: #7d899e; background: #e8ebf2; font-weight: 800; }
+.doc-lab-check.is-passed .doc-check-icon { color: #fff; background: #39b991; }
+.doc-check-copy { min-width: 0; flex: 1; }
+.doc-check-copy b, .doc-check-copy small { display: block; }
+.doc-check-copy b { color: #263454; font-size: 13px; }
+.doc-check-copy small { margin-top: 3px; color: #77849a; font-size: 11px; }
+.doc-check-status { color: #8995a8; font-size: 11px; font-weight: 700; }
+.doc-lab-check.is-passed .doc-check-status { color: #22956f; }
+
 .dashboard,
 .analytics-page,
 .diagnosis-page,
@@ -164,7 +184,7 @@ button, input, textarea, select { font: inherit; }
 .main-content .module-card:nth-child(3n+2) { border-top: 3px solid var(--coral) !important; }
 .main-content .module-card:nth-child(3n) { border-top: 3px solid var(--sky) !important; }
 
-.main-content .qa-page { height: calc(100vh - 144px) !important; }
+.main-content .qa-page { height: calc(100vh - 108px) !important; }
 .main-content .qa-layout { gap: 18px !important; }
 .main-content .history-column { width: 280px !important; }
 .main-content .chat-card,
@@ -202,7 +222,7 @@ button, input, textarea, select { font: inherit; }
   .el-dialog { width: calc(100% - 28px) !important; }
   .el-card__body { padding: 17px !important; }
   .main-content .module-grid { grid-template-columns: 1fr !important; }
-  .main-content .qa-page { height: calc(100vh - 112px) !important; }
+  .main-content .qa-page { height: calc(100vh - 90px) !important; }
   .main-content .history-column { display: none; }
   .main-content .resources-layout { display: block !important; }
   .main-content .resources-pdf-sidebar { position: static !important; width: 100% !important; max-height: none !important; margin-top: 16px; }

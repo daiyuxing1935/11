@@ -15,6 +15,18 @@ async def generate_learning_path(user_id: int, goal: str = "", timeline: str = "
     """
     # ===== 模块选择模式：直接从知识结构构建学习路径 =====
     if modules and len(modules) > 0:
+        from services.agent_course import TRACK_NAMES, build_course_path
+
+        # 新版项目制课程使用固定依赖顺序与显式实验绑定，不再从知识标签中随机拼装。
+        if any(module in TRACK_NAMES for module in modules):
+            selected = [name for name in TRACK_NAMES if name in modules]
+            if not selected:
+                raise ValueError("请选择至少一个 Agent 实战阶段")
+            return await _save_learning_path(
+                user_id,
+                build_course_path(selected, learning_depth),
+            )
+
         import os as _os
         # 模块名 → 分类名映射
         MODULE_CATEGORY_MAP = {
@@ -390,6 +402,32 @@ async def get_learning_path(user_id: int) -> dict:
 
     path_data = json.loads(row["path_data_json"]) if row["path_data_json"] else {}
     progress = json.loads(row["progress_json"]) if row["progress_json"] else {}
+
+    # 课程方向已从概念题库切换为项目制 Agent 工程。旧任务无法可靠映射到新实验，
+    # 因此首次读取时执行一次显式版本迁移，保留路径记录但重置任务进度。
+    if path_data.get("curriculum_version") != "agent-project-path-v1":
+        from services.agent_course import TRACK_NAMES, build_course_path
+        path_data = build_course_path(TRACK_NAMES, path_data.get("learning_depth", "标准"))
+        path_data["migrated_from_legacy"] = True
+        progress = {
+            "completed_tasks": {},
+            "overall_progress": 0,
+            "current_day": 1,
+            "remedial_tasks": {},
+        }
+        conn_migration = get_db()
+        conn_migration.execute(
+            "UPDATE learning_paths SET path_data_json = ?, progress_json = ?, updated_at = ? WHERE id = ?",
+            (
+                json.dumps(path_data, ensure_ascii=False),
+                json.dumps(progress, ensure_ascii=False),
+                datetime.now().isoformat(),
+                row["id"],
+            ),
+        )
+        conn_migration.commit()
+        conn_migration.close()
+
     original_ct = progress.get("completed_tasks", [])
     progress = _normalize_progress(progress)
 
@@ -482,6 +520,61 @@ async def get_learning_path(user_id: int) -> dict:
             )
             conn3.commit()
             conn3.close()
+
+    # 第二天起，根据编程实验的基本测试/用户解释/变式迁移证据，虚拟追加第 5 阶段。
+    # 该阶段每次读取时动态生成，不写回基础课程，避免重复插入。
+    try:
+        from services.personalization_service import get_due_review_recommendations
+
+        recommendations = get_due_review_recommendations(user_id)
+        if recommendations:
+            task_by_lab = {}
+            for phase in path_data.get("phases", []):
+                for task in phase.get("tasks", []):
+                    if task.get("lab_id"):
+                        task_by_lab[task["lab_id"]] = task
+            review_tasks = []
+            review_notices = []
+            for item in recommendations:
+                source = task_by_lab.get(item.get("source_exercise_id"))
+                if not source:
+                    continue
+                mastery_percent = round(float(item.get("mastery_score", 0)) * 100)
+                review_task = dict(source)
+                review_task.update({
+                    "topic": f"个性化复习：{item['knowledge_tag']}",
+                    "knowledge": source.get("knowledge") or item["knowledge_tag"],
+                    "action": f"系统检测到你对「{item['knowledge_tag']}」的熟悉程度较低，建议返回编程实验重点复习。",
+                    "check": "重新通过基本测试、用自己的话解释关键实现，并完成变式迁移",
+                    "personalized_review": True,
+                    "mastery_score": item["mastery_score"],
+                    "basic_score": item["basic_score"],
+                    "explanation_score": item["explanation_score"],
+                    "transfer_score": item["transfer_score"],
+                    "source_topic": source.get("topic"),
+                })
+                review_tasks.append(review_task)
+                review_notices.append({
+                    "knowledge_tag": item["knowledge_tag"],
+                    "mastery_percent": mastery_percent,
+                    "lab_id": source.get("lab_id"),
+                    "module_id": source.get("module_id"),
+                    "topic": source.get("topic"),
+                })
+            if review_tasks:
+                path_data["phases"].append({
+                    "name": "个性化复习路径",
+                    "description": "根据昨天及更早的实验能力证据动态生成",
+                    "personalized_review": True,
+                    "tasks": review_tasks,
+                })
+                path_data["personalized_review"] = {
+                    "title": f"检测到 {len(review_tasks)} 个知识点需要返工",
+                    "message": f"系统检测到你对「{review_tasks[0]['knowledge']}」的熟悉程度较低，建议先复习昨天的编程部分。",
+                    "items": review_notices,
+                }
+    except Exception:
+        pass
 
     return {
         "id": row["id"],

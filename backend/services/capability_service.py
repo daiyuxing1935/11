@@ -19,6 +19,7 @@ from typing import Any
 
 from database import get_db
 from services.judge_service import get_flagship_exercise, is_flagship_exercise, judge_submission
+from services.personalization_service import record_mastery_evidence
 
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "exercises_processed.json"
@@ -376,6 +377,9 @@ def mark_code_passed(user_id: int, session_id: int, code: str) -> dict:
     conn.commit()
     updated = conn.execute("SELECT * FROM capability_sessions WHERE id = ?", (session_id,)).fetchone()
     conn.close()
+    record_mastery_evidence(
+        user_id, row["knowledge_tag"], row["exercise_id"], basic_score=100, passed=True,
+    )
     return _session_dict(updated)
 
 
@@ -432,6 +436,10 @@ def submit_defense(user_id: int, session_id: int, answers: list[dict], ai_usage:
     conn.close()
     data = _session_dict(updated)
     data["defense_passed"] = passed
+    record_mastery_evidence(
+        user_id, row["knowledge_tag"], row["exercise_id"],
+        explanation_score=score, passed=passed,
+    )
     return data
 
 
@@ -465,6 +473,51 @@ def _process_evidence(conn, session_id: int, started_at: str, ai_usage: str) -> 
     return min(score, 100), evidence
 
 
+def _mark_learning_path_lab_complete(conn, user_id: int, exercise_id: str) -> None:
+    """把通过完整能力闭环的实验同步回项目制学习路径。"""
+    row = conn.execute(
+        "SELECT id, path_data_json, progress_json FROM learning_paths WHERE user_id = ? AND status = 'active'",
+        (user_id,),
+    ).fetchone()
+    if not row:
+        return
+    path_data = _loads(row["path_data_json"], {})
+    progress = _loads(row["progress_json"], {})
+    completed = progress.get("completed_tasks", {})
+    if isinstance(completed, list):
+        completed = {key: {"learn": True, "quiz": False, "code": True} for key in completed}
+
+    matched_key = None
+    total = 0
+    for phase in path_data.get("phases", []):
+        for task in phase.get("tasks", []):
+            total += 1
+            key = f"{task.get('day')}-{task.get('topic')}"
+            if task.get("lab_id") == exercise_id:
+                matched_key = key
+    if not matched_key:
+        return
+
+    status = completed.get(matched_key, {})
+    if not isinstance(status, dict):
+        status = {"learn": bool(status)}
+    status["code"] = True
+    status.setdefault("learn", False)
+    # 兼容旧进度结构：新版课程用实验替代选择题，内部将 quiz 视为由实验验收覆盖。
+    status["quiz"] = True
+    completed[matched_key] = status
+    progress["completed_tasks"] = completed
+    finished = sum(
+        1 for value in completed.values()
+        if isinstance(value, dict) and value.get("learn") and value.get("code")
+    )
+    progress["overall_progress"] = round(finished / max(total, 1) * 100)
+    conn.execute(
+        "UPDATE learning_paths SET progress_json = ?, updated_at = ? WHERE id = ?",
+        (json.dumps(progress, ensure_ascii=False), datetime.now().isoformat(), row["id"]),
+    )
+
+
 def submit_repair(user_id: int, session_id: int, code: str, explanation: str) -> dict:
     row = _owned_session(user_id, session_id)
     if row["status"] != "repair_pending":
@@ -489,6 +542,10 @@ def submit_repair(user_id: int, session_id: int, code: str, explanation: str) ->
         )
         conn.commit()
         conn.close()
+        record_mastery_evidence(
+            user_id, row["knowledge_tag"], row["exercise_id"],
+            transfer_score=repair_score, passed=False,
+        )
         return {"repair_passed": False, "repair_score": repair_score, "evaluation": evaluation}
 
     process_score, evidence = _process_evidence(conn, session_id, row["started_at"], row["ai_usage"] or "")
@@ -543,8 +600,13 @@ def submit_repair(user_id: int, session_id: int, code: str, explanation: str) ->
         "INSERT INTO capability_events (session_id, user_id, event_type, payload_json) VALUES (?, ?, 'verified', ?)",
         (session_id, user_id, json.dumps({"total_score": total_score}, ensure_ascii=False)),
     )
+    _mark_learning_path_lab_complete(conn, user_id, row["exercise_id"])
     conn.commit()
     conn.close()
+    record_mastery_evidence(
+        user_id, row["knowledge_tag"], row["exercise_id"],
+        transfer_score=repair_score, passed=True,
+    )
     return {"repair_passed": True, "verified": True, "report": report, "evaluation": evaluation}
 
 

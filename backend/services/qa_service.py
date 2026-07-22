@@ -6,6 +6,8 @@ from services.ai_service import (
     QA_BEGINNER_PROMPT, QA_STANDARD_PROMPT, QA_ADVANCED_PROMPT, CODE_DEBUG_PROMPT
 )
 from database import get_db
+from services.personalization_service import build_personalized_system_prompt, record_conversation_turn
+from services.guidance_context_service import build_learning_context, public_learning_context
 
 
 def _filter_code_response(raw: str) -> str:
@@ -171,9 +173,12 @@ def _rewrite_question(question: str) -> str:
 async def answer_question(user_id: int, question: str, question_type: str = "text",
                           explanation_level: str = "standard", context: str = "") -> dict:
     """AI答疑"""
+    learning_context = build_learning_context(user_id, question)
     # 自动检测代码输入
     if is_code_input(question):
         system_prompt = "你是代码分析机器人。你的输出会被程序自动解析，任何不符合格式的内容都会导致系统报错。你必须只输出以下三部分：## 代码结构与功能分析 / ## 是否存在错误 / ## 如何修改。不要输出其他任何文字。"
+        system_prompt = build_personalized_system_prompt(user_id, question, system_prompt)
+        system_prompt += "\n\n" + learning_context["prompt"]
         prompt = CODE_DEBUG_PROMPT.format(question=question)
         raw = await call_llm(user_id, [
             {"role": "system", "content": system_prompt},
@@ -224,6 +229,8 @@ async def answer_question(user_id: int, question: str, question_type: str = "tex
 
 【回答风格】
 直接讲AI领域的实质内容，不要输出思考过程，不要用开场白。语言通俗，适合大学生。"""
+        system_prompt = build_personalized_system_prompt(user_id, question, system_prompt)
+        system_prompt += "\n\n" + learning_context["prompt"]
 
         response = await call_llm(user_id, [
             {"role": "system", "content": system_prompt},
@@ -250,17 +257,21 @@ async def answer_question(user_id: int, question: str, question_type: str = "tex
     conn.commit()
     conn.close()
 
+    record_conversation_turn(user_id, None, question, response, knowledge_tags)
+
     return {
         "id": qa_id,
         "question": question,
         "answer": response,
         "knowledge_tags": knowledge_tags,
-        "explanation_level": explanation_level
+        "explanation_level": explanation_level,
+        "learning_context": public_learning_context(learning_context),
     }
 
 async def save_qa_history(user_id: int, question: str, answer: str,
                           question_type: str = "text",
-                          explanation_level: str = "standard") -> int:
+                          explanation_level: str = "standard",
+                          conversation_id: int = None) -> int:
     """保存流式问答记录到数据库，返回记录ID"""
     knowledge_tags = identify_knowledge_tags(question)
     conn = get_db()
@@ -278,6 +289,7 @@ async def save_qa_history(user_id: int, question: str, answer: str,
     )
     conn.commit()
     conn.close()
+    record_conversation_turn(user_id, conversation_id, question, answer, knowledge_tags)
     return qa_id
 
 
