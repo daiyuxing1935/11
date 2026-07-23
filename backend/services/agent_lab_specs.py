@@ -31,6 +31,32 @@ SPECS = {
             {"description": "拒绝空用户消息", "args": ["助手", "   "], "exception": "ValueError"},
             {"description": "拒绝非字符串系统提示", "args": [None, "你好"], "exception": "ValueError"},
             {"description": "拒绝非字符串用户消息", "args": ["助手", 123], "exception": "ValueError"},
+            # ── 以下为增强测试点：确保函数不是简单硬编码 ──
+            {"description": "处理仅含空白字符的输入（全角空格与制表符）", "args": ["　　　", "问题"], "exception": "ValueError"},
+            {"description": "拒绝布尔值输入", "args": [True, "你好"], "exception": "ValueError"},
+            {"description": "拒绝列表类型输入", "args": ["助教", ["问题1", "问题2"]], "exception": "ValueError"},
+            {"description": "拒绝数字类型系统提示", "args": [42, "你好"], "exception": "ValueError"},
+            {"description": "处理含引号和特殊字符的输入", "args": [
+                '请用 "专业" 且 "友好" 的语气回答',
+                "解释 '智能体' 和 'Agent' 的区别"
+            ], "expected": [
+                {"role": "system", "content": '请用 "专业" 且 "友好" 的语气回答'},
+                {"role": "user", "content": "解释 '智能体' 和 'Agent' 的区别"}
+            ]},
+            {"description": "处理含 emoji 的用户消息", "args": ["你是助教", "你好👋 请问如何学习AI？😊"], "expected": [
+                {"role": "system", "content": "你是助教"},
+                {"role": "user", "content": "你好👋 请问如何学习AI？😊"}
+            ]},
+            {"description": "处理极长系统提示（200+字符）", "args": [
+                "你是一个专业的技术顾问。" + "经验丰富。" * 30,
+                "简短问题"
+            ], "expected": [
+                {"role": "system", "content": "你是一个专业的技术顾问。" + "经验丰富。" * 30},
+                {"role": "user", "content": "简短问题"}
+            ]},
+            {"description": "连续3次调用返回独立对象且不相互污染", "args": ["助教", "测试消息"], "expected": [
+                {"role": "system", "content": "助教"}, {"role": "user", "content": "测试消息"}
+            ], "fresh_result": True},
         ],
     },
     "1-2": {

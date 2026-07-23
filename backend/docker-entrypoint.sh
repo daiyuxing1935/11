@@ -19,6 +19,6 @@ fi
 
 # The server updater builds with its own Dockerfile, so enforce the resource
 # integrity check again at runtime after seed data has been synchronized.
-python /app/validate_resource_images.py
+python /app/scripts/validate_resource_images.py
 
 exec uvicorn main:app --host 0.0.0.0 --port 8000

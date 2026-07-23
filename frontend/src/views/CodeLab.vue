@@ -902,7 +902,7 @@ function handleTerminalKeydown(event) {
   const commandCandidates = [
     'ls', 'tree', 'pwd', 'cd', 'clear', 'python --version', 'python -m venv .venv',
     'source .venv/bin/activate', 'deactivate', 'pip install', 'pip install -r requirements.txt',
-    'python -m py_compile solution.py', 'python solution.py', 'pytest', 'git status',
+    'python -m py_compile solution.py', 'python solution.py', 'lab-test', 'python -m lab_test', 'pytest', 'git status',
   ]
   const lastToken = value.split(/\s+/).pop() || ''
   const pathCandidates = [

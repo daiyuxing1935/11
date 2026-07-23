@@ -1,14 +1,19 @@
 """编程能力真实性验证闭环。
 
 代码通过只代表功能正确；学生还需要完成基于本人代码的答辩和故障修复，
-系统才会把该练习标记为“能力已验证”。过程事件只用于形成学习证据，
+系统才会把该练习标记为"能力已验证"。过程事件只用于形成学习证据，
 不会输出作弊概率，也不会单独作为惩罚依据。
+
+答辩评分由 AI 基于学生代码和回答进行实质性评审（非关键词匹配），
+AI 不可用时自动降级为关键词匹配兜底。
 """
 
 from __future__ import annotations
 
 import ast
+import asyncio
 import json
+import logging
 import os
 import re
 import subprocess
@@ -18,8 +23,11 @@ from pathlib import Path
 from typing import Any
 
 from database import get_db
+from services.ai_service import call_llm
 from services.judge_service import get_flagship_exercise, is_flagship_exercise, judge_submission
 from services.personalization_service import record_mastery_evidence
+
+logger = logging.getLogger(__name__)
 
 
 DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "exercises_processed.json"
@@ -215,7 +223,7 @@ def _authoritative_source(exercise: dict) -> dict:
     """从现有课程知识库索引中检索与练习最接近的权威条目。
 
     这条确定性关键词检索也是向量服务不可用时的 RAG 降级路径，确保答辩始终
-    有真实来源，而不是让模型凭空生成“依据”。
+    有真实来源，而不是让模型凭空生成"依据"。
     """
     index_data = {}
     for path in MATERIAL_INDEX_CANDIDATES:
@@ -301,14 +309,36 @@ def _defense_questions(code: str, exercise: dict) -> list[dict]:
             "source": source["label"], "source_path": source["path"],
         })
 
-    questions.append({
-        "id": "q3",
-        "prompt": "如果需求增加一个此前没有覆盖的异常输入，你会在哪一层增加保护？请说明修改位置和验证方法。",
-        "focus": "迁移与验证策略",
-        "rubric": [["异常", "边界", "校验"], ["修改", "增加", "位置"], ["测试", "验证", "用例"]],
-        "source": source["label"],
-        "source_path": source["path"],
-    })
+    exercise_id = str(exercise.get("id", ""))
+    # 实验 1-1 (build_chat_messages)：代码已做完整的输入校验，问「未覆盖的异常输入」无意义。
+    # 替换为框架理解题，考查学生对 LangChain 返回值设计的理解。
+    if exercise_id == "1-1":
+        questions.append({
+            "id": "q3",
+            "prompt": "`model.invoke()` 返回的是 `AIMessage` 对象而非字符串。请说明这个设计的好处，以及如果你直接用 `str(response)` 或 `print(response)` 会看到什么？（提示：除了正文，响应对象还可能包含哪些信息？）",
+            "focus": "框架返回值设计理解",
+            "rubric": [["AIMessage", "对象", "不是字符串"], ["content", "属性", "正文"], ["元数据", "token", "用量", "finish_reason"]],
+            "source": source["label"],
+            "source_path": source["path"],
+        })
+    elif exercise_id in ("1-2",):
+        questions.append({
+            "id": "q3",
+            "prompt": "如果对话历史过长导致超出模型上下文窗口，你的 `append_turn_and_trim` 会如何处理？请说明裁剪策略的取舍（保留最近 vs 保留最重要）。",
+            "focus": "上下文管理策略",
+            "rubric": [["裁剪", "trim", "上限"], ["system", "保留"], ["取舍", "最近", "重要"]],
+            "source": source["label"],
+            "source_path": source["path"],
+        })
+    else:
+        questions.append({
+            "id": "q3",
+            "prompt": "请说明 LangChain 框架在本实验中替你完成了哪些底层工作？如果不用框架，你需要自己处理哪些步骤？",
+            "focus": "框架价值理解",
+            "rubric": [["框架", "LangChain", "封装"], ["底层", "HTTP", "请求"], ["自己实现", "替代方案"]],
+            "source": source["label"],
+            "source_path": source["path"],
+        })
     return questions
 
 
@@ -320,7 +350,7 @@ def _mutation_candidates(code: str) -> list[tuple[str, str]]:
     region, start, end = _user_region(code)
     candidates: list[tuple[str, str]] = []
 
-    # 优先制造“可解释的语义故障”，且逐个验证确实能让测试失败。
+    # 优先制造"可解释的语义故障"，且逐个验证确实能让测试失败。
     for match in list(re.finditer(r"(?m)^(\s*)return\s+([^\n#]+)", region))[:5]:
         expression = match.group(2).strip()
         if expression in {"None", "False"} or expression.endswith(("{", "[", "(")):
@@ -383,7 +413,32 @@ def mark_code_passed(user_id: int, session_id: int, code: str) -> dict:
     return _session_dict(updated)
 
 
+_DEFENSE_EVAL_PROMPT = """你是一位严格的编程教学评审官。请根据学生代码和答辩回答，进行实质性评分。
+
+**实验编号**: {exercise_id}
+**问题**: {question_prompt}
+**评分聚焦点**: {rubric_focus}
+**学生代码（关键片段）**:
+```python
+{code_snippet}
+```
+**学生回答**:
+{answer}
+
+请评估回答是否展示了真正的理解（而非仅仅复述代码或泛泛而谈）。
+
+返回严格 JSON（不含 markdown 代码块标记）:
+{{"score": <0-100 整数>, "hit_points": ["答到的要点"], "missing_points": ["遗漏或理解偏差"], "feedback": "1-3 句具体改进建议，指出哪里需要深入"}}
+
+评分参考:
+- 90-100: 准确解释了核心原理，展示了深层理解，能关联工程实践
+- 70-89: 基本正确但部分描述停留在表面，缺乏深度或具体例证
+- 50-69: 有正确成分但存在明显遗漏或理解偏差
+- 0-49: 严重错误、答非所问或仅复述代码"""
+
+
 def _answer_score(answer: str, question: dict, identifiers: list[str]) -> tuple[int, list[str], list[str]]:
+    """关键词匹配评分 — AI 不可用时的降级兜底。"""
     normalized = answer.lower().strip()
     hit_labels = []
     missing_labels = []
@@ -400,23 +455,104 @@ def _answer_score(answer: str, question: dict, identifiers: list[str]) -> tuple[
     return score, hit_labels, missing_labels
 
 
-def submit_defense(user_id: int, session_id: int, answers: list[dict], ai_usage: str) -> dict:
+async def _ai_evaluate_answer(
+    user_id: int, answer: str, question: dict, identifiers: list[str],
+    code: str, exercise_id: str,
+) -> tuple[int, list[str], list[str], str]:
+    """使用 AI 对学生答辩回答进行实质性评审。
+
+    返回 (score, hit_points, missing_points, feedback)。
+    调用失败时抛出异常，由上层降级到关键词匹配评分。
+    """
+    answer = answer.strip()
+    if not answer:
+        return 0, [], ["未作答"], "请认真回答每个问题，这是验证你真实理解的重要环节。"
+
+    region, _, _ = _user_region(code)
+    code_snippet = region[:2000] if region else code[:2000]
+
+    prompt = _DEFENSE_EVAL_PROMPT.format(
+        exercise_id=exercise_id,
+        question_prompt=question.get("prompt", ""),
+        rubric_focus=question.get("focus", ""),
+        code_snippet=code_snippet,
+        answer=answer[:3000],
+    )
+
+    messages = [{"role": "system", "content": prompt}]
+
+    try:
+        response = await call_llm(user_id, messages, temperature=0.3, max_tokens=800, request_timeout=30.0)
+    except ValueError as exc:
+        # 用户未配置 API Key
+        logger.info("AI defense evaluation skipped: %s", exc)
+        raise
+    except Exception as exc:
+        logger.warning("LLM call failed during defense evaluation: %s", exc)
+        raise
+
+    # 解析 AI 返回的 JSON
+    json_match = re.search(r'\{[^{}]*"score"\s*:\s*\d+[^{}]*\}', response, re.DOTALL)
+    if not json_match:
+        json_match = re.search(r'\{[^{}]*\}', response, re.DOTALL)
+    if not json_match:
+        raise ValueError(f"AI 评审返回格式异常，无法解析 JSON: {response[:200]}")
+
+    try:
+        result = json.loads(json_match.group())
+    except json.JSONDecodeError:
+        raise ValueError(f"AI 评审 JSON 解析失败: {json_match.group()[:200]}")
+
+    score = max(0, min(100, int(result.get("score", 0))))
+    hit_points = result.get("hit_points", []) if isinstance(result.get("hit_points"), list) else []
+    missing_points = result.get("missing_points", []) if isinstance(result.get("missing_points"), list) else []
+    feedback = str(result.get("feedback", ""))[:500]
+
+    return score, hit_points, missing_points, feedback
+
+
+async def submit_defense(user_id: int, session_id: int, answers: list[dict], ai_usage: str) -> dict:
+    """提交答辩回答。使用 AI 对每个回答进行实质性评审，AI 不可用时降级为关键词匹配。
+
+    相比旧版关键词匹配，AI 评审的改进：
+    - 真正读懂学生回答，而非机械化查找关键词
+    - 给出具体改进建议（feedback），而非仅显示「命中/遗漏」
+    - 评分反映理解深度，而非凑字数 + 碰关键词
+
+    3 个问题的 AI 评审并行执行，总耗时 ≈ max(单题耗时) 而非 sum(单题耗时)。
+    """
     row = _owned_session(user_id, session_id)
     questions = _loads(row["defense_questions_json"], [])
     answer_map = {str(item.get("question_id")): str(item.get("answer", "")) for item in answers}
     identifiers = _code_identifiers(row["original_code"] or "")
-    details = []
-    for question in questions:
+    code = row["original_code"] or ""
+    exercise_id = str(row["exercise_id"] or "")
+
+    # 并行 AI 评审所有问题
+    async def _eval_one(question: dict) -> dict:
         answer = answer_map.get(question.get("id"), "")
-        score, hits, missing = _answer_score(answer, question, identifiers)
-        details.append({
+        try:
+            score, hits, missing, feedback = await _ai_evaluate_answer(
+                user_id, answer, question, identifiers, code, exercise_id,
+            )
+            graded_by = "ai"
+        except Exception:
+            score, hits, missing = _answer_score(answer, question, identifiers)
+            feedback = "⚠️ AI 评审暂时不可用（请确认已在个人中心配置 API Key），当前为关键词匹配评分，仅供参考。"
+            graded_by = "keyword"
+        return {
             "question_id": question.get("id"),
             "prompt": question.get("prompt"),
             "answer": answer,
             "score": score,
             "hit_points": hits,
             "missing_points": missing,
-        })
+            "feedback": feedback,
+            "graded_by": graded_by,
+        }
+
+    details = list(await asyncio.gather(*(_eval_one(q) for q in questions)))
+
     score = round(sum(item["score"] for item in details) / max(len(details), 1))
     passed = score >= 60 and all(item["answer"].strip() for item in details)
     status = "repair_pending" if passed else "defense_pending"

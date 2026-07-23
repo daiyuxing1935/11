@@ -90,7 +90,7 @@ class LabWorkspaceServiceTests(unittest.TestCase):
         self.assertEqual(len(workspace["course"]["stages"]), 6)
 
     def test_structure_and_dependency_checks_are_incremental(self):
-        for name in ["requirements.txt", ".env.example", "solution.py", "app.py"]:
+        for name in ["requirements.txt", ".env", "solution.py", "app.py"]:
             service.save_file(7, "1-1", name, "")
         structure = service.check_stage(7, "1-1", "structure")
         self.assertTrue(structure["passed"])

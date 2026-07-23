@@ -1,36 +1,22 @@
 <template>
   <div class="resources-page">
     <div class="resources-layout">
-      <!-- 左侧：学习资源 -->
+      <!-- 左侧：项目制教程库 -->
       <div class="resources-main">
-        <el-tabs v-model="activeTab">
-          <el-tab-pane label="全部资源" name="all">
-            <div style="margin-bottom:12px">
-              <el-select v-model="filterCategory" placeholder="按模块筛选" clearable style="width:280px" @change="fetchAll">
-                <el-option v-for="m in moduleList" :key="m.key" :label="m.label" :value="m.key" />
-              </el-select>
-            </div>
-            <div v-for="mod in moduleGroups" :key="mod.key" style="margin-bottom:32px">
-              <div style="display:flex;align-items:center;gap:8px;padding:12px 0;margin-bottom:12px;border-bottom:2px solid #409EFF">
-                <span style="font-size:22px">{{ mod.icon }}</span>
-                <span style="font-size:17px;font-weight:700;color:#1a1a2e">{{ mod.label }}</span>
-                <el-tag size="small" type="info">{{ mod.items.length }}个</el-tag>
-              </div>
-              <el-row :gutter="20">
-                <el-col :span="8" v-for="item in mod.items" :key="item.id">
-                  <el-card shadow="hover" style="cursor:pointer;margin-bottom:16px" @click="openResource(item)">
-                    <div style="display:flex;justify-content:space-between">
-                      <el-tag :type="item.difficulty==='Lv1入门'?'success':item.difficulty==='Lv2中等'?'warning':'danger'" size="small">{{ item.difficulty }}</el-tag>
-                    </div>
-                    <h4 style="margin:8px 0">{{ item.title }}</h4>
-                    <p style="color:#909399;font-size:13px">{{ item.summary?.slice(0,60) }}...</p>
-                    <span style="font-size:12px;color:#c0c4cc">{{ item.duration }}</span>
-                  </el-card>
-                </el-col>
-              </el-row>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
+        <div style="margin-bottom:20px">
+          <h2 style="margin:0 0 8px;font-size:20px;color:#1a1a2e">📖 项目制 Agent 工程实战</h2>
+          <p style="margin:0;color:#909399;font-size:14px">12 个递进项目，从第一段对话到端到端客服 Agent。在<a href="/learning-path" style="color:#409EFF">学习路径</a>中按顺序学习。</p>
+        </div>
+        <el-row :gutter="16">
+          <el-col :span="8" v-for="track in tutorialTracks" :key="track.name">
+            <el-card shadow="hover" style="cursor:pointer;margin-bottom:12px;height:100%" @click="$router.push('/learning-path')">
+              <div style="font-size:20px;margin-bottom:4px">{{ track.stage }}</div>
+              <h4 style="margin:0 0 6px;font-size:15px;color:#1a1a2e">{{ track.name }}</h4>
+              <p style="color:#909399;font-size:12px;margin:0 0 6px">{{ track.desc }}</p>
+              <el-tag size="small" type="primary">{{ track.count }} 个项目</el-tag>
+            </el-card>
+          </el-col>
+        </el-row>
       </div>
 
       <!-- 右侧：PDF电子书 -->
@@ -98,20 +84,6 @@
         </el-card>
       </div>
     </div>
-    <!-- 学习资料弹窗 -->
-    <div v-if="dialogVisible" @click.self="dialogVisible=false" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center">
-      <div style="background:#fff;border-radius:8px;width:75%;max-width:1300px;height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px;border-bottom:1px solid #e4e7ed;flex-shrink:0">
-          <h2 style="margin:0;font-size:18px">{{ dialogTitle }}</h2>
-          <button @click="dialogVisible=false" style="background:none;border:none;font-size:28px;cursor:pointer;color:#909399;line-height:1">&times;</button>
-        </div>
-        <div style="flex:1;overflow-y:auto;padding:20px 28px;font-size:16px;line-height:1.9;color:#303133">
-          <div v-if="dialogLoading" style="text-align:center;padding:40px;color:#409EFF">加载中...</div>
-          <div v-else v-html="dialogContent" ref="contentRef"></div>
-        </div>
-      </div>
-    </div>
-
     <!-- PDF 阅读器弹窗 -->
     <div v-if="pdfViewerVisible" @click.self="pdfViewerVisible=false" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding-top:2vh">
       <div style="background:#fff;border-radius:8px;width:95%;height:94vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
@@ -131,18 +103,21 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick, watch } from 'vue'
-import { getResourceList, getResourceLearnMaterial, uploadPdf, getPdfList, getPdfUrl, deletePdf, batchDeletePdfs } from '../api/resource'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { uploadPdf, getPdfList, getPdfUrl, deletePdf, batchDeletePdfs } from '../api/resource'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { recordStudyVisit } from '../api/learning'
-import { renderMermaidIn, asciiToMermaid } from '../composables/useMermaid'
-import { marked } from 'marked'
-import { copyToClipboard } from '../utils/clipboard'
-import { renderMarkdown as renderMdWithCopy, bindCodeBlockActions } from '../composables/useCodeBlockRenderer'
 
-const activeTab = ref('all')
-const allResources = ref({ items: [] })
-const filterCategory = ref('')
+const router = useRouter()
+
+const tutorialTracks = [
+  { stage: '01', name: '起步：第一段 AI 对话', desc: '环境搭建 → 单轮对话 → 记忆与流式输出', count: 3 },
+  { stage: '02', name: 'LangChain：链与工具 Agent', desc: '提示链 → 工具契约 → create_agent 循环', count: 3 },
+  { stage: '03', name: 'LangGraph：状态与工作流', desc: 'StateGraph → 条件路由 → 检查点恢复', count: 3 },
+  { stage: '04', name: '工程项目：可上线客服 Agent', desc: 'RAG → 有依据回答 → 端到端工程验收', count: 3 },
+]
+
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const dialogContent = ref('')
@@ -167,25 +142,7 @@ function togglePdfSelect(id, checked) {
   selectedPdfs.value = new Set(selectedPdfs.value)
 }
 
-const moduleList = [
-  { key: '模块一：智能体基础通识', label: '模块一：智能体基础通识', icon: '' },
-  { key: '模块二：大模型与提示词工程', label: '模块二：大模型与提示词工程', icon: '' },
-  { key: '模块三：智能体四大核心能力模块', label: '模块三：智能体四大核心能力模块', icon: '' },
-  { key: '模块四：开发框架与工程实践', label: '模块四：开发框架与工程实践', icon: '' },
-  { key: '模块五：多智能体系统', label: '模块五：多智能体系统', icon: '' },
-  { key: '模块六：评估、安全与前沿拓展', label: '模块六：评估、安全与前沿拓展', icon: '' }
-]
-
-const moduleGroups = computed(() => {
-  return moduleList.map(m => ({ ...m, items: (allResources.value.items||[]).filter(i => i.category === m.key) })).filter(m => m.items.length > 0)
-})
-
-onMounted(() => { recordStudyVisit(); fetchAll(); fetchPdfs() })
-async function fetchAll() {
-  try { allResources.value = await getResourceList({ page: 1, page_size: 100, category: filterCategory.value||undefined }) } catch(e) {
-    ElMessage.error('加载资源列表失败: ' + (e?.message || '网络错误'))
-  }
-}
+onMounted(() => { recordStudyVisit(); fetchPdfs() })
 
 // PDF 电子书相关
 async function fetchPdfs() {
@@ -286,8 +243,13 @@ function formatSize(bytes) {
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
 }
 
+/**
+ * 以下代码已废弃（旧版学习资源卡片 → 外部文章查看器）
+ * 保留用于 forward compatibility，但在 UI 上已不再展示。
+ */
 window._prompts = {}
 
+/** @deprecated 旧版资源打开（2026-07 已移除版面） */
 async function openResource(resource) {
   dialogVisible.value = true
   dialogTitle.value = resource.title

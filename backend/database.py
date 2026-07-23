@@ -558,6 +558,13 @@ def init_db():
                     (_doc["knowledge_tag"],)
                 ).fetchone()
                 if _existing:
+                    # Update existing seed record so edited tutorials take effect on restart
+                    conn.execute(
+                        "UPDATE tutorial_documents SET title = ?, content = ?, curriculum_version = ?, updated_at = datetime('now') "
+                        "WHERE knowledge_tag = ? AND source_type = 'seed' AND user_id IS NULL",
+                        (_doc.get("title", ""), _doc["content"], _doc.get("curriculum_version", ""), _doc["knowledge_tag"])
+                    )
+                    _imported += 1
                     continue
                 conn.execute(
                     "INSERT INTO tutorial_documents (knowledge_tag, title, content, source_type, user_id, parent_id, curriculum_version) "
