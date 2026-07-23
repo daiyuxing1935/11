@@ -92,13 +92,48 @@
           <el-button class="reader-lab-button" type="primary" :loading="labLoading[currentLearnTask?.day]" @click="goToCodeLab(currentLearnTask)">
             <el-icon><Monitor /></el-icon>打开配套实验
           </el-button>
+          <el-button size="small" text @click="openAIDialog">🤖 AI 生成教程</el-button>
           <button class="reader-page-link next" :disabled="!nextLearnTask" @click="moveLearning(1)">
             <small>下一节 →</small><b>{{ nextLearnTask?.topic || '已经是最后一节' }}</b>
           </button>
         </div>
+        <!-- 来源标识 -->
+        <div v-if="tutorialMeta.source_type && !learnDialogLoading" class="tutorial-source-badge" :class="'source-' + tutorialMeta.source_type">
+          <el-tag v-if="tutorialMeta.source_type === 'seed'" type="success" size="small" effect="plain">📚 系统预置</el-tag>
+          <el-tag v-else-if="tutorialMeta.source_type === 'user_modified'" type="warning" size="small" effect="plain">✏️ 我的修改</el-tag>
+          <el-tag v-else-if="tutorialMeta.source_type === 'ai_generated'" type="primary" size="small" effect="plain">🤖 AI 生成</el-tag>
+          <el-button v-if="tutorialMeta.source_type === 'user_modified'" type="danger" size="small" text @click="restoreSeedTutorial">恢复原始版本</el-button>
+          <el-button v-if="tutorialMeta.source_type === 'ai_generated'" type="danger" size="small" text @click="deleteCustomTutorial">删除此教程</el-button>
+        </div>
+
         <div v-if="learnDialogLoading" class="reader-loading"><el-icon class="is-loading" :size="30"><Loading /></el-icon><p>正在加载教程…</p></div>
+
+        <!-- 编辑/预览切换 -->
+        <div v-if="learnDialogContent && !learnDialogLoading" class="tutorial-edit-bar">
+          <el-button size="small" :type="isEditing ? '' : 'primary'" text @click="toggleEditMode">
+            {{ isEditing ? '👁 预览' : '✏️ 编辑' }}
+          </el-button>
+        </div>
+
         <div
-          v-else
+          v-if="!learnDialogLoading && isEditing"
+          class="learn-material-editor"
+        >
+          <el-input
+            v-model="editContent"
+            type="textarea"
+            :rows="20"
+            placeholder="使用 Markdown 格式编辑教程内容…"
+            class="tutorial-textarea"
+          />
+          <div class="editor-actions">
+            <el-button @click="isEditing = false">取消</el-button>
+            <el-button type="primary" :loading="saveLoading" @click="saveEditedTutorial">保存修改</el-button>
+          </div>
+        </div>
+
+        <div
+          v-else-if="!learnDialogLoading"
           ref="materialRef"
           class="learn-material-content"
           tabindex="0"
@@ -123,15 +158,33 @@
       </template>
     </el-dialog>
 
+    <el-dialog v-model="showAIDialog" title="🤖 AI 生成教程" width="550px" :close-on-click-modal="false">
+      <el-form :model="aiGenForm" label-position="top">
+        <el-form-item label="知识点标识（英文/拼音，用于系统索引）">
+          <el-input v-model="aiGenForm.knowledge_tag" placeholder="如: custom-rag-advanced" />
+        </el-form-item>
+        <el-form-item label="教程主题">
+          <el-input v-model="aiGenForm.topic" placeholder="如: RAG高级检索技巧" />
+        </el-form-item>
+        <el-form-item label="学习目标（可选）">
+          <el-input v-model="aiGenForm.goal" type="textarea" :rows="2" placeholder="想通过这篇教程达成什么学习目标？" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showAIDialog = false">取消</el-button>
+        <el-button type="primary" :loading="aiGenLoading" :disabled="!aiGenForm.knowledge_tag || !aiGenForm.topic" @click="doAIGenerate">开始生成</el-button>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
 <script setup>
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useLearningStore } from '../stores/learning'
-import { getLearningResource, recordStudyVisit } from '../api/learning'
+import { getLearningResource, recordStudyVisit, saveTutorial, deleteTutorial, generateAITutorial } from '../api/learning'
 import { getLabProgressOverview, getLabWorkspace } from '../api/workspace'
 import { bindCodeBlockActions, renderMarkdown } from '../composables/useCodeBlockRenderer'
 
@@ -150,6 +203,13 @@ const learnLoading = reactive({})
 const learnDialogTitle = ref('')
 const learnDialogContent = ref('')
 const learnDialogLoading = ref(false)
+const tutorialMeta = ref({ source_type: '', tutorial_id: null, parent_id: null })
+const showAIDialog = ref(false)
+const aiGenForm = reactive({ knowledge_tag: '', topic: '', goal: '' })
+const aiGenLoading = ref(false)
+const isEditing = ref(false)
+const editContent = ref('')
+const saveLoading = ref(false)
 const currentLearnTask = ref(null)
 const materialRef = ref(null)
 const articleOutline = ref([])
@@ -387,6 +447,12 @@ async function loadLearningMaterial(task, markLearn = false) {
       }
     }
     learnDialogTitle.value = resource.matched_tag || task.topic
+    tutorialMeta.value = {
+      source_type: resource.source_type || 'file',
+      tutorial_id: resource.tutorial_id || null,
+      parent_id: resource.parent_id || null
+    }
+    editContent.value = resource.content || ''
     learnDialogContent.value = renderMarkdown(resource.content, {
       completedStages,
       stages: workspace?.course?.stages || stageCatalog,
@@ -422,6 +488,106 @@ function handleCheckpointClick(stage) {
   goToLearning(selectedTask.value)
 }
 
+function openAIDialog() {
+  aiGenForm.knowledge_tag = ''
+  aiGenForm.topic = ''
+  aiGenForm.goal = ''
+  showAIDialog.value = true
+}
+
+async function doAIGenerate() {
+  aiGenLoading.value = true
+  try {
+    const result = await generateAITutorial({
+      knowledge_tag: aiGenForm.knowledge_tag,
+      topic: aiGenForm.topic,
+      goal: aiGenForm.goal
+    })
+    showAIDialog.value = false
+    ElMessage.success('AI 教程已生成！')
+    tutorialMeta.value = {
+      source_type: 'ai_generated',
+      tutorial_id: result.tutorial_id,
+      parent_id: null
+    }
+    learnDialogTitle.value = result.title
+    editContent.value = result.content || ''
+    learnDialogContent.value = renderMarkdown(result.content)
+    learnDialogLoading.value = false
+    await nextTick()
+    if (materialRef.value) {
+      materialRef.value.scrollTop = 0
+      bindCodeBlockActions(materialRef.value)
+      rebuildArticleOutline()
+    }
+  } catch (e) {
+    ElMessage.error('AI 生成失败: ' + (e.response?.data?.message || e.message))
+  } finally {
+    aiGenLoading.value = false
+  }
+}
+
+async function restoreSeedTutorial() {
+  try {
+    await ElMessageBox.confirm('将放弃你的修改，恢复为系统预置版本。确定？', '恢复原始版本', { type: 'warning' })
+    await deleteTutorial(currentLearnTask.value.knowledge || currentLearnTask.value.topic)
+    ElMessage.success('已恢复为系统预置版本')
+    tutorialMeta.value = { source_type: 'seed', tutorial_id: null, parent_id: null }
+    await loadLearningMaterial(currentLearnTask.value, false)
+  } catch (e) {
+    if (e !== 'cancel') ElMessage.error('恢复失败')
+  }
+}
+
+async function deleteCustomTutorial() {
+  try {
+    await ElMessageBox.confirm('将删除此 AI 生成的教程。确定？', '删除教程', { type: 'warning' })
+    await deleteTutorial(currentLearnTask.value.knowledge || currentLearnTask.value.topic)
+    ElMessage.success('已删除')
+    tutorialMeta.value = { source_type: 'seed', tutorial_id: null, parent_id: null }
+    await loadLearningMaterial(currentLearnTask.value, false)
+  } catch (e) {
+    if (e !== 'cancel') ElMessage.error('删除失败')
+  }
+}
+
+function toggleEditMode() {
+  if (!isEditing.value) {
+    isEditing.value = true
+  } else {
+    isEditing.value = false
+  }
+}
+
+async function saveEditedTutorial() {
+  if (!editContent.value.trim()) return ElMessage.warning('内容不能为空')
+  saveLoading.value = true
+  try {
+    const knowledgeTag = currentLearnTask.value.knowledge || currentLearnTask.value.topic
+    await saveTutorial(knowledgeTag, {
+      title: learnDialogTitle.value,
+      content: editContent.value,
+      source_type: tutorialMeta.value.source_type || 'ai_generated'
+    })
+    ElMessage.success('已保存')
+    isEditing.value = false
+    learnDialogContent.value = renderMarkdown(editContent.value)
+    await nextTick()
+    if (materialRef.value) {
+      materialRef.value.scrollTop = 0
+      bindCodeBlockActions(materialRef.value)
+      rebuildArticleOutline()
+    }
+    if (tutorialMeta.value.source_type === 'seed') {
+      tutorialMeta.value.source_type = 'user_modified'
+    }
+  } catch (e) {
+    ElMessage.error('保存失败')
+  } finally {
+    saveLoading.value = false
+  }
+}
+
 </script>
 
 <style scoped>
@@ -434,11 +600,15 @@ function handleCheckpointClick(stage) {
 .reader-content-column{min-width:0;min-height:0;display:flex;overflow:hidden;flex-direction:column;background:#fff}.inline-reader-content{border-right:1px solid #e2e7f1}.reader-page-nav{height:64px;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px;flex:0 0 64px;padding:0 18px;border-bottom:1px solid #e1e5ec;background:#fcfcfd}.reader-page-link{min-width:0;padding:6px 8px;border:0;border-radius:6px;background:transparent;text-align:left;cursor:pointer}.reader-page-link.next{text-align:right}.reader-page-link:hover:not(:disabled){background:#f0f3f8}.reader-page-link:disabled{cursor:default;opacity:.35}.reader-page-link small,.reader-page-link b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.reader-page-link small{color:#78995f;font-size:9px}.reader-page-link b{margin-top:3px;color:#4d586d;font-size:10px}.reader-progress-strip{display:flex;align-items:center;gap:5px;padding:8px 12px;border-radius:16px;background:#f3f5f8}.reader-progress-strip>span{margin-right:2px;color:#68758c;font-size:9px;font-weight:700}.reader-progress-strip>div{width:17px;height:4px;border-radius:9px;background:#d9dee7}.reader-progress-strip>div.passed{background:#72a35b}.reader-progress-strip>b{color:#53617a;font-size:9px}.reader-loading{display:grid;min-height:0;place-content:center;flex:1;color:#7b879a;text-align:center}.learn-material-content{min-height:0;flex:1 1 0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scroll-behavior:smooth;padding:34px clamp(28px,5vw,68px) 80px;color:#303b53;background:#fff;font-size:15px;line-height:1.85;outline:none}.learn-material-content:focus-visible{box-shadow:inset 0 0 0 2px rgba(83,100,216,.22)}.learn-material-content :deep(h1){margin:0 0 20px;padding-bottom:12px;border-bottom:2px solid #8daf72;color:#111b32;font-size:30px}.learn-material-content :deep(h2){scroll-margin-top:20px;margin:32px 0 13px;padding-left:12px;border-left:4px solid #8daf72;color:#1f2c48;font-size:21px}.learn-material-content :deep(h3){scroll-margin-top:20px;margin:23px 0 10px;color:#5f8557;font-size:17px}.learn-material-content :deep(p){margin:10px 0}.learn-material-content :deep(code:not(pre code)){padding:2px 6px;border-radius:5px;color:#d54f76;background:#f4f0f4}.learn-material-content :deep(table){width:100%;margin:16px 0;border-collapse:collapse;font-size:13px}.learn-material-content :deep(th){padding:10px;border:1px solid #dfe4ed;color:#fff;background:#3d4147;text-align:left}.learn-material-content :deep(td){padding:9px 10px;border:1px solid #e1e5ed}.learn-material-content :deep(blockquote){margin:16px 0;padding:11px 16px;border-left:4px solid #8daf72;background:#f3f7f0;color:#53657a}.learn-material-content :deep(ul),.learn-material-content :deep(ol){padding-left:24px}.reader-outline{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:14px;background:#f4f2ed}.outline-status-card{padding:15px;border:1px solid #dde2d8;border-radius:8px;background:#fff}.outline-status-card>span{display:block;color:#74806d;font-size:10px}.outline-status-card h3{margin:7px 0 10px;color:#34432e;font-size:14px;line-height:1.45}.outline-status-card>strong{display:block;margin:5px 0 9px;color:#45603b;font-size:28px}.outline-status-card>strong small{font-size:12px}.outline-stage-dots{display:flex;gap:4px;margin-bottom:12px}.outline-stage-dots i{height:5px;flex:1;border-radius:6px;background:#dfe3dc}.outline-stage-dots i.passed{background:#79a961}.outline-status-card .el-button{width:100%}.reader-outline-heading{margin:18px 3px 8px;color:#536b40;font-size:11px;font-weight:800;letter-spacing:.08em}.outline-links{display:flex;flex-direction:column;gap:2px}.outline-links button{display:flex;align-items:flex-start;gap:7px;width:100%;padding:7px 8px;border:0;border-radius:5px;color:#566172;background:transparent;font-size:10px;line-height:1.45;text-align:left;cursor:pointer}.outline-links button:hover,.outline-links button.active{color:#45603b;background:#e3eadf}.outline-links button.level-3{padding-left:20px;color:#7a8492}.outline-links button span{color:#83a46f;font-weight:800}.outline-note{margin-top:18px;padding:12px;border-left:3px solid #8daf72;color:#788174;background:#e9eee5;font-size:9px;line-height:1.6}
 @media(max-width:1100px){.course-layout{grid-template-columns:270px minmax(0,1fr)}.inline-reader-outline{display:none}}@media(max-width:900px){.path-toolbar{align-items:flex-start}.path-toolbar-copy span{display:none}.course-layout{height:auto;max-height:none;display:block;overflow:visible}.course-tree-panel{height:360px}.inline-reader-content{height:calc(100dvh - 110px);min-height:600px;margin-top:12px}.reader-page-nav{grid-template-columns:1fr 1fr}.reader-progress-strip{display:none}.learn-material-content{padding:26px 20px 70px}}
 .course-layout{grid-template-columns:300px minmax(0,1fr)}
-.reader-page-nav{grid-template-columns:minmax(0,1fr) auto auto minmax(0,1fr)}
+.reader-page-nav{grid-template-columns:minmax(0,1fr) auto auto auto minmax(0,1fr)}
 .reader-lab-button{flex-shrink:0}
 .learning-path-page{display:flex;height:100%;min-height:0;overflow:hidden;flex-direction:column}
 .course-layout{height:auto;min-height:0;max-height:none;flex:1}
 .review-recommendation{display:flex;align-items:center;gap:16px;margin:-4px 0 18px;padding:17px 20px;border:1px solid #f1d7a5;border-radius:15px;background:linear-gradient(120deg,#fffaf0,#fff 70%);box-shadow:0 8px 24px rgba(118,85,24,.06)}
 .review-signal{display:grid;width:42px;height:42px;flex:0 0 42px;place-items:center;border-radius:13px;color:#b97918;background:#fff0ce;font-size:20px}.review-copy{min-width:0;flex:1}.review-copy span{color:#ad741d;font-size:9px;font-weight:800;letter-spacing:.12em}.review-copy h2{margin:4px 0;color:#42341f;font-size:17px}.review-copy p{margin:0;color:#7d6b4d;font-size:12px}.review-actions{display:flex;gap:8px;flex-shrink:0}
-@media(max-width:900px){.learning-path-page{height:auto;overflow:visible}.reader-page-nav{grid-template-columns:1fr auto 1fr}.reader-progress-strip{display:none}.reader-lab-button{padding-inline:10px}}
+@media(max-width:900px){.learning-path-page{height:auto;overflow:visible}.reader-page-nav{grid-template-columns:1fr auto auto 1fr}.reader-progress-strip{display:none}.reader-lab-button{padding-inline:10px}}
+.tutorial-source-badge{display:flex;align-items:center;gap:8px;padding:6px 18px;border-bottom:1px solid #e8ecf1;background:#fafbfd}.tutorial-source-badge .el-button{margin-left:4px;font-size:11px}
+.tutorial-edit-bar{display:flex;align-items:center;gap:8px;padding:4px 18px;border-bottom:1px solid #eef1f5;background:#fcfdfe}
+.learn-material-editor{min-height:0;flex:1 1 0;display:flex;flex-direction:column;padding:24px clamp(28px,5vw,68px) 24px;overflow-y:auto}.learn-material-editor .tutorial-textarea{flex:1;min-height:400px}.learn-material-editor .tutorial-textarea :deep(textarea){font-family:'JetBrains Mono','Fira Code',monospace;font-size:13px;line-height:1.7;color:#2d3748;background:#fafbfc;border-color:#e2e8f0}.editor-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #eef1f5}
+@media(max-width:900px){.tutorial-source-badge{flex-wrap:wrap;padding:6px 12px}}
 </style>
