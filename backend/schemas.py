@@ -193,6 +193,24 @@ class LLMConfigResponse(BaseModel):
     embedding_model: str = "text-embedding-v3"
     search_api_key: str = ""  # masked
 
+# ===== Tutorial Documents =====
+class TutorialSaveRequest(BaseModel):
+    title: str = ""
+    content: str = Field(..., min_length=1)
+    source_type: str = Field(default="ai_generated")  # "ai_generated" | "user_modified"
+
+class TutorialGenerateRequest(BaseModel):
+    knowledge_tag: str = Field(..., min_length=1)
+    topic: str = Field(..., min_length=1)
+    goal: str = ""
+
+class TutorialResponse(BaseModel):
+    tutorial_id: int
+    knowledge_tag: str
+    title: str
+    source_type: str
+    message: str = ""
+
 # ===== Common =====
 class APIResponse(BaseModel):
     code: int = 200
