@@ -301,6 +301,25 @@ def init_db():
     _run_migration(conn, "users", "years_experience INTEGER DEFAULT 0", "用户表迁移: 添加从业年限")
     _run_migration(conn, "users", "answer_preference TEXT DEFAULT '分步清晰'", "用户表迁移: 添加回答偏好")
 
+    # 教程文档表 — 种子数据 + 用户私有修改 + AI 生成
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS tutorial_documents (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            knowledge_tag TEXT NOT NULL,
+            title TEXT DEFAULT '',
+            content TEXT NOT NULL,
+            source_type TEXT DEFAULT 'seed',
+            user_id INTEGER,
+            parent_id INTEGER,
+            curriculum_version TEXT DEFAULT '',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_tutorial_knowledge ON tutorial_documents(knowledge_tag, user_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_tutorial_user ON tutorial_documents(user_id, source_type)")
+    conn.commit()
+
     # 习题评测元数据表 — 存储每道题的锁定代码/目标函数/测试用例
     conn.execute("""
         CREATE TABLE IF NOT EXISTS exercise_test_metadata (
@@ -524,6 +543,33 @@ def init_db():
                 print(f"[OK] 已导入 {_ex_count} 条习题评测元数据")
     except Exception as e:
         print(f"[WARN] 习题元数据导入失败: {e}")
+
+    # Seed tutorial_documents from tutorial_seed.json (only insert new knowledge_tags)
+    try:
+        _seed_path = os.path.join(os.path.dirname(__file__), "data", "tutorial_seed.json")
+        if os.path.exists(_seed_path):
+            import json as _json
+            with open(_seed_path, "r", encoding="utf-8") as _f:
+                _seed_docs = _json.load(_f)
+            _imported = 0
+            for _doc in _seed_docs:
+                _existing = conn.execute(
+                    "SELECT 1 FROM tutorial_documents WHERE knowledge_tag = ? AND source_type = 'seed' AND user_id IS NULL",
+                    (_doc["knowledge_tag"],)
+                ).fetchone()
+                if _existing:
+                    continue
+                conn.execute(
+                    "INSERT INTO tutorial_documents (knowledge_tag, title, content, source_type, user_id, parent_id, curriculum_version) "
+                    "VALUES (?, ?, ?, 'seed', NULL, NULL, ?)",
+                    (_doc["knowledge_tag"], _doc.get("title", ""), _doc["content"], _doc.get("curriculum_version", ""))
+                )
+                _imported += 1
+            conn.commit()
+            if _imported:
+                print(f"[OK] Imported {_imported} tutorial seed documents into tutorial_documents table")
+    except Exception as e:
+        print(f"[WARN] Tutorial seed import failed: {e}")
 
     conn.commit()
     conn.close()
