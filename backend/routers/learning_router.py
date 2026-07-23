@@ -1235,6 +1235,16 @@ async def save_tutorial(knowledge_tag: str, req: TutorialSaveRequest, current_us
                 parent_id = seed["id"]
 
         if existing:
+            # Preserve original source_type if backend auto-assigned it
+            existing_row = conn.execute(
+                "SELECT source_type, parent_id FROM tutorial_documents WHERE id = ?",
+                (existing["id"],)
+            ).fetchone()
+            if existing_row:
+                if existing_row["source_type"] == "user_modified" and req.source_type == "ai_generated":
+                    source_type = "user_modified"
+                if existing_row["parent_id"] is not None:
+                    parent_id = existing_row["parent_id"]
             conn.execute(
                 "UPDATE tutorial_documents SET title = ?, content = ?, source_type = ?, updated_at = ? WHERE id = ?",
                 (req.title, req.content, source_type, datetime.now().isoformat(), existing["id"])

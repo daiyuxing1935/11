@@ -425,6 +425,21 @@ function handleArticleScroll() {
 
 async function loadLearningMaterial(task, markLearn = false) {
   if (!task) return
+
+  // Guard: warn before discarding unsaved edits
+  if (isEditing.value && editContent.value !== '') {
+    try {
+      await ElMessageBox.confirm('你有未保存的修改，切换教程将丢失这些内容。确定要放弃吗？', '未保存的修改', {
+        confirmButtonText: '放弃修改',
+        cancelButtonText: '继续编辑',
+        type: 'warning'
+      })
+    } catch {
+      return // user cancelled — stay on current content
+    }
+    isEditing.value = false
+  }
+
   const loadToken = ++lessonLoadToken
   currentLearnTask.value = task
   selectedLabId.value = task.lab_id
