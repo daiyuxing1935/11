@@ -1291,14 +1291,19 @@ async def generate_tutorial(req: TutorialGenerateRequest, current_user: dict = D
     # 构建格式参考：读取一篇种子文档作为格式样本
     fallback_format = "# 标题\n## 概述\n## 核心知识\n## 应用场景\n## 学习建议\n## 延伸阅读"
     format_sample = fallback_format
+    seed_conn = None
     try:
-        seed = get_db().execute(
+        seed_conn = get_db()
+        seed = seed_conn.execute(
             "SELECT content FROM tutorial_documents WHERE source_type = 'seed' AND user_id IS NULL LIMIT 1"
         ).fetchone()
         if seed:
             format_sample = seed["content"][:1500]
     except Exception:
         pass
+    finally:
+        if seed_conn:
+            seed_conn.close()
 
     prompt = f"""你是一位资深的AI智能体学科导师，请为以下主题生成一份结构完整的学习教程。
 
@@ -1331,13 +1336,15 @@ async def generate_tutorial(req: TutorialGenerateRequest, current_user: dict = D
 
         # 保存生成的内容到数据库
         conn = get_db()
-        cursor = conn.execute(
-            "INSERT INTO tutorial_documents (knowledge_tag, title, content, source_type, user_id, parent_id) VALUES (?, ?, ?, 'ai_generated', ?, NULL)",
-            (req.knowledge_tag, req.topic, response, current_user["id"])
-        )
-        tutorial_id = cursor.lastrowid
-        conn.commit()
-        conn.close()
+        try:
+            cursor = conn.execute(
+                "INSERT INTO tutorial_documents (knowledge_tag, title, content, source_type, user_id, parent_id) VALUES (?, ?, ?, 'ai_generated', ?, NULL)",
+                (req.knowledge_tag, req.topic, response, current_user["id"])
+            )
+            tutorial_id = cursor.lastrowid
+            conn.commit()
+        finally:
+            conn.close()
 
         return APIResponse(data={
             "tutorial_id": tutorial_id,
