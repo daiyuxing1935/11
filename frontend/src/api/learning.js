@@ -29,3 +29,13 @@ export const executeCode = (data) => request.post('/learning/code-execute', data
 export const getCodeAnswer = (taskDay) => request.get(`/learning/code-answer/${taskDay}`)
 export const generateCodeStepGuide = (data) => request.post('/learning/code-step-guide', data)
 export const checkCodeStep = (data) => request.post('/learning/code-step-check', data)
+
+// 教程文档管理
+export const saveTutorial = (knowledgeTag, data) =>
+  request.put(`/learning/tutorial/${encodeURIComponent(knowledgeTag)}`, data)
+
+export const deleteTutorial = (knowledgeTag) =>
+  request.delete(`/learning/tutorial/${encodeURIComponent(knowledgeTag)}`)
+
+export const generateAITutorial = (data) =>
+  request.post('/learning/tutorial/generate', data)
