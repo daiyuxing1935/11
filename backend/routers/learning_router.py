@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from auth import get_current_user
-from schemas import APIResponse, LearningPathGenerateRequest, PathProgressUpdateRequest, TaskUpdate, TaskQuizRequest, CodeExecuteRequest, CodeStepGuideRequest, CodeStepCheckRequest, DiagnosticTestRequest
+from schemas import APIResponse, LearningPathGenerateRequest, PathProgressUpdateRequest, TaskUpdate, TaskQuizRequest, CodeExecuteRequest, CodeStepGuideRequest, CodeStepCheckRequest, DiagnosticTestRequest, TutorialSaveRequest, TutorialGenerateRequest
 from services import learning_service, resource_service
 from database import get_db
 import os
@@ -1202,3 +1202,150 @@ async def get_code_completions(current_user: dict = Depends(get_current_user)):
     ).fetchall()
     conn.close()
     return APIResponse(data=[r["exercise_id"] for r in rows])
+
+
+@router.put("/tutorial/{knowledge_tag:path}", response_model=APIResponse)
+async def save_tutorial(knowledge_tag: str, req: TutorialSaveRequest, current_user: dict = Depends(get_current_user)):
+    """保存或更新用户的教程文档（私有版本）"""
+    from datetime import datetime
+    conn = get_db()
+
+    try:
+        # 判断该 knowledge_tag 是否有种子记录
+        seed = conn.execute(
+            "SELECT id FROM tutorial_documents WHERE knowledge_tag = ? AND source_type = 'seed' AND user_id IS NULL",
+            (knowledge_tag,)
+        ).fetchone()
+
+        # 查询用户是否已有私有记录
+        existing = conn.execute(
+            "SELECT id FROM tutorial_documents WHERE knowledge_tag = ? AND user_id = ?",
+            (knowledge_tag, current_user["id"])
+        ).fetchone()
+
+        source_type = req.source_type
+        parent_id = None
+
+        if seed and not existing:
+            # 用户修改种子文档 → 自动标记为 user_modified
+            if source_type == "ai_generated":
+                parent_id = None  # 明确选择 AI 生成则不算修改种子
+            else:
+                source_type = "user_modified"
+                parent_id = seed["id"]
+
+        if existing:
+            conn.execute(
+                "UPDATE tutorial_documents SET title = ?, content = ?, source_type = ?, updated_at = ? WHERE id = ?",
+                (req.title, req.content, source_type, datetime.now().isoformat(), existing["id"])
+            )
+            tutorial_id = existing["id"]
+        else:
+            cursor = conn.execute(
+                "INSERT INTO tutorial_documents (knowledge_tag, title, content, source_type, user_id, parent_id) VALUES (?, ?, ?, ?, ?, ?)",
+                (knowledge_tag, req.title, req.content, source_type, current_user["id"], parent_id)
+            )
+            tutorial_id = cursor.lastrowid
+
+        conn.commit()
+
+        return APIResponse(data={
+            "tutorial_id": tutorial_id,
+            "knowledge_tag": knowledge_tag,
+            "source_type": source_type,
+            "message": "教程已保存"
+        })
+    except Exception as e:
+        return APIResponse(code=500, message=f"保存教程失败: {str(e)}", data=None)
+    finally:
+        conn.close()
+
+
+@router.delete("/tutorial/{knowledge_tag:path}", response_model=APIResponse)
+async def delete_tutorial(knowledge_tag: str, current_user: dict = Depends(get_current_user)):
+    """删除用户的私有教程（回退到种子版本），不影响种子数据"""
+    conn = get_db()
+    try:
+        cursor = conn.execute(
+            "DELETE FROM tutorial_documents WHERE knowledge_tag = ? AND user_id = ?",
+            (knowledge_tag, current_user["id"])
+        )
+        deleted = cursor.rowcount
+        conn.commit()
+        return APIResponse(data={
+            "deleted": deleted,
+            "knowledge_tag": knowledge_tag,
+            "message": "已恢复为系统预置版本" if deleted else "没有需要删除的私有版本"
+        })
+    except Exception as e:
+        return APIResponse(code=500, message=f"删除教程失败: {str(e)}", data=None)
+    finally:
+        conn.close()
+
+
+@router.post("/tutorial/generate", response_model=APIResponse)
+async def generate_tutorial(req: TutorialGenerateRequest, current_user: dict = Depends(get_current_user)):
+    """AI 生成教程文档（遵循种子文档格式）"""
+    from services.ai_service import call_llm
+
+    # 构建格式参考：读取一篇种子文档作为格式样本
+    fallback_format = "# 标题\n## 概述\n## 核心知识\n## 应用场景\n## 学习建议\n## 延伸阅读"
+    format_sample = fallback_format
+    try:
+        seed = get_db().execute(
+            "SELECT content FROM tutorial_documents WHERE source_type = 'seed' AND user_id IS NULL LIMIT 1"
+        ).fetchone()
+        if seed:
+            format_sample = seed["content"][:1500]
+    except Exception:
+        pass
+
+    prompt = f"""你是一位资深的AI智能体学科导师，请为以下主题生成一份结构完整的学习教程。
+
+【主题】{req.topic}
+【学习目标】{req.goal or "系统掌握该知识点"}
+【格式参考 — 请严格遵循此结构】
+{format_sample}
+
+【生成要求】
+1. 结构必须与格式参考一致：以 # 标题开头，依次包含 ## 概述、## 核心知识、## 应用场景、## 学习建议、## 延伸阅读等章节
+2. 核心概念用 **加粗** 突出
+3. 代码示例使用 ```代码块```
+4. 语言通俗易懂，适合大学生/初学者阅读
+5. 总字数控制在 1500-3500 字
+6. 直接以 "# {req.topic}" 作为文档标题开始
+
+请直接输出完整的 Markdown 文档，不要有其他说明文字。"""
+
+    try:
+        response = await call_llm(
+            current_user["id"],
+            [{"role": "system", "content": "你是专业的AI智能体学科导师，擅长编写结构清晰的学习教程。只输出Markdown内容。"},
+             {"role": "user", "content": prompt}],
+            temperature=0.6,
+            max_tokens=4096
+        )
+
+        if response.startswith("LLM调用异常"):
+            return APIResponse(code=500, message=f"AI 生成失败: {response}", data=None)
+
+        # 保存生成的内容到数据库
+        conn = get_db()
+        cursor = conn.execute(
+            "INSERT INTO tutorial_documents (knowledge_tag, title, content, source_type, user_id, parent_id) VALUES (?, ?, ?, 'ai_generated', ?, NULL)",
+            (req.knowledge_tag, req.topic, response, current_user["id"])
+        )
+        tutorial_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+
+        return APIResponse(data={
+            "tutorial_id": tutorial_id,
+            "knowledge_tag": req.knowledge_tag,
+            "title": req.topic,
+            "content": response,
+            "source_type": "ai_generated",
+            "message": "AI 教程已生成并保存"
+        })
+    except Exception as e:
+        return APIResponse(code=500, message=f"AI 生成教程失败: {str(e)}", data=None)
