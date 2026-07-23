@@ -33,9 +33,21 @@
       <div class="sidebar-footer" :class="{ compact: sidebarCollapsed && !mobileOpen }">
         <div class="stage-orbit"><span></span></div>
         <div class="stage-copy">
-          <small>当前学习阶段</small>
+          <small>{{ userStore.user?.username || '用户' }}</small>
           <strong>{{ userStore.learningStage }}</strong>
         </div>
+      </div>
+
+      <div v-if="!sidebarCollapsed || mobileOpen" class="sidebar-logout">
+        <button class="logout-btn" @click="handleLogout">
+          <el-icon><SwitchButton /></el-icon>
+          <span>退出登录</span>
+        </button>
+      </div>
+      <div v-else class="sidebar-logout-icon">
+        <button class="logout-btn-icon" @click="handleLogout" title="退出登录">
+          <el-icon><SwitchButton /></el-icon>
+        </button>
       </div>
     </el-aside>
 
@@ -89,6 +101,11 @@ function toggleSidebar() {
   localStorage.setItem('sidebar_collapsed', String(sidebarCollapsed.value))
   localStorage.removeItem('sidebar_hidden')
 }
+
+function handleLogout() {
+  userStore.logout()
+  router.push('/login')
+}
 </script>
 
 <style scoped>
@@ -134,6 +151,14 @@ function toggleSidebar() {
 .stage-orbit span { width: 9px; height: 9px; border-radius: 50%; background: #56b7dc; box-shadow: 0 0 0 5px rgba(86,183,220,.12); }
 .stage-copy small { display: block; color: rgba(255,255,255,.42); font-size: 10px; }
 .stage-copy strong { display: block; margin-top: 4px; color: #fff; font-size: 13px; }
+.sidebar-logout { margin: 0 16px 16px; }
+.logout-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 14px; border: 1px solid rgba(255,140,115,.25); border-radius: 12px; color: rgba(255,255,255,.72); background: rgba(255,140,115,.08); cursor: pointer; font-size: 13px; transition: .2s; }
+.logout-btn:hover { color: #fff; background: rgba(255,140,115,.18); border-color: rgba(255,140,115,.5); }
+.logout-btn .el-icon { font-size: 16px; }
+.sidebar-logout-icon { display: flex; justify-content: center; margin: 0 8px 10px; }
+.logout-btn-icon { display: grid; width: 36px; height: 36px; place-items: center; border: 1px solid rgba(255,140,115,.25); border-radius: 10px; color: rgba(255,255,255,.64); background: rgba(255,140,115,.08); cursor: pointer; transition: .2s; }
+.logout-btn-icon:hover { color: #fff; background: rgba(255,140,115,.18); border-color: rgba(255,140,115,.5); }
+.logout-btn-icon .el-icon { font-size: 17px; }
 .content-shell { min-width: 0; min-height:0;height:100dvh;overflow:hidden }
 .top-header { display: flex; align-items: center; justify-content: space-between; height: 58px; padding: 0 24px; border-bottom: 1px solid rgba(220,226,238,.85); background: rgba(255,255,255,.82); backdrop-filter: blur(16px); }
 .header-left, .header-right { display: flex; align-items: center; gap: 18px; }

@@ -100,40 +100,85 @@ def _course(exercise_id: str) -> dict:
     integration_hint = ""
     if exercise_id == "1-1":
         integration_hint = " 把 build_chat_messages 的返回值传给 model.invoke()，让个性化系统指令真正进入模型上下文。"
+    elif exercise_id == "1-2":
+        integration_hint = " 在 app.py 中维护一个 messages 列表（初始含 system），每次用户输入追加 user → invoke → 追加 assistant，并用 append_turn_and_trim 控制长度。"
     elif exercise_id == "1-3":
         integration_hint = " 必须遍历 model.stream()，并在循环内使用 flush=True 逐片段输出；不能等所有片段结束后一次性打印。"
 
+    # ── 实验专属实现指引（补充步骤卡片中太简略的描述） ──
+    _IMPL_NOTES = {
+        "1-1": (
+            "接收 system_prompt 和 user_input 两个参数，先分别校验类型和非空（含 .strip() 检查），"
+            "再按 system → user 顺序返回独立的消息列表。每轮调用都必须创建新列表，不能缓存或原地修改。"
+        ),
+        "1-2": (
+            "接收 history、user_text、assistant_text、max_messages 四个参数。先深拷贝 history，"
+            "追加 user → assistant 消息对；保留开头的 system 消息（如果存在），从尾部截取最近 max_messages 条。"
+            "返回新列表，原 history 不变。max_messages 必须 ≥ 2。"
+        ),
+        "1-3": (
+            "遍历可迭代 chunks，识别字符串、None、消息字典 {content: ...}、带 content 属性的 AIMessageChunk 对象，"
+            "以及 content 为 [{type:'text', text:'...'}] 的内容块。忽略 None/空字符串/非 text 类型块，"
+            "无法识别时抛出 ValueError。返回拼接后的完整字符串。"
+        ),
+    }
+    impl_notes = _IMPL_NOTES.get(exercise_id, "")
+
+    packages_example = "、".join(track["packages"])
     project_files = ["requirements.txt", ".env", "solution.py", "app.py"]
     stages = [
         {
             "id": "structure", "title": "搭好项目骨架", "icon": "FolderOpened",
-            "instruction": "在项目中创建 requirements.txt、.env、solution.py 和 app.py，文件名必须完全一致。",
+            "instruction": (
+                f"在项目中创建 {', '.join(project_files)}，文件名必须完全一致。"
+                f".env 存放 DEEPSEEK_API_KEY（不要提交到 Git）；requirements.txt 声明框架依赖；"
+                f"solution.py 实现核心函数；app.py 负责导入并运行完整对话流程。"
+            ),
             "command": "tree", "checks": ["必需文件存在", "文件名大小写一致"],
         },
         {
             "id": "environment", "title": "创建虚拟环境", "icon": "Cpu",
-            "instruction": "在终端执行 python -m venv .venv，让项目依赖与系统 Python 隔离。",
+            "instruction": (
+                "在终端执行 python -m venv .venv，让项目依赖与系统 Python 隔离。"
+                "创建后终端提示符会自动显示 (.venv)，后续 pip install 的包只会安装到这个隔离环境。"
+            ),
             "command": "python -m venv .venv", "checks": [".venv 已创建", "Python 版本可读取"],
         },
         {
             "id": "dependencies", "title": f"声明 {track['framework']} 依赖", "icon": "Box",
-            "instruction": "把本项目需要的框架包写入 requirements.txt，再从终端安装。不要把 API Key 写进该文件。",
+            "instruction": (
+                f"在 requirements.txt 中写入以下框架包（每行一个）：\n"
+                f"{packages_example}\n\n"
+                f"然后在终端执行 pip install -r requirements.txt 安装全部依赖。"
+                f"不要将 DEEPSEEK_API_KEY 或其他密钥写入 requirements.txt。"
+            ),
             "command": "pip install -r requirements.txt", "checks": [f"包含 {', '.join(track['packages'])}", "依赖已安装到当前虚拟环境"],
         },
         {
             "id": "implementation", "title": "完成核心模块", "icon": "EditPen",
-            "instruction": f"在 solution.py 中真正实现 {', '.join(targets)}，不能只保留函数定义或占位语句。{implementation_hint}",
+            "instruction": (
+                f"在 solution.py 中真正实现 {', '.join(targets)}，不能只保留函数定义或 pass/NotImplementedError。"
+                f"{' 建议顺序：' + implementation_hint if implementation_hint else ''}"
+                f"{chr(10) + chr(10) + impl_notes if impl_notes else ''}"
+            ),
             "command": "", "test_count": test_count,
             "checks": ["Python 语法正确", "目标函数已定义", f"{test_count} 个业务测试点通过"],
         },
         {
             "id": "integration", "title": "接入可运行应用", "icon": "Connection",
-            "instruction": f"在 app.py 中导入 solution，并接入 {track['framework']}。环境变量从 .env 读取，禁止把真实 Key 写进代码。{integration_hint}",
+            "instruction": (
+                f"在 app.py 中 import {', '.join(targets[:1]) if targets else 'solution'} from solution，"
+                f"并接入 {track['framework']}。环境变量通过 python-dotenv 的 load_dotenv() 从 .env 读取，"
+                f"禁止把真实 Key 硬编码在代码中。{integration_hint}"
+            ),
             "command": "python app.py", "checks": ["核心业务测试仍通过", "app.py 可解析", "框架调用方式正确", "没有疑似硬编码密钥"],
         },
         {
             "id": "acceptance", "title": "AI 工程验收", "icon": "CircleCheck",
-            "instruction": "AI 助教将检查项目结构、环境、依赖、代码契约和服务端私有业务场景；全部通过后再进入能力答辩。",
+            "instruction": (
+                "AI 助教将检查项目结构、环境、依赖、代码契约和服务端私有业务场景；"
+                "全部通过后再进入能力答辩。你可以多次重试，直到所有检查点通过。"
+            ),
             "command": "", "checks": ["前置阶段全部通过", "私有业务场景通过"],
         },
     ]
