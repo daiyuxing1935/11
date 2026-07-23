@@ -1,4 +1,5 @@
 """智能答疑路由"""
+import asyncio
 import json
 import os
 import time
@@ -451,7 +452,7 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
         max_tokens = 8192 if req.deep_thinking else 4096
 
     async def _stream_with_search():
-        """先发送 RAG 来源/不可用提示和搜索结果，再流式输出 LLM 回答"""
+        """先发送 RAG 来源/不可用提示和搜索结果，再流式输出 LLM 回答（带心跳保活）"""
         if learning_context.get("available"):
             yield f"data: {json.dumps({'learning_context': public_learning_context(learning_context)}, ensure_ascii=False)}\n\n"
         if rag_sources:
@@ -464,13 +465,43 @@ async def ask_question_stream(req: QARequest, current_user: dict = Depends(get_c
             if search_query_rewritten:
                 search_msg["search_query"] = search_query_rewritten
             yield f"data: {json.dumps(search_msg, ensure_ascii=False)}\n\n"
-            search_msg = {"search_results": search_results}
-            if search_query_rewritten:
-                search_msg["search_query"] = search_query_rewritten
-            yield f"data: {json.dumps(search_msg, ensure_ascii=False)}\n\n"
-        async for chunk in stream_llm(current_user["id"], messages, temperature=temperature,
-                                       max_tokens=max_tokens, deep_thinking=req.deep_thinking):
-            yield chunk
+
+        # 使用队列 + 生产者任务实现心跳保活：
+        # - 生产者从 stream_llm 读取 chunk 放入队列
+        # - 消费者从队列读取，带 15s 超时 → 超时时发送 SSE 注释心跳
+        queue: asyncio.Queue = asyncio.Queue()
+
+        async def _produce():
+            try:
+                async for chunk in stream_llm(current_user["id"], messages, temperature=temperature,
+                                               max_tokens=max_tokens, deep_thinking=req.deep_thinking):
+                    await queue.put(('chunk', chunk))
+            except Exception as e:
+                await queue.put(('error', str(e)))
+            finally:
+                await queue.put(('done', None))
+
+        producer_task = asyncio.create_task(_produce())
+        try:
+            while True:
+                try:
+                    kind, data = await asyncio.wait_for(queue.get(), timeout=15.0)
+                    if kind == 'chunk':
+                        yield data
+                    elif kind == 'error':
+                        yield f"data: {json.dumps({'error': f'AI 响应中断: {data}'}, ensure_ascii=False)}\n\n"
+                        break
+                    elif kind == 'done':
+                        break
+                except asyncio.TimeoutError:
+                    # 15 秒无 LLM 输出 → 发送心跳注释放防止代理/nginx 断连
+                    yield ": heartbeat\n\n"
+        finally:
+            producer_task.cancel()
+            try:
+                await producer_task
+            except asyncio.CancelledError:
+                pass
 
     return StreamingResponse(
         _stream_with_search(),
@@ -554,14 +585,29 @@ async def save_qa(req: QASaveRequest, current_user: dict = Depends(get_current_u
         question_type=req.question_type,
         explanation_level=req.explanation_level,
         conversation_id=req.conversation_id,
+        rag_sources=req.rag_sources,
+        search_results=req.search_results,
+        search_query=req.search_query,
     )
+    # 获取实际使用的 conversation_id（可能在 save 过程中新建）
+    actual_conversation_id = req.conversation_id
+    if not actual_conversation_id:
+        from database import get_db
+        conn = get_db()
+        row = conn.execute(
+            "SELECT session_id FROM conversation_messages WHERE user_id = ? ORDER BY id DESC LIMIT 1",
+            (current_user["id"],)
+        ).fetchone()
+        conn.close()
+        if row:
+            actual_conversation_id = row["session_id"]
     # 【自进化】记录学习活动
     try:
         tags = qa_service.identify_knowledge_tags(req.question)
         record_qa_activity(current_user["id"], tags)
     except Exception:
         pass
-    return APIResponse(data={"id": qa_id, "message": "保存成功"})
+    return APIResponse(data={"id": qa_id, "conversation_id": actual_conversation_id, "message": "保存成功"})
 
 
 @router.post("/feedback", response_model=APIResponse)

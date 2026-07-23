@@ -105,6 +105,9 @@ class QASaveRequest(BaseModel):
     question_type: str = "text"
     explanation_level: str = "standard"
     conversation_id: Optional[int] = None
+    rag_sources: Optional[list] = None       # RAG 知识库来源列表
+    search_results: Optional[list] = None    # 联网搜索结果列表
+    search_query: Optional[str] = ""         # 联网搜索查询词
 
 class QAFeedbackRequest(BaseModel):
     qa_history_id: int
@@ -174,6 +177,7 @@ class LLMConfigRequest(BaseModel):
     embedding_api_key: Optional[str] = ""  # DashScope API key for RAG embedding
     embedding_provider: Optional[str] = "dashscope"
     embedding_model: Optional[str] = "text-embedding-v3"
+    search_api_key: Optional[str] = ""  # 联网检索 API Key（如 SerpAPI / Tavily 等）
 
 class LLMConfigResponse(BaseModel):
     provider: str = "openai"
@@ -187,6 +191,7 @@ class LLMConfigResponse(BaseModel):
     embedding_api_key: str = ""  # masked
     embedding_provider: str = "dashscope"
     embedding_model: str = "text-embedding-v3"
+    search_api_key: str = ""  # masked
 
 # ===== Common =====
 class APIResponse(BaseModel):

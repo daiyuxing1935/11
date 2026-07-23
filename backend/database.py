@@ -293,6 +293,8 @@ def init_db():
     _run_migration(conn, "user_llm_config", "embedding_provider TEXT DEFAULT ''", "LLM配置表迁移: 添加 embedding_provider 列")
     _run_migration(conn, "user_llm_config", "embedding_api_key TEXT DEFAULT ''", "LLM配置表迁移: 添加 embedding_api_key 列")
     _run_migration(conn, "user_llm_config", "embedding_model TEXT DEFAULT 'text-embedding-v3'", "LLM配置表迁移: 添加 embedding_model 列")
+    _run_migration(conn, "user_llm_config", "search_api_key TEXT DEFAULT ''", "LLM配置表迁移: 添加 search_api_key 列")
+    _run_migration(conn, "conversation_messages", "metadata TEXT DEFAULT '{}'", "对话消息表迁移: 添加 metadata 列")
     _run_migration(conn, "learning_stats", "mastery_detail_json TEXT DEFAULT '{}'", "学习统计表迁移: 添加 mastery_detail_json 列")
     _run_migration(conn, "qa_history", "rag_sources_json TEXT DEFAULT ''", "QA历史表迁移: 添加 rag_sources_json 列")
     _run_migration(conn, "users", "programming_background TEXT DEFAULT ''", "用户表迁移: 添加技术背景")

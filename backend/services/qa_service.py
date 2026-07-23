@@ -271,7 +271,10 @@ async def answer_question(user_id: int, question: str, question_type: str = "tex
 async def save_qa_history(user_id: int, question: str, answer: str,
                           question_type: str = "text",
                           explanation_level: str = "standard",
-                          conversation_id: int = None) -> int:
+                          conversation_id: int = None,
+                          rag_sources: list = None,
+                          search_results: list = None,
+                          search_query: str = "") -> int:
     """保存流式问答记录到数据库，返回记录ID"""
     knowledge_tags = identify_knowledge_tags(question)
     conn = get_db()
@@ -289,7 +292,8 @@ async def save_qa_history(user_id: int, question: str, answer: str,
     )
     conn.commit()
     conn.close()
-    record_conversation_turn(user_id, conversation_id, question, answer, knowledge_tags)
+    record_conversation_turn(user_id, conversation_id, question, answer, knowledge_tags,
+                             rag_sources=rag_sources, search_results=search_results, search_query=search_query)
     return qa_id
 
 

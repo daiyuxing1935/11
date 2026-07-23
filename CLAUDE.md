@@ -18,6 +18,18 @@ docker compose up -d --build
 - 原因：Docker 前端是 `npm run build` → nginx 静态构建，后端是 Python 源码复制。源码修改必须重建镜像才能生效。
 - 用户访问 `http://localhost:80` 看到的是 Docker 版本的代码，不是本地 dev server。
 
+## 🧪 代码修改后自动测试（必须执行）
+
+**每次代码修改并部署后，必须自动使用 Playwright MCP 进行端到端测试，无需用户反复要求。**
+- 使用 Playwright MCP 浏览器工具（`mcp__playwright__*`）进行测试
+- 测试范围应覆盖本次修改涉及的所有功能点
+- 测试流程：
+  1. `docker compose up -d --build` 部署完成后等待 ~15s 让容器初始化
+  2. 导航到 `http://localhost:80`，使用 demo 账号登录（demo / demo123）
+  3. 针对本次修改的功能逐一验证
+  4. 检查浏览器控制台是否有 JavaScript 错误
+  5. 报告测试结果（通过/失败/控制台错误）
+
 ## 启动方式（必须优先使用 Docker）
 
 ### 方式一：Docker 一键启动（推荐，始终优先使用）

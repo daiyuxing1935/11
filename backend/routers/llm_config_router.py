@@ -48,6 +48,7 @@ async def get_llm_config(current_user: dict = Depends(get_current_user)):
             embedding_api_key=_mask_api_key(r.get("embedding_api_key", "")),
             embedding_provider=r.get("embedding_provider", "dashscope"),
             embedding_model=r.get("embedding_model", "text-embedding-v3"),
+            search_api_key=_mask_api_key(r.get("search_api_key", "")),
         ).model_dump())
     else:
         return APIResponse(data=LLMConfigResponse(is_configured=False).model_dump())
@@ -69,22 +70,23 @@ async def save_llm_config(req: LLMConfigRequest, current_user: dict = Depends(ge
                SET provider=?, api_key=?, base_url=?, model_name=?,
                    temperature=?, max_tokens=?, image_api_key=?,
                    embedding_api_key=?, embedding_provider=?, embedding_model=?,
-                   updated_at=?
+                   search_api_key=?, updated_at=?
                WHERE user_id=?""",
             (req.provider, req.api_key, req.base_url, req.model_name,
              req.temperature, req.max_tokens, req.image_api_key or "",
              req.embedding_api_key or "", req.embedding_provider or "dashscope", req.embedding_model or "text-embedding-v3",
-             now, current_user["id"])
+             req.search_api_key or "", now, current_user["id"])
         )
     else:
         conn.execute(
             """INSERT INTO user_llm_config
                (user_id, provider, api_key, base_url, model_name, temperature, max_tokens, image_api_key,
-                embedding_api_key, embedding_provider, embedding_model, updated_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                embedding_api_key, embedding_provider, embedding_model, search_api_key, updated_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (current_user["id"], req.provider, req.api_key, req.base_url,
              req.model_name, req.temperature, req.max_tokens, req.image_api_key or "",
-             req.embedding_api_key or "", req.embedding_provider or "dashscope", req.embedding_model or "text-embedding-v3", now)
+             req.embedding_api_key or "", req.embedding_provider or "dashscope", req.embedding_model or "text-embedding-v3",
+             req.search_api_key or "", now)
         )
     conn.commit()
     conn.close()
@@ -134,6 +136,45 @@ async def save_embedding_config(req: EmbeddingConfigRequest, current_user: dict 
         "message": "嵌入 API Key 已保存",
         "embedding_provider": req.embedding_provider,
         "embedding_model": req.embedding_model,
+    })
+
+
+class SearchConfigRequest(BaseModel):
+    search_api_key: str = ""
+
+
+@router.put("/search", response_model=APIResponse)
+async def save_search_config(req: SearchConfigRequest, current_user: dict = Depends(get_current_user)):
+    """仅更新联网检索（Search）配置，不影响 LLM 对话配置"""
+    if not req.search_api_key.strip():
+        return APIResponse(code=400, message="请输入联网检索 API Key", data=None)
+
+    conn = get_db()
+    existing = conn.execute(
+        "SELECT id FROM user_llm_config WHERE user_id = ?",
+        (current_user["id"],)
+    ).fetchone()
+
+    now = datetime.now().isoformat()
+    if existing:
+        conn.execute(
+            """UPDATE user_llm_config
+               SET search_api_key=?, updated_at=?
+               WHERE user_id=?""",
+            (req.search_api_key.strip(), now, current_user["id"])
+        )
+    else:
+        conn.execute(
+            """INSERT INTO user_llm_config
+               (user_id, search_api_key, updated_at)
+               VALUES (?, ?, ?)""",
+            (current_user["id"], req.search_api_key.strip(), now)
+        )
+    conn.commit()
+    conn.close()
+
+    return APIResponse(data={
+        "message": "联网检索 API Key 已保存",
     })
 
 

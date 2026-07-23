@@ -6,7 +6,7 @@
           <el-icon><component :is="historyCollapsed ? 'Expand' : 'Fold'" /></el-icon>
         </button>
         <template v-if="!historyCollapsed">
-          <button class="new-chat-button" :disabled="sending" @click="newConversation">
+          <button class="new-chat-button" :disabled="sending || creatingConversation" @click="newConversation">
             <el-icon><CirclePlus /></el-icon><span>新建对话</span>
           </button>
           <div class="conversation-caption">最近对话</div>
@@ -62,27 +62,45 @@
                 </div>
                 <!-- RAG 知识库来源 -->
                 <div v-if="msg.ragSources && msg.ragSources.length" class="rag-sources-block">
-                  <div class="rag-sources-header">
+                  <div class="rag-sources-header" @click="msg.ragSourcesExpanded = !msg.ragSourcesExpanded">
+                    <el-icon :size="14"><component :is="msg.ragSourcesExpanded !== false ? 'ArrowDown' : 'ArrowRight'" /></el-icon>
                     <el-icon color="#67C23A"><Collection /></el-icon>
                     <span>参考知识库（{{ msg.ragSources.length }} 条来源）</span>
                   </div>
-                  <div class="rag-source-list">
-                    <div v-for="(s, i) in msg.ragSources" :key="i" class="rag-source-item">
-                      <span class="rag-source-icon">{{ s.source_type === 'pdf' ? '📖' : '📝' }}</span>
-                      <span class="rag-source-title">{{ s.title }}</span>
-                      <span v-if="s.section" class="rag-source-section">— {{ s.section }}</span>
-                      <span v-if="s.page" class="rag-source-page">(第{{ s.page }}页)</span>
+                  <div v-show="msg.ragSourcesExpanded !== false">
+                    <div class="rag-source-list">
+                      <div
+                        v-for="(s, i) in msg.ragSources"
+                        :key="i"
+                        :class="['rag-source-item', { active: i === msg._selectedSourceIndex }]"
+                        @click="msg._selectedSourceIndex = (msg._selectedSourceIndex === i ? -1 : i)"
+                      >
+                        <span class="rag-source-icon">{{ s.source_type === 'pdf' ? '📖' : '📝' }}</span>
+                        <span class="rag-source-title">{{ s.title }}</span>
+                        <span v-if="s.section" class="rag-source-section">— {{ s.section }}</span>
+                        <span v-if="s.page" class="rag-source-page">(第{{ s.page }}页)</span>
+                        <el-icon class="rag-source-expand-icon" :size="12"><component :is="i === msg._selectedSourceIndex ? 'ArrowUp' : 'ArrowDown'" /></el-icon>
+                      </div>
+                    </div>
+                    <!-- 展开的源内容 -->
+                    <div v-if="msg._selectedSourceIndex >= 0 && msg.ragSources[msg._selectedSourceIndex]" class="rag-source-content">
+                      <div class="rag-source-content-header">
+                        <el-icon><Collection /></el-icon>
+                        <span>{{ msg.ragSources[msg._selectedSourceIndex].title }}</span>
+                      </div>
+                      <div class="rag-source-content-body" v-html="renderMarkdown(msg.ragSources[msg._selectedSourceIndex].content || '内容加载中…')"></div>
                     </div>
                   </div>
                 </div>
                 <!-- 联网搜索结果 -->
                 <div v-if="msg.searchResults && msg.searchResults.length" class="search-results-block">
-                  <div class="search-header">
+                  <div class="search-header" @click="msg.searchResultsExpanded = !msg.searchResultsExpanded">
+                    <el-icon :size="14"><component :is="msg.searchResultsExpanded !== false ? 'ArrowDown' : 'ArrowRight'" /></el-icon>
                     <el-icon color="#409EFF"><Search /></el-icon>
                     <span v-if="msg.searchQuery">搜索「{{ msg.searchQuery }}」</span>
                     <span v-else>搜索到 {{ msg.searchResults.length }} 条相关结果</span>
                   </div>
-                  <div class="search-result-list">
+                  <div v-show="msg.searchResultsExpanded !== false" class="search-result-list">
                     <a
                       v-for="(r, i) in msg.searchResults"
                       :key="i"
@@ -98,6 +116,14 @@
                 </div>
                 <!-- 正式回答 -->
                 <div class="msg-content" v-html="renderMarkdown(msg.answer || msg.content)"></div>
+                <!-- 复制消息按钮 -->
+                <button
+                  class="copy-msg-btn"
+                  :title="msg.role === 'user' ? '复制消息' : '复制回答'"
+                  @click="copyMessage(msg)"
+                >
+                  <el-icon :size="14"><DocumentCopy /></el-icon>
+                </button>
                 <div v-if="msg.role === 'assistant' && (msg.answer || msg.content) && currentQaId && idx === messages.length - 1" class="feedback-btns">
                   <el-button size="small" text :type="feedbackGiven ? 'primary' : ''" @click="giveFeedback(1)" :disabled="feedbackGiven">
                     <el-icon><Check /></el-icon> 有用
@@ -155,7 +181,7 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { askQuestionStream, saveQA, uploadFile, submitFeedback, startConversation, getCurrentConversation, getConversations, getConversation, deleteConversation } from '../api/qa'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { marked } from 'marked'
 import { recordStudyVisit } from '../api/learning'
 import { copyToClipboard } from '../utils/clipboard'
@@ -179,6 +205,7 @@ const uploadedFile = ref(null)
 const fileText = ref('')
 const fileBase64 = ref(null)
 const fileType = ref('')
+const creatingConversation = ref(false)
 const uploading = ref(false)
 const currentQaId = ref(null)
 const feedbackGiven = ref(false)
@@ -202,12 +229,36 @@ onMounted(async () => {
   try {
     const conversation = await getCurrentConversation()
     conversationId.value = conversation?.id || null
-    messages.value = Array.isArray(conversation?.messages) ? conversation.messages : []
-    conversations.value = await getConversations() || []
+    messages.value = _restoreMessages(Array.isArray(conversation?.messages) ? conversation.messages : [])
+    conversations.value = sortConversations(await getConversations())
+
+    // 恢复流式备份：如果上次流式响应中断，恢复已收到的网络搜索/知识库/思考过程
+    const streamBackup = restoreStreamBackup()
+    if (streamBackup && streamBackup.conversationId === conversationId.value) {
+      const lastMsg = messages.value.length > 0 ? messages.value[messages.value.length - 1] : null
+      // 如果最后一条助手消息内容为空（content 和 answer 都为空），用备份补充
+      if (lastMsg && lastMsg.role === 'assistant' && (!lastMsg.content || lastMsg.content === '') && (!lastMsg.answer || lastMsg.answer === '')) {
+        const backupMsg = streamBackup.message
+        if (backupMsg.thinking || backupMsg.answer || backupMsg.ragSources || backupMsg.searchResults) {
+          messages.value[messages.value.length - 1] = {
+            role: 'assistant',
+            content: backupMsg.content || '',
+            thinking: backupMsg.thinking || undefined,
+            answer: backupMsg.answer || undefined,
+            thinkingExpanded: backupMsg.thinkingExpanded !== false,
+            learningContext: backupMsg.learningContext || undefined,
+            ragSources: backupMsg.ragSources || undefined,
+            ragUnavailable: backupMsg.ragUnavailable || undefined,
+            searchResults: backupMsg.searchResults || undefined,
+            searchQuery: backupMsg.searchQuery || undefined
+          }
+        }
+      }
+    }
 
     if (messages.value.length > 0) {
       await nextTick()
-      if (chatBox.value) chatBox.value.scrollTop = chatBox.value.scrollHeight
+      scrollToBottom(true)
     }
   } catch(e) {}
 })
@@ -304,17 +355,52 @@ function removeFile() {
 }
 
 async function newConversation() {
-  messages.value = []
-  currentQaId.value = null
-  feedbackGiven.value = false
-  removeFile()
-  try {
-    const conversation = await startConversation()
-    conversationId.value = conversation?.id || null
-    conversations.value = await getConversations() || []
-  } catch (_) {
-    conversationId.value = null
+  // 防止并发重复创建（race condition）
+  if (creatingConversation.value) return
+  // 已在空对话中，不重复新建
+  if (messages.value.length === 0) {
+    ElMessage.info('您已在最新的对话中')
+    return
   }
+  creatingConversation.value = true
+  try {
+    // 有消息时确认后再新建
+    try {
+      const dialogMsg = sending.value
+        ? '当前AI正在生成回答中，新建对话将中断当前回答。确定要新建对话吗？'
+        : '确定要新建对话吗？当前对话内容将保留在历史记录中。'
+      await ElMessageBox.confirm(
+        dialogMsg,
+        '新建对话',
+        { type: 'warning', confirmButtonText: '新建', cancelButtonText: '取消' }
+      )
+    } catch (_) {
+      return  // 用户取消
+    }
+    messages.value = []
+    currentQaId.value = null
+    feedbackGiven.value = false
+    removeFile()
+    try {
+      const conversation = await startConversation()
+      conversationId.value = conversation?.id || null
+      conversations.value = sortConversations(await getConversations())
+    } catch (_) {
+      conversationId.value = null
+    }
+  } finally {
+    creatingConversation.value = false
+  }
+}
+
+function sortConversations(list) {
+  if (!Array.isArray(list)) return []
+  return list.sort((a, b) => {
+    const aTime = a.last_active_at || a.created_at || ''
+    const bTime = b.last_active_at || b.created_at || ''
+    if (aTime !== bTime) return bTime.localeCompare(aTime)
+    return (b.id || 0) - (a.id || 0)
+  })
 }
 
 function toggleHistory() {
@@ -327,7 +413,7 @@ async function openConversation(id) {
   try {
     const conversation = await getConversation(id)
     conversationId.value = conversation?.id || id
-    messages.value = Array.isArray(conversation?.messages) ? conversation.messages : []
+    messages.value = _restoreMessages(Array.isArray(conversation?.messages) ? conversation.messages : [])
     currentQaId.value = null
     feedbackGiven.value = false
     await nextTick()
@@ -339,12 +425,19 @@ async function openConversation(id) {
 
 async function removeConversation(id) {
   try {
+    await ElMessageBox.confirm(
+      '确定要删除这个对话吗？删除后不可恢复。',
+      '删除对话',
+      { type: 'warning', confirmButtonText: '删除', cancelButtonText: '取消' }
+    )
     await deleteConversation(id)
     conversations.value = conversations.value.filter(item => item.id !== id)
     if (conversationId.value === id) await newConversation()
     ElMessage.success('会话已删除')
-  } catch (_) {
-    ElMessage.error('会话删除失败')
+  } catch (err) {
+    if (err !== 'cancel' && err?.action !== 'cancel') {
+      ElMessage.error('会话删除失败')
+    }
   }
 }
 
@@ -382,12 +475,19 @@ async function sendMessage() {
   messages.value.push({ role: 'assistant', content: '' })
   const assistantIdx = messages.value.length - 1
 
-  const scrollToBottom = () => {
+  const scrollToBottom = (force = false) => {
     nextTick(() => {
-      if (chatBox.value) chatBox.value.scrollTop = chatBox.value.scrollHeight
+      if (!chatBox.value) return
+      // 仅当用户已在底部附近（100px内）或强制滚动时才自动滚动
+      // 避免用户在流式输出期间向上翻阅时被反复拽回底部
+      const el = chatBox.value
+      const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight
+      if (force || distanceFromBottom < 100) {
+        el.scrollTop = el.scrollHeight
+      }
     })
   }
-  scrollToBottom()
+  scrollToBottom(true)
 
   const file_text_sent = hasFile ? fileText.value : null
   const file_base64_sent = hasFile ? fileBase64.value : null
@@ -395,12 +495,15 @@ async function sendMessage() {
   // 构建对话历史（不包含当前用户消息和空的助手占位）
   const conversationHistory = messages.value.slice(0, -2).map(m => ({
     role: m.role,
-    content: m.content
+    content: m.content || m.answer || ''  // restored messages use answer instead of content
   }))
 
   searchResultsData.value = null
   searchQuery.value = ''
   ragSourcesData.value = null
+
+  // 清除可能残留的流式备份
+  clearStreamBackup()
 
   abortStream.value = askQuestionStream(
     {
@@ -424,6 +527,7 @@ async function sendMessage() {
             learningContext: context
           }
         }
+        saveStreamBackup(assistantIdx)
       },
       onRagSources(sources) {
         ragSourcesData.value = sources
@@ -432,9 +536,12 @@ async function sendMessage() {
           messages.value[assistantIdx] = {
             ...messages.value[assistantIdx],
             ragSources: sources,
-            ragUnavailable: null
+            ragUnavailable: null,
+            ragSourcesExpanded: true,
+            _selectedSourceIndex: -1
           }
         }
+        saveStreamBackup(assistantIdx)
       },
       onRagUnavailable(message) {
         ragUnavailableMsg.value = message
@@ -444,6 +551,7 @@ async function sendMessage() {
             ragUnavailable: message
           }
         }
+        saveStreamBackup(assistantIdx)
       },
       onSearchResults(results, sq) {
         searchResultsData.value = results
@@ -452,9 +560,11 @@ async function sendMessage() {
           messages.value[assistantIdx] = {
             ...messages.value[assistantIdx],
             searchResults: results,
-            searchQuery: sq
+            searchQuery: sq,
+            searchResultsExpanded: true
           }
         }
+        saveStreamBackup(assistantIdx)
       },
       onChunk(chunkText, fullAnswer) {
         const msg = _buildAssistantMsg(fullAnswer)
@@ -464,12 +574,17 @@ async function sendMessage() {
         }
         if (ragSourcesData.value) {
           msg.ragSources = ragSourcesData.value
+          msg.ragSourcesExpanded = true
+          msg._selectedSourceIndex = -1
         }
         if (searchResultsData.value) {
           msg.searchResults = searchResultsData.value
           msg.searchQuery = searchQuery.value
+          msg.searchResultsExpanded = true
         }
         messages.value[assistantIdx] = msg
+        // 节流保存流式进度（每 500ms 最多一次）
+        throttleStreamBackup(assistantIdx)
         scrollToBottom()
       },
       onDone(fullAnswer) {
@@ -480,15 +595,19 @@ async function sendMessage() {
         }
         if (ragSourcesData.value) {
           msg.ragSources = ragSourcesData.value
+          msg.ragSourcesExpanded = false  // 流式结束后默认折叠
+          msg._selectedSourceIndex = -1
         }
         if (searchResultsData.value) {
           msg.searchResults = searchResultsData.value
           msg.searchQuery = searchQuery.value
+          msg.searchResultsExpanded = false  // 流式结束后默认折叠
         }
         messages.value[assistantIdx] = msg
         sending.value = false
         abortStream.value = null
-        scrollToBottom()
+        clearStreamBackup()
+        scrollToBottom(true)
         if (hasFile) removeFile()
         feedbackGiven.value = false
         saveQA({
@@ -496,11 +615,18 @@ async function sendMessage() {
           answer: fullAnswer,
           question_type: questionType.value,
           explanation_level: explanationLevel.value,
-          conversation_id: conversationId.value
+          conversation_id: conversationId.value,
+          rag_sources: ragSourcesData.value,
+          search_results: searchResultsData.value,
+          search_query: searchQuery.value
         }).then((result) => {
           if (result && result.id) currentQaId.value = result.id
-          getConversations().then(res => { conversations.value = res || [] }).catch(() => {})
-        }).catch(() => {})
+          // 后端可能在 save 时创建了新会话，同步回前端
+          if (result && result.conversation_id) conversationId.value = result.conversation_id
+          getConversations().then(res => { conversations.value = sortConversations(res) }).catch(() => {})
+        }).catch((err) => {
+          console.error('[QA] 保存问答记录失败:', err)
+        })
       },
       onError(err) {
         messages.value[assistantIdx] = { role: 'assistant', content: `❌ **出错了**: ${err.message}` }
@@ -547,9 +673,122 @@ function stopStreaming() {
   }
 }
 
+async function copyMessage(msg) {
+  // 提取纯文本：优先用 answer/content，对于用户消息直接用 content
+  const text = msg.answer || msg.content || ''
+  if (!text.trim()) {
+    ElMessage.warning('没有可复制的内容')
+    return
+  }
+  // 去除 markdown 格式标记，复制纯文本
+  const plainText = text
+    .replace(/[*#~`>|]/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+  const ok = await copyToClipboard(plainText)
+  ElMessage[ok ? 'success' : 'warning'](ok ? '已复制到剪贴板' : '复制失败，请手动复制')
+}
+
+// ── 流式进度备份（sessionStorage）─────────────────────────────
+// 目的：LLM 流式响应过程中若断连/卡住，用户刷新页面后可恢复已收到的“网络搜索/知识库/思考过程”
+const STREAM_BACKUP_KEY = 'qa_stream_backup'
+let _lastStreamBackup = 0
+
+function saveStreamBackup(assistantIdx) {
+  try {
+    const msg = messages.value[assistantIdx]
+    if (!msg) return
+    const backup = {
+      conversationId: conversationId.value,
+      message: {
+        role: msg.role,
+        content: msg.content || '',
+        thinking: msg.thinking || '',
+        answer: msg.answer || '',
+        thinkingExpanded: msg.thinkingExpanded,
+        learningContext: msg.learningContext || null,
+        ragSources: msg.ragSources || null,
+        ragSourcesExpanded: msg.ragSourcesExpanded,
+        ragUnavailable: msg.ragUnavailable || null,
+        searchResults: msg.searchResults || null,
+        searchResultsExpanded: msg.searchResultsExpanded,
+        searchQuery: msg.searchQuery || ''
+      },
+      timestamp: Date.now()
+    }
+    sessionStorage.setItem(STREAM_BACKUP_KEY, JSON.stringify(backup))
+  } catch (_) { /* sessionStorage 不可用时静默忽略 */ }
+}
+
+function throttleStreamBackup(assistantIdx) {
+  const now = Date.now()
+  if (now - _lastStreamBackup < 500) return
+  _lastStreamBackup = now
+  saveStreamBackup(assistantIdx)
+}
+
+function clearStreamBackup() {
+  try { sessionStorage.removeItem(STREAM_BACKUP_KEY) } catch (_) {}
+}
+
+function restoreStreamBackup() {
+  try {
+    const raw = sessionStorage.getItem(STREAM_BACKUP_KEY)
+    if (!raw) return null
+    const backup = JSON.parse(raw)
+    // 只恢复 5 分钟以内的备份（过期清理）
+    if (Date.now() - backup.timestamp > 5 * 60 * 1000) {
+      clearStreamBackup()
+      return null
+    }
+    return backup
+  } catch (_) { return null }
+}
+
 function quickAsk(q) {
   inputText.value = q
   sendMessage()
+}
+
+// 恢复从后端加载的消息：解析【思考过程】...【回答】...，恢复 metadata
+function _restoreMessages(rawMessages) {
+  if (!Array.isArray(rawMessages)) return []
+  return rawMessages.map(m => {
+    if (m.role !== 'assistant') return m
+    const restored = { ...m }
+    // 解析深度思考标记：【思考过程】...【回答】...
+    const content = m.content || ''
+    const thinkMatch = content.match(/【思考过程】\s*([\s\S]*?)\s*【回答】\s*([\s\S]*)/)
+    if (thinkMatch) {
+      restored.thinking = thinkMatch[1].trim()
+      restored.answer = thinkMatch[2].trim()
+      restored.thinkingExpanded = false  // 加载后默认折叠
+      delete restored.content  // 移除原始 content，用 answer 替代
+    } else {
+      // 处理仅有【思考过程】没有【回答】的情况（模型可能未遵循格式）
+      const partialThink = content.match(/【思考过程】\s*([\s\S]*)/)
+      if (partialThink && partialThink[1].trim()) {
+        restored.thinking = partialThink[1].trim()
+        restored.answer = ''
+        restored.thinkingExpanded = false
+        delete restored.content
+      }
+    }
+    // 恢复 RAG 来源（现在直接从后端 metadata 返回）
+    if (m.rag_sources && Array.isArray(m.rag_sources) && m.rag_sources.length) {
+      restored.ragSources = m.rag_sources
+      restored.ragSourcesExpanded = false  // 加载后默认折叠
+      restored._selectedSourceIndex = -1
+    }
+    // 恢复联网搜索结果
+    if (m.search_results && Array.isArray(m.search_results) && m.search_results.length) {
+      restored.searchResults = m.search_results
+      restored.searchQuery = m.search_query || ''
+      restored.searchResultsExpanded = false  // 加载后默认折叠
+    }
+    return restored
+  })
 }
 
 function openContextLab(context) {
@@ -591,7 +830,7 @@ function openContextLab(context) {
 .message.user .msg-body { flex: 0 1 auto; }
 .message.assistant .msg-content { background: #e6f7ff; border-radius: 0 12px 12px 12px; }
 .message.user .msg-content { background: #f0f0f0; border-radius: 12px 0 12px 12px; width: fit-content; }
-.msg-content { padding: 12px 16px; max-width: 75%; line-height: 1.7; font-size: 14px; word-break: break-word; }
+.msg-content { padding: 12px 16px; max-width: 75%; line-height: 1.7; font-size: 14px; word-break: break-word; -webkit-user-drag: none; user-select: text; }
 .msg-content :deep(p) { margin: 4px 0; }
 .msg-content :deep(pre) { background: #282c34; color: #abb2bf; padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
 .msg-content :deep(code) { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
@@ -659,6 +898,32 @@ function openContextLab(context) {
 
 .feedback-btns { margin-top: 4px; padding-left: 2px; }
 .feedback-btns .el-button { font-size: 12px; padding: 2px 8px; }
+
+/* 复制消息按钮 */
+.copy-msg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-top: 4px;
+  border: 1px solid #e0e4ea;
+  border-radius: 6px;
+  background: #fff;
+  color: #8b95a8;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.message:hover .copy-msg-btn,
+.copy-msg-btn:hover { opacity: 1; }
+.copy-msg-btn:hover {
+  color: #4657d8;
+  border-color: #aab5ed;
+  background: #f6f7ff;
+}
+.message.user .copy-msg-btn { align-self: flex-end; }
 
 /* 隐藏文件输入框（兼容所有浏览器的安全策略） */
 .hidden-file-input {
@@ -757,22 +1022,44 @@ function openContextLab(context) {
   font-weight: 500;
   color: #67C23A;
   background: #e8f8ef;
+  cursor: pointer;
+  user-select: none;
 }
-.rag-source-list { padding: 4px 8px 8px; max-height: 200px; overflow-y: auto; }
+.rag-sources-header:hover { background: #d0f0d8; }
+.rag-source-list { padding: 4px 8px 8px; max-height: 240px; overflow-y: auto; }
 .rag-source-item {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 4px;
   padding: 6px 10px;
   margin: 2px 0;
   border-radius: 4px;
   font-size: 12px;
   color: #606266;
+  cursor: pointer;
+  transition: background 0.15s;
 }
+.rag-source-item:hover { background: #dcedc8; }
+.rag-source-item.active { background: #c8e6c9; }
 .rag-source-icon { flex-shrink: 0; }
 .rag-source-title { font-weight: 500; color: #2e7d32; }
 .rag-source-section { color: #909399; }
 .rag-source-page { color: #b0b3bb; font-size: 11px; }
+.rag-source-expand-icon { margin-left: auto; flex-shrink: 0; color: #8b95a8; }
+.rag-source-content {
+  border-top: 1px solid #b7e4c7;
+  background: #fff;
+}
+.rag-source-content-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  font-size: 12px; font-weight: 500; color: #2e7d32;
+  background: #f0fdf4; border-bottom: 1px solid #dcedc8;
+}
+.rag-source-content-body {
+  padding: 10px 14px; max-height: 260px; overflow-y: auto;
+  font-size: 12px; color: #606266; line-height: 1.7;
+}
 /* 联网搜索结果 */
 .search-results-block {
   margin-bottom: 10px;
@@ -790,7 +1077,10 @@ function openContextLab(context) {
   font-weight: 500;
   color: #409EFF;
   background: #e8f3ff;
+  cursor: pointer;
+  user-select: none;
 }
+.search-header:hover { background: #d6eaff; }
 .search-result-list { padding: 4px 8px 8px; max-height: 300px; overflow-y: auto; }
 .search-result-item {
   display: block;

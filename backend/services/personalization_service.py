@@ -126,13 +126,25 @@ def get_conversation_history(user_id: int, conversation_id: Optional[int], limit
         conn.close()
         return []
     rows = conn.execute(
-        """SELECT role, content FROM conversation_messages
+        """SELECT role, content, metadata FROM conversation_messages
            WHERE session_id = ? AND user_id = ?
            ORDER BY id DESC LIMIT ?""",
         (conversation_id, user_id, max(1, min(limit, 40))),
     ).fetchall()
     conn.close()
-    return [dict(row) for row in reversed(rows)]
+    messages = []
+    for row in reversed(rows):
+        d = dict(row)
+        # 解析 metadata JSON 并展开到消息对象中
+        meta_raw = d.pop("metadata", "{}")
+        try:
+            meta = json.loads(meta_raw) if isinstance(meta_raw, str) else (meta_raw or {})
+        except Exception:
+            meta = {}
+        if meta:
+            d.update(meta)
+        messages.append(d)
+    return messages
 
 
 def _memory_embedding_config(user_id: int) -> Optional[dict]:
@@ -267,6 +279,9 @@ def record_conversation_turn(
     question: str,
     answer: str,
     knowledge_tags: list[str],
+    rag_sources: list = None,
+    search_results: list = None,
+    search_query: str = "",
 ) -> int:
     conn = get_db()
     session = _owned_conversation(conn, user_id, conversation_id)
@@ -277,12 +292,20 @@ def record_conversation_turn(
         conn = get_db()
 
     tags_json = json.dumps(knowledge_tags or [], ensure_ascii=False)
+    # 构建助手消息的 metadata JSON（存储 RAG 来源、联网搜索结果等）
+    assistant_metadata = {}
+    if rag_sources:
+        assistant_metadata["rag_sources"] = rag_sources
+    if search_results:
+        assistant_metadata["search_results"] = search_results
+        assistant_metadata["search_query"] = search_query or ""
+    metadata_json = json.dumps(assistant_metadata, ensure_ascii=False)
     conn.executemany(
-        """INSERT INTO conversation_messages (session_id, user_id, role, content, knowledge_tags)
-           VALUES (?, ?, ?, ?, ?)""",
+        """INSERT INTO conversation_messages (session_id, user_id, role, content, knowledge_tags, metadata)
+           VALUES (?, ?, ?, ?, ?, ?)""",
         [
-            (conversation_id, user_id, "user", str(question)[:12000], tags_json),
-            (conversation_id, user_id, "assistant", str(answer)[:30000], tags_json),
+            (conversation_id, user_id, "user", str(question)[:12000], tags_json, "{}"),
+            (conversation_id, user_id, "assistant", str(answer)[:30000], tags_json, metadata_json),
         ],
     )
     user_rows = conn.execute(

@@ -143,6 +143,34 @@
           </el-form>
         </el-card>
 
+        <el-card shadow="hover" style="margin-top:20px" class="search-quick-card">
+          <template #header>
+            <div class="page-title">
+              <el-icon><Search /></el-icon> 🔍 联网检索 API Key 快速配置
+              <el-tag v-if="searchApiConfigured" type="success" size="small" style="margin-left:12px">已配置</el-tag>
+            </div>
+          </template>
+          <p style="color:#909399;font-size:13px;margin-bottom:16px">
+            输入联网检索 API Key 以启用实时联网搜索功能（如 SerpAPI、Tavily 等）。<br/>
+            <span style="font-size:12px;color:#b0b3bb">
+              未配置时，QA 中的「联网检索」将默认关闭，需由用户自行申请 API Key 开通。
+            </span>
+          </p>
+          <el-form label-width="80px" style="max-width:500px">
+            <el-form-item label="API Key">
+              <el-input v-model="searchApiKey" type="password" show-password placeholder="请输入联网检索 API Key…" size="large" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="warning" size="large" @click="handleSaveSearchApi" :loading="searchApiSaving" style="width:100%">
+                🔍 保存并启用联网检索
+              </el-button>
+            </el-form-item>
+            <el-form-item v-if="searchApiConfigured">
+              <el-button type="danger" plain @click="handleResetSearchApi">重置检索配置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+
         <el-card shadow="hover" style="margin-top:20px">
           <template #header><div class="page-title"><el-icon><Cpu /></el-icon> AI大模型配置（高级）</div></template>
           <p style="color:#909399;font-size:13px;margin-bottom:16px">高级自定义配置，支持OpenAI及兼容接口（如Azure、本地模型等）。如仅需使用 DeepSeek，请在上方快速配置。</p>
@@ -246,7 +274,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getLLMConfig, saveLLMConfig, resetLLMConfig, saveEmbeddingConfig } from '../api/llm'
+import { getLLMConfig, saveLLMConfig, resetLLMConfig, saveEmbeddingConfig, saveSearchConfig } from '../api/llm'
 import { getMemoryOverview } from '../api/qa'
 
 const userStore = useUserStore()
@@ -259,6 +287,9 @@ const deepseekConfigured = ref(false)
 const embeddingSaving = ref(false)
 const embeddingApiKey = ref('')
 const embeddingConfigured = ref(false)
+const searchApiSaving = ref(false)
+const searchApiKey = ref('')
+const searchApiConfigured = ref(false)
 const memoryOverview = ref({})
 const memoryDialogVisible = ref(false)
 const selectedMemory = ref(null)
@@ -346,6 +377,7 @@ onMounted(async () => {
     // Check if DeepSeek / Embedding are already configured
     deepseekConfigured.value = data.is_configured && data.provider === 'deepseek'
     embeddingConfigured.value = !!(data.embedding_api_key)
+    searchApiConfigured.value = !!(data.search_api_key)
     if (data.is_configured) {
       llmForm.api_key = ''
       llmForm.image_api_key = ''
@@ -492,12 +524,51 @@ async function handleResetEmbedding() {
   }
 }
 
+async function handleSaveSearchApi() {
+  if (!searchApiKey.value.trim()) {
+    ElMessage.warning('请输入联网检索 API Key')
+    return
+  }
+  searchApiSaving.value = true
+  try {
+    await saveSearchConfig({ search_api_key: searchApiKey.value.trim() })
+    searchApiConfigured.value = true
+    searchApiKey.value = ''
+    ElMessage.success('联网检索 API Key 已保存并启用！')
+    const data = await getLLMConfig()
+    llmConfig.value = data
+  } catch(e) {
+    ElMessage.error('保存失败: ' + (e.message || '未知错误'))
+  } finally {
+    searchApiSaving.value = false
+  }
+}
+
+async function handleResetSearchApi() {
+  try {
+    await ElMessageBox.confirm('确认重置联网检索配置？重置后 QA 中将无法使用联网检索。', '提示', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    await saveSearchConfig({ search_api_key: '' })
+    searchApiConfigured.value = false
+    searchApiKey.value = ''
+    const data = await getLLMConfig()
+    llmConfig.value = data
+    ElMessage.success('联网检索配置已重置')
+  } catch(e) {
+    if (e !== 'cancel') ElMessage.error('重置失败')
+  }
+}
+
 async function handleResetLLM() {
   try {
     await ElMessageBox.confirm('确认重置为系统默认配置？', '提示', { confirmButtonText: '确认', cancelButtonText: '取消', type: 'warning' })
     await resetLLMConfig()
-    llmConfig.value = { provider: 'openai', api_key: '', image_api_key: '', embedding_api_key: '', base_url: 'https://api.openai.com', model_name: 'gpt-4o', temperature: 0.7, max_tokens: 4096, is_configured: false }
+    llmConfig.value = { provider: 'openai', api_key: '', image_api_key: '', embedding_api_key: '', search_api_key: '', base_url: 'https://api.openai.com', model_name: 'gpt-4o', temperature: 0.7, max_tokens: 4096, is_configured: false }
     deepseekConfigured.value = false
+    searchApiConfigured.value = false
     llmForm.provider = 'openai'
     llmForm.api_key = ''
     llmForm.image_api_key = ''
@@ -524,5 +595,8 @@ async function handleResetLLM() {
 }
 .embedding-quick-card {
   border-left: 4px solid #67C23A;
+}
+.search-quick-card {
+  border-left: 4px solid #E6A23C;
 }
 </style>

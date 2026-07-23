@@ -416,8 +416,14 @@ def _terminal_directory(root: Path, state: dict) -> Path:
 def _activation_env(root: Path, command: str) -> Path | None:
     normalized = command.strip().replace("\\", "/")
     patterns = [
+        # source .venv/bin/activate  /  . .venv/bin/activate  /  source .venv/Scripts/activate.bat
         r"^(?:source|\.)\s+['\"]?(.+?)/(?:bin/activate|Scripts/(?:activate(?:\.bat)?|Activate\.ps1))['\"]?$",
+        # Bare Windows: .venv\Scripts\activate.bat  /  & .venv/Scripts/Activate.ps1
         r"^(?:&\s*)?['\"]?(.+?)/Scripts/(?:activate(?:\.bat)?|Activate\.ps1)['\"]?$",
+        # Bare Unix path (without source/.) — user typed path directly: .venv/bin/activate
+        r"^['\"]?(.+?)/bin/activate['\"]?$",
+        # bash/sh wrapper: bash .venv/bin/activate  /  sh .venv/bin/activate
+        r"^(?:bash|sh|zsh)\s+['\"]?(.+?)/(?:bin/activate|Scripts/(?:activate(?:\.bat)?|Activate\.ps1))['\"]?$",
     ]
     for pattern in patterns:
         match = re.match(pattern, normalized, re.IGNORECASE)
@@ -433,9 +439,21 @@ def _activation_env(root: Path, command: str) -> Path | None:
     return None
 
 
+def _ensure_activate_executable(venv_root: Path) -> None:
+    """确保虚拟环境的激活脚本有执行权限（python -m venv 在 Linux 上创建的文件默认为 0644）"""
+    try:
+        for script in ["bin/activate", "Scripts/activate.bat", "Scripts/Activate.ps1"]:
+            sp = venv_root / script
+            if sp.is_file():
+                sp.chmod(sp.stat().st_mode | 0o111)  # 添加执行权限
+    except OSError:
+        pass  # 权限修改失败不阻塞主流程
+
+
 def _terminal_environment(root: Path, state: dict) -> tuple[dict, str]:
     env = os.environ.copy()
-    env.update({"HOME": str(root), "PYTHONIOENCODING": "utf-8", "LAB_MODE": "1"})
+    env.update({"HOME": str(root), "PYTHONIOENCODING": "utf-8", "LAB_MODE": "1",
+                "PIP_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple"})
     active = str(state.get("active_env", "") or "")
     if active:
         try:
@@ -507,6 +525,8 @@ def stream_terminal(user_id: int, exercise_id: str, command: str):
     if activated:
         active_env = activated.relative_to(root).as_posix()
         state["active_env"] = active_env
+        # 确保 activate 脚本有执行权限（python -m venv 创建的文件可能没有）
+        _ensure_activate_executable(activated)
         output, exit_code = f"已激活虚拟环境 {active_env}\n", 0
     elif command.lower() == "deactivate":
         state["active_env"] = ""
@@ -564,7 +584,9 @@ def stream_terminal(user_id: int, exercise_id: str, command: str):
                         assert proc is not None and proc.stdout is not None
                         try:
                             for line in iter(proc.stdout.readline, ""):
-                                chunks.put(line)
+                                # 将 \r 替换为 \n，防止 pip 进度条等原地刷新内容在终端中互相覆盖
+                                clean_line = line.replace('\r\n', '\n').replace('\r', '\n')
+                                chunks.put(clean_line)
                         finally:
                             chunks.put(None)
 
@@ -572,9 +594,9 @@ def stream_terminal(user_id: int, exercise_id: str, command: str):
                     output_parts = []
                     stream_finished = False
                     while not stream_finished:
-                        if time.monotonic() - started > 180:
+                        if time.monotonic() - started > 600:
                             proc.terminate()
-                            notice = "\n命令运行超过 180 秒，已停止。\n"
+                            notice = "\n命令运行超过 600 秒（10分钟），已停止。\n"
                             output_parts.append(notice)
                             yield {"type": "output", "data": notice}
                             exit_code = 124

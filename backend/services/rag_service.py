@@ -362,6 +362,10 @@ class RAGService:
             if source_key in seen:
                 continue
             seen.add(source_key)
+            # 截取 chunk 文本内容（前 500 字），供前端点击展开查看
+            chunk_text = chunk.get("text", "") or ""
+            if len(chunk_text) > 500:
+                chunk_text = chunk_text[:500] + "…"
             sources.append({
                 "title": meta.get("title", "未知来源"),
                 "source_path": meta.get("source_path", ""),
@@ -369,6 +373,7 @@ class RAGService:
                 "section": meta.get("section", ""),
                 "page": meta.get("page"),
                 "score": chunk.get("score", 0),
+                "content": chunk_text,
             })
         return sources
 
