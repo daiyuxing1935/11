@@ -70,7 +70,7 @@ async def create_diagnostic_test(req: DiagnosticTestRequest, current_user: dict 
 async def get_learning_resource(knowledge: str = "", current_user: dict = Depends(get_current_user)):
     """根据知识点获取本地学习资料（Markdown格式）"""
     try:
-        result = resource_service.get_local_material(knowledge)
+        result = resource_service.get_local_material(knowledge, user_id=current_user["id"])
         if result and result.get("found"):
             return APIResponse(data=result)
         # 如果没找到本地资料，返回fallback内容

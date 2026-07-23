@@ -351,22 +351,94 @@ def _load_materials_index() -> dict:
     return data.get("materials", {})
 
 
-def get_local_material(knowledge: str, allowed_hashes: set = None) -> dict:
+def _get_tutorial_from_db(knowledge: str, user_id: int = None) -> dict | None:
+    """从 tutorial_documents 表查询教程内容（用户私有优先，否则种子数据）"""
+    conn = None
+    try:
+        from database import get_db as _get_db
+        conn = _get_db()
+
+        # 1. 优先查用户私有版本
+        if user_id:
+            row = conn.execute(
+                "SELECT id, knowledge_tag, title, content, source_type, parent_id "
+                "FROM tutorial_documents "
+                "WHERE knowledge_tag = ? AND user_id = ? "
+                "ORDER BY updated_at DESC LIMIT 1",
+                (knowledge, user_id)
+            ).fetchone()
+            if row:
+                return {
+                    "found": True,
+                    "content": row["content"],
+                    "file_path": None,
+                    "matched_tag": knowledge,
+                    "format": "markdown",
+                    "source_type": row["source_type"],
+                    "tutorial_id": row["id"],
+                    "parent_id": row["parent_id"],
+                    "from_db": True,
+                }
+
+        # 2. 查种子数据
+        row = conn.execute(
+            "SELECT id, knowledge_tag, title, content, source_type, parent_id "
+            "FROM tutorial_documents "
+            "WHERE knowledge_tag = ? AND source_type = 'seed' AND user_id IS NULL "
+            "LIMIT 1",
+            (knowledge,)
+        ).fetchone()
+        if row:
+            return {
+                "found": True,
+                "content": row["content"],
+                "file_path": None,
+                "matched_tag": knowledge,
+                "format": "markdown",
+                "source_type": row["source_type"],
+                "tutorial_id": row["id"],
+                "parent_id": row["parent_id"],
+                "from_db": True,
+            }
+    except Exception:
+        pass
+    finally:
+        if conn:
+            conn.close()
+    return None
+
+
+def get_local_material(knowledge: str, allowed_hashes: set = None, user_id: int = None) -> dict:
     """根据知识点名称获取本地学习资料内容（Markdown格式）
 
     Args:
         knowledge: 知识点文本
         allowed_hashes: 允许显示的图片hash集合（用于控制每个资源最多5张图）
+        user_id: 当前用户ID（用于查询私有教程版本）
 
     Returns:
-        {"found": True/False,
-         "content": "markdown内容",
-         "file_path": "相对路径",
-         "matched_tag": "匹配到的标签名"}
+        {"found": True/False, "content": ..., "source_type": ..., "tutorial_id": ..., ...}
     """
     if not knowledge:
         return _fallback_material(knowledge)
 
+    # === 优先从数据库读取（种子数据 / 用户私有版本） ===
+    if user_id:
+        db_result = _get_tutorial_from_db(knowledge, user_id)
+    else:
+        db_result = _get_tutorial_from_db(knowledge)  # 仅查种子数据
+    if db_result:
+        # 注入图片和 mermaid 处理
+        content = db_result["content"]
+        content = _wrap_naked_mermaid(content)
+        content = _inject_cached_images(content, allowed_hashes=allowed_hashes)
+        extracted = extract_mermaid_blocks(content)
+        db_result["content"] = content
+        db_result["article_text"] = extracted["article_text"]
+        db_result["mermaid_code_list"] = extracted["mermaid_list"]
+        return db_result
+
+    # === Fallback: 从文件系统读取（旧逻辑保持不变） ===
     materials_index = _load_materials_index()
     if not materials_index:
         return _fallback_material(knowledge)
