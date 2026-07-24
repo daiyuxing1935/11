@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 
-DATA_DIR = Path(__file__).resolve().parent / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 CONFIG_PATH = DATA_DIR / "resource_image_config.json"
 IMAGES_DIR = DATA_DIR / "generated_images"
 PDF_SEED_PATH = DATA_DIR / "pdf_books_seed.json"

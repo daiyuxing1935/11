@@ -100,40 +100,85 @@ def _course(exercise_id: str) -> dict:
     integration_hint = ""
     if exercise_id == "1-1":
         integration_hint = " 把 build_chat_messages 的返回值传给 model.invoke()，让个性化系统指令真正进入模型上下文。"
+    elif exercise_id == "1-2":
+        integration_hint = " 在 app.py 中维护一个 messages 列表（初始含 system），每次用户输入追加 user → invoke → 追加 assistant，并用 append_turn_and_trim 控制长度。"
     elif exercise_id == "1-3":
         integration_hint = " 必须遍历 model.stream()，并在循环内使用 flush=True 逐片段输出；不能等所有片段结束后一次性打印。"
 
-    project_files = ["requirements.txt", ".env.example", "solution.py", "app.py"]
+    # ── 实验专属实现指引（补充步骤卡片中太简略的描述） ──
+    _IMPL_NOTES = {
+        "1-1": (
+            "接收 system_prompt 和 user_input 两个参数，先分别校验类型和非空（含 .strip() 检查），"
+            "再按 system → user 顺序返回独立的消息列表。每轮调用都必须创建新列表，不能缓存或原地修改。"
+        ),
+        "1-2": (
+            "接收 history、user_text、assistant_text、max_messages 四个参数。先深拷贝 history，"
+            "追加 user → assistant 消息对；保留开头的 system 消息（如果存在），从尾部截取最近 max_messages 条。"
+            "返回新列表，原 history 不变。max_messages 必须 ≥ 2。"
+        ),
+        "1-3": (
+            "遍历可迭代 chunks，识别字符串、None、消息字典 {content: ...}、带 content 属性的 AIMessageChunk 对象，"
+            "以及 content 为 [{type:'text', text:'...'}] 的内容块。忽略 None/空字符串/非 text 类型块，"
+            "无法识别时抛出 ValueError。返回拼接后的完整字符串。"
+        ),
+    }
+    impl_notes = _IMPL_NOTES.get(exercise_id, "")
+
+    packages_example = "、".join(track["packages"])
+    project_files = ["requirements.txt", ".env", "solution.py", "app.py"]
     stages = [
         {
             "id": "structure", "title": "搭好项目骨架", "icon": "FolderOpened",
-            "instruction": "在项目中创建 requirements.txt、.env.example、solution.py 和 app.py，文件名必须完全一致。",
+            "instruction": (
+                f"在项目中创建 {', '.join(project_files)}，文件名必须完全一致。"
+                f".env 存放 DEEPSEEK_API_KEY（不要提交到 Git）；requirements.txt 声明框架依赖；"
+                f"solution.py 实现核心函数；app.py 负责导入并运行完整对话流程。"
+            ),
             "command": "tree", "checks": ["必需文件存在", "文件名大小写一致"],
         },
         {
             "id": "environment", "title": "创建虚拟环境", "icon": "Cpu",
-            "instruction": "在终端执行 python -m venv .venv，让项目依赖与系统 Python 隔离。",
+            "instruction": (
+                "在终端执行 python -m venv .venv，让项目依赖与系统 Python 隔离。"
+                "创建后终端提示符会自动显示 (.venv)，后续 pip install 的包只会安装到这个隔离环境。"
+            ),
             "command": "python -m venv .venv", "checks": [".venv 已创建", "Python 版本可读取"],
         },
         {
             "id": "dependencies", "title": f"声明 {track['framework']} 依赖", "icon": "Box",
-            "instruction": "把本项目需要的框架包写入 requirements.txt，再从终端安装。不要把 API Key 写进该文件。",
+            "instruction": (
+                f"在 requirements.txt 中写入以下框架包（每行一个）：\n"
+                f"{packages_example}\n\n"
+                f"然后在终端执行 pip install -r requirements.txt 安装全部依赖。"
+                f"不要将 DEEPSEEK_API_KEY 或其他密钥写入 requirements.txt。"
+            ),
             "command": "pip install -r requirements.txt", "checks": [f"包含 {', '.join(track['packages'])}", "依赖已安装到当前虚拟环境"],
         },
         {
             "id": "implementation", "title": "完成核心模块", "icon": "EditPen",
-            "instruction": f"在 solution.py 中真正实现 {', '.join(targets)}，不能只保留函数定义或占位语句。{implementation_hint}",
+            "instruction": (
+                f"在 solution.py 中真正实现 {', '.join(targets)}，不能只保留函数定义或 pass/NotImplementedError。"
+                f"{' 建议顺序：' + implementation_hint if implementation_hint else ''}"
+                f"{chr(10) + chr(10) + impl_notes if impl_notes else ''}"
+            ),
             "command": "", "test_count": test_count,
             "checks": ["Python 语法正确", "目标函数已定义", f"{test_count} 个业务测试点通过"],
         },
         {
             "id": "integration", "title": "接入可运行应用", "icon": "Connection",
-            "instruction": f"在 app.py 中导入 solution，并接入 {track['framework']}。环境变量从 .env 读取，禁止把真实 Key 写进代码。{integration_hint}",
+            "instruction": (
+                f"在 app.py 中 import {', '.join(targets[:1]) if targets else 'solution'} from solution，"
+                f"并接入 {track['framework']}。环境变量通过 python-dotenv 的 load_dotenv() 从 .env 读取，"
+                f"禁止把真实 Key 硬编码在代码中。{integration_hint}"
+            ),
             "command": "python app.py", "checks": ["核心业务测试仍通过", "app.py 可解析", "框架调用方式正确", "没有疑似硬编码密钥"],
         },
         {
             "id": "acceptance", "title": "AI 工程验收", "icon": "CircleCheck",
-            "instruction": "AI 助教将检查项目结构、环境、依赖、代码契约和服务端私有业务场景；全部通过后再进入能力答辩。",
+            "instruction": (
+                "AI 助教将检查项目结构、环境、依赖、代码契约和服务端私有业务场景；"
+                "全部通过后再进入能力答辩。你可以多次重试，直到所有检查点通过。"
+            ),
             "command": "", "checks": ["前置阶段全部通过", "私有业务场景通过"],
         },
     ]
@@ -521,6 +566,15 @@ def stream_terminal(user_id: int, exercise_id: str, command: str):
         yield {"type": "done", **_terminal_result(command, state, 0, "__CLEAR__")}
         return
 
+    # ── lab-test 终端命令：在终端中运行实际判题测试 ──
+    if re.match(r"^(?:python(?:3(?:\.\d+)?)?\s+(?:-m\s+)?)?lab[-_]?test\b", command.strip(), re.IGNORECASE):
+        output = _handle_lab_test_command(root, exercise_id, state)
+        exit_code = 0 if "全部通过" in output else 1
+        output_already_streamed = True
+        yield {"type": "output", "data": output}
+        yield {"type": "done", **_terminal_result(command, state, exit_code, output)}
+        return
+
     activated = _activation_env(root, command)
     if activated:
         active_env = activated.relative_to(root).as_posix()
@@ -805,6 +859,137 @@ def _integration_contract_checks(exercise_id: str, tree: ast.AST) -> list[tuple[
     return []
 
 
+def _run_integration_runtime_test(root: Path, exercise_id: str, course: dict, add, user_id: int) -> None:
+    """使用用户配置的真实 API Key 实际运行 app.py，验证端到端集成行为。
+
+    与头歌/EduCoder 平台的关键区别：
+    - 头歌：用预置测试用例匹配输出字符串（黑盒）
+    - 本系统：实际调用用户配置的大模型 API，真正运行学生的 Agent 代码，
+      验证模型调用是否成功、输出是否正确提取
+
+    要求用户先在「个人中心 → AI大模型配置」中配置 API Key，
+    未配置时明确提示，不允许"糊弄式"通过。
+    """
+    # 仅对有框架接入的关卡执行运行时测试
+    if not course.get("framework_imports"):
+        return
+
+    app_path = root / "app.py"
+    if not app_path.is_file():
+        return
+
+    app_code = app_path.read_text(encoding="utf-8")
+    if len(app_code.strip()) < 30:
+        add("运行时集成测试", False, "app.py 内容过短，请完成代码后再测试")
+        return
+
+    # ── 读取用户的真实 API 配置 ──
+    try:
+        from database import get_db
+        conn = get_db()
+        row = conn.execute(
+            "SELECT * FROM user_llm_config WHERE user_id = ?", (user_id,)
+        ).fetchone()
+        conn.close()
+        user_config = dict(row) if row else None
+    except Exception:
+        user_config = None
+
+    if not user_config or not user_config.get("api_key"):
+        add(
+            "运行时集成测试", False,
+            "请先在「个人中心 → AI大模型配置」中配置您的 API Key、接口地址和模型名称，"
+            "否则无法进行真实运行验证。配置后重新点击检查。"
+        )
+        return
+
+    api_key = user_config["api_key"]
+    base_url = user_config.get("base_url", "https://api.deepseek.com")
+    model_name = user_config.get("model_name", "deepseek-chat")
+
+    # ── 准备运行环境 ──
+    env = os.environ.copy()
+    env.update({
+        "DEEPSEEK_API_KEY": api_key,
+        "LLM_BASE_URL": base_url,
+        "LLM_MODEL": model_name,
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUNBUFFERED": "1",
+        "LAB_MODE": "1",
+        "PIP_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple",
+    })
+
+    python_cmd = os.environ.get("PYTHON_PATH", sys.executable)
+    # 不使用工作区的 .venv Python（里面可能没有安装 langchain 等依赖）
+    # 集成测试直接使用系统 Python（Docker 镜像中已预装所有依赖）
+    has_venv = (root / ".venv" / "pyvenv.cfg").is_file()
+    if has_venv:
+        # 只把 .venv 加入 PATH，让 app.py 中可能的 subprocess 能找到它
+        # 但实际运行用系统 Python
+        executable_dir = root / (".venv/Scripts" if os.name == "nt" else ".venv/bin")
+        if executable_dir.is_dir():
+            env["PATH"] = str(executable_dir) + os.pathsep + env.get("PATH", "")
+
+    try:
+        proc = subprocess.run(
+            [python_cmd, "-X", "utf8", str(app_path)],
+            cwd=root, capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=30, env=env,
+        )
+        stdout = (proc.stdout or "").strip()
+        stderr = (proc.stderr or "").strip()
+        combined_output = (stdout + "\n" + stderr).strip()
+        exit_code = proc.returncode
+    except subprocess.TimeoutExpired:
+        add("运行时集成测试", False, "app.py 运行超时（>30秒），请检查是否有死循环或 API 调用未设置超时")
+        return
+
+    if exit_code != 0:
+        error_lower = combined_output.lower()
+        if "401" in error_lower or "unauthorized" in error_lower or "invalid api key" in error_lower:
+            detail = "API Key 无效或已过期，请检查「个人中心 → AI大模型配置」中的 Key 是否正确"
+        elif "modulenotfounderror" in error_lower or "no module named" in error_lower:
+            detail = "缺少依赖包，请在终端执行 pip install -r requirements.txt"
+        elif "importerror" in error_lower or "cannot import" in error_lower:
+            detail = "导入失败，请检查 solution.py 中的函数名与 app.py 中的 import 语句是否一致"
+        elif "connection" in error_lower or "timeout" in error_lower or "refused" in error_lower:
+            detail = f"网络连接失败，请检查 Base URL ({base_url}) 是否可访问，以及网络/代理设置"
+        elif "attributeerror" in error_lower:
+            detail = "对象属性访问错误，请检查 response.content 等属性是否正确使用"
+        else:
+            last_lines = combined_output.splitlines()[-3:]
+            detail = f"运行异常(exit={exit_code})：" + "；".join(line[:120] for line in last_lines)
+        add("运行时集成测试", False, detail)
+        return
+
+    # ── 运行成功 ──
+    output_len = len(combined_output)
+    if output_len < 20:
+        add("运行时集成测试", False, f"app.py 运行成功但输出仅 {output_len} 字符，请确保 print 了模型响应内容")
+    else:
+        detail = f"✓ 真实 API 调用成功（模型: {model_name}），app.py 输出 {output_len} 字符"
+        add("运行时集成测试", True, detail)
+
+
+def _handle_lab_test_command(root: Path, exercise_id: str, terminal_state: dict) -> str:
+    """处理 `python -m lab_test` / `lab-test` 终端命令。
+
+    在项目目录下运行实际判题测试并返回终端格式的结果。
+    """
+    solution = root / "solution.py"
+    if not solution.is_file():
+        return "错误: 当前目录下没有 solution.py，请先完成核心模块后再测试。\n"
+
+    try:
+        from services.lab_test_runner import run_tests, print_terminal_results
+    except ImportError:
+        return "错误: lab_test_runner 模块未加载，请通过UI检查阶段。\n"
+
+    code = solution.read_text(encoding="utf-8")
+    result = run_tests(exercise_id, code)
+    return print_terminal_results(result) + "\n"
+
+
 def check_stage(user_id: int, exercise_id: str, stage_id: str) -> dict:
     root = _root(user_id, exercise_id)
     course = _course(exercise_id)
@@ -888,6 +1073,9 @@ def check_stage(user_id: int, exercise_id: str, stage_id: str) -> dict:
             except SyntaxError as exc:
                 add("app.py 语法", False, f"第 {exc.lineno or '?'} 行：{exc.msg}")
             add("密钥安全", not _contains_secret(root), "未发现硬编码密钥" if not _contains_secret(root) else "疑似把真实密钥写进了代码，请改用环境变量")
+
+            # ── 实际运行集成测试（使用用户真实 API Key）──
+            _run_integration_runtime_test(root, exercise_id, course, add, user_id)
     elif stage_id == "acceptance":
         prior = [check_stage(user_id, exercise_id, item["id"]) for item in course["stages"][:-1]]
         for item in prior:
@@ -901,6 +1089,10 @@ def check_stage(user_id: int, exercise_id: str, stage_id: str) -> dict:
             )
         else:
             add("私有业务场景", False, "缺少 solution.py")
+
+        # 验收阶段也执行运行时集成测试（使用用户真实 API Key）
+        if solution.is_file() and (root / "app.py").is_file():
+            _run_integration_runtime_test(root, exercise_id, course, add, user_id)
 
     result = _stage_result(stage, checks)
     state = _read_state(root)

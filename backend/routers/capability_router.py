@@ -75,7 +75,7 @@ async def mark_code_passed(session_id: int, req: CodePassedRequest, current_user
 @router.post("/sessions/{session_id}/defense", response_model=APIResponse)
 async def submit_defense(session_id: int, req: DefenseRequest, current_user: dict = Depends(get_current_user)):
     try:
-        return APIResponse(data=capability_service.submit_defense(
+        return APIResponse(data=await capability_service.submit_defense(
             current_user["id"], session_id, req.answers, req.ai_usage
         ))
     except Exception as exc:

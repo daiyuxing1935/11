@@ -11,7 +11,7 @@ COPY . .
 
 # Fail the image build if resource configuration points at an SVG that was
 # not committed. This prevents a successful deploy with silent placeholders.
-RUN python validate_resource_images.py
+RUN python scripts/validate_resource_images.py
 
 # 创建数据目录
 RUN mkdir -p /app/data
