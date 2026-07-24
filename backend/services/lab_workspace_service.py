@@ -310,16 +310,33 @@ def get_workspace(user_id: int, exercise_id: str, reset: bool = False) -> dict:
 
 
 def get_progress_overview(user_id: int) -> dict:
-    """Return lightweight stage progress for course trees and document badges."""
+    """Return lightweight stage progress for course trees and document badges,
+    including scores from capability sessions."""
     user_root = WORKSPACE_ROOT / f"user-{int(user_id)}"
+    # ── 查询能力验证分数 ──
+    try:
+        from services.capability_service import get_exercise_scores
+        scores = get_exercise_scores(user_id)
+    except Exception:
+        scores = {}
     overview = {}
     for exercise_id in sorted(SPECS):
         root = user_root / _safe_part(exercise_id)
         state = _read_state(root) if root.is_dir() else {"completed_stages": []}
+        score_info = scores.get(exercise_id, {})
         overview[exercise_id] = {
             "completed_stages": state.get("completed_stages", []),
             "virtual_env": (root / ".venv" / "pyvenv.cfg").is_file(),
             "total_stages": len(_course(exercise_id)["stages"]),
+            "acceptance_passed": "acceptance" in state.get("completed_stages", []),
+            "score": score_info.get("score"),
+            "test_score": score_info.get("test_score"),
+            "defense_score": score_info.get("defense_score"),
+            "repair_score": score_info.get("repair_score"),
+            "verified": score_info.get("verified", False),
+            "skipped": score_info.get("skipped", False),
+            "status": score_info.get("status", ""),
+            "dimensions": score_info.get("dimensions", {}),
         }
     return overview
 

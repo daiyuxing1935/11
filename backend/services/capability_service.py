@@ -588,7 +588,9 @@ def _process_evidence(conn, session_id: int, started_at: str, ai_usage: str) -> 
     for row in rows:
         counts[row["event_type"]] = counts.get(row["event_type"], 0) + 1
     try:
-        elapsed_minutes = max(0, (datetime.now() - datetime.fromisoformat(started_at)).total_seconds() / 60)
+        if isinstance(started_at, str):
+            started_at = datetime.fromisoformat(started_at)
+        elapsed_minutes = max(0, (datetime.now() - started_at).total_seconds() / 60)
     except Exception:
         elapsed_minutes = 0
     score = 35
@@ -748,3 +750,189 @@ def submit_repair(user_id: int, session_id: int, code: str, explanation: str) ->
 
 def get_session(user_id: int, session_id: int) -> dict:
     return _session_dict(_owned_session(user_id, session_id))
+
+
+def skip_capability(user_id: int, session_id: int) -> dict:
+    """跳过能力验证，仅以测试分数完成关卡。"""
+    row = _owned_session(user_id, session_id)
+    if row["status"] in ("verified", "skipped"):
+        raise ValueError("该关卡已完成能力验证流程，不能重复跳过")
+
+    code_score = float(row["code_score"] or 0)
+    # 仅测试分：满分 60（不做能力验证的最高分）
+    test_only_score = round(code_score * 0.6)
+    total_score = test_only_score
+
+    report = {
+        "verified": False,
+        "skipped": True,
+        "verdict": "仅测试通过",
+        "summary": "你选择跳过能力验证，仅获得测试点分数。建议后续完成能力验证以获得更全面的评估。",
+        "dimensions": {
+            "代码正确性": code_score,
+            "原理理解": 0,
+            "故障修复与迁移": 0,
+            "过程证据完整度": 0,
+        },
+        "total_score": total_score,
+        "next_step": "可以随时重新进入本题完成能力验证，获得更高分数。",
+    }
+    now = datetime.now().isoformat()
+    conn = get_db()
+    conn.execute(
+        """UPDATE capability_sessions
+           SET status = 'skipped', defense_score = 0, repair_score = 0,
+               total_score = ?, verified = 0, report_json = ?, completed_at = ?
+           WHERE id = ? AND user_id = ?""",
+        (total_score, json.dumps(report, ensure_ascii=False), now, session_id, user_id),
+    )
+    conn.execute(
+        "INSERT INTO capability_events (session_id, user_id, event_type, payload_json) VALUES (?, ?, 'skipped', ?)",
+        (session_id, user_id, json.dumps({"total_score": total_score}, ensure_ascii=False)),
+    )
+    conn.commit()
+    updated = conn.execute("SELECT * FROM capability_sessions WHERE id = ?", (session_id,)).fetchone()
+    conn.close()
+    data = _session_dict(updated)
+    data["report"] = report
+    return data
+
+
+_REFERENCE_ANSWER_PROMPT = """你是一位编程教学专家。请根据学生的代码和答辩问题，撰写一份标准参考答案。
+
+**实验编号**: {exercise_id}
+**问题**: {question_prompt}
+**学生代码（关键片段）**:
+```python
+{code_snippet}
+```
+
+请撰写一份标准、准确的参考答案，涵盖该问题考察的所有要点。答案应该：
+1. 使用中文
+2. 结合代码中的具体函数/变量名，不要泛泛而谈
+3. 控制在 200-400 字
+4. 结构清晰，分点说明"""
+
+
+async def _generate_reference_answer(
+    user_id: int, question: dict, code: str, exercise_id: str,
+) -> str:
+    """为答辩问题生成标准参考答案。AI 不可用时返回降级提示。"""
+    region, _, _ = _user_region(code)
+    code_snippet = region[:2000] if region else code[:2000]
+
+    prompt = _REFERENCE_ANSWER_PROMPT.format(
+        exercise_id=exercise_id,
+        question_prompt=question.get("prompt", ""),
+        code_snippet=code_snippet,
+    )
+    try:
+        answer = await call_llm(
+            user_id,
+            [{"role": "user", "content": prompt}],
+            temperature=0.3,
+            max_tokens=800,
+            request_timeout=30.0,
+        )
+        return answer.strip()
+    except Exception:
+        return "⚠️ 标准答案生成需要配置 API Key（个人中心 → AI大模型配置）。请对比你的回答与评分反馈来查漏补缺。"
+
+
+async def get_session_review(user_id: int, session_id: int) -> dict:
+    """获取能力验证回顾数据，包含用户回答、AI 评价和标准参考答案。
+
+    用户可以对比自己的回答与标准答案，找出差距，巩固学习。
+    """
+    row = _owned_session(user_id, session_id)
+    data = _session_dict(row)
+
+    questions = data.get("defense_questions", [])
+    answers = data.get("defense_answers", [])
+    code = data.get("original_code", "")
+    exercise_id = str(data.get("exercise_id", ""))
+
+    # 构建每道题的回顾数据
+    review_items = []
+    for question in questions:
+        q_id = question.get("id", "")
+        # 找到对应的用户回答和评价
+        user_answer_data = next(
+            (a for a in answers if a.get("question_id") == q_id), {}
+        )
+        review_items.append({
+            "question_id": q_id,
+            "prompt": question.get("prompt", ""),
+            "focus": question.get("focus", ""),
+            "user_answer": user_answer_data.get("answer", ""),
+            "user_score": user_answer_data.get("score", 0),
+            "hit_points": user_answer_data.get("hit_points", []),
+            "missing_points": user_answer_data.get("missing_points", []),
+            "feedback": user_answer_data.get("feedback", ""),
+            "graded_by": user_answer_data.get("graded_by", "keyword"),
+        })
+
+    # 异步生成标准参考答案（并行）
+    import asyncio
+    reference_answers = await asyncio.gather(*(
+        _generate_reference_answer(user_id, q, code, exercise_id)
+        for q in questions
+    ))
+    for i, ref in enumerate(reference_answers):
+        if i < len(review_items):
+            review_items[i]["reference_answer"] = ref
+
+    return {
+        "session_id": session_id,
+        "exercise_id": exercise_id,
+        "exercise_title": data.get("exercise_title", ""),
+        "status": data.get("status", ""),
+        "total_score": data.get("total_score", 0),
+        "code_score": data.get("code_score", 0),
+        "defense_score": data.get("defense_score", 0),
+        "repair_score": data.get("repair_score", 0),
+        "report": data.get("report", {}),
+        "review_items": review_items,
+    }
+
+
+def get_exercise_scores(user_id: int) -> dict[str, dict]:
+    """获取用户所有已完成的实验关卡分数概览。
+
+    返回 {exercise_id: {score, test_score, capability_score, verified, skipped, status}, ...}
+    """
+    conn = get_db()
+    # 每个 exercise 取最新的 capability session
+    rows = conn.execute(
+        """SELECT cs.exercise_id, cs.status, cs.code_score, cs.defense_score,
+                  cs.repair_score, cs.total_score, cs.verified, cs.report_json
+           FROM capability_sessions cs
+           WHERE cs.user_id = ? AND cs.id IN (
+               SELECT MAX(id) FROM capability_sessions
+               WHERE user_id = ? AND status IN ('verified', 'skipped', 'repair_pending', 'defense_pending')
+               GROUP BY exercise_id
+           )""",
+        (user_id, user_id),
+    ).fetchall()
+    conn.close()
+
+    scores = {}
+    for row in rows:
+        eid = row["exercise_id"]
+        status = row["status"]
+        verified = bool(row["verified"])
+        skipped = status == "skipped"
+        report = _loads(row["report_json"], {})
+
+        scores[eid] = {
+            "score": round(row["total_score"] or 0),
+            "test_score": round(row["code_score"] or 0),
+            "defense_score": round(row["defense_score"] or 0),
+            "repair_score": round(row["repair_score"] or 0),
+            "verified": verified,
+            "skipped": skipped,
+            "status": status,
+            "summary": report.get("summary", ""),
+            "dimensions": report.get("dimensions", {}),
+        }
+    return scores

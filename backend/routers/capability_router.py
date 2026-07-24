@@ -91,3 +91,34 @@ async def submit_repair(session_id: int, req: RepairRequest, current_user: dict 
     except Exception as exc:
         _bad_request(exc)
 
+
+@router.post("/sessions/{session_id}/skip", response_model=APIResponse)
+async def skip_capability(session_id: int, current_user: dict = Depends(get_current_user)):
+    """跳过能力验证，仅以测试分数完成关卡。"""
+    try:
+        return APIResponse(data=capability_service.skip_capability(
+            current_user["id"], session_id
+        ))
+    except Exception as exc:
+        _bad_request(exc)
+
+
+@router.get("/sessions/{session_id}/review", response_model=APIResponse)
+async def review_session(session_id: int, current_user: dict = Depends(get_current_user)):
+    """获取能力验证回顾数据，包含用户回答与标准答案对比。"""
+    try:
+        return APIResponse(data=await capability_service.get_session_review(
+            current_user["id"], session_id
+        ))
+    except Exception as exc:
+        _bad_request(exc)
+
+
+@router.get("/scores", response_model=APIResponse)
+async def get_scores(current_user: dict = Depends(get_current_user)):
+    """获取所有已完成的实验关卡分数。"""
+    try:
+        return APIResponse(data=capability_service.get_exercise_scores(current_user["id"]))
+    except Exception as exc:
+        _bad_request(exc)
+

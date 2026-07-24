@@ -30,7 +30,11 @@
               <div class="task-label">关卡 {{ task.id }}</div>
               <div class="task-name">{{ task.title }}</div>
             </div>
-            <span v-if="isCompleted(task.id)" class="task-dot done">✓</span>
+            <!-- 分数标识 -->
+            <span v-if="getScoreBadge(task.id)" :class="['task-score-badge', getScoreBadge(task.id).cls]">
+              {{ getScoreBadge(task.id).text }}
+            </span>
+            <span v-else-if="isCompleted(task.id)" class="task-dot done">✓</span>
             <span v-else class="task-dot pending">○</span>
           </div>
         </div>
@@ -43,26 +47,62 @@
           <h3>关卡 {{ selectedTask.id }}：{{ selectedTask.title }}</h3>
           <p class="project-name">正在构建：{{ currentModule?.project }}</p>
           <p class="task-duration">建议用时 {{ selectedTask.duration }}</p>
-          <div v-if="getCompletion(selectedTask.id)" class="completion-info">
-            <el-tag type="success" size="large">已完成</el-tag>
-            <p>用时: {{ getCompletion(selectedTask.id).time }}</p>
-            <p>通过: {{ getCompletion(selectedTask.id).passedCount }}/{{ getCompletion(selectedTask.id).totalCount }} 用例</p>
+
+          <!-- 分数详情 -->
+          <div v-if="getScoreDetail(selectedTask.id)" class="score-detail">
+            <div class="score-ring-wrap">
+              <div :class="['score-circle', getScoreLevel(getScoreDetail(selectedTask.id).score)]">
+                <span class="score-number">{{ getScoreDetail(selectedTask.id).score }}</span>
+                <span class="score-label">综合分</span>
+              </div>
+            </div>
+            <div class="score-breakdown">
+              <div class="score-row">
+                <span>测试点</span>
+                <span :class="getScoreDetail(selectedTask.id).test_score >= 60 ? 'pass' : 'fail'">
+                  {{ getScoreDetail(selectedTask.id).test_score || 0 }} 分
+                </span>
+              </div>
+              <div class="score-row">
+                <span>原理答辩</span>
+                <span>{{ getScoreDetail(selectedTask.id).defense_score || 0 }} 分</span>
+              </div>
+              <div class="score-row">
+                <span>故障修复</span>
+                <span>{{ getScoreDetail(selectedTask.id).repair_score || 0 }} 分</span>
+              </div>
+              <div class="score-row" style="margin-top:6px;padding-top:6px;border-top:1px solid #ebeef5">
+                <span>{{ getScoreDetail(selectedTask.id).skipped ? '⚠ 已跳过能力验证' : getScoreDetail(selectedTask.id).verified ? '✓ 能力已验证' : '进行中' }}</span>
+                <span :class="getScoreDetail(selectedTask.id).skipped ? 'warn' : ''">
+                  {{ getScoreDetail(selectedTask.id).skipped ? '仅测试分' : getScoreDetail(selectedTask.id).verified ? '完整评估' : '' }}
+                </span>
+              </div>
+            </div>
           </div>
+
+          <div v-else-if="getCompletion(selectedTask.id)" class="completion-info">
+            <el-tag type="success" size="large">已完成</el-tag>
+            <p>用时: {{ getCompletion(selectedTask.id).time || '-' }}</p>
+            <p>通过: {{ getCompletion(selectedTask.id).passedCount || '?' }}/{{ getCompletion(selectedTask.id).totalCount || '?' }} 用例</p>
+            <p class="old-score-hint" style="font-size:11px;color:#909399;margin-top:4px;">（旧版记录，无详细分数。重新完成可获取分数。）</p>
+          </div>
+
           <p class="preview-hint">点击下方按钮进入代码编辑页面</p>
           <el-button type="primary" @click="enterTask(selectedTask)">
-            {{ getCompletion(selectedTask.id) ? '重做本题' : '开始挑战' }}
+            {{ getCompletion(selectedTask.id) || getScoreDetail(selectedTask.id) ? '重做本题' : '开始挑战' }}
           </el-button>
         </div>
-        <el-empty v-else description="请从左侧选择关卡" :image-size="80" />
+        <el-empty v-else description="请从左侧关卡选择" :image-size="80" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { MODULES, MOCK_PROGRESS } from '../config/flagshipExercises'
+import { MODULES } from '../config/flagshipExercises'
+import { getLabProgressOverview } from '../api/workspace'
 
 const router = useRouter()
 const route = useRoute()
@@ -71,6 +111,19 @@ const moduleId = computed(() => parseInt(route.params.moduleId))
 const currentModule = computed(() => MODULES.find(m => m.id === moduleId.value))
 const selectedTaskId = ref(currentModule.value?.tasks?.[0]?.id ?? null)
 const selectedTask = ref(currentModule.value?.tasks?.[0] ?? null)
+const progressData = ref({})
+
+/**
+ * 加载进度数据（含分数）
+ */
+onMounted(async () => {
+  try {
+    const data = await getLabProgressOverview()
+    progressData.value = data || {}
+  } catch (_) {
+    progressData.value = {}
+  }
+})
 
 /**
  * 选择关卡（右侧显示预览，不直接跳转）
@@ -91,7 +144,7 @@ function enterTask(task) {
 }
 
 /**
- * 读取关卡完成状态（从 localStorage）
+ * 读取关卡完成状态（从 localStorage — 旧版兼容）
  */
 function getCompletion(taskId) {
   try {
@@ -104,7 +157,57 @@ function getCompletion(taskId) {
 }
 
 function isCompleted(taskId) {
-  return !!getCompletion(taskId)
+  return !!getCompletion(taskId) || !!getScoreDetail(taskId)
+}
+
+/**
+ * 获取分数详情（从后端 progress 数据）
+ */
+function getScoreDetail(taskId) {
+  const info = progressData.value[taskId]
+  if (!info) return null
+  if (info.score == null && !info.verified && !info.skipped) {
+    // acceptance passed 但无分数 → 不显示分数
+    if (!info.acceptance_passed) return null
+  }
+  if (info.score == null && !info.verified && !info.skipped) return null
+  return {
+    score: info.score || 0,
+    test_score: info.test_score || 0,
+    defense_score: info.defense_score || 0,
+    repair_score: info.repair_score || 0,
+    verified: info.verified || false,
+    skipped: info.skipped || false,
+    status: info.status || '',
+  }
+}
+
+/**
+ * 获取分数徽标
+ */
+function getScoreBadge(taskId) {
+  const detail = getScoreDetail(taskId)
+  if (!detail) {
+    // 兼容旧数据
+    const comp = getCompletion(taskId)
+    if (comp) return { text: '✓', cls: 'old' }
+    return null
+  }
+  if (detail.verified) {
+    const level = getScoreLevel(detail.score)
+    return { text: `${detail.score}分`, cls: level }
+  }
+  if (detail.skipped) {
+    return { text: `${detail.score}分`, cls: 'skipped' }
+  }
+  return null
+}
+
+function getScoreLevel(score) {
+  if (score >= 90) return 'excellent'
+  if (score >= 75) return 'good'
+  if (score >= 60) return 'pass'
+  return 'low'
 }
 </script>
 
@@ -223,6 +326,48 @@ function isCompleted(taskId) {
   color: #c0c4cc;
 }
 
+/* 分数徽标 */
+.task-score-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.task-score-badge.excellent {
+  background: #e6f7e6;
+  color: #2e8b57;
+  border: 1px solid #a3d9a3;
+}
+.task-score-badge.good {
+  background: #e6f4ff;
+  color: #2979c1;
+  border: 1px solid #93c5fd;
+}
+.task-score-badge.pass {
+  background: #fff8e6;
+  color: #b8860b;
+  border: 1px solid #f0d78c;
+}
+.task-score-badge.low {
+  background: #fff0f0;
+  color: #c0392b;
+  border: 1px solid #f5a6a6;
+}
+.task-score-badge.skipped {
+  background: #f5f5f5;
+  color: #888;
+  border: 1px solid #d0d0d0;
+}
+.task-score-badge.old {
+  font-size: 12px;
+  color: #67C23A;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
 /* ===== 右侧预览区 ===== */
 .task-main {
   flex: 1;
@@ -233,6 +378,7 @@ function isCompleted(taskId) {
 }
 .task-preview {
   text-align: center;
+  max-width: 420px;
 }
 .task-preview h3 {
   font-size: 18px;
@@ -258,4 +404,64 @@ function isCompleted(taskId) {
   color: #606266;
   margin: 4px 0;
 }
+.old-score-hint {
+  font-size: 11px;
+  color: #909399;
+  margin-top: 4px;
+}
+
+/* 分数详情面板 */
+.score-detail {
+  background: #fafbff;
+  border: 1px solid #e0e4f0;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.score-ring-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.score-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #c0c4cc;
+}
+.score-circle.excellent { border-color: #2e8b57; background: #f0faf4; }
+.score-circle.good { border-color: #2979c1; background: #f0f6ff; }
+.score-circle.pass { border-color: #e6a817; background: #fffdf5; }
+.score-circle.low { border-color: #c0392b; background: #fff5f5; }
+.score-number {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a1a2e;
+  line-height: 1;
+}
+.score-label {
+  font-size: 10px;
+  color: #909399;
+  margin-top: 2px;
+}
+.score-breakdown {
+  text-align: left;
+  font-size: 12px;
+}
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  color: #606266;
+}
+.score-row span:last-child {
+  font-weight: 600;
+}
+.score-row .pass { color: #2e8b57; }
+.score-row .fail { color: #c0392b; }
+.score-row .warn { color: #e6a817; }
 </style>

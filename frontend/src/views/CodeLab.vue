@@ -141,7 +141,9 @@
           <button class="primary-action" @click="leftMode = 'guide'">打开项目引导</button>
         </div>
 
-        <div class="terminal-resize-handle" @mousedown="startTerminalResize"></div>
+        <div class="terminal-resize-handle" @mousedown.stop.prevent="startTerminalResize">
+          <div class="terminal-resize-bar"></div>
+        </div>
 
         <section class="terminal-panel" :style="{ height: terminalHeight + 'px', flex: '0 0 ' + terminalHeight + 'px' }">
           <div class="terminal-tabs">
@@ -226,6 +228,74 @@
       <button class="danger" :disabled="explorerMenu.entry?.path === '.venv'" @click="contextDelete"><span>删除</span><kbd>Delete</kbd></button>
     </div>
 
+    <!-- 能力验证选择对话框 -->
+    <el-dialog v-model="capabilityChoiceDialog" width="560px" class="dark-dialog" :close-on-click-modal="false">
+      <template #header><div class="dialog-title"><span>🎉 测试点全部通过</span><b>选择下一步</b></div></template>
+      <div class="capability-choice-form">
+        <p style="color:#a9b6ca;margin-bottom:18px;">
+          你的代码已通过所有测试点。是否继续完成<b>能力验证</b>（原理答辩 + 故障修复）？
+          完成后可获得更高综合评分。
+        </p>
+        <div class="choice-cards">
+          <div class="choice-card recommended" @click="handleCapabilityChoice('verify')">
+            <div class="choice-icon">🔬</div>
+            <h4>进入能力验证</h4>
+            <p>完成原理答辩与故障修复，获得<b>完整综合评分</b>（最高100分）</p>
+            <span class="choice-tag recommended">推荐</span>
+          </div>
+          <div class="choice-card skip" @click="handleCapabilityChoice('skip')">
+            <div class="choice-icon">⏭</div>
+            <h4>跳过，仅获得测试分</h4>
+            <p>直接以测试点分数完成关卡，获得<b>基础分数</b>（最高60分）</p>
+            <span class="choice-tag skip">可之后重做</span>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+
+    <!-- 答辩回顾对话框 -->
+    <el-dialog v-model="reviewDialog" width="820px" class="dark-dialog review-dialog" :close-on-click-modal="false">
+      <template #header><div class="dialog-title"><span>📋 答辩回顾</span><b>查看你的回答与标准答案</b></div></template>
+      <div v-if="reviewLoading" class="knowledge-detail-loading">
+        <el-icon class="is-loading"><Loading /></el-icon>
+        <p>正在生成标准参考答案...</p>
+      </div>
+      <div v-else class="review-body">
+        <div v-for="(item, index) in reviewItems" :key="item.question_id" class="review-card">
+          <div class="review-question-header">
+            <span class="review-q-num">{{ index + 1 }}</span>
+            <div>
+              <b>{{ item.prompt }}</b>
+              <small>考察重点：{{ item.focus }}</small>
+            </div>
+            <span :class="['review-score-tag', item.user_score >= 70 ? 'good' : item.user_score >= 50 ? 'ok' : 'low']">
+              {{ item.user_score }}分
+            </span>
+          </div>
+          <div class="review-compare">
+            <div class="review-col">
+              <div class="review-col-title">你的回答</div>
+              <div class="review-answer user">{{ item.user_answer || '（未作答）' }}</div>
+              <div v-if="item.feedback" class="review-feedback">
+                <b>{{ item.graded_by === 'ai' ? '🤖 AI' : '⚙️ 系统' }}反馈：</b>{{ item.feedback }}
+              </div>
+              <div v-if="item.hit_points?.length" class="review-points hit">
+                ✓ {{ item.hit_points.join(' · ') }}
+              </div>
+              <div v-if="item.missing_points?.length" class="review-points miss">
+                ✗ 遗漏：{{ item.missing_points.join(' · ') }}
+              </div>
+            </div>
+            <div class="review-col">
+              <div class="review-col-title reference">📖 标准参考答案</div>
+              <div class="review-answer reference" v-html="renderMarkdown(item.reference_answer || '（正在生成...）')"></div>
+            </div>
+          </div>
+        </div>
+        <p class="review-tip">💡 对比你的回答和标准答案，找出知识盲区。理解差异比记住答案更重要。</p>
+      </div>
+    </el-dialog>
+
     <el-dialog v-model="defenseDialog" width="760px" class="dark-dialog" :close-on-click-modal="false">
       <template #header><div class="dialog-title"><span>功能验收通过</span><b>继续完成原理答辩</b></div></template>
       <div v-if="capabilityStatus === 'defense_pending'" class="defense-form">
@@ -242,10 +312,27 @@
         <p>请回到编辑器运行并修复，然后在这里说明根因。</p>
         <el-input v-model="repairExplanation" type="textarea" :rows="4" placeholder="至少20字：故障根因是什么，你修改了哪里？" />
         <button class="primary-action dialog-submit" @click="defenseDialog = false">回到编辑器修复</button>
+        <button class="outline-button dialog-submit" style="margin-left:8px;" @click="openReviewDialog">📋 查看答辩回顾</button>
+      </div>
+      <div v-else-if="capabilityStatus === 'skipped'" class="verified-report">
+        <div class="score-ring low">{{ capabilitySession?.report?.total_score || capabilitySession?.total_score || 0 }}</div>
+        <h2>关卡完成（仅测试分）</h2>
+        <p>{{ capabilitySession?.report?.summary || '你选择跳过能力验证，仅获得测试点分数。可以随时重做本题完成能力验证。' }}</p>
+        <div class="score-dimensions">
+          <div class="dim-row"><span>测试点</span><span class="pass">100分</span></div>
+          <div class="dim-row"><span>原理答辩</span><span class="skip">未参与</span></div>
+          <div class="dim-row"><span>故障修复</span><span class="skip">未参与</span></div>
+        </div>
       </div>
       <div v-else class="verified-report">
         <div class="score-ring">{{ capabilitySession?.report?.total_score || 100 }}</div>
         <h2>能力验证完成</h2><p>{{ capabilitySession?.report?.summary || '项目、理解与故障修复证据均已成立。' }}</p>
+        <div v-if="capabilitySession?.report?.dimensions" class="score-dimensions">
+          <div class="dim-row" v-for="(val, key) in capabilitySession.report.dimensions" :key="key">
+            <span>{{ key }}</span><span :class="val >= 70 ? 'pass' : val >= 50 ? 'ok' : 'low'">{{ val }}分</span>
+          </div>
+        </div>
+        <button class="outline-button" style="margin-top:14px;" @click="openReviewDialog">📋 查看答辩回顾与标准答案</button>
       </div>
     </el-dialog>
   </div>
@@ -265,6 +352,7 @@ import LabFileTree from '../components/LabFileTree.vue'
 import {
   markCapabilityCodePassed, startCapabilitySession,
   submitCapabilityDefense, submitCapabilityRepair,
+  skipCapability, getSessionReview,
 } from '../api/capability'
 
 const route = useRoute()
@@ -328,6 +416,10 @@ const markdownPreviewContent = computed(() => {
 const capabilitySession = ref(null)
 const capabilityBusy = ref(false)
 const defenseDialog = ref(false)
+const capabilityChoiceDialog = ref(false)
+const reviewDialog = ref(false)
+const reviewLoading = ref(false)
+const reviewItems = ref([])
 const defenseAnswers = reactive({})
 const repairExplanation = ref('')
 const capabilityStatus = computed(() => capabilitySession.value?.status || 'coding')
@@ -352,6 +444,7 @@ const visibleExplorerEntries = computed(() => {
 })
 const topActionLabel = computed(() => {
   if (capabilityStatus.value === 'verified') return '查看能力报告'
+  if (capabilityStatus.value === 'skipped') return '查看分数（已跳过验证）'
   if (capabilityStatus.value === 'repair_pending') return '提交故障修复'
   if (capabilityStatus.value === 'defense_pending') return '继续原理答辩'
   return acceptancePassed.value ? '进入能力验证' : 'AI 验收项目'
@@ -1039,7 +1132,11 @@ async function sendAssistant() {
 }
 
 async function handleTopAction() {
-  if (capabilityStatus.value === 'verified' || capabilityStatus.value === 'defense_pending') {
+  if (capabilityStatus.value === 'verified' || capabilityStatus.value === 'skipped') {
+    defenseDialog.value = true
+    return
+  }
+  if (capabilityStatus.value === 'defense_pending') {
     defenseDialog.value = true
     return
   }
@@ -1051,7 +1148,42 @@ async function handleTopAction() {
     if (stage) await checkStage(stage)
     return
   }
-  await beginCapability()
+  // 测试点通过后，显示选择对话框
+  capabilityChoiceDialog.value = true
+}
+
+async function handleCapabilityChoice(choice) {
+  capabilityChoiceDialog.value = false
+  if (choice === 'skip') {
+    await doSkipCapability()
+  } else {
+    await beginCapability()
+  }
+}
+
+async function doSkipCapability() {
+  const solution = models.get('solution.py')
+  if (!solution) return ElMessage.warning('没有找到 solution.py')
+  capabilityBusy.value = true
+  try {
+    await saveAll()
+    let session = await startCapabilitySession(exerciseId.value)
+    if (session.status === 'coding') session = await markCapabilityCodePassed(session.id, solution.getValue())
+    const result = await skipCapability(session.id)
+    capabilitySession.value = { ...session, ...result, status: 'skipped' }
+    // 存储完成记录（仅测试分）
+    const completed = JSON.parse(localStorage.getItem('code_completed') || '{}')
+    completed[`${moduleId.value}_${exerciseId.value}`] = {
+      verified: false,
+      skipped: true,
+      score: result.report?.total_score || result.total_score || 0,
+      testScore: 100,
+      completedAt: new Date().toISOString(),
+    }
+    localStorage.setItem('code_completed', JSON.stringify(completed))
+    defenseDialog.value = true
+    ElMessage.info(`已跳过能力验证，得分 ${result.report?.total_score || result.total_score || 0}（仅测试分）`)
+  } finally { capabilityBusy.value = false }
 }
 
 async function beginCapability() {
@@ -1066,6 +1198,21 @@ async function beginCapability() {
     for (const question of session.defense_questions || []) defenseAnswers[question.id] = ''
     defenseDialog.value = true
   } finally { capabilityBusy.value = false }
+}
+
+async function openReviewDialog() {
+  if (!capabilitySession.value?.id) return ElMessage.warning('没有找到能力验证记录')
+  reviewDialog.value = true
+  reviewLoading.value = true
+  reviewItems.value = []
+  try {
+    const data = await getSessionReview(capabilitySession.value.id)
+    reviewItems.value = data.review_items || []
+  } catch (e) {
+    ElMessage.error(e.response?.data?.detail || '获取回顾数据失败')
+  } finally {
+    reviewLoading.value = false
+  }
 }
 
 async function submitDefenseAnswers() {
@@ -1098,7 +1245,15 @@ async function submitRepairCode() {
     capabilitySession.value = { ...capabilitySession.value, ...result, status: 'verified', report: result.report }
     defenseDialog.value = true
     const completed = JSON.parse(localStorage.getItem('code_completed') || '{}')
-    completed[`${moduleId.value}_${exerciseId.value}`] = { verified: true, evidenceScore: result.report.total_score, completedAt: new Date().toISOString() }
+    completed[`${moduleId.value}_${exerciseId.value}`] = {
+      verified: true,
+      skipped: false,
+      score: result.report.total_score,
+      testScore: 100,
+      defenseScore: result.report.dimensions?.['原理理解'] || 0,
+      repairScore: result.report.dimensions?.['故障修复与迁移'] || 0,
+      completedAt: new Date().toISOString(),
+    }
     localStorage.setItem('code_completed', JSON.stringify(completed))
   } finally { capabilityBusy.value = false }
 }
@@ -1154,11 +1309,60 @@ button { font:inherit; }
 .side-panel-resize-handle:hover,.side-panel-resize-handle:active{background:#5b6cf0}.panel-title{height:43px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;text-transform:uppercase;letter-spacing:.08em;color:#aab6c8;font-size:11px;border-bottom:1px solid var(--line)}.panel-title div{display:flex}.panel-title button,.agent-header>button,.terminal-tabs>button:last-child{border:0;background:transparent;color:#8b99ae;padding:5px;cursor:pointer}.panel-title button:hover{color:#fff}.panel-title em{font-style:normal;color:#7f70ff}
 .project-root{height:36px;padding:0 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid #263247;font-size:12px;color:#d5ddeb;background:#111a29}.project-root>.el-icon:nth-child(2){color:#d5b46d}.file-list{flex:1;overflow:auto;padding:0}.file-badge.python,.tab-dot.python{color:#59a9ff}.file-badge.markdown,.tab-dot.markdown{color:#9aa8ff}.file-badge.env,.tab-dot.env{color:#f1c45a}.file-badge.json,.tab-dot.json{color:#e6a75f}.file-badge.text,.tab-dot.text{color:#a6b0c0}.empty-files,.explorer-hint{padding:18px;color:#68768c;font-size:11px;text-align:center}.explorer-hint{padding:8px;border-top:1px solid var(--line)}
 .lesson-intro{padding:16px;border-bottom:1px solid var(--line)}.lesson-intro>span{font-size:10px;color:#a99fff;background:#27224c;padding:4px 7px;border-radius:10px}.lesson-intro h3{font-size:15px;margin:11px 0 7px}.lesson-intro p{font-size:12px;line-height:1.65;color:#8795aa;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.stage-list{overflow:auto;padding:8px}.stage-card{margin-bottom:7px;border:1px solid #232f42;border-radius:8px;background:#101827;overflow:hidden}.stage-card.open{border-color:#554ca0}.stage-card.done{border-color:#265443}.stage-heading{width:100%;display:flex;align-items:center;gap:9px;padding:10px;border:0;color:#d2dbe9;background:transparent;text-align:left;cursor:pointer}.stage-heading>span:nth-child(2){flex:1;min-width:0}.stage-heading b,.stage-heading small{display:block}.stage-heading b{font-size:12px}.stage-heading small{margin-top:3px;font-size:10px;color:#75839a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stage-heading>svg{font-size:11px}.stage-number{width:23px;height:23px;display:grid;place-items:center;border-radius:50%;background:#25304a;color:#a9b4c6;font-size:11px}.stage-card.done .stage-number{background:#174a38;color:#65e0ac}.stage-body{padding:0 11px 12px}.stage-body>p{font-size:11px;color:#9ba8bb;line-height:1.65}.command-chip{display:flex;align-items:center;padding:7px 8px;border:1px solid #26354b;border-radius:6px;background:#080f1b}.command-chip code{flex:1;color:#8fd5b7;font-size:10px;overflow:hidden;text-overflow:ellipsis}.command-chip button{border:0;color:#a99fff;background:transparent;font-size:10px;cursor:pointer}.full{width:100%;justify-content:center;margin-top:8px;color:#bbb5ff;background:transparent}.check-button{width:100%;display:flex;justify-content:center;align-items:center;gap:6px;margin-top:8px;padding:8px;border:0;border-radius:6px;color:#fff;background:#5c52d9;font-size:11px;cursor:pointer}.check-result{margin-top:9px;padding:7px;border-radius:6px;background:#2b1920}.check-result.passed{background:#122d26}.check-result>div{display:flex;gap:7px;padding:4px}.check-result>div>span{color:#ff8797}.check-result.passed>div>span{color:#57d9a1}.check-result p{margin:0}.check-result b,.check-result small{display:block;font-size:10px}.check-result small{color:#8b97aa;margin-top:2px;line-height:1.4}
-.editor-column{min-width:0;display:flex;flex-direction:column;background:#0b111d}.editor-tabs{flex:0 0 38px;display:flex;min-width:0;background:#0c1320;border-bottom:1px solid var(--line);overflow:hidden}.editor-tabs>button:not(.save-button){height:38px;display:flex;align-items:center;gap:6px;padding:0 10px;border:0;border-right:1px solid #202b3d;color:#8794a7;background:#101826;font-size:11px;cursor:pointer;white-space:nowrap}.editor-tabs>button.active{color:#e9eef7;background:#0b111d;border-top:1px solid #7464ff}.tab-dot{width:7px;height:7px;border-radius:50%;background:currentColor}.tab-close{font-size:12px;opacity:0}.editor-tabs button:hover .tab-close{opacity:1}.editor-tabs button i{font-style:normal;color:#887aff}.editor-spacer{flex:1}.save-button{border:0;border-left:1px solid var(--line);background:#0e1726;color:#9aa8bc;padding:0 11px;cursor:pointer;display:flex;gap:5px;align-items:center;font-size:11px}.monaco-host{min-width:0;min-height:280px;flex:1}.welcome-editor{grid-row:auto;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8190a7}.welcome-logo{width:60px;height:60px;border-radius:18px;font-size:29px;opacity:.75}.welcome-editor h2{font-size:18px;color:#c9d3e2;margin:18px 0 6px}.welcome-editor p{font-size:12px;margin:0 0 20px}.terminal-panel{flex:0 0 auto;min-height:0;overflow:hidden;border-top:1px solid var(--line);background:#090f1a}.terminal-resize-handle{flex:0 0 20px;position:relative;z-index:10;display:flex;align-items:center;height:20px;cursor:ns-resize;user-select:none}.terminal-resize-handle::after{content:'';display:block;width:100%;height:4px;border-radius:2px;background:#2a3a54;transition:background .15s}.terminal-resize-handle:hover::after{background:#5b6cf0}.workbench.resizing-terminal .agent-panel,.workbench.resizing-terminal .side-panel,.workbench.resizing-terminal .activity-bar,.workbench.resizing-terminal .side-panel-resize-handle{pointer-events:none}.workbench.resizing-terminal,.workbench.resizing-terminal *{user-select:none!important}.terminal-tabs{height:35px;display:flex;align-items:center;border-bottom:1px solid #1e293a}.terminal-tabs button{height:35px;border:0;color:#8997aa;background:transparent;font-size:11px;padding:0 12px;cursor:pointer}.terminal-tabs button.active{color:#e4eaf3;border-bottom:1px solid #796bff}.terminal-tabs span{margin-left:auto;color:#526077;font-size:10px}.terminal-tabs span.running{color:#5ed5a4}.terminal-tabs .stop-terminal{height:24px;margin-left:9px;padding:0 8px;border:1px solid #633844;border-radius:5px;color:#ff9aaa;background:#28141b}.terminal-output{height:calc(100% - 36px);overflow:auto;padding:9px 13px;color:#bfcbda;font:12px/1.55 'Cascadia Code',Consolas,monospace;cursor:text;user-select:text}.terminal-output *{user-select:text}.terminal-welcome{color:#687891;margin-bottom:6px}.terminal-line{display:flex;gap:8px}.terminal-line pre{margin:0;white-space:pre-wrap;font:inherit}.terminal-line.command pre{color:#e7ecf4}.terminal-line.error pre{color:#ff7f8f}.terminal-line.output pre{color:#a6b8ca}.terminal-line.status pre{color:#6fd2a8}.prompt-symbol{color:#58d5a2;font-weight:800}.prompt-env{color:#67d5a4;font-weight:700}.terminal-input-row{display:flex;align-items:center;gap:7px}.prompt-path{color:#8075ff}.terminal-input-row input{flex:1;border:0;outline:0;color:#fff;background:transparent;font:inherit;user-select:text}
+.editor-column{min-width:0;display:flex;flex-direction:column;overflow:hidden;background:#0b111d}.editor-tabs{flex:0 0 38px;display:flex;min-width:0;background:#0c1320;border-bottom:1px solid var(--line);overflow:hidden}.editor-tabs>button:not(.save-button){height:38px;display:flex;align-items:center;gap:6px;padding:0 10px;border:0;border-right:1px solid #202b3d;color:#8794a7;background:#101826;font-size:11px;cursor:pointer;white-space:nowrap}.editor-tabs>button.active{color:#e9eef7;background:#0b111d;border-top:1px solid #7464ff}.tab-dot{width:7px;height:7px;border-radius:50%;background:currentColor}.tab-close{font-size:12px;opacity:0}.editor-tabs button:hover .tab-close{opacity:1}.editor-tabs button i{font-style:normal;color:#887aff}.editor-spacer{flex:1}.save-button{border:0;border-left:1px solid var(--line);background:#0e1726;color:#9aa8bc;padding:0 11px;cursor:pointer;display:flex;gap:5px;align-items:center;font-size:11px}.monaco-host{min-width:0;min-height:200px;flex:1}.welcome-editor{grid-row:auto;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8190a7}.welcome-logo{width:60px;height:60px;border-radius:18px;font-size:29px;opacity:.75}.welcome-editor h2{font-size:18px;color:#c9d3e2;margin:18px 0 6px}.welcome-editor p{font-size:12px;margin:0 0 20px}.terminal-panel{min-height:80px;overflow:hidden;border-top:1px solid var(--line);background:#090f1a}.terminal-resize-handle{flex:0 0 24px;position:relative;z-index:10;display:flex;align-items:center;justify-content:center;height:24px;cursor:ns-resize;user-select:none;margin:-2px 0}.terminal-resize-handle:hover .terminal-resize-bar,.workbench.resizing-terminal .terminal-resize-bar{height:6px;background:#5b6cf0;box-shadow:0 0 8px rgba(91,108,240,.35)}.terminal-resize-bar{width:100%;height:5px;border-radius:3px;background:#2a3a54;transition:all .15s}.workbench.resizing-terminal .agent-panel,.workbench.resizing-terminal .side-panel,.workbench.resizing-terminal .activity-bar,.workbench.resizing-terminal .side-panel-resize-handle{pointer-events:none}.workbench.resizing-terminal,.workbench.resizing-terminal *{user-select:none!important}.terminal-tabs{height:35px;display:flex;align-items:center;border-bottom:1px solid #1e293a}.terminal-tabs button{height:35px;border:0;color:#8997aa;background:transparent;font-size:11px;padding:0 12px;cursor:pointer}.terminal-tabs button.active{color:#e4eaf3;border-bottom:1px solid #796bff}.terminal-tabs span{margin-left:auto;color:#526077;font-size:10px}.terminal-tabs span.running{color:#5ed5a4}.terminal-tabs .stop-terminal{height:24px;margin-left:9px;padding:0 8px;border:1px solid #633844;border-radius:5px;color:#ff9aaa;background:#28141b}.terminal-output{height:calc(100% - 36px);overflow:auto;padding:9px 13px;color:#bfcbda;font:12px/1.55 'Cascadia Code',Consolas,monospace;cursor:text;user-select:text}.terminal-output *{user-select:text}.terminal-welcome{color:#687891;margin-bottom:6px}.terminal-line{display:flex;gap:8px}.terminal-line pre{margin:0;white-space:pre-wrap;font:inherit}.terminal-line.command pre{color:#e7ecf4}.terminal-line.error pre{color:#ff7f8f}.terminal-line.output pre{color:#a6b8ca}.terminal-line.status pre{color:#6fd2a8}.prompt-symbol{color:#58d5a2;font-weight:800}.prompt-env{color:#67d5a4;font-weight:700}.terminal-input-row{display:flex;align-items:center;gap:7px}.prompt-path{color:#8075ff}.terminal-input-row input{flex:1;border:0;outline:0;color:#fff;background:transparent;font:inherit;user-select:text}
 .agent-panel{min-width:0;min-height:0;background:var(--panel);border-left:1px solid var(--line);display:grid;grid-template-rows:58px minmax(0,1fr) auto 142px}.agent-header{display:flex;align-items:center;gap:9px;padding:0 12px;border-bottom:1px solid var(--line)}.agent-avatar,.mini-avatar{display:grid;place-items:center;border-radius:10px;color:white;background:linear-gradient(135deg,#7a65ff,#4d7cff)}.agent-avatar{width:34px;height:34px}.agent-header>div:nth-child(2){flex:1}.agent-header b,.agent-header span{display:block}.agent-header b{font-size:12px}.agent-header span{margin-top:3px;color:#7f8ea5;font-size:9px}.agent-header span i{display:inline-block;margin-right:5px}.chat-list{min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding:14px 12px}.chat-message{display:flex;gap:8px;margin-bottom:13px}.chat-message.user{justify-content:flex-end}.mini-avatar{width:24px;height:24px;flex:0 0 24px;font-size:10px}.message-bubble{max-width:88%;min-width:0;padding:9px 10px;border-radius:4px 11px 11px 11px;background:#182236;color:#c5d0df;font-size:11px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}.chat-message.assistant .message-bubble{white-space:normal}.chat-message.user .message-bubble{background:#4c43a2;color:white;border-radius:11px 4px 11px 11px}.message-bubble small{display:block;margin-top:7px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08);color:#7f8da2;font-size:9px}.assistant-markdown :deep(p){margin:0 0 8px}.assistant-markdown :deep(p:last-child){margin-bottom:0}.assistant-markdown :deep(ul),.assistant-markdown :deep(ol){margin:7px 0;padding-left:20px}.assistant-markdown :deep(h1),.assistant-markdown :deep(h2),.assistant-markdown :deep(h3){margin:12px 0 7px;color:#eef3fb;font-size:13px}.assistant-markdown :deep(code:not(pre code)){padding:2px 5px;border-radius:4px;color:#9fe0c2;background:#0b1321}.assistant-markdown :deep(.code-block-wrapper){margin:9px 0;border:1px solid #2b3850;border-radius:7px;background:#080f1b;overflow:hidden}.assistant-markdown :deep(.code-toolbar){display:flex;align-items:center;justify-content:space-between;gap:4px;padding:5px 7px;border-bottom:1px solid #273349;background:#111a29}.assistant-markdown :deep(.code-lang-tag){color:#8998ae;font-size:9px}.assistant-markdown :deep(.code-toolbar-actions){display:flex;gap:3px}.assistant-markdown :deep(.code-toolbar-btn){width:auto;height:auto;padding:3px 5px;border:0;border-radius:4px;color:#9ba9bd;background:#1b273a;font-size:8px;cursor:pointer}.assistant-markdown :deep(.code-toolbar-btn:hover){color:#fff;background:#34425b}.assistant-markdown :deep(pre){margin:0;padding:9px;overflow:auto;color:#c9d6e7;font:10px/1.55 'Cascadia Code',Consolas,monospace;white-space:pre}.typing{display:flex;gap:4px;padding:12px}.typing i{width:5px;height:5px;border-radius:50%;background:#8f83ff;animation:blink 1s infinite}.typing i:nth-child(2){animation-delay:.16s}.typing i:nth-child(3){animation-delay:.32s}@keyframes blink{50%{opacity:.25;transform:translateY(-2px)}}.quick-prompts{display:flex;flex-wrap:wrap;gap:5px;padding:7px 10px}.quick-prompts button{padding:5px 7px;border:1px solid #2a3850;border-radius:12px;color:#8998ae;background:#101a2a;font-size:9px;cursor:pointer}.quick-prompts button:hover{color:#c7c1ff;border-color:#6156bb}.agent-composer{margin:0 10px 10px;padding:8px;border:1px solid #34425b;border-radius:9px;background:#0a111e}.agent-composer:focus-within{border-color:#6c5fe7}.assistant-mode-switch{display:flex!important;justify-content:flex-start!important;gap:3px;margin:-2px 0 6px}.assistant-mode-switch button{width:auto!important;height:23px!important;padding:0 9px!important;border:1px solid #2c3950!important;border-radius:6px!important;color:#7f8da3!important;background:transparent!important;font-size:9px!important}.assistant-mode-switch button.active{color:#fff!important;border-color:#6658e9!important;background:#332c79!important}.agent-composer textarea{width:100%;resize:none;border:0;outline:0;color:#dce5f2;background:transparent;font:11px/1.5 inherit}.agent-composer>div{display:flex;align-items:center;justify-content:space-between}.agent-composer span{color:#56647a;font-size:9px}.agent-composer button{width:27px;height:27px;border:0;border-radius:7px;color:white;background:#6658e9;cursor:pointer}.agent-composer button:disabled{opacity:.4}
-.dialog-title{display:flex;flex-direction:column}.dialog-title span{color:#7b6eff;font-size:11px}.dialog-title b{font-size:18px;margin-top:4px}.defense-form>p,.repair-form p{color:#6c7789;font-size:13px}.defense-form label{display:block;margin:15px 0}.defense-form label>span{display:block;margin-bottom:7px;font-size:13px;font-weight:600}.dialog-submit{margin-top:12px;margin-left:auto}.verified-report{text-align:center;padding:25px}.score-ring{width:95px;height:95px;display:grid;place-items:center;margin:auto;border:7px solid #59d7a3;border-radius:50%;color:#30b981;font-size:28px;font-weight:900}
+.dialog-title{display:flex;flex-direction:column}.dialog-title span{color:#7b6eff;font-size:11px}.dialog-title b{font-size:18px;margin-top:4px}.defense-form>p,.repair-form p{color:#6c7789;font-size:13px}.defense-form label{display:block;margin:15px 0}.defense-form label>span{display:block;margin-bottom:7px;font-size:13px;font-weight:600}.dialog-submit{margin-top:12px;margin-left:auto}.verified-report{text-align:center;padding:25px}.score-ring{width:95px;height:95px;display:grid;place-items:center;margin:auto;border:7px solid #59d7a3;border-radius:50%;color:#30b981;font-size:28px;font-weight:900}.score-ring.low{border-color:#e6a817;color:#b8860b}
 @media(max-width:1200px){.workbench.layout-standard{grid-template-columns:46px 240px 5px minmax(430px,1fr) 290px}.project-heading span,.environment-pill{display:none}}@media(max-width:980px){.workbench.layout-standard{grid-template-columns:46px 230px 5px minmax(430px,1fr)}.workbench.layout-standard .agent-panel{display:none}.layout-switcher{display:none}}
 .test-case-list{grid-column:2;margin:7px 0 1px;padding:5px 0 2px;border-top:1px solid rgba(255,255,255,.08);list-style:none}.test-case-list li{display:flex;gap:7px;padding:4px 0;color:#ff9aa8}.test-case-list li.passed{color:#62d4a5}.test-case-list li>span{width:12px;flex:0 0 12px}.test-case-list p{margin:0;color:#c5cfdd}.test-case-list b,.test-case-list small{display:block;font-size:9px}.test-case-list small{margin-top:2px;color:#7f8da2}.check-result-item{display:grid!important;grid-template-columns:12px minmax(0,1fr);align-items:start}
 .explorer-context-menu{position:fixed;z-index:5000;width:250px;padding:6px;border:1px solid #354157;border-radius:8px;background:#171c26;box-shadow:0 14px 36px rgba(0,0,0,.5)}.explorer-context-menu button{width:100%;height:31px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;border:0;border-radius:5px;color:#d1d7e2;background:transparent;font-size:12px;text-align:left;cursor:pointer}.explorer-context-menu button:hover:not(:disabled){color:#fff;background:#293244}.explorer-context-menu button.danger{color:#ff9aa8}.explorer-context-menu button:disabled{color:#5f6878;cursor:not-allowed}.explorer-context-menu kbd{padding:2px 5px;border:1px solid #3a4352;border-radius:4px;color:#929baa;background:#202632;font:10px 'Cascadia Code',Consolas,monospace}.menu-separator{height:1px;margin:5px -6px;background:#343b48}
 .preview-toggle-btn{display:flex;align-items:center;gap:5px;padding:0 11px;border:0;border-left:1px solid var(--line);background:#0e1726;color:#9aa8bc;font-size:11px;cursor:pointer}.preview-toggle-btn:hover,.preview-toggle-btn.active{color:#fff;background:#1b2740}.preview-toggle-btn.active{border-bottom:2px solid #7464ff}.markdown-preview{flex:1;overflow:auto;padding:24px 32px;color:#dce5f4;font-size:13px;line-height:1.8;background:#0b111d}.markdown-preview :deep(h1){font-size:24px;color:#e9eef7;border-bottom:1px solid #243044;padding-bottom:10px;margin:0 0 18px}.markdown-preview :deep(h2){font-size:19px;color:#dce5f4;margin:28px 0 12px}.markdown-preview :deep(h3){font-size:15px;color:#c5cfe0;margin:22px 0 10px}.markdown-preview :deep(p){margin:0 0 12px}.markdown-preview :deep(ul),.markdown-preview :deep(ol){margin:8px 0;padding-left:24px}.markdown-preview :deep(li){margin:4px 0}.markdown-preview :deep(code:not(pre code)){padding:2px 6px;border-radius:4px;color:#9fe0c2;background:#131d2e;font-size:12px}.markdown-preview :deep(pre){background:#080f1b;border:1px solid #243044;border-radius:8px;padding:14px;overflow:auto}.markdown-preview :deep(pre code){font-size:12px;color:#c9d6e7}.markdown-preview :deep(blockquote){margin:12px 0;padding:8px 16px;border-left:3px solid #6d5dfc;background:#111a29;color:#9aa8bc}.markdown-preview :deep(table){border-collapse:collapse;margin:12px 0;width:100%}.markdown-preview :deep(th),.markdown-preview :deep(td){padding:8px 12px;border:1px solid #243044;text-align:left}.markdown-preview :deep(th){background:#111a29;font-weight:600}.markdown-preview :deep(a){color:#7b6eff}.markdown-preview :deep(img){max-width:100%}
+</style>
+<style>
+/* 能力验证 & 关卡评分全局样式 */
+.score-ring.low{border-color:#e6a817;color:#b8860b}
+.score-dimensions{margin-top:14px;padding:12px;background:#111a29;border-radius:8px;text-align:left}
+.dim-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;color:#aab6c8}
+.dim-row .pass{color:#57d9a1}
+.dim-row .ok{color:#e6c35a}
+.dim-row .low{color:#e6a817}
+.dim-row .skip{color:#68768c}
+.capability-choice-form p{font-size:13px;line-height:1.7}
+.choice-cards{display:flex;gap:14px}
+.choice-card{flex:1;padding:18px;border:1px solid #2a3850;border-radius:10px;background:#111a29;cursor:pointer;text-align:center;transition:all .18s;position:relative}
+.choice-card:hover{transform:translateY(-2px)}
+.choice-card.recommended:hover{border-color:#6658e9;box-shadow:0 6px 20px rgba(102,88,233,.25)}
+.choice-card.skip:hover{border-color:#4b5568;box-shadow:0 6px 20px rgba(75,85,104,.20)}
+.choice-icon{font-size:28px;margin-bottom:8px}
+.choice-card h4{font-size:14px;color:#e9eef7;margin:0 0 6px}
+.choice-card p{font-size:11px;color:#8693a8;line-height:1.55;margin:0}
+.choice-tag{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600}
+.choice-tag.recommended{color:#c4bfff;background:#2a2369;border:1px solid #5347c7}
+.choice-tag.skip{color:#8794a7;background:#1b2436;border:1px solid #3a4456}
+.review-body{display:flex;flex-direction:column;gap:16px}
+.review-card{border:1px solid #2a3850;border-radius:9px;background:#111a29;overflow:hidden}
+.review-question-header{display:flex;align-items:flex-start;gap:10px;padding:12px;border-bottom:1px solid #243044;background:#0e1624}
+.review-q-num{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#2f3c54;color:#aab6c8;font-size:11px;font-weight:700;flex-shrink:0}
+.review-question-header b{display:block;font-size:12px;color:#dce5f4}
+.review-question-header small{font-size:10px;color:#75839a}
+.review-score-tag{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;flex-shrink:0;margin-left:auto}
+.review-score-tag.good{color:#57d9a1;background:#122d26;border:1px solid #265443}
+.review-score-tag.ok{color:#e6c35a;background:#2a2410;border:1px solid #554c2e}
+.review-score-tag.low{color:#ff9aa8;background:#2a181c;border:1px solid #55303a}
+.review-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+.review-col{min-width:0}
+.review-col-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9aa8bc;margin-bottom:7px;padding:4px 8px;background:#0a111e;border-radius:4px}
+.review-col-title.reference{color:#7b6eff;background:#1a1540}
+.review-answer{font-size:11px;line-height:1.65;color:#c5d0df;padding:9px;border-radius:6px;background:#0b1321;min-height:60px;white-space:pre-wrap}
+.review-answer.user{border-left:3px solid #534c8c}
+.review-answer.reference{border-left:3px solid #50b885;max-height:360px;overflow-y:auto}
+.review-answer.reference p{margin:0 0 6px}
+.review-answer.reference ul,.review-answer.reference ol{margin:4px 0;padding-left:18px}
+.review-feedback{margin-top:7px;padding:8px;border-radius:5px;background:#1a1c2a;font-size:10px;color:#9ba8c0;line-height:1.5}
+.review-feedback b{display:block;color:#c4bfff;margin-bottom:3px}
+.review-points{font-size:9px;padding:5px 8px;margin-top:5px;border-radius:4px;line-height:1.5}
+.review-points.hit{color:#57d9a1;background:#0f2620}
+.review-points.miss{color:#ff9aa8;background:#260f14}
+.review-tip{text-align:center;color:#68768c;font-size:11px;margin:0;padding:8px}
+.knowledge-detail-loading{text-align:center;padding:40px;color:#8693a8}
+.knowledge-detail-loading .el-icon{font-size:36px;margin-bottom:12px}
 </style>
