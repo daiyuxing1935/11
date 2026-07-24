@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from services.ai_service import call_llm, extract_json_object, LEARNING_PATH_PROMPT
 from services.diagnosis_service import get_user_knowledge_profile, get_all_tags_flat, generate_quiz
 from services.question_bank_service import KNOWLEDGE_CATEGORY_MAP
-from database import get_db
+from database import get_db, json_load
 
 async def generate_learning_path(user_id: int, goal: str = "", timeline: str = "", learning_depth: str = "标准", diagnostic_session_id: int = None, modules: list = None) -> dict:
     """生成个性化学习路径
@@ -306,7 +306,7 @@ def _get_diagnostic_result(user_id: int, session_id: int) -> dict:
     # 解析答题记录
     answers_json = session["answers_json"] if session["answers_json"] else "[]"
     try:
-        answers = json.loads(answers_json)
+        answers = json_load(answers_json)
     except (json.JSONDecodeError, TypeError):
         answers = []
 
@@ -400,8 +400,8 @@ async def get_learning_path(user_id: int) -> dict:
     if not row:
         return {}
 
-    path_data = json.loads(row["path_data_json"]) if row["path_data_json"] else {}
-    progress = json.loads(row["progress_json"]) if row["progress_json"] else {}
+    path_data = json_load(row["path_data_json"]) if row["path_data_json"] else {}
+    progress = json_load(row["progress_json"]) if row["progress_json"] else {}
 
     # 课程方向已从概念题库切换为项目制 Agent 工程。旧任务无法可靠映射到新实验，
     # 因此首次读取时执行一次显式版本迁移，保留路径记录但重置任务进度。
@@ -665,7 +665,7 @@ async def update_path_progress(user_id: int, task_key: str, completed: bool = Tr
         conn.close()
         return {"error": "没有活跃的学习路径"}
 
-    progress = json.loads(row["progress_json"]) if row["progress_json"] else {"completed_tasks": [], "overall_progress": 0, "current_day": 1, "remedial_tasks": {}}
+    progress = json_load(row["progress_json"]) if row["progress_json"] else {"completed_tasks": [], "overall_progress": 0, "current_day": 1, "remedial_tasks": {}}
     progress = _normalize_progress(progress)
     completed_tasks = progress["completed_tasks"]
 
@@ -685,7 +685,7 @@ async def update_path_progress(user_id: int, task_key: str, completed: bool = Tr
         task_status["code"] = completed
 
     # 计算整体进度
-    path_data = json.loads(row["path_data_json"]) if row["path_data_json"] else {}
+    path_data = json_load(row["path_data_json"]) if row["path_data_json"] else {}
     total_tasks = 0
     completed_count = 0
     for phase in path_data.get("phases", []):
@@ -724,11 +724,11 @@ async def record_quiz_result(user_id: int, task_day: int, correct_rate: float,
         conn.close()
         return {"error": "没有活跃的学习路径"}
 
-    progress = json.loads(row["progress_json"]) if row["progress_json"] else {}
+    progress = json_load(row["progress_json"]) if row["progress_json"] else {}
     progress = _normalize_progress(progress)
 
     # 标记 quiz 子任务完成
-    path_data = json.loads(row["path_data_json"]) if row["path_data_json"] else {}
+    path_data = json_load(row["path_data_json"]) if row["path_data_json"] else {}
     for phase in path_data.get("phases", []):
         for task in phase.get("tasks", []):
             if task.get("day") == task_day:
@@ -794,10 +794,10 @@ async def record_code_completion(user_id: int, task_day: int) -> dict:
         conn.close()
         return {"error": "没有活跃的学习路径"}
 
-    progress = json.loads(row["progress_json"]) if row["progress_json"] else {}
+    progress = json_load(row["progress_json"]) if row["progress_json"] else {}
     progress = _normalize_progress(progress)
 
-    path_data = json.loads(row["path_data_json"]) if row["path_data_json"] else {}
+    path_data = json_load(row["path_data_json"]) if row["path_data_json"] else {}
     for phase in path_data.get("phases", []):
         for task in phase.get("tasks", []):
             if task.get("day") == task_day:
@@ -843,7 +843,7 @@ async def get_daily_tasks(user_id: int, date: str = None) -> dict:
         }
 
     conn.close()
-    task_data = json.loads(row["task_data_json"]) if row["task_data_json"] else {}
+    task_data = json_load(row["task_data_json"]) if row["task_data_json"] else {}
     return {
         "id": row["id"],
         "date": date,
@@ -924,12 +924,12 @@ async def update_daily_task(user_id: int, date: str, completed: int = 1) -> dict
         ).fetchone()
 
         if path_row:
-            progress = json.loads(path_row["progress_json"]) if path_row["progress_json"] else {}
+            progress = json_load(path_row["progress_json"]) if path_row["progress_json"] else {}
             progress = _normalize_progress(progress)
             completed_tasks = progress.get("completed_tasks", {})
             current_day = progress.get("current_day", 1)
 
-            path_data = json.loads(path_row["path_data_json"]) if path_row["path_data_json"] else {}
+            path_data = json_load(path_row["path_data_json"]) if path_row["path_data_json"] else {}
             total_tasks = 0
             for phase in path_data.get("phases", []):
                 total_tasks += len(phase.get("tasks", []))
@@ -979,11 +979,11 @@ async def _advance_learning_day(user_id: int) -> bool:
         conn.close()
         return False
 
-    progress = json.loads(row["progress_json"]) if row["progress_json"] else {}
+    progress = json_load(row["progress_json"]) if row["progress_json"] else {}
     progress = _normalize_progress(progress)
     current_day = progress.get("current_day", 1)
 
-    path_data = json.loads(row["path_data_json"]) if row["path_data_json"] else {}
+    path_data = json_load(row["path_data_json"]) if row["path_data_json"] else {}
     completed_tasks = progress.get("completed_tasks", {})
     day_tasks = []
     for phase in path_data.get("phases", []):
@@ -1028,7 +1028,7 @@ async def get_error_book(user_id: int, page: int = 1, page_size: int = 20) -> di
         qd = d.get("question_data", "{}")
         if isinstance(qd, str):
             try:
-                d["question_data"] = json.loads(qd)
+                d["question_data"] = json_load(qd)
             except (json.JSONDecodeError, TypeError):
                 d["question_data"] = {"question": qd[:200], "analysis": ""}
         elif isinstance(qd, dict):
@@ -1116,7 +1116,7 @@ async def get_errors_by_session(user_id: int, session_id: int = None, page: int 
         qd = d.get("question_data", "{}")
         if isinstance(qd, str):
             try:
-                d["question_data"] = json.loads(qd)
+                d["question_data"] = json_load(qd)
             except (json.JSONDecodeError, TypeError):
                 d["question_data"] = {"question": qd[:200], "analysis": ""}
         elif isinstance(qd, dict):
@@ -1282,7 +1282,7 @@ async def generate_task_quiz(user_id: int, task_day: int, count: int = 10) -> di
     ).fetchone()
     if row0 and row0["progress_json"]:
         try:
-            prog = json.loads(row0["progress_json"])
+            prog = json_load(row0["progress_json"])
             used_questions = set(prog.get("used_question_texts", []))
         except:
             pass
@@ -1319,7 +1319,7 @@ async def generate_task_quiz(user_id: int, task_day: int, count: int = 10) -> di
             (user_id,)
         ).fetchone()
         if row:
-            progress = json.loads(row["progress_json"]) if row["progress_json"] else {}
+            progress = json_load(row["progress_json"]) if row["progress_json"] else {}
             progress = _normalize_progress(progress)
             if "task_quiz_map" not in progress:
                 progress["task_quiz_map"] = {}

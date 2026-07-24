@@ -3,6 +3,15 @@ import json
 from datetime import datetime, timedelta
 from database import get_db
 
+
+def _date_prefix(val):
+    """从 str 或 datetime 中提取 'YYYY-MM-DD' 前缀（兼容 SQLite TEXT / PG TIMESTAMP）"""
+    if val is None:
+        return None
+    if isinstance(val, datetime):
+        return val.strftime("%Y-%m-%d")
+    return str(val)[:10]
+
 def get_user_stats(user_id: int) -> dict:
     """获取用户学习统计数据（从真实数据源查询）"""
     conn = get_db()
@@ -15,19 +24,19 @@ def get_user_stats(user_id: int) -> dict:
         (user_id,)
     ).fetchall():
         if row["d"]:
-            study_dates.add(row["d"][:10])
+            study_dates.add(_date_prefix(row["d"]))
     # 学习记录日期
     for row in conn.execute(
         "SELECT DISTINCT created_at FROM learning_records WHERE user_id = ?", (user_id,)
     ).fetchall():
         if row["created_at"]:
-            study_dates.add(row["created_at"][:10])
+            study_dates.add(_date_prefix(row["created_at"]))
     # 问答日期
     for row in conn.execute(
         "SELECT DISTINCT created_at FROM qa_history WHERE user_id = ?", (user_id,)
     ).fetchall():
         if row["created_at"]:
-            study_dates.add(row["created_at"][:10])
+            study_dates.add(_date_prefix(row["created_at"]))
     study_days = len(study_dates)
 
     # 做题总数：所有已完成测评的题目数之和
@@ -303,7 +312,7 @@ def get_growth_data(user_id: int) -> dict:
     for q in quizzes:
         rate = q["score"] / q["total"] if q["total"] > 0 else 0
         growth_points.append({
-            "date": q["completed_at"][:10] if q["completed_at"] else "",
+            "date": _date_prefix(q["completed_at"]) or "",
             "score": q["score"],
             "total": q["total"],
             "rate": round(rate * 100, 1)

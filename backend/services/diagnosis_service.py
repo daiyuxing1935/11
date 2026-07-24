@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from services.ai_service import call_llm, extract_json, extract_json_object, REPORT_PROMPT
 from services.question_bank_service import select_questions, load_question_bank
-from database import get_db
+from database import get_db, json_load
 from config import QUESTION_TYPES, DIFFICULTY_LEVELS, LEARNING_STAGES
 
 def load_knowledge_tags():
@@ -76,7 +76,7 @@ def get_user_knowledge_profile(user_id: int) -> dict:
 
     # ---- 第1步：从 AI 报告提取 mastery ----
     for q in quizzes:
-        report = json.loads(q["report_json"]) if q["report_json"] else {}
+        report = json_load(q["report_json"]) if q["report_json"] else {}
         ka = report.get("knowledge_analysis", {})
         if not ka:
             continue
@@ -100,8 +100,8 @@ def get_user_knowledge_profile(user_id: int) -> dict:
     tag_total = {}     # {tag: total_count}
     for q in quizzes:
         try:
-            questions = json.loads(q["questions_json"]) if q["questions_json"] else []
-            answers = json.loads(q["answers_json"]) if q["answers_json"] else []
+            questions = json_load(q["questions_json"]) if q["questions_json"] else []
+            answers = json_load(q["answers_json"]) if q["answers_json"] else []
         except (json.JSONDecodeError, TypeError):
             continue
         if not questions or not answers:
@@ -343,7 +343,7 @@ async def submit_quiz(session_id: int, user_id: int, answers: list) -> dict:
         conn.close()
         return {"error": "测评会话不存在"}
 
-    questions = json.loads(session["questions_json"])
+    questions = json_load(session["questions_json"])
 
     # 批改
     total_score = 0.0
@@ -964,7 +964,7 @@ async def get_report(session_id: int, user_id: int) -> dict:
         "total": session["total"],
         "correct_rate": round(session["score"] / session["total"] * 100, 1) if session["total"] > 0 else 0,
         "stage": session["stage"],
-        "report": json.loads(session["report_json"]) if session["report_json"] else {},
+        "report": json_load(session["report_json"]) if session["report_json"] else {},
         "created_at": session["created_at"],
         "completed_at": session["completed_at"]
     }

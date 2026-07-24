@@ -5,7 +5,7 @@ from services.ai_service import (
     call_llm, extract_json_object,
     QA_BEGINNER_PROMPT, QA_STANDARD_PROMPT, QA_ADVANCED_PROMPT, CODE_DEBUG_PROMPT
 )
-from database import get_db
+from database import get_db, json_load
 from services.personalization_service import build_personalized_system_prompt, record_conversation_turn
 from services.guidance_context_service import build_learning_context, public_learning_context
 
@@ -385,7 +385,7 @@ async def get_qa_history(user_id: int, page: int = 1, page_size: int = 20) -> di
     history = []
     for r in rows:
         d = dict(r)
-        d["knowledge_tags"] = json.loads(d["knowledge_tags"]) if d["knowledge_tags"] else []
+        d["knowledge_tags"] = json_load(d["knowledge_tags"]) if d["knowledge_tags"] else []
         history.append(d)
 
     return {

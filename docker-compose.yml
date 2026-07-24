@@ -10,6 +10,11 @@ services:
       # before each backend start so newly committed resources are not hidden.
       - ./backend/data:/app/seed-data:ro
       - ./learning_materials:/learning_materials:ro
+    environment:
+      # PostgreSQL 连接（通过 SSH 隧道 host.docker.internal:5433 → 服务器）
+      # 使用前需先建立 SSH 隧道: ssh -f -N -L 5433:127.0.0.1:5433 root@113.45.66.152
+      # 安全组开放后可改回直连: postgresql://app_user:tiaozhanbei2026!@113.45.66.152:5433/tiaozhanbei
+      - DATABASE_URL=postgresql://app_user:tiaozhanbei2026!@host.docker.internal:5433/tiaozhanbei
     command: ["sh", "/app/docker-entrypoint.sh"]
     restart: unless-stopped
 

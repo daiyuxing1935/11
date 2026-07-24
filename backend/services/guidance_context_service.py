@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 from config import BASE_DIR
-from database import get_db
+from database import get_db, json_load
 from services.agent_course import COURSE_TRACKS
 
 
@@ -35,8 +35,8 @@ def _path_snapshot(user_id: int) -> tuple[dict, dict]:
     if not row:
         return {}, {}
     try:
-        path_data = json.loads(row["path_data_json"] or "{}")
-        progress = json.loads(row["progress_json"] or "{}")
+        path_data = json_load(row["path_data_json"] or "{}")
+        progress = json_load(row["progress_json"] or "{}")
         return path_data if isinstance(path_data, dict) else {}, progress if isinstance(progress, dict) else {}
     except (TypeError, json.JSONDecodeError):
         return {}, {}
